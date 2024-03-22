@@ -9,7 +9,6 @@
 # Creacion de la BD
 
 1. Ir a la carpeta apiReserva 
-
 2. Dentro de la terminal de la carpeta ejecutr el comando : php artisan db:create reserva
 
 # Migraciones
