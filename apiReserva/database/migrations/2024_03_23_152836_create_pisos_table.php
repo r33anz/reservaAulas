@@ -15,6 +15,8 @@ class CreatePisosTable extends Migration
     {
         Schema::create('pisos', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('bloque_id');
+            $table->integer('nroPiso');
             $table->timestamps();
         });
     }
