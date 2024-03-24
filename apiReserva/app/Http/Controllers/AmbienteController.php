@@ -2,15 +2,17 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Http\Requests\AmbienteRequest;
 use App\Models\Ambiente;
 use App\Models\Piso;
-use App\Http\Requests\AmbienteRequest;
+use Illuminate\Http\Request;
+
 class AmbienteController extends Controller
 {
     public function index()
     {
         $ambientes = Ambiente::all();
+
         return response()->json($ambientes);
     }
 
@@ -20,10 +22,12 @@ class AmbienteController extends Controller
         if (!$ambiente) {
             return response()->json(['error' => 'Ambiente no encontrado'], 404);
         }
+
         return response()->json($ambiente);
     }
 
-    public function store(AmbienteRequest $request){
+    public function store(AmbienteRequest $request)
+    {
         $nombre = $request->input('nombre');
         $capacidad = $request->input('capacidad');
         $idBloque = $request->input('idBloque');
@@ -34,29 +38,29 @@ class AmbienteController extends Controller
         $idPiso = Piso::where('bloque_id', $idBloque)
                     ->where('nroPiso', $piso)
                     ->first();
-        
-        
+
         Ambiente::create([
             'piso_id' => $idPiso->id,
             'nombre' => $nombre,
             'capacidad' => $capacidad,
             'tipo' => $tipo,
-            //'descripcion' => $descripcion
+            // 'descripcion' => $descripcion
         ]);
 
         return response()->json([
             'success' => true,
         ]);
-         
     }
 
-    public function buscar(Request $request){
+    public function buscar(Request $request)
+    {
         $patron = $request->input('patron');
-        $resultado = Ambiente::where('nombre','like','%'.$patron.'%')
-                                ->select('id','nombre')
+        $resultado = Ambiente::where('nombre', 'like', '%'.$patron.'%')
+                                ->select('id', 'nombre')
                                 ->get();
+
         return response()->json([
-            'respuesta' => $resultado
+            'respuesta' => $resultado,
         ]);
     }
 }
