@@ -9,29 +9,26 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Models\Bloque;
 use App\Http\Controllers\DocenteController;
-/*
-|--------------------------------------------------------------------------
-| API Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register API routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| is assigned the "api" middleware group. Enjoy building your API!
-|
-*/
+
+
+///Docente
+
+Route::get('/docentes/{id}', [DocenteController::class, 'getMaterias']);
+
+
+///Administrador
 
 Route::get('/pisos', function (Request $request) {
-    return new BloqueResource(Bloque::find(1));
-    
+    return new BloqueResource(Bloque::find(1)); 
 });
 Route::get('/ambientes/pisos', function (Request $request) {
-    return new PisoResource(Piso::find(1));
-    
+    return new PisoResource(Piso::find(1)); 
 });
+
 Route::get('/bloques', [BloqueController::class, 'index']);
 Route::get('/bloques/{id}', [BloqueController::class, 'show']);
 
 Route::get('/ambientes', [AmbienteController::class, 'index']);
 Route::get('/ambientes/{id}', [AmbienteController::class, 'show']);
-
-Route::get('/docentes/{id}/materias', [DocenteController::class, 'getMaterias']);
+///Registro de ambiente
+Route::post('/registroAmbiente',[AmbienteController::class,'store']);

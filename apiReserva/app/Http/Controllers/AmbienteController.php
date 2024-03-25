@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Ambiente;
+use App\Models\Piso;
 class AmbienteController extends Controller
 {
     public function index()
@@ -19,5 +20,31 @@ class AmbienteController extends Controller
             return response()->json(['error' => 'Ambiente no encontrado'], 404);
         }
         return response()->json($ambiente);
+    }
+
+    public function store(Request $request){
+        $nombre = $request->input('nombre');
+        $capacidad = $request->input('capacidad');
+        $idBloque = $request->input('idBloque');
+        $piso = $request->input('piso');
+        $tipo = $request->input('tipo');
+        $descripcion = $request->input('descripcion');
+
+        $idPiso = Piso::where('bloque_id', $idBloque)
+                    ->where('nroPiso', $piso)
+                    ->first();
+
+        Ambiente::create([
+            'piso_id' => $idPiso->id,
+            'nombre' => $nombre,
+            'capacidad' => $capacidad,
+            'tipo' => $tipo,
+            'descripcion' => $descripcion
+        ]);
+
+        return response()->json([
+            'success' => true,
+        ]);
+         
     }
 }
