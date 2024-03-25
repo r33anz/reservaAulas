@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Periodo extends Model
 {
     use HasFactory;
-    
+
     protected $fillable = [
         'horainicial',
         'horafinal',
