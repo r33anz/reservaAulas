@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AmbienteController;
 use App\Http\Controllers\BloqueController;
+use App\Http\Controllers\PeriodoController;
 use App\Http\Resources\BloqueResource;
 use App\Http\Resources\PisoResource;
 use App\Models\Piso;
@@ -32,3 +33,9 @@ Route::get('/ambientes', [AmbienteController::class, 'index']);
 Route::get('/ambientes/{id}', [AmbienteController::class, 'show']);
 ///Registro de ambiente
 Route::post('/registroAmbiente',[AmbienteController::class,'store']);
+
+
+//Route::get('/periodos', [PeriodoController::class, 'index']);
+Route::get('/periodos/{id}', [PeriodoController::class, 'show']);
+
+Route::get('/periodos', [PeriodoController::class, 'getPeriodos']);

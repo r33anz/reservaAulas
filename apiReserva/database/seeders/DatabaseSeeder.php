@@ -19,7 +19,8 @@ class DatabaseSeeder extends Seeder
             MateriaSeeder::class,
             AmbienteSeeder::class,
             BloqueSeeder::class,
-            PisoSeeder::class
+            PisoSeeder::class, 
+            PeriodoSeeder::class
         ]);
     }
 }
