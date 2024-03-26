@@ -8,8 +8,14 @@ class DocenteController extends Controller
 {
     public function getMaterias($id){
         $docente = Docente::findOrFail($id);
-        $materias = $docente->materias->pluck('nombreMateria');
-        return  response()->json([
+        $materias = $docente->materias()->get()->map(function ($materia) {
+            return [
+                'nombreMateria' => $materia->nombreMateria,
+                'grupo' => $materia->pivot->grupo
+            ];
+        });
+    
+        return response()->json([
             'materias' => $materias
         ]);
     }

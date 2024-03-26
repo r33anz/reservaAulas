@@ -30,8 +30,8 @@ Route::get('/bloques', [BloqueController::class, 'index']);
 Route::get('/bloques/{id}', [BloqueController::class, 'show']);
 
 Route::get('/ambientes', [AmbienteController::class, 'index']);
-Route::get('/ambientes/{id}', [AmbienteController::class, 'show']);
-///Registro de ambiente
+
+  ///Registro de ambiente
 Route::post('/registroAmbiente',[AmbienteController::class,'store']);
 
 
@@ -39,3 +39,9 @@ Route::post('/registroAmbiente',[AmbienteController::class,'store']);
 Route::get('/periodos/{id}', [PeriodoController::class, 'show']);
 
 Route::get('/periodos', [PeriodoController::class, 'getPeriodos']);
+
+
+//Ambos
+
+Route::post('/busquedaAula',[AmbienteController::class,'buscar']);
+Route::get('/ambientes/{id}', [AmbienteController::class, 'show']);
