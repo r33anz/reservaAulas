@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { getBloques, getTiposDeAmbiente, getPiso } from "../../services/Ambiente.service"
+import { getBloques, getTiposDeAmbiente, getPiso, registrarAmbiente } from "../../services/Ambiente.service"
 import { Container, Row, Col, Form, Button, Stack } from 'react-bootstrap'
 import { XSquareFill } from 'react-bootstrap-icons'
 import { useFormik } from "formik";
@@ -23,6 +23,7 @@ const RegistrarAmbiente = () => {
         validationSchema: Yup.object({
             nombre: Yup.string()
                 .max(15, "Must be 15 characters or less")
+                .uppercase()
                 .required("Required"),
             capacidad: Yup.number()
                 .positive()
@@ -36,7 +37,7 @@ const RegistrarAmbiente = () => {
 
         }),
         onSubmit: values => {
-            alert(JSON.stringify(values, null, 2));
+            registrarAmbiente(values)
             formik.resetForm();
         }
     });

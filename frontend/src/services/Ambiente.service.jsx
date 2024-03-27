@@ -1,3 +1,7 @@
+import axios from 'axios';
+
+const apiUrl = process.env.REACT_APP_URL;
+
 export const getBloques = () => {
     return [
         { id: 1, name: "Edificio Nuevo" },
@@ -19,4 +23,14 @@ export const getTiposDeAmbiente = () => {
 
 export const getPiso = () => {
     return [{ value: 0 }, { value: 1 }, { value: 2 }, { value: 3 }];
+}
+
+export const registrarAmbiente = (ambiente) => {
+    axios.post(`${apiUrl}/registroAmbiente`, ambiente)
+      .then(function (response) {
+        console.log(response);
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
 }
