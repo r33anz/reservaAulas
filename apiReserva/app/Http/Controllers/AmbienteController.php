@@ -63,14 +63,4 @@ class AmbienteController extends Controller
             'respuesta' => $resultado,
         ]);
     }
-
-    public function buscar(Request $request){
-        $patron = $request->input('patron');
-        $resultado = Ambiente::where('nombre','like','%'.$patron.'%')
-                                ->select('id','nombre')
-                                ->get();
-        return response()->json([
-            'respuesta' => $resultado
-        ]);
-    }
 }

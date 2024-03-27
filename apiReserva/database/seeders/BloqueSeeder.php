@@ -40,5 +40,23 @@ class BloqueSeeder extends Seeder
             'id' => 6,
             'nombreBloque' => 'Bloque Quimica',
         ]);
+        Bloque::create([
+            "id"=> 3,
+            'nombreBloque' => 'Edificio Nuevo'
+        ]);
+        Bloque::create([
+            "id"=> 4,
+            'nombreBloque' => 'MEMI'
+        ]);
+        Bloque::create([
+            "id"=> 5,
+            'nombreBloque' => 'Bloque Informatica'
+        ]);
+
+        Bloque::create([
+            "id"=> 6,
+            'nombreBloque' => 'Bloque Quimica'
+        ]);
+        
     }
 }

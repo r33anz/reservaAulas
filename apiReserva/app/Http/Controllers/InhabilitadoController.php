@@ -2,19 +2,20 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\Inhabilitado;
+use Illuminate\Http\Request;
+
 class InhabilitadoController extends Controller
 {
-    //habilitar ambiente curso/fecha/periodo
-        //eliminar
-    
-    
-    public function habilitarAmbiente(Request $request){
+    // habilitar ambiente curso/fecha/periodo
+    // eliminar
+
+    public function habilitarAmbiente(Request $request)
+    {
         $idAmbiente = $request->input('idAmbiente');
         $idPeriodos = $request->input('idPeriodos'); // lista []
         $fecha = $request->input('fecha');
-        
+
         foreach ($idPeriodos as $idPeriodo) {
             // Eliminar registros que coincidan con los tres parámetros
             Inhabilitado::where('ambiente_id', $idAmbiente)
@@ -22,32 +23,35 @@ class InhabilitadoController extends Controller
                         ->where('fecha', $fecha)
                         ->delete();
         }
+
         return response()
             ->json(['message' => 'Registros eliminados con éxito']);
-
     }
-    //inhabilitar ambiemte
-        //agregar
-    
-    public function inhabilitarAmbiente(Request $request){
+    // inhabilitar ambiemte
+    // agregar
+
+    public function inhabilitarAmbiente(Request $request)
+    {
         $idAmbiente = $request->input('idAmbiente');
         $idPeriodos = $request->input('idPeriodos'); // lista []
         $fecha = $request->input('fecha');
-        
+
         foreach ($idPeriodos as $idPeriodo) {
-            
             Inhabilitado::create([
                 'id_ambiente' => $idAmbiente,
                 'id_periodo' => $idPeriodo,
                 'fecha' => $fecha,
             ]);
         }
+
         return response()
             ->json(['message' => 'Registros agregados con éxito']);
     }
-    //buscar inhabilitados
+
+    // buscar inhabilitados
     // devuelve lista de periodos inhabilitados
-    public function buscarPeriodos(Request $request){
+    public function buscarPeriodos(Request $request)
+    {
         $idAmbiente = $request->input('idAmbiente');
         $fecha = $request->input('fecha');
 
@@ -57,5 +61,4 @@ class InhabilitadoController extends Controller
 
         return response()->json(['periodos' => $periodosInhabilitados], 200);
     }
-
 }
