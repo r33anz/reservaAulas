@@ -42,6 +42,7 @@
   .RegistrarAmbiente-button-register:hover,
   .RegistrarAmbiente-button-register:active,
   .RegistrarAmbiente-button-register:focus,
+  .RegistrarAmbiente-button-register:disabled,
   .RegistrarAmbiente-button-register.active {
     /* let's darken #004E64 a bit for hover effect */
     color: #ffffff;

@@ -1,6 +1,6 @@
 import React from "react";
-import { Container, Row, Col, Image, Button, Stack, Navbar, Figure } from 'react-bootstrap'
-import { Bell, BellFill, Calendar3, XSquareFill } from 'react-bootstrap-icons'
+import { Container, Row, Col, Figure } from 'react-bootstrap'
+import { BellFill, Calendar3 } from 'react-bootstrap-icons'
 import logo from './logo.png';
 
 const Home = ({ children }) => {
