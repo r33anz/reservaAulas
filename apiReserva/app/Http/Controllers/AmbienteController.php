@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Ambiente;
 use App\Models\Piso;
+use App\Http\Requests\AmbienteRequest;
 class AmbienteController extends Controller
 {
     public function index()
@@ -39,7 +40,7 @@ class AmbienteController extends Controller
             'nombre' => $nombre,
             'capacidad' => $capacidad,
             'tipo' => $tipo,
-            'descripcion' => $descripcion
+            //'descripcion' => $descripcion
         ]);
 
         return response()->json([
