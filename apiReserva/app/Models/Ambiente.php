@@ -14,5 +14,9 @@ class Ambiente extends Model
     public function piso(): BelongsTo{
         return $this->belongsTo(Piso::class);
     }
+    public function inhabilitados()
+    {
+        return $this->hasMany(Inhabilitado::class);
+    }
 }
 

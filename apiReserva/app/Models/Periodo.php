@@ -13,4 +13,9 @@ class Periodo extends Model
         'horainicial',
         'horafinal',
     ];
+
+    public function inhabilitados()
+    {
+        return $this->hasMany(Inhabilitado::class);
+    }
 }

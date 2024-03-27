@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use Database\Seeders\DocenteSeeder;
 use Database\Seeders\MateriaSeeder;
+use Database\Seeders\InhabilitadoSeeder;
 class DatabaseSeeder extends Seeder
 {
     /**
@@ -17,10 +18,11 @@ class DatabaseSeeder extends Seeder
         $this ->call([
             DocenteSeeder::class,
             MateriaSeeder::class,
-            AmbienteSeeder::class,
+            //AmbienteSeeder::class,
             BloqueSeeder::class,
             PisoSeeder::class, 
-            PeriodoSeeder::class
+            PeriodoSeeder::class,
+            //InhabilitadoSeeder::class
         ]);
     }
 }

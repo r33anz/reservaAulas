@@ -23,7 +23,7 @@ class AmbienteController extends Controller
         return response()->json($ambiente);
     }
 
-    public function store(Request $request){
+    public function store(AmbienteRequest $request){
         $nombre = $request->input('nombre');
         $capacidad = $request->input('capacidad');
         $idBloque = $request->input('idBloque');

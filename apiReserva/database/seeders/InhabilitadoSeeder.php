@@ -2,10 +2,9 @@
 
 namespace Database\Seeders;
 
-use App\Models\Ambiente;
 use Illuminate\Database\Seeder;
 
-class AmbienteSeeder extends Seeder
+class InhabilitadoSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -14,7 +13,6 @@ class AmbienteSeeder extends Seeder
      */
     public function run()
     {
-        
         
     }
 }

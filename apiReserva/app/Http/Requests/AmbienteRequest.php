@@ -3,24 +3,40 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Contracts\Validation\Validator;
+use Illuminate\Http\Exceptions\HttpResponseException;
 
 class AmbienteRequest extends FormRequest
 {
-    
-    public function authorize()
+    /*public function authorize()
     {
-        return false;
+        
     }
-
-    
+    */
     public function rules()
     {
         return [
-            'nombre' => 'required|unique|regex:/^[A-Z0-9]+$/',
-            'capacidad'=> 'required|integer|min:0',
-            'piso_id'=>'required|integer',
-            'piso'=> 'required|integer|min:0',
-            'tipo'=> 'required'
+            'nombre' => 'unique:ambientes|regex:/^[A-Z0-9]+$/'
         ];
     }
+
+    // Este método personalizado permite definir mensajes de error personalizados.
+    public function messages()
+    {
+        return [
+            
+            'nombre.unique' => 'El campo nombre debe ser único.',
+            'nombre.regex' => 'El campo nombre debe contener solo letras mayúsculas y números.'
+        ];
+    }
+
+    // Este método se llama cuando falla la validación.
+    protected function failedValidation(Validator $validator)
+    {
+        throw new HttpResponseException(response()->json([
+            'message' => 'Datos invalidos',
+            'errors' => $validator->errors()
+        ], 422));
+    }
 }
+
