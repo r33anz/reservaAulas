@@ -22,7 +22,7 @@ class DatabaseSeeder extends Seeder
             BloqueSeeder::class,
             PisoSeeder::class, 
             PeriodoSeeder::class,
-            //InhabilitadoSeeder::class
+            InhabilitadoSeeder::class
         ]);
     }
 }
