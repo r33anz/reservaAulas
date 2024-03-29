@@ -1,8 +1,9 @@
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import RegistrarAmbiente from './components/RegistrarAmbiente';
 import Home from './pages/Home';
 import { AlertsProvider } from './components/Alert/AlertsContext';
+import Buscar from './components/Busquedanombre/Buscar';
+import RegistrarAmbiente from './components/RegistrarAmbiente';
 
 function App() {
 
@@ -11,7 +12,9 @@ function App() {
       <AlertsProvider>
         <RegistrarAmbiente />
       </AlertsProvider>
+      <Buscar></Buscar>
     </Home>
+
   );
 }
 
