@@ -6,15 +6,19 @@ import Home from './pages/Home';
 import { AlertsProvider } from './components/Alert/AlertsContext';
 import Buscar from './components/Busquedanombre/Buscar';
 import ModificarPeriodo from './components/ModificarPorPeriodo/ModicarPeriodo';
+import Home from './pages/Home';
+import { AlertsProvider } from './components/Alert/AlertsContext';
 
 function App() {
 
   return (
     <Home>
       <AlertsProvider>
-      <ModificarPeriodo/>
+        <ModificarPeriodo />
       </AlertsProvider>
-        <Calendario />
+      <Calendario />
+      <Buscar></Buscar>
+      <RegistrarAmbiente />
     </Home>
 
   );
