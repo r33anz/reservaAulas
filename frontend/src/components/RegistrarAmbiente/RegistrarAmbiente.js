@@ -1,15 +1,18 @@
-import React, { useEffect, useState } from "react";
-import { getBloques, getTiposDeAmbiente, getPiso, registrarAmbiente } from "../../services/Ambiente.service"
-import { Container, Row, Col, Form, Button, Stack } from 'react-bootstrap'
-import { XSquareFill } from 'react-bootstrap-icons'
+import React, { useContext, useEffect, useState } from "react";
+import { getBloques, getTiposDeAmbiente, getPiso, registrarAmbiente } from "../../services/Ambiente.service";
+import { Container, Row, Col, Form, Button, Stack } from 'react-bootstrap';
+import { CheckCircleFill, ExclamationCircleFill, XSquareFill } from 'react-bootstrap-icons';
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import './style.css'
+import './style.css';
+import { AlertsContext } from "../Alert/AlertsContext";
 
 const RegistrarAmbiente = () => {
     const [bloques, setBloques] = useState([]);
     const [tiposDeAmbiente, setTiposDeAmbiente] = useState([]);
     const [pisos, setPisos] = useState([]);
+    const { agregarAlert } = useContext(AlertsContext);
+    console.log(agregarAlert);
 
     const formik = useFormik({
         initialValues: {
@@ -22,7 +25,6 @@ const RegistrarAmbiente = () => {
         },
         validationSchema: Yup.object({
             nombre: Yup.string()
-                .max(15, "Must be 15 characters or less")
                 .uppercase()
                 .required("Required"),
             capacidad: Yup.number()
@@ -38,7 +40,12 @@ const RegistrarAmbiente = () => {
         }),
         onSubmit: values => {
             registrarAmbiente(values)
-            formik.resetForm();
+                .then((response) => {
+                    agregarAlert({ icon: <CheckCircleFill />, severidad: "success", mensaje: "Se a registrado correctamente el ambiente" });
+                    formik.resetForm();
+                }).catch((error) => {
+                    agregarAlert({ icon: <ExclamationCircleFill />, severidad: "danger", mensaje: error });
+                });
         }
     });
 

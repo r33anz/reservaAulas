@@ -1,0 +1,8 @@
+.AlertContext-alert {
+    position: relative
+}
+
+.AlertsWrapper-container {
+    position: absolute;
+    height: 75%;
+}

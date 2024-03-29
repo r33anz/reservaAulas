@@ -2,8 +2,10 @@ import React from "react";
 import { Container, Row, Col, Figure } from 'react-bootstrap'
 import { BellFill, Calendar3 } from 'react-bootstrap-icons'
 import logo from './logo.png';
+import './style.css';
 
 const Home = ({ children }) => {
+
     return (<>
         <Container style={{ height: "118px" }} className="RegistrarAmbiente-header" fluid >
             <Row >
@@ -29,7 +31,7 @@ const Home = ({ children }) => {
                 </Col>
             </Row>
         </Container>
-        <Container style={{ paddingTop: "2rem" }}>
+        <Container className="Home-body">
             {children}
         </Container>
     </>);
