@@ -25,8 +25,8 @@ class AmbienteRequest extends FormRequest
     {
         return [
             
-            'nombre.unique' => 'El campo nombre debe ser único.',
-            'nombre.regex' => 'El campo nombre debe contener solo letras mayúsculas y números.'
+            'nombre.unique' => 'El campo nombre debe ser unico.',
+            'nombre.regex' => 'El campo nombre debe contener solo letras mayusculas y numeros.'
         ];
     }
 

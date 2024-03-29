@@ -34,7 +34,8 @@ class AmbienteController extends Controller
         $idPiso = Piso::where('bloque_id', $idBloque)
                     ->where('nroPiso', $piso)
                     ->first();
-
+        
+        
         Ambiente::create([
             'piso_id' => $idPiso->id,
             'nombre' => $nombre,

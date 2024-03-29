@@ -18,7 +18,7 @@ class DatabaseSeeder extends Seeder
         $this ->call([
             DocenteSeeder::class,
             MateriaSeeder::class,
-            //AmbienteSeeder::class,
+            AmbienteSeeder::class,
             BloqueSeeder::class,
             PisoSeeder::class, 
             PeriodoSeeder::class,
