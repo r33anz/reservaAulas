@@ -38,8 +38,8 @@ class InhabilitadoController extends Controller
 
         foreach ($idPeriodos as $idPeriodo) {
             Inhabilitado::create([
-                'id_ambiente' => $idAmbiente,
-                'id_periodo' => $idPeriodo,
+                'ambiente_id' => $idAmbiente,
+                'periodo_id' => $idPeriodo,
                 'fecha' => $fecha,
             ]);
         }
@@ -55,9 +55,11 @@ class InhabilitadoController extends Controller
         $idAmbiente = $request->input('idAmbiente');
         $fecha = $request->input('fecha');
 
-        $periodosInhabilitados = Inhabilitado::where('id_ambiente', $idAmbiente)
-                                      ->where('fecha', $fecha)
-                                      ->get();
+        $periodosInhabilitados = Inhabilitado::select('periodo_id')
+                                        ->where('ambiente_id', $idAmbiente)
+                                        ->where('fecha', $fecha)
+                                        ->pluck('periodo_id')
+                                        ->toArray();
 
         return response()->json(['periodos' => $periodosInhabilitados], 200);
     }
