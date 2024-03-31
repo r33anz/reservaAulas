@@ -15,38 +15,38 @@ class InhabilitadoSeeder extends Seeder
     public function run()
     {  //yy mm dd
         Inhabilitado::create([
-            'id_ambiente'=>1,
-            'id_periodo'=>1,
+            'ambiente_id'=>1,
+            'periodo_id'=>1,
             'fecha'=> "2024-04-1" 
         ]);
 
         Inhabilitado::create([
-            'id_ambiente'=>1,
-            'id_periodo'=>2,
+            'ambiente_id'=>1,
+            'periodo_id'=>2,
             'fecha'=> "2024-04-1" 
         ]);
 
         Inhabilitado::create([
-            'id_ambiente'=>1,
-            'id_periodo'=>7,
+            'ambiente_id'=>1,
+            'periodo_id'=>7,
             'fecha'=> "2024-04-1" 
         ]);
 
         Inhabilitado::create([
-            'id_ambiente'=>1,
-            'id_periodo'=>1,
+            'ambiente_id'=>1,
+            'periodo_id'=>1,
             'fecha'=> "2024-04-3" 
         ]);
 
         Inhabilitado::create([
-            'id_ambiente'=>1,
-            'id_periodo'=>1,
+            'ambiente_id'=>1,
+            'periodo_id'=>1,
             'fecha'=> "2024-04-3" 
         ]);
 
         Inhabilitado::create([
-            'id_ambiente'=>1,
-            'id_periodo'=>5,
+            'ambiente_id'=>1,
+            'periodo_id'=>5,
             'fecha'=> "2024-04-4" 
         ]);
     }

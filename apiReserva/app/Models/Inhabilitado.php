@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Inhabilitado extends Model
 {
     use HasFactory;
-    protected $fillable = ['id_ambiente','id_periodo','fecha'];
+    protected $fillable = ['ambiente_id','periodo_id','fecha'];
 
     public function ambiente()
     {
