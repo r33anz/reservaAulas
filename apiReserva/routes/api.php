@@ -42,4 +42,4 @@ Route::get('/ambientes', [AmbienteController::class, 'index']);
 //Habilitado/DeshabilitadoAula
 Route::post('/inhabilitarAmbiente',[InhabilitadoController::class,'inhabilitarAmbiente']);
 Route::delete('/habilitarAmbiente',[InhabilitadoController::class,'habilitarAmbiente']);
-Route::get('/buscarInhabilitados',[InhabilitadoController::class,'buscarPeriodos']);
+Route::post('/buscarInhabilitados',[InhabilitadoController::class,'buscarPeriodos']);
