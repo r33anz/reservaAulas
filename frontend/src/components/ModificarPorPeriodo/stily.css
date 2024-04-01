@@ -1,0 +1,52 @@
+.buscar-container {
+    width: 600px ;
+    height: 530px;
+    margin-left: 300px;
+    
+    background-color: #D9D9D9;
+    display: flex;
+    flex-direction: column;
+    color: #000000;
+}
+.options-container {
+    font-size: 20px;
+    margin-left: 290px;
+    margin-right: 110px;
+    max-height: 100px; /* Altura máxima para mostrar hasta 3 opciones */
+    overflow-y: auto; /* Habilitar el desplazamiento vertical cuando se supera la altura máxima */
+  }
+#buscar-input {
+    margin-left: 30px;
+}
+
+.fecha{
+    position: absolute;
+    margin-top: 90px;
+    font-size: 25px;
+    margin-left: -10px;
+    padding-top: 0px;
+    
+}
+
+.consultar-button {
+    position: absolute;
+    margin-top: 100px;
+    margin-left: 500px;
+}
+
+
+.periodos-container{
+
+    position: absolute;
+    margin-left: 20px;
+    margin-top: 130px;
+    
+}
+
+.periodos-container div label {
+    width: 100px; /* Ancho fijo para cada periodo */
+    text-align: center;
+    border: 1px solid black; /* Borde de 1px sólido negro */
+    margin: 2px; /* Espacio entre los elementos */
+    padding: 2px; /* Espacio interno del borde */
+}
