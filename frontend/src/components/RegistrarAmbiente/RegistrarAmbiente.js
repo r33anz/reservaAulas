@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { getBloques, getTiposDeAmbiente, getPiso, registrarAmbiente } from "../../services/Ambiente.service";
+import { getBloques, getTiposDeAmbiente, registrarAmbiente } from "../../services/Ambiente.service";
 import { Container, Row, Col, Form, Button, Stack } from 'react-bootstrap';
 import { CheckCircleFill, ExclamationCircleFill, XSquareFill } from 'react-bootstrap-icons';
 import { useFormik } from "formik";
@@ -25,17 +25,17 @@ const RegistrarAmbiente = () => {
         },
         validationSchema: Yup.object({
             nombre: Yup.string()
-                .uppercase()
-                .required("Required"),
+                .required("Obligatorio")
+                .matches(/^[A-Z0-9]+$/, "Solo letras mayusculas y numeros es permitido"),
             capacidad: Yup.number()
-                .positive()
-                .required("Required"),
+                .positive("Debe ser mayor a 0")
+                .required("Obligatorio"),
             idBloque: Yup.number()
-                .required("Required"),
+                .required("Obligatorio"),
             tipo: Yup.string()
-                .required("Required"),
+                .required("Obligatorio"),
             piso: Yup.number()
-                .required("Required"),
+                .required("Obligatorio"),
 
         }),
         onSubmit: values => {
@@ -49,13 +49,22 @@ const RegistrarAmbiente = () => {
         }
     });
 
+    const setPisosPorBloqueSeleccionado = (e, callback) => {
+        const bloqueId = e.target.value;
+        const bloque = bloques.find((item) => item.id === parseInt(bloqueId));
+        const bloquePisos = [];
+        for (let i = 0; i < bloque.pisos; i++) {
+            bloquePisos.push({ value: i });
+        }
+        setPisos(bloquePisos);
+        callback(e);
+    }
+
     useEffect(() => {
         const bloques = getBloques();
         setBloques(bloques);
         const tiposDeAmbiente = getTiposDeAmbiente();
         setTiposDeAmbiente(tiposDeAmbiente);
-        const pisos = getPiso();
-        setPisos(pisos);
     }, [])
 
     return (<>
@@ -107,7 +116,7 @@ const RegistrarAmbiente = () => {
                                     <Form.Group className="mb-3" controlId="idBloque">
                                         <Form.Label>Bloque</Form.Label>
                                         <Form.Select
-                                            onChange={formik.handleChange}
+                                            onChange={(e) => setPisosPorBloqueSeleccionado(e, formik.handleChange)}
                                             onBlur={formik.handleBlur}
                                             value={formik.values.idBloque}
                                         >
@@ -143,7 +152,9 @@ const RegistrarAmbiente = () => {
                                             onBlur={formik.handleBlur}
                                             value={formik.values.piso}
                                         >
-                                            <option value="" disabled selected>Ingrese un piso</option>
+                                            {pisos.length > 0 ?
+                                                <option value="" disabled selected>Ingrese un piso</option>
+                                                : <option value="" disabled selected>Seleccione un bloque</option>}
                                             {pisos.map((piso) => {
                                                 if (piso.value === 0) {
                                                     return <option value={piso.value}>Planta Baja</option>
