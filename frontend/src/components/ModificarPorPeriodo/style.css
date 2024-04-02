@@ -50,3 +50,15 @@
     margin: 2px; /* Espacio entre los elementos */
     padding: 2px; /* Espacio interno del borde */
 }
+
+.periodos-inhabilitados{
+    background-color: rgb(88, 88, 253);
+}
+.periodos-habilitados{
+    background-color: #ffffff;
+}
+.modi{
+    position: absolute;
+    margin-top: 450px;
+    margin-left: 500px;
+}
