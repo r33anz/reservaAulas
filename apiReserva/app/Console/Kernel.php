@@ -17,6 +17,7 @@ class Kernel extends ConsoleKernel
     protected $commands = [
         // Aquí debes agregar la ruta completa de tu comando personalizado
         \App\Console\Commands\CreateDatabase::class,
+        \App\Console\Commands\MigrateAndSeedDatabase::class,
     ];
 
     protected function schedule(Schedule $schedule)
