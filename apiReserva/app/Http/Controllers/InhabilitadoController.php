@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Inhabilitado;
+use App\Models\Periodo;
+use App\Models\Ambiente;
+
 class InhabilitadoController extends Controller
 {
     //habilitar ambiente curso/fecha/periodo
@@ -17,13 +20,19 @@ class InhabilitadoController extends Controller
         
         foreach ($idPeriodos as $idPeriodo) {
             // Eliminar registros que coincidan con los tres parámetros
+            if (!Periodo::find($idPeriodo)) {
+                return response()->json(['message' => 'El periodo no existe.'], 404);
+            }
+            if (!Ambiente::find($idAmbiente)) {
+                return response()->json(['message' => 'El curso  introducido  no existe.'], 404);
+            }
             Inhabilitado::where('ambiente_id', $idAmbiente)
                         ->where('periodo_id', $idPeriodo)
                         ->where('fecha', $fecha)
                         ->delete();
         }
         return response()
-            ->json(['message' => 'Registros eliminados con éxito']);
+            ->json(['message' => 'Registros eliminados con éxito'],200);
 
     }
     //inhabilitar ambiemte
@@ -36,6 +45,12 @@ class InhabilitadoController extends Controller
         
         foreach ($idPeriodos as $idPeriodo) {
             
+            if (!Periodo::find($idPeriodo)) {
+                return response()->json(['message' => 'El periodo ' . $idPeriodo . ' no existe.'], 404);
+            }
+            if (!Ambiente::find($idAmbiente)) {
+                return response()->json(['message' => 'El curso  introducido ' . $idPeriodo . ' no existe.'], 404);
+            }
             Inhabilitado::create([
                 'ambiente_id' => $idAmbiente,
                 'periodo_id' => $idPeriodo,
@@ -43,7 +58,7 @@ class InhabilitadoController extends Controller
             ]);
         }
         return response()
-            ->json(['message' => 'Registros agregados con éxito']);
+            ->json(['message' => 'Registros agregados con éxito'],200);
     }
     //buscar inhabilitados
     // devuelve lista de periodos inhabilitados

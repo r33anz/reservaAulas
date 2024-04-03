@@ -16,21 +16,18 @@ class AmbienteRequest extends FormRequest
     public function rules()
     {
         return [
-            'nombre' => 'unique:ambientes|regex:/^[A-Z0-9]+$/'
+            'nombre' => 'unique:ambientes'
         ];
     }
 
-    // Este método personalizado permite definir mensajes de error personalizados.
     public function messages()
     {
         return [
             
             'nombre.unique' => 'El campo nombre debe ser unico.',
-            'nombre.regex' => 'El campo nombre debe contener solo letras mayusculas y numeros.'
+            
         ];
     }
-
-    // Este método se llama cuando falla la validación.
     protected function failedValidation(Validator $validator)
     {
         throw new HttpResponseException(response()->json([

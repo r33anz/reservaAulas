@@ -20,7 +20,20 @@ class AmbienteController extends Controller
         if (!$ambiente) {
             return response()->json(['error' => 'Ambiente no encontrado'], 404);
         }
-        return response()->json($ambiente);
+        
+        
+        $piso = $ambiente->piso;
+        $bloque = $piso->bloque;
+        $nombreBloque = $bloque->nombreBloque;
+        $nroPiso = $piso->nroPiso;
+
+        return response()->json([
+        'nombre'=>$ambiente->nombre,
+        'capacidad'=>$ambiente->capacidad,
+        'tipo'=>$ambiente->tipo,
+        'nombreBloque' => $nombreBloque,
+        'nroPiso' => $nroPiso
+        ]);
     }
 
     public function store(AmbienteRequest $request){
