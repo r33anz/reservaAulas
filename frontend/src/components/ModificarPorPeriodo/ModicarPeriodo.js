@@ -52,7 +52,7 @@ const Modificarperdiodo = () => {
     const handleInputChange = (e) => {
         const newValue = e.target.value;
         // Validar que solo se permitan datos alfanuméricos
-        if (/^[a-zA-Z0-9]*$/.test(newValue)) {
+        if (/^[a-zA-Z0-9\s]*$/.test(newValue)) {
             setNombreAmbiente(newValue);
             if (newValue.trim() === '') {
                 setAmbienteOptions([]); // Limpiar las opciones de ambiente si el campo está vacío
@@ -299,7 +299,7 @@ const otraHabilitar = (id) => {
           <p>Color blanco hace a periodos habilitados.</p>
           <p>Color gris hace referencia a periodos  </p>
           <p>inhabilitados. </p>
-          <p>Color rojo a periodos ya reservados </p>
+          <p>Color rojo para periodos ya reservados </p>
           {/* Mostrar el id y el nombre del ambiente */}
           </div>
         </div>

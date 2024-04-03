@@ -11,7 +11,7 @@ function App() {
   return (
     <Home>
       <AlertsProvider>
-      <Buscar/>
+      <ModificarPeriodo/>
       </AlertsProvider>
       
       
