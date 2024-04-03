@@ -1,5 +1,5 @@
 import React, { createContext, useState } from "react";
-import { Alert } from "react-bootstrap";
+import { Alert, Row, Stack } from "react-bootstrap";
 import { AlertsWrapper } from "./AlertsWrapper";
 import "./style.css";
 
@@ -8,7 +8,7 @@ const AlertsProvider = ({ children }) => {
     const [alerts, setAlerts] = useState([]);
 
     const agregarAlert = (alert) => {
-        const id = Math.random().toString(36).slice(2, 9) + new Date().getTime().toString(36);
+        const id = alert.id ? Math.random().toString(36).slice(2, 9) + new Date().getTime().toString(36): alert.id;
         setAlerts((prev) => [{ ...alert, id }, ...prev]);
     }
 
@@ -19,7 +19,7 @@ const AlertsProvider = ({ children }) => {
     }
 
     return (
-        <AlertsContext.Provider value={{ agregarAlert }}>
+        <AlertsContext.Provider value={{ agregarAlert, eliminarAlert }}>
             <AlertsWrapper show={alerts.length > 0}>
                 {alerts.map((alert) => (
                     <Alert
@@ -29,12 +29,16 @@ const AlertsProvider = ({ children }) => {
                         variant={alert.severidad}
                         dismissible
                     >
-                        {alert.icon} {' '}
-                        {alert.mensaje}
+                        <Row>
+                            <Stack direction="horizontal" gap={2}>
+                                {alert.icon}
+                                {alert.mensaje}
+                            </Stack>
+                        </Row>
                     </Alert>
                 ))}
-        </AlertsWrapper>
-            { children }
+            </AlertsWrapper>
+            {children}
         </AlertsContext.Provider >
     );
 }

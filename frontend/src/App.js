@@ -6,21 +6,23 @@ import Calendario from './components/Calendario';
 import Home from './pages/Home';
 import { AlertsProvider } from './components/Alert/AlertsContext';
 import ModificarPeriodo from './components/ModificarPorPeriodo/ModicarPeriodo';
-import Home from './pages/Home';
-import { AlertsProvider } from './components/Alert/AlertsContext';
 import {
   createBrowserRouter,
   RouterProvider
 } from "react-router-dom";
-import RegistrarAmbiente from './components/RegistrarAmbiente';
 import ModificarEstadoDelAmbientePorFecha from './components/ModificarAmbiente/EstadoPorFecha';
+import Buscar from "./components/Busquedanombre/Buscar";
 
 function App() {
 
   const router = createBrowserRouter([
     {
       path: "/",
-      element: "",
+      element: (
+        <AlertsProvider>
+          <RegistrarAmbiente />
+        </AlertsProvider>
+      ),
     },
     {
       path: "registroAmbiente",
@@ -33,25 +35,34 @@ function App() {
     {
       path: "modificarPorPeriodo",
       element: (
-        <ModificarPeriodo />
+        <AlertsProvider>
+          <ModificarPeriodo />
+        </AlertsProvider>
       )
     },
     {
       path: "modificarPorFecha",
       element: (
-        <ModificarEstadoDelAmbientePorFecha />
+        <AlertsProvider>
+          <ModificarEstadoDelAmbientePorFecha />
+        </AlertsProvider>
+      )
+    },
+    {
+      path: "calendario",
+      element: (
+        <Calendario />
+      )
+    }, {
+      path: "buscarPorNombre",
+      element: (
+        <Buscar />
       )
     }
   ]);
 
   return (
     <Home>
-      <AlertsProvider>
-        <ModificarPeriodo />
-      </AlertsProvider>
-      <Calendario />
-      <Buscar></Buscar>
-      <RegistrarAmbiente />
       <RouterProvider router={router} />
     </Home>
   );
