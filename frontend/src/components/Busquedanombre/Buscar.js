@@ -36,8 +36,8 @@ const Buscar = () => {
   // Función para manejar el cambio en el campo de entrada
   const handleInputChange = (e) => {
     const newValue = e.target.value;
-    // Validar que solo se permitan datos alfanuméricos
-    if (/^[a-zA-Z0-9]*$/.test(newValue)) {
+    // Validar que solo se permitan datos alfanuméricos y espacios en blanco
+    if (/^[a-zA-Z0-9\s]*$/.test(newValue)) {
         setNombreAmbiente(newValue);
         if (newValue.trim() === '') {
             setAmbienteOptions([]); // Limpiar las opciones de ambiente si el campo está vacío
@@ -46,6 +46,7 @@ const Buscar = () => {
         }
     }
 };
+
 
 // Función para manejar el clic fuera del campo de entrada
 const handleClickOutside = () => {
@@ -120,7 +121,8 @@ useEffect(() => {
           <p>Nombre: {ambienteDetails.nombre}</p>
           <p>Capacidad:   {ambienteDetails.capacidad}</p>
           <p>Tipo de Ambiente: {ambienteDetails.tipo}</p>
-          <p>Piso: {ambienteDetails.piso}</p>
+          <p>Bloque: {ambienteDetails.nombreBloque}</p>
+          <p>Piso: {ambienteDetails.nroPiso}</p>
           {/* Mostrar el id y el nombre del ambiente */}
           </div>
         </div>

@@ -12,7 +12,7 @@ function App() {
   return (
     <Home>
       <AlertsProvider>
-      <Buscar/>
+      <ModificarPeriodo/>
       </AlertsProvider>
         <Calendario />
     </Home>
