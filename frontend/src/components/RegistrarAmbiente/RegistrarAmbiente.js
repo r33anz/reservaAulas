@@ -12,7 +12,6 @@ const RegistrarAmbiente = () => {
     const [tiposDeAmbiente, setTiposDeAmbiente] = useState([]);
     const [pisos, setPisos] = useState([]);
     const { agregarAlert } = useContext(AlertsContext);
-    console.log(agregarAlert);
 
     const formik = useFormik({
         initialValues: {

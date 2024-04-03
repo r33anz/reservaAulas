@@ -1,8 +1,8 @@
-import {Calendar, dayjsLocalizer} from 'react-big-calendar'
-import "react-big-calendar/lib/css/react-big-calendar.css"
-import dayjs from 'dayjs'
-import "dayjs/locale/es"
-import "./style.css"
+import {Calendar, dayjsLocalizer} from 'react-big-calendar';
+import "react-big-calendar/lib/css/react-big-calendar.css";
+import dayjs from 'dayjs';
+import "dayjs/locale/es";
+import "./style.css";
 
 dayjs.locale("es");
 
@@ -40,7 +40,6 @@ function Calendario(){
       end: dayjs('2024-04-26T13:00:00').toDate(),
       title: "1 Solicitud"
     },
-    ,
     {
       start: dayjs('2024-04-13T12:00:00').toDate(),
       end: dayjs('2024-04-13T13:00:00').toDate(),
@@ -51,7 +50,6 @@ function Calendario(){
       end: dayjs('2024-04-13T13:00:00').toDate(),
       title: "2 Solicitudes"
     },
-    ,
     {
       start: dayjs('2024-04-23T12:00:00').toDate(),
       end: dayjs('2024-04-23T13:00:00').toDate(),
@@ -62,7 +60,6 @@ function Calendario(){
       end: dayjs('2024-04-23T13:00:00').toDate(),
       title: "1 Solicitud"
     },
-    ,
     {
       start: dayjs('2024-04-17T12:00:00').toDate(),
       end: dayjs('2024-04-17T13:00:00').toDate(),

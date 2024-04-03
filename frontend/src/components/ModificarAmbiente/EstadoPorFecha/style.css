@@ -1,0 +1,31 @@
+.ModificarEstadoDelAmbientePorFecha-header {
+    background-color: #003F70;
+}
+
+.ModificarEstadoDelAmbientePorFecha-header-button-close {
+    color: #ffffff;
+    background-color: #D51809;
+    border-radius: 0%;
+    border-color: #D51809;
+}
+
+.ModificarEstadoDelAmbientePorFecha-body {
+    background-color: #D9D9D9;
+    padding: 1rem;
+}
+
+.ModificarEstadoDelAmbientePorFecha-button-inhabilitar {
+    color: #003F70;
+    background-color: #ffffff;
+    border-color: #003F70;
+}
+
+.ModificarEstadoDelAmbientePorFecha-button-inhabilitar:hover,
+.ModificarEstadoDelAmbientePorFecha-button-inhabilitar:active,
+.ModificarEstadoDelAmbientePorFecha-button-inhabilitar:focus,
+.ModificarEstadoDelAmbientePorFecha-button-inhabilitar.active {
+  /* let's darken #004E64 a bit for hover effect */
+  color: #003F70;
+  background: #ffffff;
+  border-color: #003F70;
+}

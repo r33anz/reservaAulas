@@ -1,13 +1,16 @@
 import React, { useState, useEffect } from "react";
 import { buscarAmbientePorNombre, recuperarAmbientePorID } from '../../services/Busqueda.service';
-import { Button } from 'react-bootstrap';
 import './Style.css';
 
 const Buscar = () => {
   const [nombreAmbiente, setNombreAmbiente] = useState(''); // Estado para almacenar el nombre del ambiente
   const [ambienteOptions, setAmbienteOptions] = useState([]); // Estado para almacenar las opciones de ambiente
   const [ambienteDetails, setAmbienteDetails] = useState(null); // Estado para almacenar los detalles del ambiente
+  // (FIX:Marco) 'id' is assigned a value but never used
+  // eslint-disable-next-line
   const [id, setId] = useState(''); // Estado para almacenar el id del ambiente
+  // (FIX:Marco) 'nombre' is assigned a value but never used 
+  // eslint-disable-next-line
   const [nombre, setNombre] = useState('');
 
   // Función para buscar los ambientes que coinciden con el nombre

@@ -3,7 +3,7 @@ import { Button } from 'react-bootstrap';
 import { buscarAmbientePorNombre, modificarPerio ,estadoinhabilitado,habilita} from '../../services/ModificarPeriodo.service';
 import './style.css';
 import { AlertsContext } from "../Alert/AlertsContext";
-import { CheckCircleFill, ExclamationCircleFill, XSquareFill } from 'react-bootstrap-icons';
+import { ExclamationCircleFill } from 'react-bootstrap-icons';
 
 const Modificarperdiodo = () => {
     const [nombreAmbiente, setNombreAmbiente] = useState(''); // Estado para almacenar el nombre del ambiente
