@@ -65,8 +65,8 @@ const Buscar = () => {
   };
 
   return (
-    <div className="buscar-container">
-      <h1 className='bb'>Búsqueda por nombre</h1>
+    <div className="buscarcontainer">
+      <h1 className='titulo'>Búsqueda por nombre</h1>
       <div className="search-field">
         <label htmlFor="buscar-input">Nombre del ambiente:</label>
         <input 
@@ -76,7 +76,7 @@ const Buscar = () => {
           onChange={handleInputChange} 
         />
         {ambienteOptions.length > 0 && (
-          <div className="options-container">
+          <div className="optionscontainer">
             {ambienteOptions.map(option => (
               <div 
                 key={option.id} 
@@ -95,12 +95,13 @@ const Buscar = () => {
       {ambienteDetails && (
         <div className="ambiente-details">
           <h1>Detalle</h1>
-          <p>nombre: {ambienteDetails.nombre}</p>
-          <p>Capacidad: {ambienteDetails.capacidad}</p>
-          <p>Tipo de ambiente: {ambienteDetails.tipo}</p>
+          <div className="datos">
+          <p>Nombre: {ambienteDetails.nombre}</p>
+          <p>Capacidad:   {ambienteDetails.capacidad}</p>
+          <p>Tipo de Ambiente: {ambienteDetails.tipo}</p>
           <p>Piso: {ambienteDetails.piso}</p>
           {/* Mostrar el id y el nombre del ambiente */}
-          
+          </div>
         </div>
       )}
       

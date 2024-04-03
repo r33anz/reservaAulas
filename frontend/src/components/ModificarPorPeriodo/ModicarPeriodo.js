@@ -1,7 +1,7 @@
 import React, { useCallback, useState } from 'react';
 import { Button } from 'react-bootstrap';
 import { buscarAmbientePorNombre, modificarPerio ,estadoinhabilitado,habilita} from '../../services/ModificarPeriodo.service';
-import './stily.css';
+import './style.css';
 
 const Modificarperdiodo = () => {
     const [nombreAmbiente, setNombreAmbiente] = useState(''); // Estado para almacenar el nombre del ambiente

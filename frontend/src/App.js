@@ -13,8 +13,8 @@ function App() {
       <AlertsProvider>
         <RegistrarAmbiente />
       </AlertsProvider>
-      <Buscar></Buscar>
-      <ModificarPeriodo></ModificarPeriodo>
+      <Buscar/>
+      <ModificarPeriodo/>
       
     </Home>
 
