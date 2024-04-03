@@ -11,10 +11,10 @@ function App() {
   return (
     <Home>
       <AlertsProvider>
-        <RegistrarAmbiente />
-      </AlertsProvider>
       <Buscar/>
-      <ModificarPeriodo/>
+      </AlertsProvider>
+      
+      
       
     </Home>
 

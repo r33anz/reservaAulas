@@ -1,4 +1,8 @@
- .App-logo {
+.App {
+    text-align: s;
+  }
+  
+  .App-logo {
     padding: 20px;
     width: 100px ;
     height: 100px;
@@ -29,13 +33,25 @@
     color: rgb(255, 255, 255);
     font-weight: bold;
   }
-
-/*buscador*/
-
+  
+  .nombre {
+    width: 731px;
+    height: 260px;
+    flex-direction: column; /* Apilar los elementos verticalmente */
+    justify-content: center; /* Alinear el contenido en la parte superior */
+    align-items: center; /* Centrar horizontalmente */
+     /* Ajustar la altura al 100% del viewport */
+     margin: auto; /* Margen automático en todos los lados */
+    background-color: #D9D9D9;
+    
+  }
+  
+  
+  
   .buscarcontainer {
-    width: 520px ;
-    height: 400px;
-    margin-left: 380px;
+    width: 550px ;
+    height: 340px;
+    margin-left: 300px;
     
     background-color: #D9D9D9;
     display: flex;
@@ -50,7 +66,42 @@
     background-color: #003F70;
     
   }
+  .RegistrarAmbiente-header {
+    background-color: #003F70;
+}
+
+.RegistrarAmbiente-header-button-close {
+    color: #ffffff;
+    background-color: #D51809;
+    border-radius: 0%;
+    border-color: #D51809;
+}
+.sssss{
+  margin-left: 400px;
+  width: 500px;
+  background-color: #D9D9D9;
+}
   
+.optionscontainer {
+  font-size: 20px;
+  margin-left: 290px;
+  margin-right: 110px;
+  max-height: 100px; /* Altura máxima para mostrar hasta 3 opciones */
+  overflow-y: auto; /* Habilitar el desplazamiento vertical cuando se supera la altura máxima */
+position: absolute;
+  z-index: 1;
+}
+.option1 {
+
+  background-color: lightgray; /* Fondo de color gris por defecto */
+  transition: background-color 0.3s ease; /* Transición suave para el cambio de color */
+  width: 170px;
+}
+.option1:hover {
+  background-color: gray; /* Fondo de color más intenso al pasar el cursor sobre el elemento */
+}  
+
+
   .search-field{
     
     padding-left: 20px;
@@ -63,44 +114,68 @@
     font-size: 16px;
   }
 
-  .option {
-    background-color: lightgray; /* Fondo de color gris por defecto */
-    transition: background-color 0.3s ease; /* Transición suave para el cambio de color */
-    z-index: 1;
+
+  .fecha{
+    padding-top: 20px;
+    padding-left: 30px;
+    font-size: 16px;
+  }
+  #fecha-input{
+    margin-left: 50px;
+    border-radius: 5px;
+    font-size: 16px;
+  }
+  .buttons-container{
+    margin-top: 30px;
+    padding-left: 400px;
+  }
+  .buttons-container button {
+    margin-right: 10px; /* Separación entre los botones */
+  }
+  .custom-button{
+    background-color:  #ffffff;
+    border-color: #003F70;
+    color: #003F70;
+    border-radius: 30px;
+  }
+  .custom-button1{
+    background-color:  #CC9C00;
+    border-radius: 30px;
+    border-color: #CC9C00;
+    color: #ffffff;
   }
   
-  .option:hover {
-    background-color: gray; /* Fondo de color más intenso al pasar el cursor sobre el elemento */
+  .footer1 {
+    margin-top: auto; /* El footer se coloca al final de la página */
+    background-color: #ffffff; /* Color de fondo del footer */
+    color: white; /* Color de texto del footer */
+    padding: 20px; /* Espaciado interno del footer */
   }
-  .optionscontainer {
-    font-size: 20px;
-    margin-left: 290px;
-    margin-right: 25px;
-    max-height: 100px; /* Altura máxima para mostrar hasta 3 opciones */
-    overflow-y: auto; /* Habilitar el desplazamiento vertical cuando se supera la altura máxima */
-    position: relative;
-    z-index: 1;
+  /* Estilos para el footer */
+  .footer {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    background-color: #1c63aa; /* Color de fondo del footer */
+    padding: 20px; /* Espaciado interno del footer */
+     /* Alineación del contenido del footer */
   }
-  .ambiente-details{
-    margin-top: 110px;
-    margin-left: 110px;
+  .ambientedetails{
+    margin-top: 100px;
+    margin-left: 100px;
     position: absolute;
-  background-color: #f9f9f9;
+    background-color: #f9f9f9;
   padding-left: 75px;
   padding-right: 75px;
   border-radius: 8px;
-  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.6);
-  
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
   }
-  .datos{
+  .datos {
     margin-top: 20px;
-  margin-left: -40px;
-  
+    margin-left: -40px;
   }
-  .datos p {
-    font-style: italic;
-  /* Aplicar sombreado solo a las letras */
-  text-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);
-}
-
   
+  .datos p {
+    /* Aplicar estilo de cursiva */
+    font-style: italic;
+  }

@@ -1,20 +1,20 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useState, useContext,useEffect } from 'react';
 import { Button } from 'react-bootstrap';
 import { buscarAmbientePorNombre, modificarPerio ,estadoinhabilitado,habilita} from '../../services/ModificarPeriodo.service';
 import './style.css';
+import { AlertsContext } from "../Alert/AlertsContext";
+import { CheckCircleFill, ExclamationCircleFill, XSquareFill } from 'react-bootstrap-icons';
 
 const Modificarperdiodo = () => {
     const [nombreAmbiente, setNombreAmbiente] = useState(''); // Estado para almacenar el nombre del ambiente
     const [ambienteOptions, setAmbienteOptions] = useState([]); // Estado para almacenar las opciones de ambiente
     const [periodosOptions, setPeriodosOptions] = useState([]); // Estado para almacenar las opciones de periodo
-    const [resultados, setResultados] = useState([]); // Estado para almacenar los resultados de la consulta
     const [fecha, setFecha] = useState(''); // Estado para almacenar la fecha seleccionada
-    const [aula, setAula] = useState(''); // Estado para almacenar el aula seleccionada
-    const [periodo, setPeriodo] = useState(''); // Estado para almacenar el periodo seleccionado
     const [idAmbiente, setId] = useState(''); // Estado para almacenar el ID del ambiente
     const [nombre, setNombre] = useState(''); // Estado para almacenar el nombre del ambiente
     const [periodosSeleccionados, setPeriodosSeleccionados] = useState([]); // Estado para almacenar los periodos seleccionados
     const [periodosModificados, setPeriodosModificados] = useState([]);
+    const { agregarAlert } = useContext(AlertsContext);
 
     // Función para buscar ambientes por nombre
     const buscarAmbiente = (nombre) => {
@@ -51,12 +51,34 @@ const Modificarperdiodo = () => {
     // Función para manejar el cambio en el campo de búsqueda de ambiente
     const handleInputChange = (e) => {
         const newValue = e.target.value;
-        setNombreAmbiente(newValue); // Actualizar el estado con el nuevo valor del campo de entrada
-        buscarAmbiente(newValue); // Realizar la búsqueda de ambientes automáticamente cada vez que cambia el valor del campo de entrada
+        // Validar que solo se permitan datos alfanuméricos
+        if (/^[a-zA-Z0-9]*$/.test(newValue)) {
+            setNombreAmbiente(newValue);
+            if (newValue.trim() === '') {
+                setAmbienteOptions([]); // Limpiar las opciones de ambiente si el campo está vacío
+            } else {
+                buscarAmbiente(newValue); // Realizar la búsqueda de ambientes automáticamente cada vez que cambia el valor del campo de entrada
+            }
+        }
     };
+    
+    // Función para manejar el clic fuera del campo de entrada
+    const handleClickOutside = () => {
+        setAmbienteOptions([]); // Limpiar las opciones de ambiente al hacer clic fuera del campo
+    };
+    
+    // Agregar un event listener para hacer clic fuera del campo de entrada
+    useEffect(() => {
+        document.addEventListener('click', handleClickOutside);
+        return () => {
+            document.removeEventListener('click', handleClickOutside);
+        };
+    }, []);
+
 
     // Función para manejar la selección de una opción de ambiente
     const handleOptionSelect = (selectedId, selectedNombre) => {
+        
         setId(selectedId);
         setNombre(selectedNombre);
         setNombreAmbiente(selectedNombre);
@@ -72,7 +94,7 @@ const Modificarperdiodo = () => {
             // Aquí puedes realizar cualquier otra operación que necesites con el ID y la fecha, como enviarlos a un servicio para obtener resultados específicos, etc.
     
         } else {
-            console.log("Debes seleccionar un ambiente e ingresar una fecha para realizar la consulta.");
+            agregarAlert({ icon: <ExclamationCircleFill />, severidad: "danger", mensaje: "Debes seleccionar un ambiente e ingresar una fecha para realizar la consulta." });
         }
     };
 
@@ -91,10 +113,8 @@ const Modificarperdiodo = () => {
                 const checkboxIdAsNumber = parseInt(checkbox.id, 10);
                 // Verifica si el ID del checkbox está en periodosModificados
                 if (periodosModificados.includes(checkboxIdAsNumber)) {
-                    console.log("El ID del checkbox está en periodosModificados");
                     otraHabilitar(checkbox.id);
                 } else {
-                    console.log("El ID del checkbox no está en periodosModificados");
                     otraFuncion(checkbox.id);
                 }
                 
@@ -102,9 +122,16 @@ const Modificarperdiodo = () => {
                 // otraFuncion(checkbox.id);
             }
         });
+    
+        // Desmarcar todas las casillas de verificación
+        checkboxes.forEach(checkbox => {
+            checkbox.checked = false;
+        });
+    
         modifica(idAmbiente,fecha);
         setPeriodosSeleccionados(seleccionados);
     };
+    
     
 const otraHabilitar = (id) => {
         const ids = [id];
@@ -125,13 +152,22 @@ const otraHabilitar = (id) => {
         return periodoModificado ? 'periodos-inhabilitados' : 'periodos-habilitados';
     }, [periodosModificados]);
     
-    
+    const handleFechaChange = (e) => {
+        const nuevaFecha = e.target.value;
+        // Obtener la fecha actual en formato ISO (YYYY-MM-DD)
+        const fechaActual = new Date().toISOString().split('T')[0];
+        if (nuevaFecha >= fechaActual) {
+            setFecha(nuevaFecha);
+        } else {
+            agregarAlert({ icon: <ExclamationCircleFill />, severidad: "danger", mensaje: "Por favor, selecciona una fecha igual o posterior a hoy." });
+        }
+    };
 
     return (
         <div className="buscar-container">
             <h1 className='bb'>Modifica ambiente por periodo</h1>
-            <div className="search-field">
-                <label htmlFor="buscar-input">Nombre del ambiente:</label>
+            <div className="search-field1">
+                <label htmlFor="buscar-input1">Nombre del ambiente:</label>
                 <input
                     type="text"
                     id="buscar-input"
@@ -159,7 +195,7 @@ const otraHabilitar = (id) => {
                     type="date"
                     id="fecha-input"
                     value={fecha}
-                    onChange={(e) => setFecha(e.target.value)}
+                    onChange={handleFechaChange}
                 />
             </div>
             <Button className="consultar-button" onClick={handleConsultarClick}>Consultar</Button>
@@ -257,6 +293,16 @@ const otraHabilitar = (id) => {
                 </div>
                 {/* Agrega más periodos aquí si es necesario */}
             </div>
+            <div className="ambiente-details">
+          <h1>Detalle</h1>
+          <div className="datos">
+          <p>Color blanco hace a periodos habilitados.</p>
+          <p>Color gris hace referencia a periodos  </p>
+          <p>inhabilitados. </p>
+          <p>Color rojo a periodos ya reservados </p>
+          {/* Mostrar el id y el nombre del ambiente */}
+          </div>
+        </div>
             <Button className="modi" onClick={estado}>Modificar</Button>
         </div>
     );

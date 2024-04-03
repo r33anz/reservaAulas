@@ -36,9 +36,30 @@ const Buscar = () => {
   // Función para manejar el cambio en el campo de entrada
   const handleInputChange = (e) => {
     const newValue = e.target.value;
-    setNombreAmbiente(newValue); // Actualizar el estado con el nuevo valor del campo de entrada
-    buscarAmbiente(newValue); // Realizar la búsqueda de ambientes automáticamente cada vez que cambia el valor del campo de entrada
-  };
+    // Validar que solo se permitan datos alfanuméricos
+    if (/^[a-zA-Z0-9]*$/.test(newValue)) {
+        setNombreAmbiente(newValue);
+        if (newValue.trim() === '') {
+            setAmbienteOptions([]); // Limpiar las opciones de ambiente si el campo está vacío
+        } else {
+            buscarAmbiente(newValue); // Realizar la búsqueda de ambientes automáticamente cada vez que cambia el valor del campo de entrada
+        }
+    }
+};
+
+// Función para manejar el clic fuera del campo de entrada
+const handleClickOutside = () => {
+    setAmbienteOptions([]); // Limpiar las opciones de ambiente al hacer clic fuera del campo
+};
+
+// Agregar un event listener para hacer clic fuera del campo de entrada
+useEffect(() => {
+    document.addEventListener('click', handleClickOutside);
+    return () => {
+        document.removeEventListener('click', handleClickOutside);
+    };
+}, []);
+
 
   // Función para seleccionar un ambiente de la lista de opciones
   const handleOptionSelect = (selectedId, selectedNombre) => {
@@ -81,7 +102,7 @@ const Buscar = () => {
               <div 
                 key={option.id} 
                 onClick={() => handleOptionSelect(option.id, option.nombre)}
-                className="option"
+                className="option1"
               >
                 {option.nombre}
               </div>
@@ -93,7 +114,7 @@ const Buscar = () => {
       </div>
       {/* Mostrar los detalles del ambiente si están disponibles */}
       {ambienteDetails && (
-        <div className="ambiente-details">
+        <div className="ambientedetails">
           <h1>Detalle</h1>
           <div className="datos">
           <p>Nombre: {ambienteDetails.nombre}</p>
