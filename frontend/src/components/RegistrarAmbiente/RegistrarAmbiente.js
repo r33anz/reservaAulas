@@ -13,6 +13,20 @@ const RegistrarAmbiente = () => {
     const [pisos, setPisos] = useState([]);
     const { agregarAlert } = useContext(AlertsContext);
 
+    const validosKey = [
+        "0",
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "Backspace",
+      ];
+
     const formik = useFormik({
         initialValues: {
             nombre: "",
@@ -96,10 +110,15 @@ const RegistrarAmbiente = () => {
                                         ) : null}
                                     </Form.Text>
                                 </Form.Group>
-                                <Form.Group className="mb-3" controlId="capacidad">
+                                <Form.Group className="mb-3 RegistrarAmbiente-entrada-numero" controlId="capacidad">
                                     <Form.Label>Capacidad</Form.Label>
                                     <Form.Control
                                         type="number"
+                                        onKeyDown={(e) => {
+                                            if (!validosKey.includes(e.key)) {
+                                              e.preventDefault();
+                                            }
+                                          }}
                                         placeholder="Ingrese un valor"
                                         onChange={formik.handleChange}
                                         onBlur={formik.handleBlur}
