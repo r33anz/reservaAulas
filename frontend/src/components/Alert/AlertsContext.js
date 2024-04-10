@@ -1,14 +1,15 @@
 import React, { createContext, useState } from "react";
-import { Alert, Row, Stack } from "react-bootstrap";
+import { Alert, Col, Row, Stack } from "react-bootstrap";
 import { AlertsWrapper } from "./AlertsWrapper";
 import "./style.css";
+import { X } from "react-bootstrap-icons";
 
 const AlertsContext = createContext();
 const AlertsProvider = ({ children }) => {
     const [alerts, setAlerts] = useState([]);
 
     const agregarAlert = (alert) => {
-        const id = alert.id ? Math.random().toString(36).slice(2, 9) + new Date().getTime().toString(36): alert.id;
+        const id = alert.id ? Math.random().toString(36).slice(2, 9) + new Date().getTime().toString(36) : alert.id;
         setAlerts((prev) => [{ ...alert, id }, ...prev]);
     }
 
@@ -25,15 +26,18 @@ const AlertsProvider = ({ children }) => {
                     <Alert
                         key={alert.id}
                         className="AlertContext-alert"
-                        onClose={() => eliminarAlert(alert.id)}
                         variant={alert.severidad}
-                        dismissible
                     >
-                        <Row>
-                            <Stack direction="horizontal" gap={2}>
-                                {alert.icon}
-                                {alert.mensaje}
-                            </Stack>
+                        <Row xs="auto" lg="auto" className="justify-content-md-end">
+                            <Col xs lg="10">
+                                <Stack direction="horizontal" gap={2}>
+                                    {alert.icon}
+                                    {alert.mensaje}
+                                </Stack>
+                            </Col>
+                            <Col xs lg="2" >
+                                <X style={{ width: "24px", height: "24px" }} onClick={() => eliminarAlert(alert.id)} />
+                            </Col>
                         </Row>
                     </Alert>
                 ))}
