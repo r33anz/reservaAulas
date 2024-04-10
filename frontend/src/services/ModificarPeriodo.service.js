@@ -45,10 +45,6 @@ export const estadoinhabilitado = (idAmbiente, idPeriodos, fecha) => {
 }
 
 export const habilita = (idAmbiente, idPeriodos, fecha) => {
-    
-    console.log(idAmbiente);
-    console.log(idPeriodos.map((item)=>parseInt(item)));
-    console.log(fecha);
     return axios.delete(`${apiUrl}/habilitarAmbiente`, {data:{
             idAmbiente: idAmbiente,
             idPeriodos: idPeriodos.map((item)=>parseInt(item)),
