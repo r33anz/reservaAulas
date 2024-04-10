@@ -1,4 +1,4 @@
-import React, { useCallback, useState, useContext,useEffect } from 'react';
+import React, { useCallback, useState, useContext,useEffect, useRef  } from 'react';
 import { Button } from 'react-bootstrap';
 import { buscarAmbientePorNombre, modificarPerio ,estadoinhabilitado,habilita} from '../../services/ModificarPeriodo.service';
 import './style.css';
@@ -15,23 +15,39 @@ const Modificarperdiodo = () => {
     const [periodosSeleccionados, setPeriodosSeleccionados] = useState([]); // Estado para almacenar los periodos seleccionados
     const [periodosModificados, setPeriodosModificados] = useState([]);
     const { agregarAlert } = useContext(AlertsContext);
-
+    const [buscarAmbienteActivo, setBuscarAmbienteActivo] = useState(true);
+    const [idAmbienteModificar, setIdMo] = useState(''); // Estado para almacenar el ID del ambiente
+    const [nombreModificar, setNombreMO] = useState(''); // Estado para almacenar el nombre del ambiente
+    const [fechaModifica, setFechaMo] = useState(''); // Estado para almacenar la fecha seleccionada
+    const optionsContainerRef = useRef(null); 
+    const [selectedOptionIndex, setSelectedOptionIndex] = useState(-1);
+    const [consultarPresionado, setConsultarPresionado] = useState(false);
     // Función para buscar ambientes por nombre
     const buscarAmbiente = (nombre) => {
+    if (nombre.trim() !== '') {
         buscarAmbientePorNombre(nombre)
             .then(data => {
                 const idValue = data.respuesta[0].id;
-                const nombreValue = data.respuesta[0].nombre;
-                // Actualizar estados con los valores obtenidos
+               const nombreValue = data.respuesta[0].nombre;
+                 //Actualizar estados con los valores obtenidos
                 setId(idValue);
                 setNombre(nombreValue);
-                setAmbienteOptions(data.respuesta); // Actualizar las opciones de ambiente con los datos obtenidos
+                setAmbienteOptions(data.respuesta);
+                setSelectedOptionIndex(-1); // Actualizar las opciones de ambiente con los datos obtenidos
+                
             })
             .catch(error => {
                 console.log('Error al buscar los ambientes:', error);
                 setAmbienteOptions([]); // Limpiar las opciones de ambiente en caso de error
             });
-    };
+    } else {
+        // Limpiar los estados relacionados con el ambiente
+        setId('');
+        setNombre('');
+        setAmbienteOptions([]);
+    }
+};
+
 
     // Función para modificar periodo
     const modifica = (idAmbiente,fecha) => {
@@ -39,8 +55,7 @@ const Modificarperdiodo = () => {
             .then(data => {
                 // Obtener solo la hora inicial de cada periodo y actualizar las opciones de periodo
                 setPeriodosModificados(data.periodos);
-                cambiarColorLabels();
-                
+                cambiarColorLabels(); 
             })
             .catch(error => {
                 console.log('Error al buscar los ambientes:', error);
@@ -48,49 +63,97 @@ const Modificarperdiodo = () => {
             });
     };
 
-    // Función para manejar el cambio en el campo de búsqueda de ambiente
-    const handleInputChange = (e) => {
-        const newValue = e.target.value;
-        // Validar que solo se permitan datos alfanuméricos
-        if (/^[a-zA-Z0-9\s]*$/.test(newValue)) {
-            setNombreAmbiente(newValue);
-            if (newValue.trim() === '') {
-                setAmbienteOptions([]); // Limpiar las opciones de ambiente si el campo está vacío
-            } else {
-                buscarAmbiente(newValue); // Realizar la búsqueda de ambientes automáticamente cada vez que cambia el valor del campo de entrada
-            }
-        }
-    };
+
+// Función para manejar el cambio en el campo de búsqueda de ambiente
+// Función para manejar el cambio en el campo de búsqueda de ambiente
+// Función para manejar el cambio en el campo de búsqueda de ambiente
+const handleInputChange = (e) => {
+    const newValue = e.target.value;
+    // Limpiar el estado del ID y las opciones de ambiente al borrar el texto
+    // Validar que solo se permitan datos alfanuméricos
+    if (/^[a-zA-Z0-9\s]*$/.test(newValue)) {
+        buscarAmbiente(newValue);
+        setNombreAmbiente(newValue);
+    }
+};
+const handleKeyDown = (e) => {
+    console.log("nombreAmbiente.length");
+    if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      setSelectedOptionIndex(prevIndex => Math.max(prevIndex - 1, 0)); // Mover hacia arriba y no por debajo de 0
+      scrollIntoViewarriba();
+    } else if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      setSelectedOptionIndex(prevIndex => Math.min(prevIndex + 1, ambienteOptions.length - 1)); // Mover hacia abajo y no más allá del último índice
+      scrollIntoView();
+    } else if (e.key === 'Enter') {
+      e.preventDefault();
+      document.getElementById("buscar-input").blur();
+      // Si no se ha seleccionado ninguna opción con las flechas, seleccionar la primera opción si está disponible
+      if (selectedOptionIndex === -1 && ambienteOptions.length > 0) {
+        handleOptionSelect(ambienteOptions[0].id, ambienteOptions[0].nombre, 0);
+        
+      } else if (selectedOptionIndex >= 0 && selectedOptionIndex < ambienteOptions.length) {
+        handleOptionSelect(ambienteOptions[selectedOptionIndex].id, ambienteOptions[selectedOptionIndex].nombre, selectedOptionIndex);
+      }
+    }
+  };
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      // Realiza la misma lógica que en el caso de 'Enter' dentro de handleKeyDown
+      document.getElementById("buscar-input").blur();
+      setNombreAmbiente(nombre);
+    }
+  });
+
+  const scrollIntoView = () => {
+    if (optionsContainerRef.current && selectedOptionIndex >= 0) {
+      const selectedOptionElement = optionsContainerRef.current.childNodes[selectedOptionIndex];
+      selectedOptionElement.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  };
+  const scrollIntoViewarriba = () => {
+    if (optionsContainerRef.current && selectedOptionIndex >= 0) {
+      const selectedOptionElement = optionsContainerRef.current.childNodes[selectedOptionIndex];
+      selectedOptionElement.scrollIntoView({ behavior: "smooth", block: "end" });
+    }
+  };
+
     
-    // Función para manejar el clic fuera del campo de entrada
-    const handleClickOutside = () => {
-        setAmbienteOptions([]); // Limpiar las opciones de ambiente al hacer clic fuera del campo
-    };
-    
+  useEffect(() => {
+    function handleClickOutside() {
+      setAmbienteOptions([]); // Limpiar las opciones de ambiente al hacer clic fuera del campo
+    }
+
     // Agregar un event listener para hacer clic fuera del campo de entrada
-    useEffect(() => {
-        document.addEventListener('click', handleClickOutside);
-        return () => {
-            document.removeEventListener('click', handleClickOutside);
-        };
-    }, []);
+    document.addEventListener('click', handleClickOutside);
+    return () => {
+      document.removeEventListener('click', handleClickOutside);
+    };
+  }, []);
 
 
     // Función para manejar la selección de una opción de ambiente
-    const handleOptionSelect = (selectedId, selectedNombre) => {
-        
+    const handleOptionSelect = (selectedId, selectedNombre,index) => {
         setId(selectedId);
         setNombre(selectedNombre);
         setNombreAmbiente(selectedNombre);
-        setAmbienteOptions([]); // Limpiar las opciones de ambiente después de seleccionar una
+        setAmbienteOptions([]);
+        setSelectedOptionIndex(index);
+         // Limpiar las opciones de ambiente después de seleccionar una
     };
+
     const handleConsultarClick = () => {
+        setIdMo(idAmbiente);
+        setNombreMO(nombre);
+        setFechaMo(fecha);
+        
         // Verificar que se haya seleccionado un ambiente y que se haya ingresado una fecha
         if (idAmbiente && fecha) {
             // Aquí puedes usar el ID del ambiente (almacenado en el estado 'id') y la fecha (almacenada en el estado 'fecha')
-            console.log("ID del ambiente:", idAmbiente);
-            console.log("Fecha ingresada:", fecha);
             modifica(idAmbiente,fecha);
+            setConsultarPresionado(true);
             // Aquí puedes realizar cualquier otra operación que necesites con el ID y la fecha, como enviarlos a un servicio para obtener resultados específicos, etc.
     
         } else {
@@ -101,13 +164,10 @@ const Modificarperdiodo = () => {
     const estado = () => {
         const checkboxes = document.querySelectorAll('.periodos-container input[type="checkbox"]');
         const seleccionados = [];
-        
+        setNombreAmbiente(nombreModificar);
         checkboxes.forEach(checkbox => {
             if (checkbox.checked) {
                 seleccionados.push({ id: checkbox.id });
-                console.log('periodosModificados:', periodosModificados);
-                console.log('checkbox.id:', checkbox.id);
-                console.log('checkbox.checked:', checkbox.checked);
                 
                 // Convertir checkbox.id a número
                 const checkboxIdAsNumber = parseInt(checkbox.id, 10);
@@ -118,30 +178,31 @@ const Modificarperdiodo = () => {
                     otraFuncion(checkbox.id);
                 }
                 
-                // Llama a tu función y pasa el id como argumento
-                // otraFuncion(checkbox.id);
             }
         });
-    
         // Desmarcar todas las casillas de verificación
         checkboxes.forEach(checkbox => {
             checkbox.checked = false;
         });
-    
-        modifica(idAmbiente,fecha);
+        setFecha(fechaModifica);
+        //setNombreAmbiente(nombreModificar);
+        modifica(idAmbienteModificar,fechaModifica);
         setPeriodosSeleccionados(seleccionados);
     };
     
     
 const otraHabilitar = (id) => {
         const ids = [id];
-        habilita(idAmbiente,ids,fecha)
+        console.log(idAmbienteModificar);
+        console.log(fechaModifica);
+
         
+        habilita(idAmbienteModificar,ids,fechaModifica)
         // Llama a otras funciones aquí si es necesario
     };
     const otraFuncion = (id) => {
         const ids = [id];
-        estadoinhabilitado(idAmbiente,ids,fecha)
+        estadoinhabilitado(idAmbienteModificar,ids,fechaModifica)
         // Llama a otras funciones aquí si es necesario
     };
 
@@ -154,6 +215,7 @@ const otraHabilitar = (id) => {
     
     const handleFechaChange = (e) => {
         const nuevaFecha = e.target.value;
+        
         // Obtener la fecha actual en formato ISO (YYYY-MM-DD)
         const fechaActual = new Date().toISOString().split('T')[0];
         if (nuevaFecha >= fechaActual) {
@@ -162,6 +224,13 @@ const otraHabilitar = (id) => {
             agregarAlert({ icon: <ExclamationCircleFill />, severidad: "danger", mensaje: "Por favor, selecciona una fecha igual o posterior a hoy." });
         }
     };
+    const handleInputFocus = () => {
+        // Aquí puedes ejecutar la lógica que deseas cuando el input recibe el foco
+        if(nombreAmbiente.length > 0){
+          buscarAmbiente(nombreAmbiente);
+        console.log("El input ha recibido el foco.");
+        }
+      };
 
     return (
         <div className="buscar-container">
@@ -173,19 +242,22 @@ const otraHabilitar = (id) => {
                     id="buscar-input"
                     value={nombreAmbiente}
                     onChange={handleInputChange}
+                    onKeyDown={handleKeyDown}
+                    onFocus={handleInputFocus}
                 />
-                {ambienteOptions.length > 0 && (
-                    <div className="options-container">
-                        {ambienteOptions.map(option => (
-                            <div
-                                key={option.id}
-                                onClick={() => handleOptionSelect(option.id, option.nombre)}
-                                className="option"
-                            >
-                                {option.nombre}
-                            </div>
-                        ))}
-                    </div>
+                {nombreAmbiente.length > 0 && (
+                <div className="options-container" ref={optionsContainerRef}>
+                {ambienteOptions.map((option, index) => (
+                <div
+                    key={option.id}
+                    onClick={() => handleOptionSelect(option.id, option.nombre, index)}
+                    className={index === selectedOptionIndex ? 'selected' : 'option1'}
+                    
+                >
+                {option.nombre}
+                </div>
+                ))}
+                </div>
                 )}
                 
             </div>
@@ -199,6 +271,8 @@ const otraHabilitar = (id) => {
                 />
             </div>
             <Button className="consultar-button" onClick={handleConsultarClick}>Consultar</Button>
+            {consultarPresionado && ( // Renderizar los checkbox y el botón de modificar solo si se ha presionado el botón de consultar
+            <div>
             <div className="periodos-container">
             <h1>Periodos:</h1>
                 <div>
@@ -292,7 +366,10 @@ const otraHabilitar = (id) => {
                     <label htmlFor="periodo10" className={cambiarColorLabels(10)}>20:15-21:45</label>
                 </div>
                 {/* Agrega más periodos aquí si es necesario */}
+            </div> 
+            <Button className="modi" onClick={estado}>Modificar</Button>
             </div>
+            )}
             <div className="ambiente-details">
           <h1>Detalle</h1>
           <div className="datos">
@@ -303,8 +380,9 @@ const otraHabilitar = (id) => {
           {/* Mostrar el id y el nombre del ambiente */}
           </div>
         </div>
-            <Button className="modi" onClick={estado}>Modificar</Button>
+           
         </div>
+        
     );
     
 };
