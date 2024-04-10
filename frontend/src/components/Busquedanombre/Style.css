@@ -34,15 +34,7 @@
   font-weight: bold;
 }
 
-.nombre {
-  width: 731px;
-  height: 260px;
-  flex-direction: column; /* Apilar los elementos verticalmente */
-  justify-content: center; /* Alinear el contenido en la parte superior */
-  align-items: center; /* Centrar horizontalmente */
-   /* Ajustar la altura al 100% del viewport */
-   margin: auto; /* Margen automático en todos los lados */
-  background-color: #D9D9D9;
+
   
   .nombre {
     width: 731px;
@@ -60,9 +52,6 @@
 }
 
   
-.selected {
-  background-color: #f2f2f2; /* Color de fondo gris para la opción resaltada */
-}
 
   
   .buscarcontainer {
