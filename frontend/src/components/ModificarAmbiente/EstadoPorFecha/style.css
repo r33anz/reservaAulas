@@ -24,8 +24,24 @@
 .ModificarEstadoDelAmbientePorFecha-button-inhabilitar:active,
 .ModificarEstadoDelAmbientePorFecha-button-inhabilitar:focus,
 .ModificarEstadoDelAmbientePorFecha-button-inhabilitar.active {
-  /* let's darken #004E64 a bit for hover effect */
-  color: #003F70;
-  background: #ffffff;
-  border-color: #003F70;
+    /* let's darken #004E64 a bit for hover effect */
+    color: #003F70;
+    background: #ffffff;
+    border-color: #003F70;
+}
+
+.ModificarEstadoDelAmbientePorFecha-cancel {
+    color: #003F70;
+    background-color: #ffffff;
+    border-color: #003F70;
+}
+
+.ModificarEstadoDelAmbientePorFecha-cancel:hover,
+.ModificarEstadoDelAmbientePorFecha-cancel:active,
+.ModificarEstadoDelAmbientePorFecha-cancel:focus,
+.ModificarEstadoDelAmbientePorFecha-cancel.active {
+    /* let's darken #004E64 a bit for hover effect */
+    color: #003F70;
+    background: #ffffff;
+    border-color: #003F70;
 }
