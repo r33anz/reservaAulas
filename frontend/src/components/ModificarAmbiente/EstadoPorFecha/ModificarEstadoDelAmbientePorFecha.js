@@ -1,66 +1,105 @@
-import React, { useContext, useState } from "react";
-import { Button, Col, Container, Form, FormControl, Row, Stack } from "react-bootstrap";
-import { QuestionCircleFill, XSquareFill } from "react-bootstrap-icons";
-import { AlertsContext } from "../../Alert/AlertsContext";
+import React, { useContext, useRef, useState } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
+import { Button, Col, Container, Dropdown, Form, FormControl, Row, Stack } from "react-bootstrap";
+import { CheckCircleFill, ExclamationCircleFill, QuestionCircleFill, XSquareFill } from "react-bootstrap-icons";
+import { estadoinhabilitado, habilita, modificarPerio } from "../../../services/ModificarPeriodo.service";
+import { buscarAmbientePorNombre } from "../../../services/Busqueda.service";
+import { AlertsContext } from "../../Alert/AlertsContext";
 import "./style.css"
 
 const ModificarEstadoDelAmbientePorFecha = () => {
+    const [ambientes, setAmbientes] = useState([]);
     const [ambiente, setAmbiente] = useState({});
-    const { agregarAlert } = useContext(AlertsContext);
+    const [show, setShow] = useState("");
+    const { agregarAlert, eliminarAlert } = useContext(AlertsContext);
+    const inputAmbienteRef = useRef();
+    const periodos = [
+        { id: 1, hora: '6:45 - 8:15' },
+        { id: 2, hora: '8:15 - 9:45' },
+        { id: 3, hora: '9:45 - 11:15' },
+        { id: 4, hora: '11:15 - 12:45' },
+        { id: 5, hora: '12:45 - 14:15' },
+        { id: 6, hora: '14:15 - 15:45' },
+        { id: 7, hora: '15:45 - 17:15' },
+        { id: 8, hora: '17:15 - 18:45' },
+        { id: 9, hora: '18:45 - 20:15' },
+        { id: 10, hora: '20:15 - 21:45' },
+    ];
 
     const formik = useFormik({
         initialValues: {
-            nombre: "",
+            ambiente: { nombre: "", id: "" },
             fecha: "",
         },
         validationSchema: Yup.object({
-            nombre: Yup.string()
-                .required("Obligatorio")
-                .matches(/^[A-Z0-9]+$/, "Solo letras mayusculas y numeros es permitido"),
+            ambiente: Yup.object().shape({
+                nombre: Yup.string()
+                    .required("Obligatorio")
+            }),
             fecha: Yup.date()
                 .required("Obligatorio")
-                .min(new Date(new Date().setDate(new Date().getDate() - 1)), "No se admiten fechas pasadas al dia actual"),
         }),
         onSubmit: values => {
-            buscarAmbientePorNombre(values.nombre, values.fecha);
+            buscarAmbientPorFecha(values.ambiente, values.fecha);
+            console.log(values);
         }
     });
 
     const handleOnClickLimpiar = () => {
+        setAmbientes([]);
         setAmbiente({});
         formik.resetForm();
     }
 
-    const buscarAmbientePorNombre = (nombre, fecha) => {
-        setAmbiente({
-            id: 1, nombre, fecha, periodos: [
-                { id: 1, hora: '6:45 - 8:15', isHabilitado: true },
-                { id: 2, hora: '8:15 - 9:45', isHabilitado: true },
-                { id: 3, hora: '9:45 - 11:15', isHabilitado: true },
-                { id: 4, hora: '11:15 - 12:45', isHabilitado: true },
-                { id: 5, hora: '12:45 - 14:15', isHabilitado: true },
-                { id: 6, hora: '14:15 - 15:45', isHabilitado: true },
-                { id: 7, hora: '15:45 - 17:15', isHabilitado: false },
-                { id: 8, hora: '17:15 - 18:45', isHabilitado: false },
-                { id: 9, hora: '18:45 - 20:15', isHabilitado: false },
-                { id: 10, hora: '20:15 - 21:45', isHabilitado: false },
-            ]
-        })
+    const buscarAmbiente = async (event) => {
+        if (event.hasOwnProperty('target') && event.target.hasOwnProperty('value')) {
+            const value = event.target.value
+            formik.setFieldValue("ambiente", { ...formik.values.ambiente, nombre: value })
+            const { respuesta } = await buscarAmbientePorNombre(value);
+            console.log("ambientes", respuesta)
+            setAmbientes(respuesta)
+            setShow("show")
+        }
     }
 
-    const modificarPeriodos = (estado) => {
-        const periodosActualizados = ambiente.periodos.map((periodo) => {
-            if (estado === "Inhabilitar" && periodo.isHabilitado) {
-                return { ...periodo, isHabilitado: false }
+    const setNombreDelAmbiente = (ambiente) => {
+        formik.setFieldValue("ambiente", { id: ambiente.id, nombre: ambiente.nombre });
+        setShow("")
+    }
+
+    const setFechaDelAmbiente = (event, callback) => {
+        setAmbiente({ ...ambiente, periodos: null })
+        callback(event);
+    }
+
+    const buscarAmbientPorFecha = async (ambiente, fecha) => {
+        const data = await modificarPerio(ambiente.id, fecha);
+        if (data != null) {
+            setAmbiente({
+                id: 1, nombre: ambiente.nombre, fecha, periodos: data.periodos
+            })
+        }
+    }
+
+    const modificarPeriodos = async (estado) => {
+        const periodosActualizados = periodos.map((periodo) => {
+            if (estado === "Inhabilitar" && ambiente.periodos.includes(periodo.id)) {
+                return periodo.id;
             }
-            if (estado === "Habilitar" && !periodo.isHabilitado) {
-                return { ...periodo, isHabilitado: true }
+            if (estado === "Habilitar" && !ambiente.periodos.includes(periodo.id)) {
+                return periodo.id;
             }
-            return periodo;
+            return periodo.id;
         })
-        setAmbiente({ ...ambiente, periodos: periodosActualizados })
+        const response = estado === "Inhabilitar" ? await estadoinhabilitado(ambiente.id, periodosActualizados, ambiente.fecha)
+            : await habilita(ambiente.id, periodosActualizados, ambiente.fecha);
+        if (response !== null) {
+            setAmbiente({ ...ambiente, periodos: periodosActualizados })
+            agregarAlert({ icon: <CheckCircleFill />, severidad: "success", mensaje: "Registro exitoso" });
+        } else {
+            agregarAlert({ icon: <ExclamationCircleFill />, severidad: "danger", mensaje: "Registro fallido" });
+        }
     }
 
     const mostrarMensajeDeConfirmacion = (estado) => {
@@ -98,19 +137,35 @@ const ModificarEstadoDelAmbientePorFecha = () => {
                 <Row className="justify-content-md-center">
                     <Col xs lg="9">
                         <Form onSubmit={formik.handleSubmit}>
-                            <Form.Group as={Row} className="mb-3" controlId="nombre">
+                            <Form.Group as={Row} className="mb-3" controlId="ambiente">
                                 <Form.Label column sm="2">Nombre</Form.Label>
                                 <Col sm="10">
-                                    <FormControl
-                                        type="text"
-                                        placeholder="Ingrese el nombre del ambiente"
-                                        onChange={formik.handleChange}
-                                        onBlur={formik.handleBlur}
-                                        value={formik.values.nombre}
-                                    />
+                                    <Dropdown id="ambientes">
+                                        <Dropdown.Toggle
+                                            ref={inputAmbienteRef}
+                                            as={"input"}
+                                            id="ambiente"
+                                            type="text"
+                                            placeholder="Ingrese el nombre del ambiente"
+                                            onChange={buscarAmbiente}
+                                            onBlur={formik.handleBlur}
+                                            value={formik.values.ambiente.nombre}
+                                            className="form-control"
+                                            bsPrefix="dropdown-toggle" />
+                                        {formik.values.ambiente.nombre !== "" &&
+                                            <Dropdown.Menu className={show} style={{ width: "100%", overflowY: "auto", maxHeight: "5rem" }} show>
+                                                {ambientes.map((ambiente) =>
+                                                    <Dropdown.Item
+                                                        key={ambiente.nombre}
+                                                        onClick={() => setNombreDelAmbiente(ambiente)}
+                                                    >
+                                                        {ambiente.nombre}
+                                                    </Dropdown.Item>)}
+                                            </Dropdown.Menu>}
+                                    </Dropdown>
                                     <Form.Text className="text-danger">
-                                        {formik.touched.nombre && formik.errors.nombre ? (
-                                            <div className="text-danger">{formik.errors.nombre}</div>
+                                        {formik.touched.ambiente && formik.errors.ambiente ? (
+                                            <div className="text-danger">{formik.errors.ambiente.nombre}</div>
                                         ) : null}
                                     </Form.Text>
                                 </Col>
@@ -121,12 +176,12 @@ const ModificarEstadoDelAmbientePorFecha = () => {
                                     <FormControl
                                         type="text"
                                         placeholder="Ingrese la fecha"
-                                        onChange={formik.handleChange}
-                                        onFocus={(e)=> {
-                                            e.target.type='date';
+                                        onChange={(e) => setFechaDelAmbiente(e, formik.handleChange)}
+                                        onFocus={(e) => {
+                                            e.target.type = 'date';
                                         }}
                                         onBlur={(e) => {
-                                            e.target.type='text'
+                                            e.target.type = 'text'
                                             formik.handleBlur(e)
                                         }}
                                         value={formik.values.fecha}
@@ -141,24 +196,24 @@ const ModificarEstadoDelAmbientePorFecha = () => {
                             <Row xs="auto" className="justify-content-md-end">
                                 <Stack direction="horizontal" gap={2}>
                                     <Button onClick={handleOnClickLimpiar}>Limpiar</Button>
-                                    {Object.keys(ambiente).length > 0 ? <>
+                                    {ambiente.periodos ? <>
                                         <Button onClick={() => mostrarMensajeDeConfirmacion("Inhabilitar")}
                                             disabled={!formik.isValid || !formik.dirty}>Inhabilitar</Button>
                                         <Button className="btn ModificarEstadoDelAmbientePorFecha-button-inhabilitar"
                                             onClick={() => mostrarMensajeDeConfirmacion("Habilitar")}
                                             disabled={!formik.isValid || !formik.dirty}>Habilitar</Button>
                                     </>
-                                        : <Button disabled={!formik.isValid || !formik.dirty} type="submit">Consultar</Button>}
+                                        : <Button type="submit">Consultar</Button>}
                                 </Stack>
                             </Row>
                             {ambiente.periodos && <label>Periodos</label>}
-                            {ambiente.periodos && ambiente.periodos.map(item => <>
+                            {ambiente.periodos && periodos.map(item => <>
                                 <div style={{
                                     border: '1px solid black',
                                     width: '8rem',
                                     padding: '10px',
-                                    color: `${item.isHabilitado ? "black" : "white"}`,
-                                    background: `${item.isHabilitado ? "white" : "#71a3cc"}`
+                                    color: `${ambiente.periodos.includes(item.id) ? "white" : "black"}`,
+                                    background: `${ambiente.periodos.includes(item.id) ? "#71a3cc" : "white"}`
                                 }}>
                                     {item.hora}
                                 </div>

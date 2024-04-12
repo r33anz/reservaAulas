@@ -201,7 +201,7 @@ class AmbienteSeeder extends Seeder
         // 5
         Ambiente::create([
             'piso_id' => 13,
-            'nombre' => '694A',
+            'nombre' => '694E',
             'capacidad' => 70,
             'tipo' => 'Aula',
         ]);
