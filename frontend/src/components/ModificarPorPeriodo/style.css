@@ -117,3 +117,14 @@
     border-radius:5px;
     font-size: 16px;
   }
+.error{
+  position: absolute;
+  color: red;
+  margin-left: 300px;
+  font-size: 15px;
+}
+.error1{
+  color: red;
+  margin-left: 120px;
+  font-size: 15px;
+}

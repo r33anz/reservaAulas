@@ -8,27 +8,26 @@ import { ExclamationCircleFill } from 'react-bootstrap-icons';
 const Modificarperdiodo = () => {
     const [nombreAmbiente, setNombreAmbiente] = useState(''); // Estado para almacenar el nombre del ambiente
     const [ambienteOptions, setAmbienteOptions] = useState([]); // Estado para almacenar las opciones de ambiente
-    const [periodosOptions, setPeriodosOptions] = useState([]); // Estado para almacenar las opciones de periodo
     const [fecha, setFecha] = useState(''); // Estado para almacenar la fecha seleccionada
     const [idAmbiente, setId] = useState(''); // Estado para almacenar el ID del ambiente
     const [nombre, setNombre] = useState(''); // Estado para almacenar el nombre del ambiente
-    const [periodosSeleccionados, setPeriodosSeleccionados] = useState([]); // Estado para almacenar los periodos seleccionados
     const [periodosModificados, setPeriodosModificados] = useState([]);
     const { agregarAlert } = useContext(AlertsContext);
-    const [buscarAmbienteActivo, setBuscarAmbienteActivo] = useState(true);
     const [idAmbienteModificar, setIdMo] = useState(''); // Estado para almacenar el ID del ambiente
     const [nombreModificar, setNombreMO] = useState(''); // Estado para almacenar el nombre del ambiente
     const [fechaModifica, setFechaMo] = useState(''); // Estado para almacenar la fecha seleccionada
     const optionsContainerRef = useRef(null); 
     const [selectedOptionIndex, setSelectedOptionIndex] = useState(-1);
     const [consultarPresionado, setConsultarPresionado] = useState(false);
+    const [nombreAmbienteFocused, setNombreAmbienteFocused] = useState(false);
+    const [fechaAmbienteFocused, setFechaAmbienteFocused] = useState(false);
     // Función para buscar ambientes por nombre
     const buscarAmbiente = (nombre) => {
     if (nombre.trim() !== '') {
         buscarAmbientePorNombre(nombre)
             .then(data => {
                 const idValue = data.respuesta[0].id;
-               const nombreValue = data.respuesta[0].nombre;
+                const nombreValue = data.respuesta[0].nombre;
                  //Actualizar estados con los valores obtenidos
                 setId(idValue);
                 setNombre(nombreValue);
@@ -59,69 +58,64 @@ const Modificarperdiodo = () => {
             })
             .catch(error => {
                 console.log('Error al buscar los ambientes:', error);
-                setPeriodosOptions([]); // Limpiar las opciones de periodo en caso de error
             });
     };
 
-
-// Función para manejar el cambio en el campo de búsqueda de ambiente
-// Función para manejar el cambio en el campo de búsqueda de ambiente
 // Función para manejar el cambio en el campo de búsqueda de ambiente
 const handleInputChange = (e) => {
     const newValue = e.target.value;
-    // Limpiar el estado del ID y las opciones de ambiente al borrar el texto
     // Validar que solo se permitan datos alfanuméricos
     if (/^[a-zA-Z0-9\s]*$/.test(newValue)) {
         buscarAmbiente(newValue);
         setNombreAmbiente(newValue);
     }
 };
+
 const handleKeyDown = (e) => {
-    console.log("nombreAmbiente.length");
     if (e.key === 'ArrowUp') {
-      e.preventDefault();
-      setSelectedOptionIndex(prevIndex => Math.max(prevIndex - 1, 0)); // Mover hacia arriba y no por debajo de 0
-      scrollIntoViewarriba();
+        e.preventDefault();
+        setSelectedOptionIndex(prevIndex => Math.max(prevIndex - 1, 0)); // Mover hacia arriba y no por debajo de 0
+        scrollIntoViewarriba();
     } else if (e.key === 'ArrowDown') {
-      e.preventDefault();
-      setSelectedOptionIndex(prevIndex => Math.min(prevIndex + 1, ambienteOptions.length - 1)); // Mover hacia abajo y no más allá del último índice
-      scrollIntoView();
+        e.preventDefault();
+        setSelectedOptionIndex(prevIndex => Math.min(prevIndex + 1, ambienteOptions.length - 1)); // Mover hacia abajo y no más allá del último índice
+        scrollIntoView();
     } else if (e.key === 'Enter') {
-      e.preventDefault();
-      document.getElementById("buscar-input").blur();
+        e.preventDefault();
+        document.getElementById("buscar-input").blur();
       // Si no se ha seleccionado ninguna opción con las flechas, seleccionar la primera opción si está disponible
-      if (selectedOptionIndex === -1 && ambienteOptions.length > 0) {
+    if (selectedOptionIndex === -1 && ambienteOptions.length > 0) {
         handleOptionSelect(ambienteOptions[0].id, ambienteOptions[0].nombre, 0);
         
-      } else if (selectedOptionIndex >= 0 && selectedOptionIndex < ambienteOptions.length) {
+    } else if (selectedOptionIndex >= 0 && selectedOptionIndex < ambienteOptions.length) {
         handleOptionSelect(ambienteOptions[selectedOptionIndex].id, ambienteOptions[selectedOptionIndex].nombre, selectedOptionIndex);
-      }
     }
-  };
-  document.addEventListener('keydown', (e) => {
+    }
+};
+document.addEventListener('keydown', (e) => {
     if (e.key === 'Enter') {
-      e.preventDefault();
-      // Realiza la misma lógica que en el caso de 'Enter' dentro de handleKeyDown
-      document.getElementById("buscar-input").blur();
-      setNombreAmbiente(nombre);
+        e.preventDefault();
+        // Realiza la misma lógica que en el caso de 'Enter' dentro de handleKeyDown
+        document.getElementById("buscar-input").blur();
+        setNombreAmbiente(nombre);
     }
-  });
+});
 
-  const scrollIntoView = () => {
+const scrollIntoView = () => {
     if (optionsContainerRef.current && selectedOptionIndex >= 0) {
-      const selectedOptionElement = optionsContainerRef.current.childNodes[selectedOptionIndex];
-      selectedOptionElement.scrollIntoView({ behavior: "smooth", block: "start" });
+        const selectedOptionElement = optionsContainerRef.current.childNodes[selectedOptionIndex];
+        selectedOptionElement.scrollIntoView({ behavior: "smooth", block: "start" });
     }
-  };
-  const scrollIntoViewarriba = () => {
+};
+const scrollIntoViewarriba = () => {
     if (optionsContainerRef.current && selectedOptionIndex >= 0) {
-      const selectedOptionElement = optionsContainerRef.current.childNodes[selectedOptionIndex];
-      selectedOptionElement.scrollIntoView({ behavior: "smooth", block: "end" });
+        const selectedOptionElement = optionsContainerRef.current.childNodes[selectedOptionIndex];
+        selectedOptionElement.scrollIntoView({ behavior: "smooth", block: "end" });
     }
-  };
+};
 
     
-  useEffect(() => {
+useEffect(() => {
     function handleClickOutside() {
       setAmbienteOptions([]); // Limpiar las opciones de ambiente al hacer clic fuera del campo
     }
@@ -129,11 +123,9 @@ const handleKeyDown = (e) => {
     // Agregar un event listener para hacer clic fuera del campo de entrada
     document.addEventListener('click', handleClickOutside);
     return () => {
-      document.removeEventListener('click', handleClickOutside);
+        document.removeEventListener('click', handleClickOutside);
     };
-  }, []);
-
-
+}, []);
     // Función para manejar la selección de una opción de ambiente
     const handleOptionSelect = (selectedId, selectedNombre,index) => {
         setId(selectedId);
@@ -141,23 +133,24 @@ const handleKeyDown = (e) => {
         setNombreAmbiente(selectedNombre);
         setAmbienteOptions([]);
         setSelectedOptionIndex(index);
-         // Limpiar las opciones de ambiente después de seleccionar una
+        // Limpiar las opciones de ambiente después de seleccionar una
     };
 
     const handleConsultarClick = () => {
-        setIdMo(idAmbiente);
-        setNombreMO(nombre);
-        setFechaMo(fecha);
         
-        // Verificar que se haya seleccionado un ambiente y que se haya ingresado una fecha
-        if (idAmbiente && fecha) {
+        // Obtener la fecha actual en formato ISO (YYYY-MM-DD)
+        const fechaActual = new Date().toISOString().split('T')[0];
+        
+        // Verificar que se haya seleccionado un ambiente, que se haya ingresado una fecha y que la fecha sea igual o mayor a la fecha actual
+        if (idAmbiente && fecha && fecha >= fechaActual) {
+            setIdMo(idAmbiente);
+            setNombreMO(nombre);
+            setFechaMo(fecha);
             // Aquí puedes usar el ID del ambiente (almacenado en el estado 'id') y la fecha (almacenada en el estado 'fecha')
-            modifica(idAmbiente,fecha);
+            modifica(idAmbiente, fecha);
             setConsultarPresionado(true);
             // Aquí puedes realizar cualquier otra operación que necesites con el ID y la fecha, como enviarlos a un servicio para obtener resultados específicos, etc.
     
-        } else {
-            agregarAlert({ icon: <ExclamationCircleFill />, severidad: "danger", mensaje: "Debes seleccionar un ambiente e ingresar una fecha para realizar la consulta." });
         }
     };
 
@@ -185,18 +178,13 @@ const handleKeyDown = (e) => {
             checkbox.checked = false;
         });
         setFecha(fechaModifica);
-        //setNombreAmbiente(nombreModificar);
         modifica(idAmbienteModificar,fechaModifica);
-        setPeriodosSeleccionados(seleccionados);
+
     };
     
     
 const otraHabilitar = (id) => {
         const ids = [id];
-        console.log(idAmbienteModificar);
-        console.log(fechaModifica);
-
-        
         habilita(idAmbienteModificar,ids,fechaModifica)
         // Llama a otras funciones aquí si es necesario
     };
@@ -218,18 +206,21 @@ const otraHabilitar = (id) => {
         
         // Obtener la fecha actual en formato ISO (YYYY-MM-DD)
         const fechaActual = new Date().toISOString().split('T')[0];
-        if (nuevaFecha >= fechaActual) {
-            setFecha(nuevaFecha);
-        } else {
-            agregarAlert({ icon: <ExclamationCircleFill />, severidad: "danger", mensaje: "Por favor, selecciona una fecha igual o posterior a hoy." });
-        }
+        setFecha(nuevaFecha);
+        
     };
     const handleInputFocus = () => {
+        setNombreAmbienteFocused(true);
         // Aquí puedes ejecutar la lógica que deseas cuando el input recibe el foco
         if(nombreAmbiente.length > 0){
           buscarAmbiente(nombreAmbiente);
         console.log("El input ha recibido el foco.");
         }
+      };
+      const handleInputFocus2 = () => {
+        setFechaAmbienteFocused(true);
+        // Aquí puedes ejecutar la lógica que deseas cuando el input recibe el foco
+        
       };
 
     return (
@@ -245,6 +236,9 @@ const otraHabilitar = (id) => {
                     onKeyDown={handleKeyDown}
                     onFocus={handleInputFocus}
                 />
+                {nombreAmbiente.length <= 0 && nombreAmbienteFocused && (
+                        <div className="error">obligatorio.</div>
+                    )}
                 {nombreAmbiente.length > 0 && (
                 <div className="options-container" ref={optionsContainerRef}>
                 {ambienteOptions.map((option, index) => (
@@ -268,7 +262,15 @@ const otraHabilitar = (id) => {
                     id="fecha-input"
                     value={fecha}
                     onChange={handleFechaChange}
+                    onFocus={handleInputFocus2}
                 />
+                {fechaAmbienteFocused && (
+                fecha.length <= 0 ? (
+                <div className="error1">Fecha obligatoria.</div>
+                ) : fecha < new Date().toISOString().split('T')[0] ? (
+                <div className="error1">Solo fecha actual o posterior.</div>
+                ) : null
+                )}
             </div>
             <Button className="consultar-button" onClick={handleConsultarClick}>Consultar</Button>
             {consultarPresionado && ( // Renderizar los checkbox y el botón de modificar solo si se ha presionado el botón de consultar
