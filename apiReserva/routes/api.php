@@ -11,7 +11,8 @@ use Illuminate\Support\Facades\Route;
 use App\Models\Bloque;
 use App\Http\Controllers\DocenteController;
 use App\Http\Controllers\InhabilitadoController;
-
+use App\Http\Controllers\SolicitudController;
+use App\Http\Controllers\ValidadorController;
 ///Docente
 Route::get('/docentes/{id}', [DocenteController::class, 'getMaterias']);
 
@@ -26,8 +27,7 @@ Route::get('/ambientes/pisos', function (Request $request) {
 Route::get('/bloques', [BloqueController::class, 'index']);
 Route::get('/bloques/{id}', [BloqueController::class, 'show']);
 
-///Registro de ambiente
-Route::post('/registroAmbiente',[AmbienteController::class,'store']);
+
 
 //Route::get('/periodos', [PeriodoController::class, 'index']);
 Route::get('/periodos/{id}', [PeriodoController::class, 'show']);
@@ -36,10 +36,25 @@ Route::get('/periodos', [PeriodoController::class, 'getPeriodos']);
 
 //Ambiente
 Route::post('/busquedaAula',[AmbienteController::class,'buscar']);
-Route::get('/ambientes/{id}', [AmbienteController::class, 'show']);
+Route::get('/ambiente/{id}', [AmbienteController::class, 'show']);
 Route::get('/ambientes', [AmbienteController::class, 'index']);
+Route::post('/registroAmbiente',[AmbienteController::class,'store']);
+Route::get('/{id}/ambientesMismoPiso', [AmbienteController::class, 'ambientesMismoPiso']);
+Route::get('/{id}/ambientesMismoBloque', [AmbienteController::class, 'ambientesMismoBloque']);
 
 //Habilitado/DeshabilitadoAula
 Route::post('/inhabilitarAmbiente',[InhabilitadoController::class,'inhabilitarAmbiente']);
 Route::delete('/habilitarAmbiente',[InhabilitadoController::class,'habilitarAmbiente']);
 Route::post('/buscarInhabilitados',[InhabilitadoController::class,'buscarPeriodos']);
+
+//Solicitud
+Route::get('/fechasSolicitud',[SolicitudController::class,'conseguirFechas']);
+Route::post('/realizarSolicitud',[SolicitudController::class,'registroSolicitud']);
+Route::post('/informacionsolicitud',[SolicitudController::class,'informacionSolicitud']);
+Route::get('/solicitudesPorLlegada',[SolicitudController::class,'solicitudesPorLlegada']);
+
+//Reserva
+
+//validador
+Route::post('/consultarFechaPeriodo',[ValidadorController::class,'consultaFechaPeriodo']);  //devuelves los ambientes habiles
+
