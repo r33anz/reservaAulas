@@ -1,3 +1,41 @@
 .Home-body {
-    padding-top: 2rem;
+    padding-top: 1.5rem;
+    height: calc(100% - 13.5rem);
+    overflow-y: auto;
+}
+
+.App-header {
+    /* position: relative; */
+    /* height: 118px; */
+    background-color: #002A4C;
+    display: flex;
+    align-items: center;
+    font-size: calc(10px + 2vmin);
+
+}
+
+.App-footer {
+    background-color: #002A4C;
+    color: white;
+    padding-bottom: 5px;
+    border-top: 2px solid rgba(0, 0, 0, 0.24);
+    /* position: relative; */
+    /* left: 0; */
+    /* bottom: 0; */
+    height: 10%;
+    width: 100%;
+}
+
+.ico-header {
+    margin-left: calc(100% - 30rem);
+}
+
+.App-logo {
+    padding: 20px;
+    width: 9rem;
+    height: 9rem;
+}
+
+.Home-busqueda {
+    margin-left: calc(100% - 25.5rem)
 }

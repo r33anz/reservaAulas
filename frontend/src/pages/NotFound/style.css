@@ -1,0 +1,15 @@
+.NotFound-button-ir-a-home {
+    color: #ffffff;
+    background-color: #003F70;
+    border-color: #003F70;
+}
+
+.NotFound-button-ir-a-home:hover,
+.NotFound-button-ir-a-home:active,
+.NotFound-button-ir-a-home:focus,
+.NotFound-button-ir-a-home:disabled,
+.NotFound-button-ir-a-home.active {
+    color: #ffffff;
+    background: #003F70;
+    border-color: #003F70;
+}
