@@ -17,12 +17,12 @@ class DatabaseSeeder extends Seeder
      * @return void     */
     public function run()
     {
-        $this ->call([
+        $this->call([
             DocenteSeeder::class,
             MateriaSeeder::class,
             AmbienteSeeder::class,
             BloqueSeeder::class,
-            PisoSeeder::class, 
+            PisoSeeder::class,
             PeriodoSeeder::class,
             InhabilitadoSeeder::class,
             //PivoteAmbienteSolicitudSeeder::class,

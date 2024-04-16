@@ -72,9 +72,7 @@ class AmbienteController extends Controller
             'respuesta' => $resultado
         ]);
     }
-
-
-    public function ambientesMismoBloque($id)
+   public function ambientesMismoBloque($id)
     {
         $ambiente = Ambiente::findOrFail($id);
         $ambientesEnMismoBloque = Ambiente::whereHas('piso', function ($query) use ($ambiente) {

@@ -36,4 +36,3 @@ class AmbienteRequest extends FormRequest
         ], 422));
     }
 }
-
