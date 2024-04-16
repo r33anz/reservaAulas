@@ -1,24 +1,70 @@
-import logo from './logo.svg';
+import React from "react";
 import './App.css';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import RegistrarAmbiente from './components/RegistrarAmbiente';
+import Calendario from './components/Calendario';
+import Home from './pages/Home';
+import { AlertsProvider } from './components/Alert/AlertsContext';
+import ModificarPeriodo from './components/ModificarPorPeriodo/ModicarPeriodo';
+import {
+  createBrowserRouter,
+  RouterProvider
+} from "react-router-dom";
+import ModificarEstadoDelAmbientePorFecha from './components/ModificarAmbiente/EstadoPorFecha';
+import Buscar from "./components/Busquedanombre/Buscar";
 
 function App() {
+
+  const router = createBrowserRouter([
+    {
+      path: "/",
+      element: (
+        <AlertsProvider>
+          <RegistrarAmbiente />
+        </AlertsProvider>
+      ),
+    },
+    {
+      path: "registroAmbiente",
+      element: (
+        <AlertsProvider>
+          <RegistrarAmbiente />
+        </AlertsProvider>
+      ),
+    },
+    {
+      path: "modificarPorPeriodo",
+      element: (
+        <AlertsProvider>
+          <ModificarPeriodo />
+        </AlertsProvider>
+      )
+    },
+    {
+      path: "modificarPorFecha",
+      element: (
+        <AlertsProvider>
+          <ModificarEstadoDelAmbientePorFecha />
+        </AlertsProvider>
+      )
+    },
+    {
+      path: "calendario",
+      element: (
+        <Calendario />
+      )
+    }, {
+      path: "buscarPorNombre",
+      element: (
+        <Buscar />
+      )
+    }
+  ]);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Home>
+      <RouterProvider router={router} />
+    </Home>
   );
 }
 
