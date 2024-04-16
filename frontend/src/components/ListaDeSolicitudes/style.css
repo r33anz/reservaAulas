@@ -1,0 +1,9 @@
+.ListaDeSolicitudes-header {
+    background-color: #003F70;
+    height: 3.5rem;
+}
+
+.ListaDeSolicitudes-body {
+    background-color: #D9D9D9;
+    padding: 1rem;
+}

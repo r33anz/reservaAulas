@@ -13,31 +13,34 @@ import {
 import ModificarEstadoDelAmbientePorFecha from './components/ModificarAmbiente/EstadoPorFecha';
 import Buscar from "./components/Busquedanombre/Buscar";
 import NotFound from "./pages/NotFound";
+import ListaDeSolicitudes from "./components/ListaDeSolicitudes";
 
 function App() {
   return (
     <Routes>
-      <Route exact path="/" element={<Home />}>
+      <Route exact path="/" element={
+        <AlertsProvider>
+          <Home />
+        </AlertsProvider>
+      }>
         <Route index element={<Buscar />} />
         <Route exact path="/docente/buscarPorNombre" element={<Buscar />} />
         <Route exact path="/docente/enviarSolicitud" element="enviarSolicitud" />
-        <Route exact path="/docente/listaDeSolicitudesDeReservaAceptadas" element="listaDeSolicitudesDeReservaAceptadas" />
-        <Route exact path="/admin/listaDeSolicitudesDeReserva" element="listaDeSolicitudesDeReserva" />
+        <Route exact path="/docente/listaDeSolicitudesDeReservaAceptadas" element={
+          <ListaDeSolicitudes tipoDeUsuario="Docente" titulo="Lista de Solicitudes de Reserva Aceptadas" />
+        } />
+        <Route exact path="/admin/listaDeSolicitudesDeReserva" element={
+          <ListaDeSolicitudes tipoDeUsuario="Admin" titulo="Lista de Solicitudes de Reserva" />
+        } />
         <Route exact path="/admin/buscarPorNombre" element={<Buscar />} />
         <Route exact path="/admin/registroAmbiente" element={
-          <AlertsProvider>
-            <RegistrarAmbiente />
-          </AlertsProvider>
+          <RegistrarAmbiente />
         } />
         <Route exact path="/admin/modificarPorPeriodo" element={
-          <AlertsProvider>
-            <ModificarPeriodo />
-          </AlertsProvider>
+          <ModificarPeriodo />
         } />
         <Route exact path="/admin/modificarPorFecha" element={
-          <AlertsProvider>
-            <ModificarEstadoDelAmbientePorFecha />
-          </AlertsProvider>
+          <ModificarEstadoDelAmbientePorFecha />
         } />
         <Route exact path="/admin/calendario" element={
           <Calendario />

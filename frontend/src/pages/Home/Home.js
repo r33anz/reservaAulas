@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, Col, Container, Row, Stack, Image } from 'react-bootstrap'
+import { Col, Container, Row, Stack, Image } from 'react-bootstrap'
 import { BellFill, Calendar3 } from 'react-bootstrap-icons'
 import './style.css';
 import logo from '../../assets/images/image.png';
