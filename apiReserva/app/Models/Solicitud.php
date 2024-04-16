@@ -12,9 +12,12 @@ class Solicitud extends Model
 
                         
     public function docente()
-        {
-            return $this->belongsTo(Docente::class);
-        }                    
+    {
+        return $this->belongsTo(Docente::class);
+    }                    
 
-    
+    public function ambientes()
+    {
+        return $this->belongsToMany(Ambiente::class, 'solicitud_ambiente', 'solicitud_id', 'ambiente_id');
+    }
 }

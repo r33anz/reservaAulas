@@ -50,8 +50,9 @@ Route::post('/buscarInhabilitados',[InhabilitadoController::class,'buscarPeriodo
 //Solicitud
 Route::get('/fechasSolicitud',[SolicitudController::class,'conseguirFechas']);
 Route::post('/realizarSolicitud',[SolicitudController::class,'registroSolicitud']);
-Route::post('/informacionsolicitud',[SolicitudController::class,'informacionSolicitud']);
+Route::post('/informacionSolicitud',[SolicitudController::class,'informacionSolicitud']);
 Route::get('/solicitudesPorLlegada',[SolicitudController::class,'solicitudesPorLlegada']);
+Route::get('/solicitudesAceptadas',[SolicitudController::class,'solicitudesAtendidas']);
 
 //Reserva
 
