@@ -188,7 +188,7 @@ class SolicitudController extends Controller
     }
 
 
-    public function solicitudesAtendidas(){ //to do 
+    public function solicitudesAtendidas(){ 
 
         $idsSolicitudesAceptadas = DB::table('reservas')->pluck('idSolicitud');
 
@@ -223,8 +223,8 @@ class SolicitudController extends Controller
                 "cantidad" => $solicitud->cantidad,
                 "razon" => $solicitud->razon,
                 "fechaReserva" => $solicitud->fechaReserva,
-                "periodoIni" => $solicitud->periodo_ini_id,
-                "periodoFin" => $solicitud->periodo_fin_id,
+                "periodo_ini_id" => $solicitud->periodo_ini_id,
+                "periodo_fin_id" => $solicitud->periodo_fin_id,
                 "ambiente_nombre" => $nombreAmbiente
             ];
 
