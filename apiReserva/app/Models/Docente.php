@@ -9,11 +9,16 @@ use App\Models\Materia;
 class Docente extends Model
 {
     use HasFactory;
-    protected $guarderd = [];
+    protected $guarded = [];
 
 
     public function materias(){
         return $this->belongsToMany(Materia::class,'docente_materia')->withPivot('grupo');
+    }
+
+    public function solicitudes()
+    {
+        return $this->hasMany(Solicitud::class);
     }
     
 } 

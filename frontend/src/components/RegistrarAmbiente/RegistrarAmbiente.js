@@ -25,7 +25,7 @@ const RegistrarAmbiente = () => {
         "8",
         "9",
         "Backspace",
-      ];
+    ];
 
     const formik = useFormik({
         initialValues: {
@@ -81,138 +81,145 @@ const RegistrarAmbiente = () => {
     }, [])
 
     return (<>
-        <div style={{ width: "574px" }}>
-            <Container className="RegistrarAmbiente-header" fluid >
-                <Row xs="auto" className="justify-content-md-end">
-                    <Button className="RegistrarAmbiente-header-button-close" style={{ width: "58px", height: "58px" }} >
-                        <XSquareFill style={{ width: "24px", height: "24px" }} />
-                    </Button>
-                </Row>
-            </Container>
-            <Container className="RegistrarAmbiente-body" fluid>
-                <Row className="justify-content-md-center">
-                    <h1 style={{ fontWeight: "bold" }} className="text-center">Registrar nuevo ambiente</h1>
-                    <Col xs lg="9">
-                        <Form onSubmit={formik.handleSubmit}>
-                            <Stack gap={2} direction="vertical">
-                                <Form.Group className="mb-3" controlId="nombre">
-                                    <Form.Label>Nombre del ambiente</Form.Label>
-                                    <Form.Control
-                                        type="text"
-                                        placeholder="Ingrese el nuevo nombre del ambiente"
-                                        onChange={formik.handleChange}
-                                        onBlur={formik.handleBlur}
-                                        value={formik.values.nombre}
-                                    />
-                                    <Form.Text className="text-danger">
-                                        {formik.touched.nombre && formik.errors.nombre ? (
-                                            <div className="text-danger">{formik.errors.nombre}</div>
-                                        ) : null}
-                                    </Form.Text>
-                                </Form.Group>
-                                <Form.Group className="mb-3 RegistrarAmbiente-entrada-numero" controlId="capacidad">
-                                    <Form.Label>Capacidad</Form.Label>
-                                    <Form.Control
-                                        type="number"
-                                        onKeyDown={(e) => {
-                                            if (!validosKey.includes(e.key)) {
-                                              e.preventDefault();
-                                            }
-                                          }}
-                                        placeholder="Ingrese un valor"
-                                        onChange={formik.handleChange}
-                                        onBlur={formik.handleBlur}
-                                        value={formik.values.capacidad}
-                                    />
-                                    <Form.Text className="text-danger">
-                                        {formik.touched.capacidad && formik.errors.capacidad ? (
-                                            <div className="text-danger">{formik.errors.capacidad}</div>
-                                        ) : null}
-                                    </Form.Text>
-                                </Form.Group>
-                                <Col lg="9">
-                                    <Form.Group className="mb-3" controlId="idBloque">
-                                        <Form.Label>Bloque</Form.Label>
-                                        <Form.Select
-                                            onChange={(e) => setPisosPorBloqueSeleccionado(e, formik.handleChange)}
+        <Container fluid>
+            <Row>
+                <Col sm="3">
+                    <Row sm className="text-white RegistrarAmbiente-header">
+                        <Col xs="10" className="d-flex justify-content-start align-items-center" style={{ height: '100%'}}>
+                            <h3 style={{ fontWeight: "bold" }} className="">Registrar nuevo ambiente</h3>
+                        </Col>
+                        <Col xs="2" className="d-flex justify-content-end align-items-end" style={{ padding: 0 }}>
+                            <div className="RegistrarAmbiente-header-button-close d-flex justify-content-center align-items-center">
+                                <XSquareFill size={24} />
+                            </div>
+                        </Col>
+                    </Row>
+                    <Row className="RegistrarAmbiente-body justify-content-center">
+                        <Col xs >
+                            <Form onSubmit={formik.handleSubmit}>
+                                <Stack gap={2} direction="vertical">
+                                    <Form.Group className="mb-3" controlId="nombre">
+                                        <Form.Label>Nombre del ambiente</Form.Label>
+                                        <Form.Control
+                                            type="text"
+                                            placeholder="Ingrese el nuevo nombre del ambiente"
+                                            onChange={formik.handleChange}
                                             onBlur={formik.handleBlur}
-                                            value={formik.values.idBloque}
-                                        >
-                                            <option value="" disabled selected>Ingrese un bloque</option>
-                                            {bloques.map((bloque) => <option value={bloque.id}>{bloque.name}</option>)}
-                                        </Form.Select>
+                                            value={formik.values.nombre}
+                                        />
                                         <Form.Text className="text-danger">
-                                            {formik.touched.idBloque && formik.errors.idBloque ? (
-                                                <div className="text-danger">{formik.errors.idBloque}</div>
+                                            {formik.touched.nombre && formik.errors.nombre ? (
+                                                <div className="text-danger">{formik.errors.nombre}</div>
                                             ) : null}
                                         </Form.Text>
                                     </Form.Group>
-                                    <Form.Group className="mb-3" controlId="tipo">
-                                        <Form.Label>Tipo de ambiente</Form.Label>
-                                        <Form.Select
-                                            onChange={formik.handleChange}
-                                            onBlur={formik.handleBlur}
-                                            value={formik.values.tipo}
-                                        >
-                                            <option value="" disabled selected>Ingrese tipo de ambiente</option>
-                                            {tiposDeAmbiente.map((item) => <option value={item.name}>{item.name}</option>)}
-                                        </Form.Select>
-                                        <Form.Text className="text-danger">
-                                            {formik.touched.tipo && formik.errors.tipo ? (
-                                                <div className="text-danger">{formik.errors.tipo}</div>
-                                            ) : null}
-                                        </Form.Text>
-                                    </Form.Group>
-                                    <Form.Group className="mb-3" controlId="piso">
-                                        <Form.Label>Piso</Form.Label>
-                                        <Form.Select
-                                            onChange={formik.handleChange}
-                                            onBlur={formik.handleBlur}
-                                            value={formik.values.piso}
-                                        >
-                                            {pisos.length > 0 ?
-                                                <option value="" disabled selected>Ingrese un piso</option>
-                                                : <option value="" disabled selected>Seleccione un bloque</option>}
-                                            {pisos.map((piso) => {
-                                                if (piso.value === 0) {
-                                                    return <option value={piso.value}>Planta Baja</option>
-                                                } else {
-                                                    return <option value={piso.value}>Piso {piso.value}</option>
+                                    <Form.Group className="mb-3 RegistrarAmbiente-entrada-numero" controlId="capacidad">
+                                        <Form.Label>Capacidad</Form.Label>
+                                        <Form.Control
+                                            type="number"
+                                            onKeyDown={(e) => {
+                                                if (!validosKey.includes(e.key)) {
+                                                    e.preventDefault();
                                                 }
-                                            })}
-                                        </Form.Select>
+                                            }}
+                                            placeholder="Ingrese un valor"
+                                            onChange={formik.handleChange}
+                                            onBlur={formik.handleBlur}
+                                            value={formik.values.capacidad}
+                                        />
                                         <Form.Text className="text-danger">
-                                            {formik.touched.piso && formik.errors.piso ? (
-                                                <div className="text-danger">{formik.errors.piso}</div>
+                                            {formik.touched.capacidad && formik.errors.capacidad ? (
+                                                <div className="text-danger">{formik.errors.capacidad}</div>
                                             ) : null}
                                         </Form.Text>
                                     </Form.Group>
-                                </Col>
-                                <Row xs="auto" className="justify-content-md-end">
-                                    <Stack direction="horizontal" gap={2}>
-                                        <Button
-                                            className="btn RegistrarAmbiente-button-cancel"
-                                            size="sm"
-                                            onClick={() => formik.resetForm()}
-                                        >
-                                            Cancelar
-                                        </Button>
-                                        <Button
-                                            className="btn RegistrarAmbiente-button-register"
-                                            size="sm"
-                                            type="submit"
-                                            disabled={!formik.isValid || !formik.dirty}
-                                        >
-                                            Registrar
-                                        </Button>
-                                    </Stack>
-                                </Row>
-                            </Stack>
-                        </Form>
-                    </Col>
-                </Row>
-            </Container>
-        </div>
+                                    <Col lg="9">
+                                        <Form.Group className="mb-3" controlId="idBloque">
+                                            <Form.Label>Bloque</Form.Label>
+                                            <Form.Select
+                                                onChange={(e) => setPisosPorBloqueSeleccionado(e, formik.handleChange)}
+                                                onBlur={formik.handleBlur}
+                                                value={formik.values.idBloque}
+                                            >
+                                                <option value="" disabled selected>Ingrese un bloque</option>
+                                                {bloques.map((bloque) => <option value={bloque.id}>{bloque.name}</option>)}
+                                            </Form.Select>
+                                            <Form.Text className="text-danger">
+                                                {formik.touched.idBloque && formik.errors.idBloque ? (
+                                                    <div className="text-danger">{formik.errors.idBloque}</div>
+                                                ) : null}
+                                            </Form.Text>
+                                        </Form.Group>
+                                        <Form.Group className="mb-3" controlId="tipo">
+                                            <Form.Label>Tipo de ambiente</Form.Label>
+                                            <Form.Select
+
+
+                                                onChange={formik.handleChange}
+                                                onBlur={formik.handleBlur}
+                                                value={formik.values.tipo}
+                                            >
+                                                <option value="" disabled selected>Ingrese tipo de ambiente</option>
+                                                {tiposDeAmbiente.map((item) => <option value={item.name}>{item.name}</option>)}
+                                            </Form.Select>
+                                            <Form.Text className="text-danger">
+                                                {formik.touched.tipo && formik.errors.tipo ? (
+                                                    <div className="text-danger">{formik.errors.tipo}</div>
+                                                ) : null}
+                                            </Form.Text>
+                                        </Form.Group>
+                                        <Form.Group className="mb-3" controlId="piso">
+                                            <Form.Label>Piso</Form.Label>
+                                            <Form.Select
+                                                onChange={formik.handleChange}
+                                                onBlur={formik.handleBlur}
+                                                value={formik.values.piso}
+                                            >
+                                                {pisos.length > 0 ?
+                                                    <option value="" disabled selected>Ingrese un piso</option>
+                                                    : <option value="" disabled selected>Seleccione un bloque</option>}
+                                                {pisos.map((piso) => {
+                                                    if (piso.value === 0) {
+                                                        return <option value={piso.value}>Planta Baja</option>
+                                                    } else {
+                                                        return <option value={piso.value}>Piso {piso.value}</option>
+                                                    }
+                                                })}
+                                            </Form.Select>
+                                            <Form.Text className="text-danger">
+                                                {formik.touched.piso && formik.errors.piso ? (
+                                                    <div className="text-danger">{formik.errors.piso}</div>
+                                                ) : null}
+                                            </Form.Text>
+                                        </Form.Group>
+                                    </Col>
+                                    <Row xs="auto" className="justify-content-md-end">
+                                        <Stack direction="horizontal" gap={2}>
+                                            <Button
+                                                className="btn RegistrarAmbiente-button-cancel"
+                                                size="sm"
+                                                onClick={() => formik.resetForm()}
+                                            >
+                                                Cancelar
+                                            </Button>
+                                            <Button
+                                                className="btn RegistrarAmbiente-button-register"
+                                                size="sm"
+                                                type="submit"
+                                            >
+                                                Registrar
+                                            </Button>
+                                        </Stack>
+                                    </Row>
+                                </Stack>
+                            </Form>
+                        </Col>
+                    </Row>
+                </Col>
+                <Col>
+                </Col>
+            </Row>
+        </Container>
     </>);
 }
 
