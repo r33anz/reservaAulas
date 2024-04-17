@@ -27,9 +27,7 @@ export const modificarPerio = (idAmbiente,fecha) => {
 }
 
 export const estadoinhabilitado = (idAmbiente, idPeriodos, fecha) => {
-    console.log(idAmbiente);
-    console.log(idPeriodos);
-    console.log(fecha);
+
     return axios.post(`${apiUrl}/inhabilitarAmbiente`, {
             idAmbiente: idAmbiente,
             idPeriodos: idPeriodos,

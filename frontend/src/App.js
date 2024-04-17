@@ -14,8 +14,10 @@ import ModificarEstadoDelAmbientePorFecha from './components/ModificarAmbiente/E
 import Buscar from "./components/Busquedanombre/Buscar";
 import NotFound from "./pages/NotFound";
 import ListaDeSolicitudes from "./components/ListaDeSolicitudes";
+import SolcitarReserva from "./components/SolicitudReserva/SolicitarReserva"
 
 function App() {
+
   return (
     <Routes>
       <Route exact path="/" element={
@@ -25,7 +27,7 @@ function App() {
       }>
         <Route index element={<Buscar />} />
         <Route exact path="/docente/buscarPorNombre" element={<Buscar />} />
-        <Route exact path="/docente/enviarSolicitud" element="enviarSolicitud" />
+        <Route exact path="/docente/enviarSolicitud" element={<SolcitarReserva />} />
         <Route exact path="/docente/listaDeSolicitudesDeReservaAceptadas" element={
           <ListaDeSolicitudes tipoDeUsuario="Docente" titulo="Lista de Solicitudes de Reserva Aceptadas" />
         } />
