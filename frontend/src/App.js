@@ -7,64 +7,44 @@ import Home from './pages/Home';
 import { AlertsProvider } from './components/Alert/AlertsContext';
 import ModificarPeriodo from './components/ModificarPorPeriodo/ModicarPeriodo';
 import {
-  createBrowserRouter,
-  RouterProvider
+  Route,
+  Routes,
 } from "react-router-dom";
 import ModificarEstadoDelAmbientePorFecha from './components/ModificarAmbiente/EstadoPorFecha';
 import Buscar from "./components/Busquedanombre/Buscar";
+import NotFound from "./pages/NotFound";
 
 function App() {
-
-  const router = createBrowserRouter([
-    {
-      path: "/",
-      element: (
-        <AlertsProvider>
-          <RegistrarAmbiente />
-        </AlertsProvider>
-      ),
-    },
-    {
-      path: "registroAmbiente",
-      element: (
-        <AlertsProvider>
-          <RegistrarAmbiente />
-        </AlertsProvider>
-      ),
-    },
-    {
-      path: "modificarPorPeriodo",
-      element: (
-        <AlertsProvider>
-          <ModificarPeriodo />
-        </AlertsProvider>
-      )
-    },
-    {
-      path: "modificarPorFecha",
-      element: (
-        <AlertsProvider>
-          <ModificarEstadoDelAmbientePorFecha />
-        </AlertsProvider>
-      )
-    },
-    {
-      path: "calendario",
-      element: (
-        <Calendario />
-      )
-    }, {
-      path: "buscarPorNombre",
-      element: (
-        <Buscar />
-      )
-    }
-  ]);
-
   return (
-    <Home>
-      <RouterProvider router={router} />
-    </Home>
+    <Routes>
+      <Route exact path="/" element={<Home />}>
+        <Route index element={<Buscar />} />
+        <Route exact path="/docente/buscarPorNombre" element={<Buscar />} />
+        <Route exact path="/docente/enviarSolicitud" element="enviarSolicitud" />
+        <Route exact path="/docente/listaDeSolicitudesDeReservaAceptadas" element="listaDeSolicitudesDeReservaAceptadas" />
+        <Route exact path="/admin/listaDeSolicitudesDeReserva" element="listaDeSolicitudesDeReserva" />
+        <Route exact path="/admin/buscarPorNombre" element={<Buscar />} />
+        <Route exact path="/admin/registroAmbiente" element={
+          <AlertsProvider>
+            <RegistrarAmbiente />
+          </AlertsProvider>
+        } />
+        <Route exact path="/admin/modificarPorPeriodo" element={
+          <AlertsProvider>
+            <ModificarPeriodo />
+          </AlertsProvider>
+        } />
+        <Route exact path="/admin/modificarPorFecha" element={
+          <AlertsProvider>
+            <ModificarEstadoDelAmbientePorFecha />
+          </AlertsProvider>
+        } />
+        <Route exact path="/admin/calendario" element={
+          <Calendario />
+        } />
+      </Route>
+      <Route path="*" element={<NotFound />} />
+    </Routes >
   );
 }
 
