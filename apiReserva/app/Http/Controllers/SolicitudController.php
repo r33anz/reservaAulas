@@ -115,7 +115,6 @@ class SolicitudController extends Controller
 
     }
 
-
     //TO DO UPDATE
     public function informacionSolicitud(Request $request){
         $id = $request->input('id');
