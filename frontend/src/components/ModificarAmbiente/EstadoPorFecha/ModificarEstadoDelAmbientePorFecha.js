@@ -99,9 +99,9 @@ const ModificarEstadoDelAmbientePorFecha = () => {
             : await habilita(ambiente.id, periodosActualizados, ambiente.fecha);
         if (response !== null) {
             setAmbiente({ ...ambiente, periodos: periodosActualizados })
-            agregarAlert({ icon: <CheckCircleFill />, severidad: "success", mensaje: "Registro exitoso" });
+            agregarAlert({ icon: <CheckCircleFill />, severidad: "success", mensaje: "Modificacion exitosa" });
         } else {
-            agregarAlert({ icon: <ExclamationCircleFill />, severidad: "danger", mensaje: "Registro fallido" });
+            agregarAlert({ icon: <ExclamationCircleFill />, severidad: "danger", mensaje: "Modificacion fallida" });
         }
     }
 

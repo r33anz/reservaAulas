@@ -255,8 +255,8 @@ const otraHabilitar = (id) => {
                 )}
                 
             </div>
-            <div className='fecha'>
-            <label  htmlFor="fecha-input">Fecha:</label>
+            <div className='ModificarPeriodo-fecha'>
+            <label htmlFor="fecha-input">Fecha:</label>
                 <input
                     type="date"
                     id="fecha-input"

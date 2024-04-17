@@ -54,7 +54,7 @@ const RegistrarAmbiente = () => {
         onSubmit: values => {
             registrarAmbiente(values)
                 .then((response) => {
-                    agregarAlert({ icon: <CheckCircleFill />, severidad: "success", mensaje: "Se a registrado correctamente el ambiente" });
+                    agregarAlert({ icon: <CheckCircleFill />, severidad: "success", mensaje: "Registro exitoso" });
                     formik.resetForm();
                 }).catch((error) => {
                     agregarAlert({ icon: <ExclamationCircleFill />, severidad: "danger", mensaje: error });
