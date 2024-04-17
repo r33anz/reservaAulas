@@ -1,7 +1,7 @@
 import React, { useContext, useRef, useState } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import { Button, Col, Container, Dropdown, Form, FormControl, Row, Stack } from "react-bootstrap";
+import { Alert, Modal, Button, Col, Container, Dropdown, Form, FormControl, Row, Stack } from "react-bootstrap";
 import { CheckCircleFill, ExclamationCircleFill, QuestionCircleFill, XSquareFill } from "react-bootstrap-icons";
 import { estadoinhabilitado, habilita, modificarPerio } from "../../../services/ModificarPeriodo.service";
 import { buscarAmbientePorNombre } from "../../../services/Busqueda.service";
@@ -12,7 +12,9 @@ const ModificarEstadoDelAmbientePorFecha = () => {
     const [ambientes, setAmbientes] = useState([]);
     const [ambiente, setAmbiente] = useState({});
     const [show, setShow] = useState("");
-    const { agregarAlert, eliminarAlert } = useContext(AlertsContext);
+    const [estado, setEstado] = useState("");
+    const [showMensajeDeConfirmacion, setShowMensajeDeConfirmacion] = useState(false);
+    const { agregarAlert } = useContext(AlertsContext);
     const inputAmbienteRef = useRef();
     const periodos = [
         { id: 1, hora: '6:45 - 8:15' },
@@ -47,6 +49,7 @@ const ModificarEstadoDelAmbientePorFecha = () => {
     });
 
     const handleOnClickLimpiar = () => {
+        setEstado("");
         setAmbientes([]);
         setAmbiente({});
         formik.resetForm();
@@ -103,22 +106,8 @@ const ModificarEstadoDelAmbientePorFecha = () => {
     }
 
     const mostrarMensajeDeConfirmacion = (estado) => {
-        agregarAlert({
-            severidad: "primary", mensaje: <Container>
-                <Row xs="auto" className="justify-content-md-end">
-                    <QuestionCircleFill size="2rem" />
-                    ¿Esta seguro de hacer esta modificacion?
-                </Row>
-                <Row xs="auto" className="justify-content-md-end">
-                    <Button
-                        onClick={() => {
-                            modificarPeriodos(estado)
-                        }}
-                        size="sm"
-                    >Aceptar</Button>
-                </Row>
-            </Container>
-        });
+        setEstado(estado);
+        setShowMensajeDeConfirmacion(true);
     }
 
     return (<>
@@ -126,7 +115,7 @@ const ModificarEstadoDelAmbientePorFecha = () => {
             <Container className="ModificarEstadoDelAmbientePorFecha-header" fluid >
                 <Row xs="auto" className="justify-content-md-end">
                     <Col xs lg="10" style={{ alignContent: "center", padding: 0 }}>
-                        <h4 style={{ color: "white", fontWeight: "bold" }}>Busqueda de Ambiente por fecha</h4>
+                        <h4 style={{ color: "white", fontWeight: "bold" }}>Modificar Estado de Ambiente por fecha</h4>
                     </Col>
                     <Button className="ModificarEstadoDelAmbientePorFecha-header-button-close" style={{ width: "58px", height: "58px" }} >
                         <XSquareFill style={{ width: "24px", height: "24px" }} />
@@ -222,6 +211,43 @@ const ModificarEstadoDelAmbientePorFecha = () => {
                     </Col>
                 </Row>
             </Container>
+            {estado !== "" &&
+                <Modal
+                    size="xs"
+                    aria-labelledby="contained-modal-title-vcenter"
+                    show={showMensajeDeConfirmacion} 
+                    onHide={() => setShowMensajeDeConfirmacion(false)}
+                    centered
+                >
+                    <Alert
+                        variant="primary"
+                        show={showMensajeDeConfirmacion}
+                        style={{margin: 0}}
+                    >
+                        <Container>
+                            <Row xs="auto">
+                                <QuestionCircleFill size="2rem" />
+                                ¿Esta seguro de hacer esta modificacion?
+                            </Row>
+                            <Row xs="auto" className="justify-content-md-end">
+                                <Stack direction="horizontal" gap={2}>
+                                    <Button
+                                        className="ModificarEstadoDelAmbientePorFecha-cancel"
+                                        size="sm"
+                                        variant="secondary"
+                                        onClick={() => setShowMensajeDeConfirmacion(false)}
+                                    >Close</Button>
+                                    <Button
+                                        onClick={() => {
+                                            modificarPeriodos(estado)
+                                        }}
+                                        size="sm"
+                                    >Aceptar</Button>
+                                </Stack>
+                            </Row>
+                        </Container>
+                    </Alert>
+                </Modal>}
         </div>
     </>);
 }
