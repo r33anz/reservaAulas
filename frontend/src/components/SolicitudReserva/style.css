@@ -1,0 +1,23 @@
+.optionscontainer1 {
+    font-size: 20px;
+    margin-left: 0px;
+    margin-right: 110px;
+    max-height: 100px; /* Altura máxima para mostrar hasta 3 opciones */
+    overflow-y: auto; /* Habilitar el desplazamiento vertical cuando se supera la altura máxima */
+    position: absolute;
+    z-index: 1;
+    }
+    .search-field1{
+  
+        padding-left: 0px;
+        font-size: 16px;  
+      }
+      #buscar-input1{
+        margin-left: 0px;
+        border-radius:5px;
+        font-size: 16px;
+      }
+      .fecha1{
+        margin-top: 10px;
+        font-size: 16px;
+    }
