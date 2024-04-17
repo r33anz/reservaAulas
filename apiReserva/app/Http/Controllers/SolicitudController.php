@@ -17,8 +17,9 @@ class SolicitudController extends Controller
     {
         $this->ambienteValido = $ambienteValido;
     }
-
-    public function conseguirFechas(){  // devuelve objetos donde esta compuesto por una fecha y las reservas y solicitudes de la respectiva fecha
+    //FINISH
+    public function conseguirFechas(){  // devuelve objetos donde esta compuesto por una fecha 
+                                        // y las reservas y solicitudes de la respectiva fecha
         $fechasSolicitudes = Solicitud::distinct()->pluck('fechaReserva');
         $idsReservas = DB::table('reservas')->pluck('idSolicitud');
         $fechas = [];
@@ -55,7 +56,8 @@ class SolicitudController extends Controller
 
     }
 
-    public function registroSolicitud(Request $request){ //finish
+    //CHECK UPDATE
+    public function registroSolicitud(Request $request){ 
         /**
         * docente / materia / grupo / cantidad / razon / fecha / estado :false
         * preProcesamineto: periodoId
@@ -113,6 +115,8 @@ class SolicitudController extends Controller
 
     }
 
+
+    //TO DO UPDATE
     public function informacionSolicitud(Request $request){
         $id = $request->input('id');
         $solicitud = Solicitud::find($id);
@@ -137,6 +141,7 @@ class SolicitudController extends Controller
         ]);
     }
 
+    //FINISH
     public function solicitudesPorLlegada(){
         $solicitudes = Solicitud::where('estado', false)
             ->orderBy('created_at', 'asc')
@@ -182,13 +187,56 @@ class SolicitudController extends Controller
         return response()->json(['solicitudes_por_llegada' => $datosSolicitudes]);
     }
 
-    public function solicitudesAtendidas(){
+
+    public function solicitudesAtendidas(){ //to do 
 
         $idsSolicitudesAceptadas = DB::table('reservas')->pluck('idSolicitud');
 
          // Obtener los datos de las solicitudes correspondientes a esos IDs
         $solicitudesAceptadas = Solicitud::whereIn('id', $idsSolicitudesAceptadas)->get();
 
-        return response()->json(['solicitudes_aceptadas' => $solicitudesAceptadas]);
+            
+        $datosSolicitudesAceptadas = [];
+
+        foreach ($solicitudesAceptadas as $solicitud) {
+            // Obtener el nombre del docente
+            $docente = Docente::find($solicitud->docente_id);
+
+            // Obtener el ID del ambiente asociado a la solicitud desde la tabla ambiente_solicitud
+            $idAmbiente = DB::table('ambiente_solicitud')
+                ->where('solicitud_id', $solicitud->id)
+                ->value('ambiente_id');
+
+            // Obtener el nombre del ambiente
+            $nombreAmbiente = null;
+            if ($idAmbiente) {
+                $ambiente = Ambiente::find($idAmbiente);
+                if ($ambiente) {
+                    $nombreAmbiente = $ambiente->nombre;
+                }
+            }
+
+            $datosSolicitud = [
+                "id_docente" => $solicitud->docente_id,
+                "materia" => $solicitud->materia,
+                "grupo" => $solicitud->grupo,
+                "cantidad" => $solicitud->cantidad,
+                "razon" => $solicitud->razon,
+                "fechaReserva" => $solicitud->fechaReserva,
+                "periodoIni" => $solicitud->periodo_ini_id,
+                "periodoFin" => $solicitud->periodo_fin_id,
+                "ambiente_nombre" => $nombreAmbiente
+            ];
+
+            // Agregar los datos de la solicitud al array de datos de solicitudes aceptadas,
+            // agrupados por el nombre del profesor
+            $profesorNombre = $docente->nombre ?? 'Desconocido'; // Si no se encuentra el nombre del profesor, se asigna 'Desconocido'
+            if (!isset($datosSolicitudesAceptadas[$profesorNombre])) {
+                $datosSolicitudesAceptadas[$profesorNombre] = [];
+            }
+            $datosSolicitudesAceptadas[$profesorNombre][] = $datosSolicitud;
+        }
+
+        return response()->json(['solicitudes_aceptadas_por_profesor' => $datosSolicitudesAceptadas]);
     }
 }
