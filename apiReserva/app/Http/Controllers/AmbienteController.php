@@ -72,21 +72,4 @@ class AmbienteController extends Controller
             'respuesta' => $resultado
         ]);
     }
-   public function ambientesMismoBloque($id)
-    {
-        $ambiente = Ambiente::findOrFail($id);
-        $ambientesEnMismoBloque = Ambiente::whereHas('piso', function ($query) use ($ambiente) {
-            $query->where('bloque_id', $ambiente->piso->bloque_id);
-        })->get();
-
-        return response()->json(['ambientes' => $ambientesEnMismoBloque]);
-    }
-
-    public function ambientesMismoPiso($id)
-    {
-        $ambiente = Ambiente::findOrFail($id);
-        $ambientesEnMismoPiso = $ambiente->piso->ambientes;
-
-        return response()->json(['ambientes' => $ambientesEnMismoPiso]);
-    }
 }

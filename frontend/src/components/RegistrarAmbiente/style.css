@@ -1,6 +1,5 @@
 .RegistrarAmbiente-header {
   background-color: #003F70;
-  height: 3.5rem;
 }
 
 .RegistrarAmbiente-header-button-close {
@@ -8,8 +7,6 @@
   background-color: #D51809;
   border-radius: 0%;
   border-color: #D51809;
-  width: 58px;
-  height: 100%;
 }
 
 .RegistrarAmbiente-body {
@@ -35,8 +32,11 @@
 
 .RegistrarAmbiente-button-register {
   color: #ffffff;
-  background-color: #003F70;
-  border-color: #003F70;
+  background-color: #CC9C00;
+  border-color: #CC9C00;
+  /* font-weight: bold; */
+  /* letter-spacing: 0.05em; */
+  /* border-radius: 0; */
 }
 
 .RegistrarAmbiente-button-register:hover,
@@ -46,8 +46,8 @@
 .RegistrarAmbiente-button-register.active {
   /* let's darken #004E64 a bit for hover effect */
   color: #ffffff;
-  background: #003F70;
-  border-color: #003F70;
+  background: #CC9C00;
+  border-color: #CC9C00;
 }
 
 .RegistrarAmbiente-entrada-numero input::-webkit-outer-spin-button,

@@ -8,7 +8,7 @@ import "./style.css"
 
 const ModificarEstadoDelAmbientePorFecha = () => {
     const [ambiente, setAmbiente] = useState({});
-    const { agregarAlert } = useContext(AlertsContext);
+    const { agregarAlert, eliminarAlert } = useContext(AlertsContext);
 
     const formik = useFormik({
         initialValues: {
@@ -64,7 +64,9 @@ const ModificarEstadoDelAmbientePorFecha = () => {
     }
 
     const mostrarMensajeDeConfirmacion = (estado) => {
+        const id = "mensaje-de-confirmacion-de-modificar-estado-del-ambiente";
         agregarAlert({
+            id,
             severidad: "primary", mensaje: <Container>
                 <Row xs="auto" className="justify-content-md-end">
                     <QuestionCircleFill size="2rem" />
@@ -72,7 +74,8 @@ const ModificarEstadoDelAmbientePorFecha = () => {
                 </Row>
                 <Row xs="auto" className="justify-content-md-end">
                     <Button
-                        onClick={() => {
+                        onClick={(e) => {
+                            eliminarAlert(id);
                             modificarPeriodos(estado)
                         }}
                         size="sm"

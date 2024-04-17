@@ -8,16 +8,15 @@ class DocenteController extends Controller
 {
     public function getMaterias($id){
         $docente = Docente::findOrFail($id);
-
-        $materiasConGrupos = $docente->materias()->get()->groupBy('nombreMateria')->map(function ($materias) {
-            $grupos = $materias->pluck('pivot.grupo');
+        $materias = $docente->materias()->get()->map(function ($materia) {
             return [
-                'grupos' => $grupos
+                'nombreMateria' => $materia->nombreMateria,
+                'grupo' => $materia->pivot->grupo
             ];
         });
-
+    
         return response()->json([
-            'materias' => $materiasConGrupos
+            'materias' => $materias
         ]);
     }
 }
