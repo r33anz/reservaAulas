@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useCallback, useContext, useEffect, useState } from "react";
 import { Col, Container, Modal, OverlayTrigger, Row, Table, Tooltip } from "react-bootstrap";
 import "./style.css";
 import { recuperarSolicitudesDeReserva, recuperarSolicitudesDeReservaAceptadas } from "../../services/Reserva.service";
@@ -35,7 +35,7 @@ const ListaDeSolicitudes = ({ titulo, tipoDeUsuario }) => {
         agregarAlert({ icon: <CheckCircleFill />, severidad: "success", mensaje: "Actualizacion con exito" });
     }
 
-    const getSolicitudes = async() => {
+    const getSolicitudes = useCallback(async() => {
         if (tipoDeUsuario === "Admin") { 
             const id = window.sessionStorage.getItem("admin_id");
             const data = await recuperarSolicitudesDeReserva(id)
@@ -46,11 +46,11 @@ const ListaDeSolicitudes = ({ titulo, tipoDeUsuario }) => {
             const data = await recuperarSolicitudesDeReservaAceptadas(id)
             setSolicitudes(data.solicitudes_aceptadas_por_profesor["TATIANA APARICIO"]);
         }
-    }
+    }, [tipoDeUsuario])
 
     useEffect(() => {
         getSolicitudes();
-    }, [tipoDeUsuario])
+    }, [getSolicitudes])
 
     return (<>
         <Container fluid>
@@ -78,7 +78,6 @@ const ListaDeSolicitudes = ({ titulo, tipoDeUsuario }) => {
                         <Table striped bordered hover responsive>
                             <thead>
                                 <tr>
-                                    <th>#</th>
                                     <th>Ambiente</th>
                                     {tipoDeUsuario === "Admin" && <th>Docente</th>}
                                     <th>Materia</th>
@@ -88,8 +87,7 @@ const ListaDeSolicitudes = ({ titulo, tipoDeUsuario }) => {
                                 </tr>
                             </thead>
                             <tbody>
-                                {solicitudes.map((item, index) => <tr>
-                                    <td>{++index}</td>
+                                {solicitudes.map((item) => <tr>
                                     <td>{item.ambiente_nombre}</td>
                                     {tipoDeUsuario === "Admin" && <td>{item.nombre_docente}</td>}
                                     <td>{item.materia}</td>

@@ -22,6 +22,7 @@ const Message = ({ alert }) => {
     useEffect(() => {
         setMessage(null);
         setShow(false)
+        setTimeout(() => console.log(), 1000);
     }, [])
 
     return (<>{message && <Alert

@@ -23,18 +23,19 @@
     /* position: relative; */
     /* left: 0; */
     /* bottom: 0; */
-    height: 10%;
+    height: 6%;
+    /* height: -webkit-fill-available; */
     width: 100%;
 }
 
 .ico-header {
-    margin-left: calc(100% - 28.8rem);
+    margin-left: calc(100% - 22rem);
 }
 
 .App-logo {
-    padding: 20px;
-    width: 9rem;
-    height: 9rem;
+    padding: 15px;
+    width: 5rem;
+    height: 5rem;
 }
 
 .Home-busqueda {

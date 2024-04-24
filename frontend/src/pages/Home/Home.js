@@ -12,10 +12,10 @@ const Home = () => {
     <header className="App-header">
       <img src={logo} className="App-logo" alt="logo" />
       <div className="tamaño">
-        <h1>
+        <h3>
           Intelligence<br />
           Software
-        </h1>
+        </h3>
       </div>
       <div className="ico-header">
         <BellFill color="white" size={30} />
@@ -44,8 +44,8 @@ const Home = () => {
     <footer className="App-footer">
       <Container fluid="xs" style={{ padding: "5px" }}>
         <Stack direction="horizontal" gap={1}>
-          <Image roundedCircle src={logo} style={{ height: "3rem", width: "3rem" }} />
-          <small>
+          <Image roundedCircle src={logo} style={{ height: "2rem", width: "2rem" }} />
+          <small style={{fontSize: ".5em"}}>
             Copyright ©2024 <br />
             Intelligence Software S.R.L. <br />
             Todos los derechos reservados.
