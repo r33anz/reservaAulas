@@ -69,11 +69,11 @@ class SolicitudController extends Controller
         $idDocente = $request->input('idDocente');
         $materia = $request->input('materia');
         $grupo = $request->input('grupo');
-        $cantidad = $request->input('cantidad');
+        $cantidad = $request->input('capacidad');
         $razon = $request->input('razon');
         $fechaReserva = $request->input('fechaReserva');
         $estado = false;
-        $idAmbiente = $request->input('idAmbiente');
+        $idAmbiente = $request->input('ambiente');
         $periodos = $request->input('periodos');
         // verificar si el ambiente es valido
         $ambienteDisponible = $this->ambienteValido->ambienteValido($idAmbiente, $fechaReserva, $periodos);

@@ -16,7 +16,7 @@ export const buscarAmbientePorNombre = (nombre) => {
 
 export const recuperarAmbientePorID = (id) => {
   return axios.get(`${apiUrl}/ambiente/${id}`).then(function (response) {
-    console.log(id);
+    
     return response.data; // Devuelve los datos del ambiente encontrado
   });
 };
