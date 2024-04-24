@@ -103,6 +103,8 @@ const ModificarEstadoDelAmbientePorFecha = () => {
         } else {
             agregarAlert({ icon: <ExclamationCircleFill />, severidad: "danger", mensaje: "Modificacion fallida" });
         }
+        buscarAmbientPorFecha(formik.values.ambiente, formik.values.fecha)
+        setShowMensajeDeConfirmacion(false);
     }
 
     const mostrarMensajeDeConfirmacion = (estado) => {
@@ -236,7 +238,7 @@ const ModificarEstadoDelAmbientePorFecha = () => {
                                         size="sm"
                                         variant="secondary"
                                         onClick={() => setShowMensajeDeConfirmacion(false)}
-                                    >Close</Button>
+                                    >Cancelar</Button>
                                     <Button
                                         onClick={() => {
                                             modificarPeriodos(estado)
