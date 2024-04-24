@@ -54,6 +54,7 @@ export const getGruposPorBloque = (nombreMateria) => {
 
 
 export const getReserva =(reserva)=>{
+    console.log(reserva);
     return axios.post(`${apiUrl}/realizarSolicitud`,reserva)
     .then((response) => {
         

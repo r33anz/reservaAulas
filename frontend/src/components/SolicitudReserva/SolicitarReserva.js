@@ -35,12 +35,16 @@ const SolcitarReserva = () => {
     capacidadDelAmbienteSeleccionado,
     setCapacidadDelAmbienteSeleccionado,
   ] = useState(null);
+  const [
+    ida,
+    setidambiente,
+  ] = useState(null);
   const [bloques, setBloques] = useState([]);
   const [grupos, setGrupos] = useState([]);
   const { agregarAlert } = useContext(AlertsContext);
   const [nombreAmbiente, setNombreAmbiente] = useState(""); // Estado para almacenar el nombre del ambiente
   const [ambienteOptions, setAmbienteOptions] = useState([]); // Estado para almacenar las opciones de ambiente
-  let periodos = [
+  const [periodos, setPeriodos] = useState([
     { id: 1, hora: "6:45 - 8:15", isCheck: false },
     { id: 2, hora: "8:15 - 9:45", isCheck: false },
     { id: 3, hora: "9:45 - 11:15", isCheck: false },
@@ -51,7 +55,7 @@ const SolcitarReserva = () => {
     { id: 8, hora: "17:15 - 18:45", isCheck: false },
     { id: 9, hora: "18:45 - 20:15", isCheck: false },
     { id: 10, hora: "20:15 - 21:45", isCheck: false },
-  ];
+  ]);
 
   // (FIX:Marco) 'id' is assigned a value but never used
   // eslint-disable-next-line
@@ -101,9 +105,20 @@ const SolcitarReserva = () => {
   }, []);
 
   const handleClick = (e, check, index) => {
-    periodos[index].isCheck = check;
+    console.log(index);
+    console.log(check);
+    
+    setPeriodos(prevPeriodos => {
+      const updatedPeriodos = [...prevPeriodos];
+      updatedPeriodos[index] = { ...updatedPeriodos[index], isCheck: check };
+      
+      return updatedPeriodos;
+    });
     console.log(periodos);
   };
+  
+
+  
 
   // Función para seleccionar un ambiente de la lista de opciones
 
@@ -139,9 +154,15 @@ const SolcitarReserva = () => {
     }),
     onSubmit: (values) => {
       const periodosSeleccionados = periodos.filter((item) => item.isCheck);
-      console
-        .log("periodosSeleccionados", periodos)
-        //getReserva(values)
+      const id = window.localStorage.getItem("docente_id");
+      const listaIDs = periodosSeleccionados.map(item => item.id);
+
+// Asignar la lista de IDs a values.periodos
+values.periodos = listaIDs;
+
+      values.idDocente = id;
+      
+        getReserva(values)
         .then((response) => {
           agregarAlert({
             icon: <CheckCircleFill />,
@@ -175,9 +196,13 @@ const SolcitarReserva = () => {
     formik.setFieldValue("ambiente", ambiente.id);
     formik.setFieldValue("nombreAmbiente", ambiente.nombre);
     setShow("");
+    setidambiente(ambiente.id);
+    console.log(ida);
     recuperarAmbientePorID(ambiente.id)
+    
       .then((data) => {
         // Actualizar estado con los detalles del ambiente
+        
         setCapacidadDelAmbienteSeleccionado(data.capacidad);
       })
       .catch((error) => {
@@ -399,20 +424,16 @@ const SolcitarReserva = () => {
                     )}
                     <h1>Periodos:</h1>
                     {periodos.map((item, index) => (
-                      <div key={index}>
-                        {item.isCheck ? <input
-                          type="checkbox"
-                          onClick={() => handleClick(this, true, index)}
-                          defaultChecked="true"
-                          checked
-                        />:
-                        <input
-                          type="checkbox"
-                          onClick={() => handleClick(this, false, index)}
-                        />}
-                        <label>{item.hora}</label>
-                      </div>
-                    ))}
+  <div key={index}>
+    <input
+      type="checkbox"
+      onClick={() => handleClick(this, !item.isCheck, index)}
+      checked={item.isCheck}
+    />
+    <label>{item.hora}</label>
+  </div>
+))}
+
                   </Col>
                   <Row xs="auto" className="justify-content-md-end">
                     <Stack direction="horizontal" gap={2}>
