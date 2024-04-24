@@ -31,8 +31,8 @@ function App() {
         <Route exact path="/docente/listaDeSolicitudesDeReservaAceptadas" element={
           <ListaDeSolicitudes tipoDeUsuario="Docente" titulo="Lista de Solicitudes de Reserva Aceptadas" />
         } />
-        <Route exact path="/admin/listaDeSolicitudesDeReserva" element={
-          <ListaDeSolicitudes tipoDeUsuario="Admin" titulo="Lista de Solicitudes de Reserva" />
+        <Route exact path="/admin/listaDeSolicitudesDeReservaPorLlegada" element={
+          <ListaDeSolicitudes tipoDeUsuario="Admin" titulo="Lista de Solicitudes de Reserva Por Llegada" />
         } />
         <Route exact path="/admin/buscarPorNombre" element={<Buscar />} />
         <Route exact path="/admin/registroAmbiente" element={

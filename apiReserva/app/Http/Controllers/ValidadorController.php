@@ -6,16 +6,19 @@ use Illuminate\Http\Request;
 use App\Models\Inhabilitado;
 use Illuminate\Support\Carbon;
 use App\Models\Solicitud;
+use App\Services\ValidadorService;
 use Illuminate\Support\Facades\DB;
 
 
 class ValidadorController extends Controller
 {
     protected $ambientesTodos;
+    protected $ambienteValido;
 
-    public function __construct(AmbienteService $ambientes)
+    public function __construct(AmbienteService $ambientes,ValidadorService $ambienteValido)
     {
         $this->ambientesTodos = $ambientes;
+        $this->ambienteValido = $ambienteValido;
     }
 
     
@@ -72,5 +75,22 @@ class ValidadorController extends Controller
         });
 
         return response()->json(['ambientes_disponibles' => $ambientesDisponibles]);
+    }
+
+    public function consultarFechaPeriodoAmbiente(Request $request){
+
+        $valido = true;
+        $fecha = $request->input('fecha');
+        $periodos = $request->input('periodos');
+        $ambiente = $request->input('idAmbiente');
+
+        $ambienteDisponible = $this->ambienteValido->ambienteValido($ambiente, $fecha, $periodos);
+        if(!$ambienteDisponible){
+            $valido = false;
+        }
+
+        return response()->json([
+            "valido"=>$valido
+        ]);
     }
 }

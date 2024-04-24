@@ -58,4 +58,4 @@ Route::get('/solicitudesAceptadas',[SolicitudController::class,'solicitudesAtend
 
 //validador
 Route::post('/consultarFechaPeriodo',[ValidadorController::class,'consultaFechaPeriodo']);  //devuelves los ambientes habiles
-
+Route::post('/consultarFechaPeriodAmbiente',[ValidadorController::class,'consultarFechaPeriodoAmbiente']);
