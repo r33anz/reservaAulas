@@ -78,6 +78,7 @@ class SolicitudController extends Controller
         // verificar si el ambiente es valido
         $ambienteDisponible = $this->ambienteValido->ambienteValido($idAmbiente, $fechaReserva, $periodos);
 
+        echo $ambienteDisponible;
         if (!$ambienteDisponible) {
             return response()->json(['mensaje' => 'El ambiente no está disponible en la fecha y periodos especificados'], 400);
         }
