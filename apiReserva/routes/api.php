@@ -53,7 +53,7 @@ Route::post('/realizarSolicitud',[SolicitudController::class,'registroSolicitud'
 Route::post('/informacionSolicitud',[SolicitudController::class,'informacionSolicitud']);
 Route::get('/solicitudesPorLlegada',[SolicitudController::class,'solicitudesPorLlegada']);
 Route::get('/solicitudesAceptadas',[SolicitudController::class,'solicitudesAtendidas']);
-
+Route::get('/{idSolicitud}/recuperarInformacion',[SolicitudController::class,'recuperarInformacion']);
 //Reserva
 
 //validador

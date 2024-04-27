@@ -58,7 +58,7 @@ class SolicitudController extends Controller
         return response()->json(['listaFechas' => $listaFechas]);
     }
 
-    // CHECK UPDATE
+    //FINISH
     public function registroSolicitud(Request $request)
     {
         /**
@@ -80,7 +80,7 @@ class SolicitudController extends Controller
 
         echo $ambienteDisponible;
         if (!$ambienteDisponible) {
-            return response()->json(['mensaje' => 'El ambiente no está disponible en la fecha y periodos especificados'], 400);
+            return response()->json(['mensaje' => 'El ambiente no esta disponible en la fecha y periodos especificados'], 400);
         }
 
         if (count($periodos) === 1) {
@@ -116,7 +116,7 @@ class SolicitudController extends Controller
         ]);
     }
 
-    // TO DO UPDATE
+    //FINISH
     public function informacionSolicitud(Request $request)
     {
         $id = $request->input('id');
@@ -139,8 +139,33 @@ class SolicitudController extends Controller
             'periodo_fin_id' => $solicitud->periodo_fin_id,
             'fecha' => $solicitud->fechaReserva,
             'ambiente_nombre' => $ambiente->nombre,
+            
         ]);
     }
+
+    public function recuperarInformacion($idSolicitud){
+        $solicitud = Solicitud::find($idSolicitud);
+
+        $idAmbiente = DB::table('ambiente_solicitud')->where('solicitud_id', $idSolicitud)->value('ambiente_id');
+        $ambiente = Ambiente::where('id', $idAmbiente)->first();
+
+        $docente = Docente::find($solicitud->docente_id);
+        return response()->json([
+            'nombreDocente' => $docente->nombre,
+            'materia' => $solicitud->materia,
+            'grupo'=>$solicitud->grupo,
+            'cantidad' => $solicitud->cantidad,
+            'razon' => $solicitud->razon,
+            'periodo_ini_id' => $solicitud->periodo_ini_id,
+            'periodo_fin_id' => $solicitud->periodo_fin_id,
+            'fecha' => $solicitud->fechaReserva,
+
+
+            'ambiente_nombre' => $ambiente->nombre,
+            'ambienteCantidadMax' => $ambiente->capacidad
+        ]);
+    }
+
 
     // FINISH
     public function solicitudesPorLlegada()
