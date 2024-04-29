@@ -27,7 +27,7 @@ const ListaDeSolicitudes = ({ titulo, tipoDeUsuario }) => {
         const periodoReserva = periodos.filter((periodo) => {
             return periodo.id === periodoInicioId || periodo.id === periodoFinId;
         }).map((periodo) => periodo.hora);
-        return <>{periodoReserva[0]} <br /> {periodoReserva[1]}</>
+        return <>De {periodoReserva[0]} a {periodoReserva[1]}</>
     }
 
     const reloadSolicitudes = async () => {
@@ -35,11 +35,11 @@ const ListaDeSolicitudes = ({ titulo, tipoDeUsuario }) => {
         agregarAlert({ icon: <CheckCircleFill />, severidad: "success", mensaje: "Actualizacion con exito" });
     }
 
-    const getSolicitudes = useCallback(async() => {
-        if (tipoDeUsuario === "Admin") { 
+    const getSolicitudes = useCallback(async () => {
+        if (tipoDeUsuario === "Admin") {
             const id = window.sessionStorage.getItem("admin_id");
             const data = await recuperarSolicitudesDeReserva(id)
-            setSolicitudes(data.solicitudes_por_llegada            );
+            setSolicitudes(data.solicitudes_por_llegada);
         }
         if (tipoDeUsuario === "Docente") {
             const id = window.sessionStorage.getItem("docente_id");
@@ -55,19 +55,17 @@ const ListaDeSolicitudes = ({ titulo, tipoDeUsuario }) => {
     return (<>
         <Container fluid>
             <Row>
-                <Col sm="3">
-                </Col>
                 <Col>
                     <Row sm className="text-white ListaDeSolicitudes-header">
-                        <Col xs="10" className="d-flex justify-content-start align-items-center">
-                            <h3 style={{ fontWeight: "bold" }} className="">{titulo}</h3>
+                        <Col xs="10" className="d-flex justify-content-start align-items-center" style={{height: "3rem"}}>
+                            <h5 style={{ fontWeight: "bold" }}>{titulo}</h5>
                         </Col>
                         <Col xs="2" className="d-flex justify-content-end align-items-end" style={{ padding: 0 }}>
                             <OverlayTrigger
                                 overlay={(<Tooltip id="hi">Actualizar lista</Tooltip>)} placement="left"
                             >
                                 <div onClick={reloadSolicitudes}
-                                    className="RegistrarAmbiente-header-button-close d-flex 
+                                    className="ListaDeSolicitudes-header-button-cargar d-flex 
                                                justify-content-center align-items-center">
                                     <ArrowClockwise size={24} />
                                 </div>
@@ -78,21 +76,24 @@ const ListaDeSolicitudes = ({ titulo, tipoDeUsuario }) => {
                         <Table striped bordered hover responsive>
                             <thead>
                                 <tr>
-                                    <th>Ambiente</th>
+                                    <th scope="col">Ambiente</th>
                                     {tipoDeUsuario === "Admin" && <th>Docente</th>}
-                                    <th>Materia</th>
-                                    <th>Periodo</th>
-                                    <th>Fecha de Reserva</th>
-                                    <th>Detalle</th>
+                                    <th scope="col">Materia</th>
+                                    <th scope="col" className="d-none d-xl-table-cell">Periodo</th>
+                                    <th scope="col" className="d-none d-lg-table-cell">Fecha de Reserva</th>
+                                    <th scope="col">Detalle</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {solicitudes.map((item) => <tr>
                                     <td>{item.ambiente_nombre}</td>
-                                    {tipoDeUsuario === "Admin" && <td>{item.nombre_docente}</td>}
                                     <td>{item.materia}</td>
-                                    <td>{getPeriodo(item.periodo_ini_id, item.periodo_fin_id)}</td>
-                                    <td>{item.fechaReserva}</td>
+                                    <td className="d-none d-xl-table-cell">
+                                        {getPeriodo(item.periodo_ini_id, item.periodo_fin_id)}
+                                    </td>
+                                    <td className="d-none d-lg-table-cell">
+                                        {item.fechaReserva}
+                                    </td>
                                     <td>
                                         <CardHeading size={30} onClick={() => {
                                             setSolicitud(item);
@@ -112,18 +113,18 @@ const ListaDeSolicitudes = ({ titulo, tipoDeUsuario }) => {
             show={show} onHide={() => setShow(false)}
             centered
         >
-            <Row sm className="text-white RegistrarAmbiente-header">
+            <Row sm className="text-white SolicitarReserva-header">
                 <Col xs="10" className="d-flex justify-content-start align-items-center" style={{ height: '100%' }}>
                     <h4 style={{ fontWeight: "bold" }} className="">Detalle de la Solicitud de Reserva</h4>
                 </Col>
                 <Col xs="2" className="d-flex justify-content-end align-items-end" style={{ padding: 0 }}>
                     <div onClick={() => setShow(false)}
-                        className="RegistrarAmbiente-header-button-close d-flex justify-content-center align-items-center">
+                        className="SolicitarReserva-header-button-close d-flex justify-content-center align-items-center">
                         <XSquareFill size={24} />
                     </div>
                 </Col>
             </Row>
-            <Row className="RegistrarAmbiente-body justify-content-center">
+            <Row className="SolicitarReserva-body justify-content-center">
                 <h6>Nombre del Ambiente:</h6><p>{solicitud.ambiente_nombre}</p>
                 {tipoDeUsuario === "Admin" && <><h6>Nombre del Docente: </h6><p>{solicitud.nombre_docente}</p></>}
                 <h6>Periodo: </h6><p>{getPeriodo(solicitud.periodo_ini_id, solicitud.periodo_fin_id)}</p>

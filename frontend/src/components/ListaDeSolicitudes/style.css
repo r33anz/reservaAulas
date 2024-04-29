@@ -1,9 +1,30 @@
 .ListaDeSolicitudes-header {
     background-color: #003F70;
-    height: 3.5rem;
+    /* height: 3.5rem; */
 }
 
 .ListaDeSolicitudes-body {
     background-color: #D9D9D9;
     padding: 1rem;
 }
+
+.ListaDeSolicitudes-header-button-cargar {
+    color: #ffffff;
+    background-color: #D51809;
+    border-radius: 0%;
+    border-color: #D51809;
+    width: 58px;
+    height: 100%;
+  }
+  
+  .ListaDeSolicitudes-header-button-cargar:hover,
+  .ListaDeSolicitudes-header-button-cargar:active,
+  .ListaDeSolicitudes-header-button-cargar:focus,
+  .ListaDeSolicitudes-header-button-cargar:disabled,
+  .ListaDeSolicitudes-header-button-cargar.active {
+    color: #ffffff;
+    background: #D51809;
+    border-color: #D51809;
+    --bs-btn-active-bg: #D51809;
+    --bs-btn-active-border-color: #D51809;
+  }

@@ -28,7 +28,7 @@ import * as Yup from "yup";
 import "./style.css";
 import { AlertsContext } from "../Alert/AlertsContext";
 
-const SolcitarReserva = () => {
+const SolcitarReserva = ({ onClose }) => {
   const inputAmbienteRef = useRef();
   const [show, setShow] = useState("");
   const [
@@ -107,18 +107,18 @@ const SolcitarReserva = () => {
   const handleClick = (e, check, index) => {
     console.log(index);
     console.log(check);
-    
+
     setPeriodos(prevPeriodos => {
       const updatedPeriodos = [...prevPeriodos];
       updatedPeriodos[index] = { ...updatedPeriodos[index], isCheck: check };
-      
+
       return updatedPeriodos;
     });
     console.log(periodos);
   };
-  
 
-  
+
+
 
   // Función para seleccionar un ambiente de la lista de opciones
 
@@ -157,12 +157,12 @@ const SolcitarReserva = () => {
       const id = window.localStorage.getItem("docente_id");
       const listaIDs = periodosSeleccionados.map(item => item.id);
 
-// Asignar la lista de IDs a values.periodos
-values.periodos = listaIDs;
+      // Asignar la lista de IDs a values.periodos
+      values.periodos = listaIDs;
 
       values.idDocente = id;
-      
-        getReserva(values)
+
+      getReserva(values)
         .then((response) => {
           agregarAlert({
             icon: <CheckCircleFill />,
@@ -199,10 +199,10 @@ values.periodos = listaIDs;
     setidambiente(ambiente.id);
     console.log(ida);
     recuperarAmbientePorID(ambiente.id)
-    
+
       .then((data) => {
         // Actualizar estado con los detalles del ambiente
-        
+
         setCapacidadDelAmbienteSeleccionado(data.capacidad);
       })
       .catch((error) => {
@@ -218,229 +218,232 @@ values.periodos = listaIDs;
 
   return (
     <>
-      <div style={{ width: "574px" }}>
+      <div style={{ width: "100%" }}>
         <Container className="RegistrarAmbiente-header" fluid>
-          <Row xs="auto" className="justify-content-md-end">
-            <Button
-              className="RegistrarAmbiente-header-button-close"
-              style={{ width: "58px", height: "58px" }}
-            >
-              <XSquareFill style={{ width: "24px", height: "24px" }} />
-            </Button>
+          <Row xs="auto" className="text-white justify-content-end">
+            <Col xs="10" className="d-flex justify-content-start align-items-center" style={{ height: "3rem" }}>
+              <h5 style={{ fontWeight: "bold" }}>Solicitud de Reserva</h5>
+            </Col>
+            <Col xs="2" className="d-flex justify-content-end align-items-end" style={{ padding: 0 }}>
+              <Button
+                className="btn SolicitarReserva-header-button-close"
+                style={{ width: "58px", height: "48px" }}
+                onClick={onClose}
+              >
+                <XSquareFill style={{ width: "24px", height: "24px" }} />
+              </Button>
+            </Col>
           </Row>
         </Container>
         <Container className="RegistrarAmbiente-body" fluid>
           <Row className="justify-content-md-center">
-            <h1 style={{ fontWeight: "bold" }} className="text-center">
-              Registrar nuevo ambiente
-            </h1>
-            <Col xs lg="9">
+            <Col xs lg="10">
               <Form onSubmit={formik.handleSubmit}>
                 <Stack gap={2} direction="vertical">
-                  <Col lg="9">
-                    <Form.Group className="mb-3" controlId="materia">
-                      <Form.Label>Materia</Form.Label>
-                      <Form.Select
-                        onChange={(e) => {
-                          setPisosPorBloqueSeleccionado(e);
-                          formik.handleChange(e);
-                        }}
-                        onBlur={formik.handleBlur}
-                        value={formik.values.materia}
-                      >
-                        <option value="" disabled selected>
-                          Ingrese una materia
-                        </option>
-                        {bloques.map((bloque) => (
-                          <option key={bloque.id} value={bloque.name}>
-                            {bloque.name}
-                          </option>
-                        ))}
-                      </Form.Select>
-                      <Form.Text className="text-danger">
-                        {formik.touched.materia && formik.errors.materia ? (
-                          <div className="text-danger">
-                            {formik.errors.materia}
-                          </div>
-                        ) : null}
-                      </Form.Text>
-                    </Form.Group>
-                    <Form.Group className="mb-3" controlId="grupo">
-                      <Form.Label>Grupo</Form.Label>
-                      <Form.Select
-                        onChange={formik.handleChange}
-                        onBlur={formik.handleBlur}
-                        value={formik.values.grupo}
-                        disabled={!formik.values.materia} // Deshabilitar si no se ha seleccionado una materia
-                      >
-                        <option value="" disabled selected>
-                          Seleccione un grupo
-                        </option>
-                        {grupos.map((grupo) => (
-                          <option key={grupo} value={grupo}>
-                            {grupo}
-                          </option>
-                        ))}
-                      </Form.Select>
-                      <Form.Text className="text-danger">
-                        {formik.touched.grupo && formik.errors.grupo ? (
-                          <div className="text-danger">
-                            {formik.errors.grupo}
-                          </div>
-                        ) : null}
-                      </Form.Text>
-                    </Form.Group>
-                    <Form.Group
-                      className="mb-3 RegistrarAmbiente-entrada-numero"
-                      controlId="capacidad"
+                  <Form.Group className="mb-3" controlId="materia">
+                    <Form.Label>Materia</Form.Label>
+                    <Form.Select
+                      onChange={(e) => {
+                        setPisosPorBloqueSeleccionado(e);
+                        formik.handleChange(e);
+                      }}
+                      onBlur={formik.handleBlur}
+                      value={formik.values.materia}
                     >
-                      <Form.Label>Capacidad</Form.Label>
-                      <Form.Control
-                        type="number"
-                        onKeyDown={(e) => {
-                          if (!validosKey.includes(e.key)) {
-                            e.preventDefault();
-                          }
-                        }}
-                        placeholder="Ingrese un valor"
-                        onChange={formik.handleChange}
-                        onBlur={formik.handleBlur}
-                        value={formik.values.capacidad}
-                      />
-                      <Form.Text className="text-danger">
-                        {formik.touched.capacidad && formik.errors.capacidad ? (
-                          <div className="text-danger">
-                            {formik.errors.capacidad}
-                          </div>
-                        ) : null}
-                      </Form.Text>
-                    </Form.Group>
-                    <Form.Group className="mb-3" controlId="razon">
-                      <Form.Label>Razon</Form.Label>
-                      <Form.Control
-                        as="textarea" // Cambia el tipo a "textarea"
-                        placeholder="Ingrese la razon de uso"
-                        onChange={formik.handleChange}
-                        onBlur={formik.handleBlur}
-                        value={formik.values.razon}
-                      />
-                      <Form.Text className="text-danger">
-                        {formik.touched.razon && formik.errors.razon ? (
-                          <div className="text-danger">
-                            {formik.errors.razon}
-                          </div>
-                        ) : null}
-                      </Form.Text>
-                    </Form.Group>
+                      <option value="" disabled selected>
+                        Ingrese una materia
+                      </option>
+                      {bloques.map((bloque) => (
+                        <option key={bloque.id} value={bloque.name}>
+                          {bloque.name}
+                        </option>
+                      ))}
+                    </Form.Select>
+                    <Form.Text className="text-danger">
+                      {formik.touched.materia && formik.errors.materia ? (
+                        <div className="text-danger">
+                          {formik.errors.materia}
+                        </div>
+                      ) : null}
+                    </Form.Text>
+                  </Form.Group>
+                  <Form.Group className="mb-3" controlId="grupo">
+                    <Form.Label>Grupo</Form.Label>
+                    <Form.Select
+                      onChange={formik.handleChange}
+                      onBlur={formik.handleBlur}
+                      value={formik.values.grupo}
+                      disabled={!formik.values.materia} // Deshabilitar si no se ha seleccionado una materia
+                    >
+                      <option value="" disabled selected>
+                        Seleccione un grupo
+                      </option>
+                      {grupos.map((grupo) => (
+                        <option key={grupo} value={grupo}>
+                          {grupo}
+                        </option>
+                      ))}
+                    </Form.Select>
+                    <Form.Text className="text-danger">
+                      {formik.touched.grupo && formik.errors.grupo ? (
+                        <div className="text-danger">
+                          {formik.errors.grupo}
+                        </div>
+                      ) : null}
+                    </Form.Text>
+                  </Form.Group>
+                  <Form.Group
+                    className="mb-3 RegistrarAmbiente-entrada-numero"
+                    controlId="capacidad"
+                  >
+                    <Form.Label>Capacidad</Form.Label>
+                    <Form.Control
+                      type="number"
+                      onKeyDown={(e) => {
+                        if (!validosKey.includes(e.key)) {
+                          e.preventDefault();
+                        }
+                      }}
+                      placeholder="Ingrese un valor"
+                      onChange={formik.handleChange}
+                      onBlur={formik.handleBlur}
+                      value={formik.values.capacidad}
+                    />
+                    <Form.Text className="text-danger">
+                      {formik.touched.capacidad && formik.errors.capacidad ? (
+                        <div className="text-danger">
+                          {formik.errors.capacidad}
+                        </div>
+                      ) : null}
+                    </Form.Text>
+                  </Form.Group>
+                  <Form.Group className="mb-3" controlId="razon">
+                    <Form.Label>Razon</Form.Label>
+                    <Form.Control
+                      as="textarea" // Cambia el tipo a "textarea"
+                      placeholder="Ingrese la razon de uso"
+                      onChange={formik.handleChange}
+                      onBlur={formik.handleBlur}
+                      value={formik.values.razon}
+                    />
+                    <Form.Text className="text-danger">
+                      {formik.touched.razon && formik.errors.razon ? (
+                        <div className="text-danger">
+                          {formik.errors.razon}
+                        </div>
+                      ) : null}
+                    </Form.Text>
+                  </Form.Group>
 
-                    <Form.Group
-                      as={Row}
-                      className="mb-3"
-                      controlId="nombreAmbiente"
-                    >
-                      <Form.Label>Nombre del Ambiente</Form.Label>
-                      <Col>
-                        <Dropdown id="nombreAmbientes">
-                          <Dropdown.Toggle
-                            ref={inputAmbienteRef}
-                            as={"input"}
-                            id="nombreAmbiente"
-                            type="text"
-                            placeholder="Ingrese el nombre del ambiente"
-                            onChange={handleInputChange}
-                            onBlur={formik.handleBlur}
-                            value={formik.values.nombreAmbiente}
-                            className="form-control"
-                            bsPrefix="dropdown-toggle"
-                          />
-                          {formik.values.nombreAmbiente !== "" && (
-                            <Dropdown.Menu
-                              className={show}
-                              style={{
-                                width: "100%",
-                                overflowY: "auto",
-                                maxHeight: "5rem",
-                              }}
-                              show
-                            >
-                              {ambienteOptions.map((ambiente) => (
-                                <Dropdown.Item
-                                  key={ambiente.nombre}
-                                  onClick={() => setNombreDelAmbiente(ambiente)}
-                                >
-                                  {ambiente.nombre}
-                                </Dropdown.Item>
-                              ))}
-                            </Dropdown.Menu>
-                          )}
-                        </Dropdown>
-                        <Form.Text className="text-danger">
-                          {formik.touched.nombreAmbiente &&
-                          formik.errors.nombreAmbiente ? (
-                            <div className="text-danger">
-                              {formik.errors.nombreAmbiente}
-                            </div>
-                          ) : null}
-                        </Form.Text>
-                      </Col>
-                    </Form.Group>
-                    <Form.Group
-                      as={Row}
-                      className="mb-3"
-                      controlId="fechaReserva"
-                    >
-                      <Form.Label column sm="3">
-                        Fecha Reserva
-                      </Form.Label>
-                      <Col sm="9">
-                        <FormControl
+                  <Form.Group
+                    as={Row}
+                    className="mb-3"
+                    controlId="nombreAmbiente"
+                  >
+                    <Form.Label>Nombre del Ambiente</Form.Label>
+                    <Col>
+                      <Dropdown id="nombreAmbientes">
+                        <Dropdown.Toggle
+                          ref={inputAmbienteRef}
+                          as={"input"}
+                          id="nombreAmbiente"
                           type="text"
-                          placeholder="Ingrese la fecha para la reserva"
-                          onChange={formik.handleChange}
-                          onFocus={(e) => {
-                            e.target.type = "date";
-                          }}
-                          onBlur={(e) => {
-                            e.target.type = "text";
-                            formik.handleBlur(e);
-                          }}
-                          value={formik.values.fechaReserva}
+                          placeholder="Ingrese el nombre del ambiente"
+                          onChange={handleInputChange}
+                          onBlur={formik.handleBlur}
+                          value={formik.values.nombreAmbiente}
+                          className="form-control"
+                          bsPrefix="dropdown-toggle"
                         />
-                        <Form.Text className="text-danger">
-                          {formik.touched.fechaReserva &&
+                        {formik.values.nombreAmbiente !== "" && (
+                          <Dropdown.Menu
+                            className={show}
+                            style={{
+                              width: "100%",
+                              overflowY: "auto",
+                              maxHeight: "5rem",
+                            }}
+                            show
+                          >
+                            {ambienteOptions.map((ambiente) => (
+                              <Dropdown.Item
+                                key={ambiente.nombre}
+                                onClick={() => setNombreDelAmbiente(ambiente)}
+                              >
+                                {ambiente.nombre}
+                              </Dropdown.Item>
+                            ))}
+                          </Dropdown.Menu>
+                        )}
+                      </Dropdown>
+                      <Form.Text className="text-danger">
+                        {formik.touched.nombreAmbiente &&
+                          formik.errors.nombreAmbiente ? (
+                          <div className="text-danger">
+                            {formik.errors.nombreAmbiente}
+                          </div>
+                        ) : null}
+                      </Form.Text>
+                    </Col>
+                  </Form.Group>
+                  <Form.Group
+                    as={Row}
+                    className="mb-3"
+                    controlId="fechaReserva"
+                  >
+                    <Form.Label column sm="3">
+                      Fecha Reserva
+                    </Form.Label>
+                    <Col sm="9">
+                      <FormControl
+                        type="text"
+                        placeholder="Ingrese la fecha para la reserva"
+                        onChange={formik.handleChange}
+                        onFocus={(e) => {
+                          e.target.type = "date";
+                        }}
+                        onBlur={(e) => {
+                          e.target.type = "text";
+                          formik.handleBlur(e);
+                        }}
+                        value={formik.values.fechaReserva}
+                      />
+                      <Form.Text className="text-danger">
+                        {formik.touched.fechaReserva &&
                           formik.errors.fechaReserva ? (
-                            <div className="text-danger">
-                              {formik.errors.fechaReserva}
-                            </div>
-                          ) : null}
-                        </Form.Text>
-                      </Col>
-                    </Form.Group>
-                    {capacidadDelAmbienteSeleccionado !== null && (
-                      <p>
-                        Este ambiente tiene una capacidad maxima de{" "}
-                        {capacidadDelAmbienteSeleccionado}
-                      </p>
-                    )}
-                    <h1>Periodos:</h1>
-                    {periodos.map((item, index) => (
-  <div key={index}>
-    <input
-      type="checkbox"
-      onClick={() => handleClick(this, !item.isCheck, index)}
-      checked={item.isCheck}
-    />
-    <label>{item.hora}</label>
-  </div>
-))}
-
-                  </Col>
+                          <div className="text-danger">
+                            {formik.errors.fechaReserva}
+                          </div>
+                        ) : null}
+                      </Form.Text>
+                    </Col>
+                  </Form.Group>
+                  {capacidadDelAmbienteSeleccionado !== null && (
+                    <p>
+                      Este ambiente tiene una capacidad maxima de{" "}
+                      {capacidadDelAmbienteSeleccionado}
+                    </p>
+                  )}
+                  <h1>Periodos:</h1>
+                  {periodos.map((item, index) => (
+                    <div key={index}>
+                      <input
+                        type="checkbox"
+                        onClick={() => handleClick(this, !item.isCheck, index)}
+                        checked={item.isCheck}
+                      />
+                      <label>{item.hora}</label>
+                    </div>
+                  ))}
                   <Row xs="auto" className="justify-content-md-end">
                     <Stack direction="horizontal" gap={2}>
                       <Button
                         className="btn RegistrarAmbiente-button-cancel"
                         size="sm"
-                        onClick={() => formik.resetForm()}
+                        onClick={() => {
+                          formik.resetForm();
+                          onClose();
+                        }}
                       >
                         Cancelar
                       </Button>

@@ -5,6 +5,7 @@ import './style.css';
 import logo from '../../assets/images/image.png';
 import '../../components/Busquedanombre/Style.css';
 import { Outlet } from "react-router-dom";
+import DashboardDocente from "../DashboardDocente";
 
 const Home = () => {
 
@@ -27,19 +28,9 @@ const Home = () => {
         <Col>
           <h4>HOME</h4>
         </Col>
-        {/* <Col className="Home-busqueda">
-          <Stack direction="horizontal" gap={2}>
-            <h5>BUSQUEDA:</h5>
-            <Button>
-              Nombre
-            </Button>
-            <Button>
-              Fecha
-            </Button>
-          </Stack>
-        </Col> */}
       </Row>
-      <Outlet />
+      <Outlet /> {/** TODO(Cristal.Flores): Esto se eliminara cuando se haga la integracion de todos los componentes */}
+      <DashboardDocente />
     </Container>
     <footer className="App-footer">
       <Container fluid="xs" style={{ padding: "5px" }}>
