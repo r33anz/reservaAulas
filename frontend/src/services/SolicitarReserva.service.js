@@ -52,6 +52,13 @@ export const getGruposPorBloque = (nombreMateria) => {
     return gruposPredeterminados[nombreMateria];
 };
 
+export const getDocente = (id) => {
+    return axios.get(`${apiUrl}/docentes/${id}`)
+    .then(function (response) {
+      //console.log(response.data.nombre);
+      return response.data; // Devuelve los datos del ambiente encontrado
+    });
+  };
 
 export const getReserva =(reserva)=>{
     console.log(reserva);

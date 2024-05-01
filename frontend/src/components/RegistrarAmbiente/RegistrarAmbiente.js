@@ -25,6 +25,7 @@ const RegistrarAmbiente = () => {
         "8",
         "9",
         "Backspace",
+        "Tab",      
     ];
 
     const formik = useFormik({
@@ -118,6 +119,7 @@ const RegistrarAmbiente = () => {
                                         <Form.Control
                                             type="number"
                                             onKeyDown={(e) => {
+                                                console.log(e.key)
                                                 if (!validosKey.includes(e.key)) {
                                                     e.preventDefault();
                                                 }
