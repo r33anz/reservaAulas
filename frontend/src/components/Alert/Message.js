@@ -8,22 +8,18 @@ const Message = ({ alert }) => {
     const [show, setShow] = useState(true)
 
     useEffect(() => {
+        setShow(true);
         const timeId = setTimeout(() => {
             setMessage(null);
             setShow(false)
         }, 5000);
-        setShow(true)
         setMessage(alert);
         return () => {
             clearTimeout(timeId);
+            setMessage(null);
+            setShow(false);
         }
     }, [alert]);
-
-    useEffect(() => {
-        setMessage(null);
-        setShow(false)
-        setTimeout(() => console.log(), 1000);
-    }, [])
 
     return (<>{message && <Alert
         key={message.id}

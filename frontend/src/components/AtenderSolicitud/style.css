@@ -1,0 +1,85 @@
+.AtenderSolicitud-header, .AtenderSolicitud-modal-header {
+    background-color: #003F70;
+    height: 3.5rem;
+}
+
+.AtenderSolicitud-body, .AtenderSolicitud-modal-body {
+    background-color: #D9D9D9;
+    padding: 1rem;
+}
+
+.AtenderSolicitud-header-button-close {
+    color: #ffffff;
+    background-color: #D51809;
+    border-radius: 0%;
+    border-color: #D51809;
+    width: 58px;
+    height: 100%;
+}
+
+.AtenderSolicitud-header-button-close:hover,
+.AtenderSolicitud-header-button-close:active,
+.AtenderSolicitud-header-button-close:focus,
+.AtenderSolicitud-header-button-close:disabled,
+.AtenderSolicitud-header-button-close.active {
+    /* let's darken #004E64 a bit for hover effect */
+    color: #ffffff;
+    background: #D51809;
+    border-color: #D51809;
+}
+
+.AtenderSolicitud-button-cancel {
+    color: #003F70;
+    background-color: #ffffff;
+    border-color: #003F70;
+}
+
+.AtenderSolicitud-button-cancel:hover,
+.AtenderSolicitud-button-cancel:active,
+.AtenderSolicitud-button-cancel:focus,
+.AtenderSolicitud-button-cancel.active {
+    /* let's darken #004E64 a bit for hover effect */
+    color: #003F70;
+    background: #ffffff;
+    border-color: #003F70;
+    --bs-btn-active-color: #003F70;
+    --bs-btn-active-bg: #ffffff;
+    --bs-btn-active-border-color: #003F70;
+}
+
+.AtenderSolicitud-button-enviar, 
+.AtenderSolicitud-button-aceptar, 
+.AtenderSolicitud-button-rechazar, 
+.AtenderSolicitud-button-disponibilidad {
+    color: #ffffff;
+    background-color: #003F70;
+    border-color: #003F70;
+}
+
+.AtenderSolicitud-button-enviar:hover, 
+.AtenderSolicitud-button-aceptar:hover, 
+.AtenderSolicitud-button-rechazar:hover,
+.AtenderSolicitud-button-disponibilidad:hover,
+.AtenderSolicitud-button-enviar:active,
+.AtenderSolicitud-button-aceptar:active, 
+.AtenderSolicitud-button-rechazar:active,
+.AtenderSolicitud-button-disponibilidad:active,
+.AtenderSolicitud-button-enviar:focus,
+.AtenderSolicitud-button-aceptar:focus, 
+.AtenderSolicitud-button-rechazar:focus,
+.AtenderSolicitud-button-disponibilidad:focus,
+.AtenderSolicitud-button-enviar:disabled,
+.AtenderSolicitud-button-aceptar:disabled, 
+.AtenderSolicitud-button-rechazar:disabled,
+.AtenderSolicitud-button-disponibilidad:disabled,
+.AtenderSolicitud-button-enviar.active,
+.AtenderSolicitud-button-aceptar.active, 
+.AtenderSolicitud-button-rechazar.active,
+.AtenderSolicitud-button-disponibilidad.active {
+    color: #ffffff;
+    background: #003F70;
+    border-color: #003F70;
+    --bs-btn-active-color: #003F70;
+    --bs-btn-active-bg: #ffffff;
+    --bs-btn-active-border-color: #003F70;
+}

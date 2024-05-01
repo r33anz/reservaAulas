@@ -15,6 +15,7 @@ import Buscar from "./components/Busquedanombre/Buscar";
 import NotFound from "./pages/NotFound";
 import ListaDeSolicitudes from "./components/ListaDeSolicitudes";
 import SolcitarReserva from "./components/SolicitudReserva/SolicitarReserva"
+import AtenderSolicitud from "./components/AtenderSolicitud/AtenderSolicitud";
 
 function App() {
 
@@ -27,6 +28,7 @@ function App() {
       }>
         <Route index element={<Buscar />} />
         <Route exact path="/docente/buscarPorNombre" element={<Buscar />} />
+        <Route exact path="/docente/atenderSolicitud" element={<AtenderSolicitud solicitudId={1} />} />
         <Route exact path="/docente/enviarSolicitud" element={<SolcitarReserva />} />
         
         <Route exact path="/docente/listaDeSolicitudesDeReservaAceptadas" element={
