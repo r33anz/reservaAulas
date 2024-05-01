@@ -14,6 +14,7 @@ const ModificarEstadoDelAmbientePorFecha = () => {
     const [show, setShow] = useState("");
     const [estado, setEstado] = useState("");
     const [showMensajeDeConfirmacion, setShowMensajeDeConfirmacion] = useState(false);
+    const [enterPressed, setEnterPressed] = useState(false);
     const { agregarAlert } = useContext(AlertsContext);
     const inputAmbienteRef = useRef();
     const periodos = [
@@ -38,14 +39,32 @@ const ModificarEstadoDelAmbientePorFecha = () => {
             ambiente: Yup.object().shape({
                 nombre: Yup.string()
                     .required("Obligatorio")
+                    .test('hasOptions', 'No exite ese ambiente', function(value) {
+                        // 'this.options' contiene las opciones que pasas al esquema de validación
+                        if(ambientes.length>0){
+                          
+                          return true;
+                        }else{
+                          
+                          return false;
+                        }
+                    })
             }),
             fecha: Yup.date()
+            .min(new Date(new Date().setDate(new Date().getDate() - 1)), 'La fecha no puede ser anterior a la fecha actual')
                 .required("Obligatorio")
         }),
         onSubmit: values => {
-            buscarAmbientPorFecha(values.ambiente, values.fecha);
-            console.log(values);
-            setShow("")
+            if(enterPressed){
+                
+                buscarAmbientPorFecha(values.ambiente, values.fecha);
+                console.log(values);
+                setEnterPressed(false);
+                }else{
+                    
+                    buscarAmbientPorFecha(ambientes[0], values.fecha);
+                }
+                console.log(show);
         }
     });
 
@@ -63,12 +82,13 @@ const ModificarEstadoDelAmbientePorFecha = () => {
             const { respuesta } = await buscarAmbientePorNombre(value);
             console.log("ambientes", respuesta)
             setAmbientes(respuesta)
-            setShow("show")
+            //setShow("show")
         }
     }
 
     const setNombreDelAmbiente = (ambiente) => {
         formik.setFieldValue("ambiente", { id: ambiente.id, nombre: ambiente.nombre });
+        setEnterPressed(true);
         setShow("")
     }
 
