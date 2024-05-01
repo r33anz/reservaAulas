@@ -83,6 +83,7 @@ const ListaDeSolicitudes = ({ titulo, tipoDeUsuario }) => {
                                     <th>Materia</th>
                                     <th>Periodo</th>
                                     <th>Fecha de Reserva</th>
+                                    <th>Fecha Creada</th>
                                     <th>Detalle</th>
                                 </tr>
                             </thead>
@@ -93,6 +94,7 @@ const ListaDeSolicitudes = ({ titulo, tipoDeUsuario }) => {
                                     <td>{item.materia}</td>
                                     <td>{getPeriodo(item.periodo_ini_id, item.periodo_fin_id)}</td>
                                     <td>{item.fechaReserva}</td>
+                                    <td>{item.fechaEnviada}</td>
                                     <td>
                                         <CardHeading size={30} onClick={() => {
                                             setSolicitud(item);
