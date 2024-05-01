@@ -2,27 +2,33 @@ import React, { useCallback, useState, useContext,useEffect, useRef  } from 'rea
 import { Button } from 'react-bootstrap';
 import { buscarAmbientePorNombre, modificarPerio ,estadoinhabilitado,habilita} from '../../services/ModificarPeriodo.service';
 import './style.css';
+import {  FormControl,Col, Container, Dropdown, Form,  Row} from "react-bootstrap";
 import { AlertsContext } from "../Alert/AlertsContext";
 import { ExclamationCircleFill } from 'react-bootstrap-icons';
+import { useFormik } from "formik";
+import * as Yup from "yup";
+
 
 const Modificarperdiodo = () => {
+    const inputAmbienteRef = useRef();
+    const [show, setShow] = useState("");
     const [nombreAmbiente, setNombreAmbiente] = useState(''); // Estado para almacenar el nombre del ambiente
     const [ambienteOptions, setAmbienteOptions] = useState([]); // Estado para almacenar las opciones de ambiente
     const [fecha, setFecha] = useState(''); // Estado para almacenar la fecha seleccionada
-    const [idAmbiente, setId] = useState(''); // Estado para almacenar el ID del ambiente
-    const [nombre, setNombre] = useState(''); // Estado para almacenar el nombre del ambiente
+
     const [periodosModificados, setPeriodosModificados] = useState([]);
     const { agregarAlert } = useContext(AlertsContext);
-    const [idAmbienteModificar, setIdMo] = useState(''); // Estado para almacenar el ID del ambiente
-    const [nombreModificar, setNombreMO] = useState(''); // Estado para almacenar el nombre del ambiente
+
     const [fechaModifica, setFechaMo] = useState(''); // Estado para almacenar la fecha seleccionada
     const optionsContainerRef = useRef(null); 
-    const [selectedOptionIndex, setSelectedOptionIndex] = useState(-1);
+
     const [consultarPresionado, setConsultarPresionado] = useState(false);
     const [nombreAmbienteFocused, setNombreAmbienteFocused] = useState(false);
-    const [fechaAmbienteFocused, setFechaAmbienteFocused] = useState(false);
+    const [enterPressed, setEnterPressed] = useState(false);
     // Función para buscar ambientes por nombre
-    const buscarAmbiente = (nombre) => {
+    const [ambientes, setAmbientes] = useState([]);
+    const [ambiente, setAmbiente] = useState({});
+    /*const buscarAmbiente = (nombre) => {
     if (nombre.trim() !== '') {
         buscarAmbientePorNombre(nombre)
             .then(data => {
@@ -32,11 +38,14 @@ const Modificarperdiodo = () => {
                 setId(idValue);
                 setNombre(nombreValue);
                 setAmbienteOptions(data.respuesta);
+                
                 setSelectedOptionIndex(-1); // Actualizar las opciones de ambiente con los datos obtenidos
                 
             })
             .catch(error => {
                 console.log('Error al buscar los ambientes:', error);
+                setConsultarPresionado(false);
+                setId();
                 setAmbienteOptions([]); // Limpiar las opciones de ambiente en caso de error
             });
     } else {
@@ -45,119 +54,34 @@ const Modificarperdiodo = () => {
         setNombre('');
         setAmbienteOptions([]);
     }
-};
+};*/const buscarAmbiente = async (event) => {
+    if (event.hasOwnProperty('target') && event.target.hasOwnProperty('value')) {
+        const value = event.target.value
+        formik.setFieldValue("ambiente", { ...formik.values.ambiente, nombre: value })
+        const { respuesta } = await buscarAmbientePorNombre(value);
+        console.log("ambientes", respuesta)
+        setAmbientes(respuesta)
+        
+    }
+}
 
-
-    // Función para modificar periodo
-    const modifica = (idAmbiente,fecha) => {
-        modificarPerio(idAmbiente,fecha)
-            .then(data => {
-                // Obtener solo la hora inicial de cada periodo y actualizar las opciones de periodo
-                setPeriodosModificados(data.periodos);
+const buscarAmbientPorFecha = async (ambiente, fecha) => {
+    const data = await modificarPerio(ambiente.id, fecha);
+    if (data != null) {
+        setAmbiente({
+            id: 1, nombre: ambiente.nombre, fecha, periodos: data.periodos
+        })
+        setPeriodosModificados(data.periodos);
                 cambiarColorLabels(); 
-            })
-            .catch(error => {
-                console.log('Error al buscar los ambientes:', error);
-            });
-    };
+                setConsultarPresionado(true);
+    }
+}
 
-// Función para manejar el cambio en el campo de búsqueda de ambiente
-const handleInputChange = (e) => {
-    const newValue = e.target.value;
-    // Validar que solo se permitan datos alfanuméricos
-    if (/^[a-zA-Z0-9\s]*$/.test(newValue)) {
-        buscarAmbiente(newValue);
-        setNombreAmbiente(newValue);
-    }
-};
-
-const handleKeyDown = (e) => {
-    if (e.key === 'ArrowUp') {
-        e.preventDefault();
-        setSelectedOptionIndex(prevIndex => Math.max(prevIndex - 1, 0)); // Mover hacia arriba y no por debajo de 0
-        scrollIntoViewarriba();
-    } else if (e.key === 'ArrowDown') {
-        e.preventDefault();
-        setSelectedOptionIndex(prevIndex => Math.min(prevIndex + 1, ambienteOptions.length - 1)); // Mover hacia abajo y no más allá del último índice
-        scrollIntoView();
-    } else if (e.key === 'Enter') {
-        e.preventDefault();
-        document.getElementById("buscar-input").blur();
-      // Si no se ha seleccionado ninguna opción con las flechas, seleccionar la primera opción si está disponible
-    if (selectedOptionIndex === -1 && ambienteOptions.length > 0) {
-        handleOptionSelect(ambienteOptions[0].id, ambienteOptions[0].nombre, 0);
-        
-    } else if (selectedOptionIndex >= 0 && selectedOptionIndex < ambienteOptions.length) {
-        handleOptionSelect(ambienteOptions[selectedOptionIndex].id, ambienteOptions[selectedOptionIndex].nombre, selectedOptionIndex);
-    }
-    }
-};
-document.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter') {
-        e.preventDefault();
-        // Realiza la misma lógica que en el caso de 'Enter' dentro de handleKeyDown
-        document.getElementById("buscar-input").blur();
-        setNombreAmbiente(nombre);
-    }
-});
-
-const scrollIntoView = () => {
-    if (optionsContainerRef.current && selectedOptionIndex >= 0) {
-        const selectedOptionElement = optionsContainerRef.current.childNodes[selectedOptionIndex];
-        selectedOptionElement.scrollIntoView({ behavior: "smooth", block: "start" });
-    }
-};
-const scrollIntoViewarriba = () => {
-    if (optionsContainerRef.current && selectedOptionIndex >= 0) {
-        const selectedOptionElement = optionsContainerRef.current.childNodes[selectedOptionIndex];
-        selectedOptionElement.scrollIntoView({ behavior: "smooth", block: "end" });
-    }
-};
-
-    
-useEffect(() => {
-    function handleClickOutside() {
-      setAmbienteOptions([]); // Limpiar las opciones de ambiente al hacer clic fuera del campo
-    }
-
-    // Agregar un event listener para hacer clic fuera del campo de entrada
-    document.addEventListener('click', handleClickOutside);
-    return () => {
-        document.removeEventListener('click', handleClickOutside);
-    };
-}, []);
-    // Función para manejar la selección de una opción de ambiente
-    const handleOptionSelect = (selectedId, selectedNombre,index) => {
-        setId(selectedId);
-        setNombre(selectedNombre);
-        setNombreAmbiente(selectedNombre);
-        setAmbienteOptions([]);
-        setSelectedOptionIndex(index);
-        // Limpiar las opciones de ambiente después de seleccionar una
-    };
-
-    const handleConsultarClick = () => {
-        
-        // Obtener la fecha actual en formato ISO (YYYY-MM-DD)
-        const fechaActual = new Date().toISOString().split('T')[0];
-        
-        // Verificar que se haya seleccionado un ambiente, que se haya ingresado una fecha y que la fecha sea igual o mayor a la fecha actual
-        if (idAmbiente && fecha && fecha >= fechaActual) {
-            setIdMo(idAmbiente);
-            setNombreMO(nombre);
-            setFechaMo(fecha);
-            // Aquí puedes usar el ID del ambiente (almacenado en el estado 'id') y la fecha (almacenada en el estado 'fecha')
-            modifica(idAmbiente, fecha);
-            setConsultarPresionado(true);
-            // Aquí puedes realizar cualquier otra operación que necesites con el ID y la fecha, como enviarlos a un servicio para obtener resultados específicos, etc.
-    
-        }
-    };
 
     const estado = () => {
         const checkboxes = document.querySelectorAll('.periodos-container input[type="checkbox"]');
         const seleccionados = [];
-        setNombreAmbiente(nombreModificar);
+        formik.setFieldValue("ambiente", { id: ambiente.id, nombre: ambiente.nombre });
         checkboxes.forEach(checkbox => {
             if (checkbox.checked) {
                 seleccionados.push({ id: checkbox.id });
@@ -178,19 +102,19 @@ useEffect(() => {
             checkbox.checked = false;
         });
         setFecha(fechaModifica);
-        modifica(idAmbienteModificar,fechaModifica);
+        buscarAmbientPorFecha(formik.values.ambiente, formik.values.fecha);
 
     };
     
     
 const otraHabilitar = (id) => {
         const ids = [id];
-        habilita(idAmbienteModificar,ids,fechaModifica)
-        // Llama a otras funciones aquí si es necesario
+        habilita(formik.values.ambiente.id,ids,formik.values.fecha)
+        // Llama a otras funciones aquí si es necesaris
     };
     const otraFuncion = (id) => {
         const ids = [id];
-        estadoinhabilitado(idAmbienteModificar,ids,fechaModifica)
+        estadoinhabilitado(formik.values.ambiente.id,ids,formik.values.fecha)
         // Llama a otras funciones aquí si es necesario
     };
 
@@ -200,83 +124,132 @@ const otraHabilitar = (id) => {
         // Devolver una clase CSS dependiendo del estado del periodo
         return periodoModificado ? 'periodos-inhabilitados' : 'periodos-habilitados';
     }, [periodosModificados]);
-    
-    const handleFechaChange = (e) => {
-        const nuevaFecha = e.target.value;
-        
-        // Obtener la fecha actual en formato ISO (YYYY-MM-DD)
-        const fechaActual = new Date().toISOString().split('T')[0];
-        setFecha(nuevaFecha);
-        
-    };
-    const handleInputFocus = () => {
-        setNombreAmbienteFocused(true);
-        // Aquí puedes ejecutar la lógica que deseas cuando el input recibe el foco
-        if(nombreAmbiente.length > 0){
-          buscarAmbiente(nombreAmbiente);
-        console.log("El input ha recibido el foco.");
+    const formik = useFormik({
+        initialValues: {
+            ambiente: { nombre: "", id: "" },
+            fecha: "",
+        },
+        validationSchema: Yup.object({
+            ambiente: Yup.object().shape({
+                nombre: Yup.string()
+                    .required("Obligatorio")
+                    .test('hasOptions', 'No exite ese ambiente', function(value) {
+                  // 'this.options' contiene las opciones que pasas al esquema de validación
+                  if(ambientes.length>0){
+                    
+                    return true;
+                  }else{
+                    
+                    return false;
+                  }
+              })
+            }),
+            fecha: Yup.date()
+            .min(new Date(new Date().setDate(new Date().getDate() - 1)), 'La fecha no puede ser anterior a la fecha actual')
+            .required("Obligatorio")
+        }),
+        onSubmit: values => {
+            if(enterPressed){
+                
+            buscarAmbientPorFecha(values.ambiente, values.fecha);
+            console.log(values);
+            setEnterPressed(false);
+            }else{
+                
+                buscarAmbientPorFecha(ambientes[0], values.fecha);
+            }
+            console.log(show);
         }
-      };
-      const handleInputFocus2 = () => {
-        setFechaAmbienteFocused(true);
-        // Aquí puedes ejecutar la lógica que deseas cuando el input recibe el foco
-        
-      };
-
+    });
+    
+    const setNombreDelAmbiente = (ambiente) => {
+        formik.setFieldValue("ambiente", { id: ambiente.id, nombre: ambiente.nombre });
+        setEnterPressed(true);
+        setShow("")
+    }
+    const setFechaDelAmbiente = (event, callback) => {
+        setAmbiente({ ...ambiente, periodos: null })
+        callback(event);
+    }
     return (
         <div className="buscar-container">
             <h1 className='bb'>Modifica ambiente por periodo</h1>
-            <div className="search-field1">
-                <label htmlFor="buscar-input1">Nombre del ambiente:</label>
-                <input
-                    type="text"
-                    id="buscar-input"
-                    value={nombreAmbiente}
-                    onChange={handleInputChange}
-                    onKeyDown={handleKeyDown}
-                    onFocus={handleInputFocus}
+          <Form onSubmit={formik.handleSubmit}>
+            <div className="search-field12">
+            
+            <Form.Group as={Row} className="mb-3" >
+            <Form.Label column sm="2">Nombre </Form.Label>
+                <Col sm="10">
+                <Dropdown>
+                <Dropdown.Toggle
+                style={{ width: "60%"}}
+                ref={inputAmbienteRef}
+                as={"input"}
+                id="ambiente"
+                type="text"
+                placeholder="Ingrese el nombre del ambiente"
+                onChange={buscarAmbiente}
+                onBlur={formik.handleBlur}
+                value={formik.values.ambiente.nombre}
+                className="form-control"
+                bsPrefix="dropdown-toggle"
                 />
-                {nombreAmbiente.length <= 0 && nombreAmbienteFocused && (
-                        <div className="error">obligatorio.</div>
-                    )}
-                {nombreAmbiente.length > 0 && (
-                <div className="options-container" ref={optionsContainerRef}>
-                {ambienteOptions.map((option, index) => (
-                <div
-                    key={option.id}
-                    onClick={() => handleOptionSelect(option.id, option.nombre, index)}
-                    className={index === selectedOptionIndex ? 'selected' : 'option1'}
-                    
-                >
-                {option.nombre}
-                </div>
-                ))}
-                </div>
-                )}
+                {formik.values.ambiente.nombre !== "" && 
+                                            <Dropdown.Menu className={show} style={{ width: "60%", overflowY: "auto", maxHeight: "5rem" }} show>
+                                                {ambientes.map((ambiente) =>
+                                                    <Dropdown.Item
+                                                        key={ambiente.nombre}
+                                                        onClick={() => setNombreDelAmbiente(ambiente)}
+                                                    >
+                                                        {ambiente.nombre}
+                                                    </Dropdown.Item>)}
+                                            </Dropdown.Menu>}
+                </Dropdown>
+                <Form.Text className="text-danger">
+                                        {formik.touched.ambiente && formik.errors.ambiente ? (
+                                            <div className="error" >{formik.errors.ambiente.nombre}</div>
+                                        ) : null}
+                                    </Form.Text>
+                </Col>
+                </Form.Group>
+            </div>
+            
+            <div className='ModificarPeriodo-fecha'>
+            <Form.Group as={Row} className="mb-3" controlId="fecha">
+                                <Form.Label column sm="3">Fecha</Form.Label>
+                                <Col sm="6">
+                                    <FormControl
+                                        type="text"
+                                        placeholder="Ingrese la fecha"
+                                        onChange={(e) => setFechaDelAmbiente(e, formik.handleChange)}
+                                        onFocus={(e) => {
+                                            e.target.type = 'date';
+                                        }}
+                                        onBlur={(e) => {
+                                            e.target.type = 'text'
+                                            formik.handleBlur(e)
+                                        }}
+                                        value={formik.values.fecha}
+                                    />
+                                    <Form.Text className="text-danger">
+                                        {formik.touched.fecha && formik.errors.fecha ? (
+                                            <div className="error1">{formik.errors.fecha}</div>
+                                        ) : null}
+                                    </Form.Text>
+                                </Col>
+                            </Form.Group>
                 
             </div>
-            <div className='ModificarPeriodo-fecha'>
-            <label htmlFor="fecha-input">Fecha:</label>
-                <input
-                    type="date"
-                    id="fecha-input"
-                    value={fecha}
-                    onChange={handleFechaChange}
-                    onFocus={handleInputFocus2}
-                />
-                {fechaAmbienteFocused && (
-                fecha.length <= 0 ? (
-                <div className="error1">Fecha obligatoria.</div>
-                ) : fecha < new Date().toISOString().split('T')[0] ? (
-                <div className="error1">Solo fecha actual o posterior.</div>
-                ) : null
-                )}
-            </div>
-            <Button className="consultar-button" onClick={handleConsultarClick}>Consultar</Button>
-            {consultarPresionado && ( // Renderizar los checkbox y el botón de modificar solo si se ha presionado el botón de consultar
-            <div>
+            <Col sm="2">
+                
+                <Button className="consultar-button" type="submit">Consultar</Button>
+            </Col>
+            </Form>
+            <Form.Group as={Row} className="mb-3" >
+            <Col sm="3">
+            {consultarPresionado  && ambientes.length>0 && ( // Renderizar los checkbox y el botón de modificar solo si se ha presionado el botón de consultar
             <div className="periodos-container">
-            <h1>Periodos:</h1>
+            <h1 >Periodos:</h1>
                 <div>
                     <input
                         type="checkbox"
@@ -368,10 +341,14 @@ const otraHabilitar = (id) => {
                     <label htmlFor="periodo10" className={cambiarColorLabels(10)}>20:15-21:45</label>
                 </div>
                 {/* Agrega más periodos aquí si es necesario */}
-            </div> 
+            
             <Button className="modi" onClick={estado}>Modificar</Button>
+            
             </div>
+            
             )}
+            </Col>
+            <Col sm="5">
             <div className="ambiente-details">
           <h1>Detalle</h1>
           <div className="datos">
@@ -382,7 +359,8 @@ const otraHabilitar = (id) => {
           {/* Mostrar el id y el nombre del ambiente */}
           </div>
         </div>
-           
+        </Col>
+        </Form.Group>
         </div>
         
     );

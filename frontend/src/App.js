@@ -28,6 +28,7 @@ function App() {
         <Route index element={<Buscar />} />
         <Route exact path="/docente/buscarPorNombre" element={<Buscar />} />
         <Route exact path="/docente/enviarSolicitud" element={<SolcitarReserva />} />
+        
         <Route exact path="/docente/listaDeSolicitudesDeReservaAceptadas" element={
           <ListaDeSolicitudes tipoDeUsuario="Docente" titulo="Lista de Solicitudes de Reserva Aceptadas" />
         } />

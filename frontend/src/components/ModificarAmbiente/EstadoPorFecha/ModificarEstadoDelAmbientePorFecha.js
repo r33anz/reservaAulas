@@ -45,6 +45,7 @@ const ModificarEstadoDelAmbientePorFecha = () => {
         onSubmit: values => {
             buscarAmbientPorFecha(values.ambiente, values.fecha);
             console.log(values);
+            setShow("")
         }
     });
 
