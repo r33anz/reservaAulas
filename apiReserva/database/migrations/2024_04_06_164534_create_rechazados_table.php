@@ -15,6 +15,12 @@ class CreateRechazadosTable extends Migration
     {
         Schema::create('rechazados', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('idSolicitud');
+            $table->foreign('idSolicitud')
+                  ->references('id')
+                  ->on('solicituds')
+                  ->onDelete('cascade');
+            $table->string('razonRechazo');
             $table->timestamps();
         });
     }

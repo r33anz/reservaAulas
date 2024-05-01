@@ -58,7 +58,7 @@ class SolicitudController extends Controller
         return response()->json(['listaFechas' => $listaFechas]);
     }
 
-    // CHECK UPDATE
+    //FINISH
     public function registroSolicitud(Request $request)
     {
         /**
@@ -78,13 +78,14 @@ class SolicitudController extends Controller
         // verificar si el ambiente es valido
         $ambienteDisponible = $this->ambienteValido->ambienteValido($idAmbiente, $fechaReserva, $periodos);
 
+        echo $ambienteDisponible;
         if (!$ambienteDisponible) {
-            return response()->json(['mensaje' => 'El ambiente no está disponible en la fecha y periodos especificados'], 400);
+            return response()->json(['mensaje' => 'El ambiente no esta disponible en la fecha y periodos especificados'], 400);
         }
 
         if (count($periodos) === 1) {
             $periodoInicial = $periodos[0];
-            $periodoFinal = $periodos[0];
+            $periodoFinal = $periodos[0]+1;
         } else { // Si hay más de un periodo, determina el periodo inicial y final
             $periodoInicial = $periodos[0];
             $periodoFinal = $periodos[count($periodos) - 1];
@@ -115,7 +116,7 @@ class SolicitudController extends Controller
         ]);
     }
 
-    // TO DO UPDATE
+    //FINISH
     public function informacionSolicitud(Request $request)
     {
         $id = $request->input('id');
@@ -138,8 +139,33 @@ class SolicitudController extends Controller
             'periodo_fin_id' => $solicitud->periodo_fin_id,
             'fecha' => $solicitud->fechaReserva,
             'ambiente_nombre' => $ambiente->nombre,
+            
         ]);
     }
+
+    public function recuperarInformacion($idSolicitud){
+        $solicitud = Solicitud::find($idSolicitud);
+
+        $idAmbiente = DB::table('ambiente_solicitud')->where('solicitud_id', $idSolicitud)->value('ambiente_id');
+        $ambiente = Ambiente::where('id', $idAmbiente)->first();
+
+        $docente = Docente::find($solicitud->docente_id);
+        return response()->json([
+            'nombreDocente' => $docente->nombre,
+            'materia' => $solicitud->materia,
+            'grupo'=>$solicitud->grupo,
+            'cantidad' => $solicitud->cantidad,
+            'razon' => $solicitud->razon,
+            'periodo_ini_id' => $solicitud->periodo_ini_id,
+            'periodo_fin_id' => $solicitud->periodo_fin_id,
+            'fecha' => $solicitud->fechaReserva,
+
+
+            'ambiente_nombre' => $ambiente->nombre,
+            'ambienteCantidadMax' => $ambiente->capacidad
+        ]);
+    }
+
 
     // FINISH
     public function solicitudesPorLlegada()
@@ -237,5 +263,45 @@ class SolicitudController extends Controller
         }
 
         return response()->json(['solicitudes_aceptadas_por_profesor' => $datosSolicitudesAceptadas]);
+    }
+
+    //FINISH
+    public function aceptarSolicitud(Request $request){
+        $id = $request->input('id');
+        $solicitud = Solicitud::find($id);
+        if (!$solicitud) {
+            return response()->json(['mensaje' => 'Solicitud no encontrada'], 404);
+        }
+        $solicitud->estado = true;
+        $solicitud->save();
+
+        // Inserta datos en tablas externas
+        DB::table('reservas')->insert([
+            "idSolicitud" => $id,
+        ]);
+
+        // Retorna una respuesta de éxito
+        return response()->json(['mensaje' => 'Solicitud atendida correctamente']);
+    }
+
+    //TO DO
+    public function rechazarSolicitud(Request $request){
+        $id = $request->input('id');
+        $razon = $request->input('razonRechazo');
+        $solicitud = Solicitud::find($id);
+        if (!$solicitud) {
+            return response()->json(['mensaje' => 'Solicitud no encontrada'], 404);
+        }
+        $solicitud->estado = true;
+        $solicitud->save();
+
+        // Inserta datos en tablas externas
+        DB::table('rechazados')->insert([
+            "idSolicitud" => $id,
+            "razonRechazo" =>$razon
+        ]);
+
+        // Retorna una respuesta de éxito
+        return response()->json(['mensaje' => 'Solicitud atendida correctamente']);
     }
 }

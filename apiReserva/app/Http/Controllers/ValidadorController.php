@@ -80,10 +80,10 @@ class ValidadorController extends Controller
     public function consultarFechaPeriodoAmbiente(Request $request){
 
         $valido = true;
-        $fecha = $request->input('fecha');
+        $fecha = $request->input('fechaReserva');
         $periodos = $request->input('periodos');
-        $ambiente = $request->input('idAmbiente');
-
+        $ambiente = $request->input('ambiente');
+        
         $ambienteDisponible = $this->ambienteValido->ambienteValido($ambiente, $fecha, $periodos);
         if(!$ambienteDisponible){
             $valido = false;
@@ -93,4 +93,6 @@ class ValidadorController extends Controller
             "valido"=>$valido
         ]);
     }
+
+    
 }

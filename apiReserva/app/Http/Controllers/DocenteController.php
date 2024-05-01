@@ -17,6 +17,7 @@ class DocenteController extends Controller
         });
 
         return response()->json([
+            'nombre'=>  $docente->nombre,
             'materias' => $materiasConGrupos
         ]);
     }

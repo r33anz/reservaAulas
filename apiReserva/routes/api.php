@@ -27,12 +27,9 @@ Route::get('/ambientes/pisos', function (Request $request) {
 Route::get('/bloques', [BloqueController::class, 'index']);
 Route::get('/bloques/{id}', [BloqueController::class, 'show']);
 
-
-
 //Route::get('/periodos', [PeriodoController::class, 'index']);
 Route::get('/periodos/{id}', [PeriodoController::class, 'show']);
 Route::get('/periodos', [PeriodoController::class, 'getPeriodos']);
-
 
 //Ambiente
 Route::post('/busquedaAula',[AmbienteController::class,'buscar']);
@@ -53,8 +50,9 @@ Route::post('/realizarSolicitud',[SolicitudController::class,'registroSolicitud'
 Route::post('/informacionSolicitud',[SolicitudController::class,'informacionSolicitud']);
 Route::get('/solicitudesPorLlegada',[SolicitudController::class,'solicitudesPorLlegada']);
 Route::get('/solicitudesAceptadas',[SolicitudController::class,'solicitudesAtendidas']);
-
-//Reserva
+Route::get('/{idSolicitud}/recuperarInformacion',[SolicitudController::class,'recuperarInformacion']);
+Route::put('/aceptarSolicitud',[SolicitudController::class,'aceptarSolicitud']);
+Route::put('/rechazarSolicitud',[SolicitudController::class,'rechazarSolicitud']);
 
 //validador
 Route::post('/consultarFechaPeriodo',[ValidadorController::class,'consultaFechaPeriodo']);  //devuelves los ambientes habiles
