@@ -218,8 +218,6 @@ const RegistrarAmbiente = () => {
                         </Col>
                     </Row>
                 </Col>
-                <Col>
-                </Col>
             </Row>
         </Container>
     </>);
