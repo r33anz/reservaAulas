@@ -123,7 +123,7 @@ const AtenderSolicitud = ({ solicitudId }) => {
                                                 <strong>Periodos:</strong>
                                             </div>
                                             <div>
-                                                {solicitud.periodo_ini_id && solicitud.periodo_fin_id ? getPeriodoPorId(solicitud.periodo_ini_id, solicitud.periodo_fin_id) : ""}
+                                                {solicitud.periodo_ini_id && solicitud.periodo_fin_id ? getPeriodoPorId(solicitud.periodo_ini_id, solicitud.periodo_fin_id): ""}
                                             </div>
                                         </Row>
                                     </Col>
