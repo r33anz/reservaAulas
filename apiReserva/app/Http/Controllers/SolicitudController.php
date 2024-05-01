@@ -85,7 +85,7 @@ class SolicitudController extends Controller
 
         if (count($periodos) === 1) {
             $periodoInicial = $periodos[0];
-            $periodoFinal = $periodos[0];
+            $periodoFinal = $periodos[0]+1;
         } else { // Si hay más de un periodo, determina el periodo inicial y final
             $periodoInicial = $periodos[0];
             $periodoFinal = $periodos[count($periodos) - 1];
@@ -263,5 +263,45 @@ class SolicitudController extends Controller
         }
 
         return response()->json(['solicitudes_aceptadas_por_profesor' => $datosSolicitudesAceptadas]);
+    }
+
+    //FINISH
+    public function aceptarSolicitud(Request $request){
+        $id = $request->input('id');
+        $solicitud = Solicitud::find($id);
+        if (!$solicitud) {
+            return response()->json(['mensaje' => 'Solicitud no encontrada'], 404);
+        }
+        $solicitud->estado = true;
+        $solicitud->save();
+
+        // Inserta datos en tablas externas
+        DB::table('reservas')->insert([
+            "idSolicitud" => $id,
+        ]);
+
+        // Retorna una respuesta de éxito
+        return response()->json(['mensaje' => 'Solicitud atendida correctamente']);
+    }
+
+    //TO DO
+    public function rechazarSolicitud(Request $request){
+        $id = $request->input('id');
+        $razon = $request->input('razonRechazo');
+        $solicitud = Solicitud::find($id);
+        if (!$solicitud) {
+            return response()->json(['mensaje' => 'Solicitud no encontrada'], 404);
+        }
+        $solicitud->estado = true;
+        $solicitud->save();
+
+        // Inserta datos en tablas externas
+        DB::table('rechazados')->insert([
+            "idSolicitud" => $id,
+            "razonRechazo" =>$razon
+        ]);
+
+        // Retorna una respuesta de éxito
+        return response()->json(['mensaje' => 'Solicitud atendida correctamente']);
     }
 }
