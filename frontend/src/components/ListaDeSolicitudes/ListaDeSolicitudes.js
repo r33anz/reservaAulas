@@ -39,7 +39,8 @@ const ListaDeSolicitudes = ({ titulo, tipoDeUsuario }) => {
         if (tipoDeUsuario === "Admin") { 
             const id = window.sessionStorage.getItem("admin_id");
             const data = await recuperarSolicitudesDeReserva(id)
-            setSolicitudes(data.solicitudes_por_llegada            );
+            setSolicitudes(data.solicitudes_por_llegada);
+            console.log(data.solicitudes_por_llegada);
         }
         if (tipoDeUsuario === "Docente") {
             const id = window.sessionStorage.getItem("docente_id");

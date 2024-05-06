@@ -100,10 +100,12 @@ const ModificarEstadoDelAmbientePorFecha = () => {
     const buscarAmbientPorFecha = async (ambiente, fecha) => {
         const data = await modificarPerio(ambiente.id, fecha);
         if (data != null) {
+            console.log(ambiente.id);
             setAmbiente({
-                id: 1, nombre: ambiente.nombre, fecha, periodos: data.periodos
+                id: ambiente.id, nombre: ambiente.nombre, fecha, periodos: data.periodos
             })
         }
+        
     }
 
     const modificarPeriodos = async (estado) => {

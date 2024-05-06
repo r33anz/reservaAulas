@@ -152,16 +152,25 @@ const otraHabilitar = (id) => {
             if(enterPressed){
                 
             buscarAmbientPorFecha(values.ambiente, values.fecha);
-            console.log(values);
+            console.log(values.ambiente);
             setEnterPressed(false);
             }else{
-                
+                console.log(ambientes[0].id);
                 buscarAmbientPorFecha(ambientes[0], values.fecha);
+                formik.setFieldValue("ambiente", { id: ambientes[0].id, nombre: ambientes[0].nombre });
+                console.log(ambientes[0].id);
             }
             console.log(show);
         }
     });
-    
+    const handleKeyPress = event => {
+        if (event.key === 'Enter') {
+            if (!formik.values.fecha && enterPressed!=true) {
+                formik.setFieldValue("ambiente", { id: ambientes[0].id, nombre: ambientes[0].nombre });
+            }
+        }
+    };
+
     const setNombreDelAmbiente = (ambiente) => {
         formik.setFieldValue("ambiente", { id: ambiente.id, nombre: ambiente.nombre });
         setEnterPressed(true);
@@ -174,7 +183,7 @@ const otraHabilitar = (id) => {
     return (
         <div className="buscar-container">
             <h1 className='bb'>Modifica ambiente por periodo</h1>
-          <Form onSubmit={formik.handleSubmit}>
+          <Form onSubmit={formik.handleSubmit}  onKeyPress={handleKeyPress}>
             <div className="search-field12">
             
             <Form.Group as={Row} className="mb-3" >
