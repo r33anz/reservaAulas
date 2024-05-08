@@ -59,3 +59,8 @@
 .RegistrarAmbiente-entrada-numero input[type=number] {
   -moz-appearance: textfield;
 }
+
+.RegistrarAmbiente-required:after {
+  content:"*";
+  color:red;
+}

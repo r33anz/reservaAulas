@@ -1,4 +1,4 @@
-import React, { useContext, useRef, useState } from "react";
+import React, { useContext, useState } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { Alert, Modal, Button, Col, Container, Dropdown, Form, FormControl, Row, Stack } from "react-bootstrap";
@@ -14,9 +14,8 @@ const ModificarEstadoDelAmbientePorFecha = () => {
     const [show, setShow] = useState("");
     const [estado, setEstado] = useState("");
     const [showMensajeDeConfirmacion, setShowMensajeDeConfirmacion] = useState(false);
-    const [enterPressed, setEnterPressed] = useState(false);
+    const [selected, setSelected] = useState(null);
     const { agregarAlert } = useContext(AlertsContext);
-    const inputAmbienteRef = useRef();
     const periodos = [
         { id: 1, hora: '6:45 - 8:15' },
         { id: 2, hora: '8:15 - 9:45' },
@@ -55,16 +54,8 @@ const ModificarEstadoDelAmbientePorFecha = () => {
                 .required("Obligatorio")
         }),
         onSubmit: values => {
-            if(enterPressed){
-                
-                buscarAmbientPorFecha(values.ambiente, values.fecha);
-                console.log(values);
-                setEnterPressed(false);
-                }else{
-                    
-                    buscarAmbientPorFecha(ambientes[0], values.fecha);
-                }
-                console.log(show);
+            buscarAmbientPorFecha(values.ambiente, values.fecha);
+            setShow("");
         }
     });
 
@@ -80,16 +71,17 @@ const ModificarEstadoDelAmbientePorFecha = () => {
             const value = event.target.value
             formik.setFieldValue("ambiente", { ...formik.values.ambiente, nombre: value })
             const { respuesta } = await buscarAmbientePorNombre(value);
-            console.log("ambientes", respuesta)
-            setAmbientes(respuesta)
-            //setShow("show")
+            setAmbientes(respuesta);
+            setShow("show");
         }
     }
 
     const setNombreDelAmbiente = (ambiente) => {
-        formik.setFieldValue("ambiente", { id: ambiente.id, nombre: ambiente.nombre });
-        setEnterPressed(true);
-        setShow("")
+        if (ambiente !== undefined) {
+            formik.setFieldValue("ambiente", { id: ambiente.id, nombre: ambiente.nombre });
+            setShow("");
+            setAmbiente({});
+        }
     }
 
     const setFechaDelAmbiente = (event, callback) => {
@@ -135,6 +127,18 @@ const ModificarEstadoDelAmbientePorFecha = () => {
         setShowMensajeDeConfirmacion(true);
     }
 
+    const handleKeyUp = ({ code }) => {
+        if (code === "Enter" && ambientes.length > 0) {
+            let ambiente = ambientes[0];
+            if (selected !== null) {
+                ambiente = ambientes.find((item) => item.nombre === selected);
+            }
+            setNombreDelAmbiente(ambiente);
+            setSelected(null);
+            setShow("");
+        }
+    }
+
     return (<>
         <div style={{ width: "574px" }}>
             <Container className="ModificarEstadoDelAmbientePorFecha-header" fluid >
@@ -154,9 +158,8 @@ const ModificarEstadoDelAmbientePorFecha = () => {
                             <Form.Group as={Row} className="mb-3" controlId="ambiente">
                                 <Form.Label column sm="2">Nombre</Form.Label>
                                 <Col sm="10">
-                                    <Dropdown id="ambientes">
+                                    <Dropdown id="ambientes" onSelect={(e) => setSelected(e)}>
                                         <Dropdown.Toggle
-                                            ref={inputAmbienteRef}
                                             as={"input"}
                                             id="ambiente"
                                             type="text"
@@ -164,17 +167,20 @@ const ModificarEstadoDelAmbientePorFecha = () => {
                                             onChange={buscarAmbiente}
                                             onBlur={formik.handleBlur}
                                             value={formik.values.ambiente.nombre}
+                                            onKeyUp={(e) => handleKeyUp(e)}
                                             className="form-control"
                                             bsPrefix="dropdown-toggle" />
                                         {formik.values.ambiente.nombre !== "" &&
                                             <Dropdown.Menu className={show} style={{ width: "100%", overflowY: "auto", maxHeight: "5rem" }} show>
                                                 {ambientes.map((ambiente) =>
                                                     <Dropdown.Item
+                                                        eventKey={ambiente.nombre}
                                                         key={ambiente.nombre}
-                                                        onClick={() => setNombreDelAmbiente(ambiente)}
+                                                        // onKeyUp={() => setNombreDelAmbiente(ambiente)}
                                                     >
-                                                        {ambiente.nombre}
-                                                    </Dropdown.Item>)}
+                                                        <option>{ambiente.nombre}</option>
+                                                    </Dropdown.Item>
+                                                )}
                                             </Dropdown.Menu>}
                                     </Dropdown>
                                     <Form.Text className="text-danger">
@@ -222,7 +228,7 @@ const ModificarEstadoDelAmbientePorFecha = () => {
                             </Row>
                             {ambiente.periodos && <label>Periodos</label>}
                             {ambiente.periodos && periodos.map(item => <>
-                                <div style={{
+                                <div key={item.id} style={{
                                     border: '1px solid black',
                                     width: '8rem',
                                     padding: '10px',
@@ -240,14 +246,14 @@ const ModificarEstadoDelAmbientePorFecha = () => {
                 <Modal
                     size="xs"
                     aria-labelledby="contained-modal-title-vcenter"
-                    show={showMensajeDeConfirmacion} 
+                    show={showMensajeDeConfirmacion}
                     onHide={() => setShowMensajeDeConfirmacion(false)}
                     centered
                 >
                     <Alert
                         variant="primary"
                         show={showMensajeDeConfirmacion}
-                        style={{margin: 0}}
+                        style={{ margin: 0 }}
                     >
                         <Container>
                             <Row xs="auto">

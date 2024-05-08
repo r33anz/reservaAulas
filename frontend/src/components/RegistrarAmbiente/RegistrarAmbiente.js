@@ -100,7 +100,7 @@ const RegistrarAmbiente = () => {
                             <Form onSubmit={formik.handleSubmit}>
                                 <Stack gap={2} direction="vertical">
                                     <Form.Group className="mb-3" controlId="nombre">
-                                        <Form.Label>Nombre del ambiente</Form.Label>
+                                        <Form.Label className="RegistrarAmbiente-required">Nombre del ambiente</Form.Label>
                                         <Form.Control
                                             type="text"
                                             placeholder="Ingrese el nuevo nombre del ambiente"
@@ -115,7 +115,7 @@ const RegistrarAmbiente = () => {
                                         </Form.Text>
                                     </Form.Group>
                                     <Form.Group className="mb-3 RegistrarAmbiente-entrada-numero" controlId="capacidad">
-                                        <Form.Label>Capacidad</Form.Label>
+                                        <Form.Label className="RegistrarAmbiente-required">Capacidad</Form.Label>
                                         <Form.Control
                                             type="number"
                                             onKeyDown={(e) => {
@@ -137,7 +137,7 @@ const RegistrarAmbiente = () => {
                                     </Form.Group>
                                     <Col lg="9">
                                         <Form.Group className="mb-3" controlId="idBloque">
-                                            <Form.Label>Bloque</Form.Label>
+                                            <Form.Label className="RegistrarAmbiente-required">Bloque</Form.Label>
                                             <Form.Select
                                                 onChange={(e) => setPisosPorBloqueSeleccionado(e, formik.handleChange)}
                                                 onBlur={formik.handleBlur}
@@ -153,7 +153,7 @@ const RegistrarAmbiente = () => {
                                             </Form.Text>
                                         </Form.Group>
                                         <Form.Group className="mb-3" controlId="tipo">
-                                            <Form.Label>Tipo de ambiente</Form.Label>
+                                            <Form.Label className="RegistrarAmbiente-required">Tipo de ambiente</Form.Label>
                                             <Form.Select
 
 
@@ -171,7 +171,7 @@ const RegistrarAmbiente = () => {
                                             </Form.Text>
                                         </Form.Group>
                                         <Form.Group className="mb-3" controlId="piso">
-                                            <Form.Label>Piso</Form.Label>
+                                            <Form.Label className="RegistrarAmbiente-required">Piso</Form.Label>
                                             <Form.Select
                                                 onChange={formik.handleChange}
                                                 onBlur={formik.handleBlur}
