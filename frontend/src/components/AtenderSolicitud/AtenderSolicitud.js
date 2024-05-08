@@ -39,9 +39,13 @@ const AtenderSolicitud = ({ solicitudId }) => {
     }
 
     const onClickParaVerificarDisponibilidad = async () => {
-        const response = await vertificarDisponibilidad(solicitud.fecha, solicitud.ambiente_nombre, [solicitud.periodo_ini_id, solicitud.periodo_fin_id]);
-        if (response) {
-            setMostrarMensajeDeVerificacion(response);
+        if (solicitud.length > 0) {
+            const response = await vertificarDisponibilidad(solicitud.fecha, solicitud.ambiente_nombre, [solicitud.periodo_ini_id, solicitud.periodo_fin_id]);
+            if (response) {
+                setMostrarMensajeDeVerificacion(response);
+            }
+        } else {
+            agregarAlert({ icon: <ExclamationCircleFill />, severidad: "danger", mensaje: "Hay solicitud para realizar la verificacion." });
         }
     }
 
@@ -119,7 +123,7 @@ const AtenderSolicitud = ({ solicitudId }) => {
                                                 <strong>Periodos:</strong>
                                             </div>
                                             <div>
-                                                {solicitud.periodo_ini_id && solicitud.periodo_fin_id ? getPeriodoPorId(solicitud.periodo_ini_id, solicitud.periodo_fin_id): ""}
+                                                {solicitud.periodo_ini_id && solicitud.periodo_fin_id ? getPeriodoPorId(solicitud.periodo_ini_id, solicitud.periodo_fin_id) : ""}
                                             </div>
                                         </Row>
                                     </Col>
@@ -142,7 +146,7 @@ const AtenderSolicitud = ({ solicitudId }) => {
                                 </Row>
                                 <Row xs="auto" sm="auto" style={{ paddingTop: "1rem" }} className="justify-content-end">
                                     <div style={{ width: "60%", padding: 0 }} className="justify-content-start text-left">
-                                        {mostrarMensajeDeVerificacion !== null ?
+                                        {solicitud.length > 0 && mostrarMensajeDeVerificacion !== null ?
                                             mostrarMensajeDeVerificacion.valido ?
                                                 "Ambiente disponible"
                                                 : "Ambiente no disponible"
