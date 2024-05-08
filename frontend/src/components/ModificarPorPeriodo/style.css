@@ -62,18 +62,48 @@
     width: 130px;
     margin-left: 20px;
     margin-top: -50px;
+    display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
     
 }
-
-
-
-.periodos-container div label {
-    width: 100px; /* Ancho fijo para cada periodo */
-    text-align: center;
-    border: 1px solid black; /* Borde de 1px sólido negro */
-    margin: 2px; /* Espacio entre los elementos */
-    padding: 2px; /* Espacio interno del borde */
+.periodos-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr); /* Divide los elementos en tres columnas */
+  gap: 20px; /* Espacio entre los elementos */
 }
+.periodos-container div label{
+  width: 100px; /* Ancho fijo para cada periodo */
+  text-align: center;
+  border: 1px solid black; /* Borde de 1px sólido negro */
+  margin: 5px; /* Espacio entre los elementos */
+  padding: 2px; /* Espacio interno del borde */
+}
+
+.ggg > div {
+  display: flex;
+  align-items: center; /* Centra verticalmente los elementos */
+}
+.circle-container {
+  display: flex;
+  align-items: center;
+}
+
+.circle {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-right: 10px;
+}
+
+.text {
+  font-size: 20px;
+  width: 200px;
+}
+
 
 .periodos-inhabilitados{
     background-color: #636c72;

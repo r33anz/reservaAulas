@@ -83,7 +83,7 @@ const Buscar = () => {
     };
 
     return (
-        <div className="buscarcontainer" style={{ width: "574px",height:"30rem",overflowY: "auto", maxHeight: "30rem" }}>
+        <div className="buscarcontainer" style={{ width: "574px" }}>
             <Container className="ModificarEstadoDelAmbientePorFecha-header" fluid>
                 <Row xs="auto" className="justify-content-md-end">
                     <Col xs lg="10" style={{ alignContent: "center", padding: 0 }}>
@@ -137,21 +137,20 @@ const Buscar = () => {
             </Container>
 
             {/* Mostrar los detalles de cada ambiente */}
-            {ambienteDetails.length > 0 &&
-                <div className="ambientedetails">
-                    <h1>Detalles</h1>
-                    {ambienteDetails.map((ambiente, index) => (
-                        <div key={index} className="datos" >
-                          
-                            <p>Nombre: {ambiente.nombre}</p>
-                            <p>Capacidad: {ambiente.capacidad}</p>
-                            <p>Tipo de Ambiente: {ambiente.tipo}</p>
-                            <p>Bloque: {ambiente.nombreBloque}</p>
-                            <p>Piso: {ambiente.nroPiso}</p>
-                        </div>
-                    ))}
-                </div>
-            }
+            {ambienteDetails.length > 0 && (
+    <div className="ambientedetails" style={{ height:"30rem",overflowY: "auto", maxHeight: "30rem" }}>
+        {ambienteDetails.map((ambiente, index) => (
+            <div key={index} className="datos1" style={{ marginBottom: '20px' }}>
+                <h2>{ambiente.nombre}</h2>
+                <p>Capacidad: {ambiente.capacidad}</p>
+                <p>Tipo de Ambiente: {ambiente.tipo}</p>
+                <p>Bloque: {ambiente.nombreBloque}</p>
+                <p>Piso: {ambiente.nroPiso}</p>
+            </div>
+        ))}
+    </div>
+)}
+
 
             {/* Mostrar mensaje si no se encuentra ningún ambiente */}
             {enterPressed && ambienteDetails.length === 0 && (

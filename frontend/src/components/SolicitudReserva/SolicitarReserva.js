@@ -64,7 +64,7 @@ const SolcitarReserva = () => {
   // (FIX:Marco) 'nombre' is assigned a value but never used
   // eslint-disable-next-line
   // Función para buscar los ambientes que coinciden con el nombre
-  const buscarAmbiente = (nombre) => {
+  const buscarAmbiente2 = async (nombre) => {
     if (nombre.trim() !== "") {
       buscarAmbientePorNombre(nombre)
         .then((data) => {
@@ -79,6 +79,15 @@ const SolcitarReserva = () => {
       setAmbienteOptions([]);
     }
   };
+  const buscarAmbiente = async (event) => {
+    if (event.hasOwnProperty('target') && event.target.hasOwnProperty('value')) {
+        const value = event.target.value;
+        formik.setFieldValue("nombreAmbiente", { ...formik.values.nombreAmbiente, nombre: value });
+        const { respuesta } = await buscarAmbientePorNombre(value);
+        setAmbienteOptions(respuesta);
+        
+    }
+};
   const docente = (nombre) => {
 
     getDocente(nombre)
@@ -147,7 +156,7 @@ const SolcitarReserva = () => {
       razon: "",
       capacidad: "",
       materia: "",
-      nombreAmbiente: "",
+      nombreAmbiente: { nombre: "", id: "" },
       grupo: "", // Nuevo campo para el grupo
       fechaReserva: "",
     },
@@ -197,17 +206,18 @@ values.periodos = listaIDs;
   };
 
   const setNombreDelAmbiente = (ambiente) => {
-    formik.setFieldValue("ambiente", ambiente.id);
-    formik.setFieldValue("nombreAmbiente", ambiente.nombre);
+    formik.setFieldValue("nombreAmbiente", { id: ambiente.id, nombre: ambiente.nombre });
     setShow("");
     setidambiente(ambiente.id);
     console.log(ida);
+    
     recuperarAmbientePorID(ambiente.id)
 
       .then((data) => {
         // Actualizar estado con los detalles del ambiente
 
         setCapacidadDelAmbienteSeleccionado(data.capacidad);
+        console.log(data.capacidad);
       })
       .catch((error) => {
         console.log("Error al buscar el ambiente:", error);
@@ -237,13 +247,45 @@ values.periodos = listaIDs;
         <Container className="RegistrarAmbiente-body" fluid>
           <Row className="justify-content-md-center">
             <h1 style={{ fontWeight: "bold" }} className="text-center">
-              Registrar Solicitud Reserva
+              Registrar Solicitud de Reserva
             </h1>
             <Col xs lg="9">
               <Form onSubmit={formik.handleSubmit}>
                 <Stack gap={2} direction="vertical">
                   <Col lg="9">
                   <p>Docente: {docentes}</p>
+                  <Form.Group
+                      as={Row}
+                      className="mb-3"
+                      controlId="fechaReserva"
+                    >
+                      <Form.Label >
+                        Fecha Reserva
+                      </Form.Label>
+                      <Col >
+                        <FormControl
+                          type="text"
+                          placeholder="Ingrese la fecha para la reserva"
+                          onChange={formik.handleChange}
+                          onFocus={(e) => {
+                            e.target.type = "date";
+                          }}
+                          onBlur={(e) => {
+                            e.target.type = "text";
+                            formik.handleBlur(e);
+                          }}
+                          value={formik.values.fechaReserva}
+                        />
+                        <Form.Text className="text-danger">
+                          {formik.touched.fechaReserva &&
+                          formik.errors.fechaReserva ? (
+                            <div className="text-danger">
+                              {formik.errors.fechaReserva}
+                            </div>
+                          ) : null}
+                        </Form.Text>
+                      </Col>
+                    </Form.Group>
                     <Form.Group className="mb-3" controlId="materia">
                       <Form.Label>Materia</Form.Label>
                       <Form.Select
@@ -296,48 +338,6 @@ values.periodos = listaIDs;
                         ) : null}
                       </Form.Text>
                     </Form.Group>
-                    <Form.Group
-                      className="mb-3 RegistrarAmbiente-entrada-numero"
-                      controlId="capacidad"
-                    >
-                      <Form.Label>Capacidad</Form.Label>
-                      <Form.Control
-                        type="number"
-                        onKeyDown={(e) => {
-                          if (!validosKey.includes(e.key)) {
-                            e.preventDefault();
-                          }
-                        }}
-                        placeholder="Ingrese un valor"
-                        onChange={formik.handleChange}
-                        onBlur={formik.handleBlur}
-                        value={formik.values.capacidad}
-                      />
-                      <Form.Text className="text-danger">
-                        {formik.touched.capacidad && formik.errors.capacidad ? (
-                          <div className="text-danger">
-                            {formik.errors.capacidad}
-                          </div>
-                        ) : null}
-                      </Form.Text>
-                    </Form.Group>
-                    <Form.Group className="mb-3" controlId="razon">
-                      <Form.Label>Razon</Form.Label>
-                      <Form.Control
-                        as="textarea" // Cambia el tipo a "textarea"
-                        placeholder="Ingrese la razon de uso"
-                        onChange={formik.handleChange}
-                        onBlur={formik.handleBlur}
-                        value={formik.values.razon}
-                      />
-                      <Form.Text className="text-danger">
-                        {formik.touched.razon && formik.errors.razon ? (
-                          <div className="text-danger">
-                            {formik.errors.razon}
-                          </div>
-                        ) : null}
-                      </Form.Text>
-                    </Form.Group>
 
                     <Form.Group
                       as={Row}
@@ -353,13 +353,13 @@ values.periodos = listaIDs;
                             id="nombreAmbiente"
                             type="text"
                             placeholder="Ingrese el nombre del ambiente"
-                            onChange={handleInputChange}
+                            onChange={buscarAmbiente}
                             onBlur={formik.handleBlur}
-                            value={formik.values.nombreAmbiente}
+                            value={formik.values.nombreAmbiente.nombre}
                             className="form-control"
                             bsPrefix="dropdown-toggle"
                           />
-                          {formik.values.nombreAmbiente !== "" && (
+                          {formik.values.nombreAmbiente.nombre !== "" && (
                             <Dropdown.Menu
                               className={show}
                               style={{
@@ -390,42 +390,57 @@ values.periodos = listaIDs;
                         </Form.Text>
                       </Col>
                     </Form.Group>
+
                     <Form.Group
-                      as={Row}
-                      className="mb-3"
-                      controlId="fechaReserva"
+                      className="mb-3 RegistrarAmbiente-entrada-numero"
+                      controlId="capacidad"
                     >
-                      <Form.Label column sm="3">
-                        Fecha Reserva
-                      </Form.Label>
-                      <Col sm="9">
-                        <FormControl
-                          type="text"
-                          placeholder="Ingrese la fecha para la reserva"
-                          onChange={formik.handleChange}
-                          onFocus={(e) => {
-                            e.target.type = "date";
-                          }}
-                          onBlur={(e) => {
-                            e.target.type = "text";
-                            formik.handleBlur(e);
-                          }}
-                          value={formik.values.fechaReserva}
-                        />
-                        <Form.Text className="text-danger">
-                          {formik.touched.fechaReserva &&
-                          formik.errors.fechaReserva ? (
-                            <div className="text-danger">
-                              {formik.errors.fechaReserva}
-                            </div>
-                          ) : null}
-                        </Form.Text>
-                      </Col>
+                      <Form.Label>Capacidad</Form.Label>
+                      <Form.Control
+                        type="number"
+                        onKeyDown={(e) => {
+                          if (!validosKey.includes(e.key)) {
+                            e.preventDefault();
+                          }
+                        }}
+                        placeholder="Ingrese un valor"
+                        onChange={formik.handleChange}
+                        onBlur={formik.handleBlur}
+                        value={formik.values.capacidad}
+                        disabled={!formik.values.nombreAmbiente.nombre}
+                      />
+                      <Form.Text className="text-danger">
+                        {formik.touched.capacidad && formik.errors.capacidad ? (
+                          <div className="text-danger">
+                            {formik.errors.capacidad}
+                          </div>
+                        ) : null}
+                      </Form.Text>
                     </Form.Group>
+                    <Form.Group className="mb-3" controlId="razon">
+                      <Form.Label>Razon</Form.Label>
+                      <Form.Control
+                        as="textarea" // Cambia el tipo a "textarea"
+                        placeholder="Ingrese la razon de uso"
+                        onChange={formik.handleChange}
+                        onBlur={formik.handleBlur}
+                        value={formik.values.razon}
+                      />
+                      <Form.Text className="text-danger">
+                        {formik.touched.razon && formik.errors.razon ? (
+                          <div className="text-danger">
+                            {formik.errors.razon}
+                          </div>
+                        ) : null}
+                      </Form.Text>
+                    </Form.Group>
+
+                    
+                    
                     {capacidadDelAmbienteSeleccionado !== null && (
                       <p>
-                        Este ambiente tiene una capacidad maxima de{" "}
-                        {capacidadDelAmbienteSeleccionado}
+                        Capacidad:{capacidadDelAmbienteSeleccionado}
+                       
                       </p>
                     )}
                     <h1>Periodos:</h1>
