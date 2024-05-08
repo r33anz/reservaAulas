@@ -55,15 +55,16 @@ const Modificarperdiodo = () => {
         setAmbienteOptions([]);
     }
 };*/const buscarAmbiente = async (event) => {
+    setConsultarPresionado(false);
     if (event.hasOwnProperty('target') && event.target.hasOwnProperty('value')) {
         const value = event.target.value
         formik.setFieldValue("ambiente", { ...formik.values.ambiente, nombre: value })
         const { respuesta } = await buscarAmbientePorNombre(value);
         console.log("ambientes", respuesta)
         setAmbientes(respuesta)
-        
     }
 }
+
 
 const buscarAmbientPorFecha = async (ambiente, fecha) => {
     const data = await modificarPerio(ambiente.id, fecha);
@@ -149,32 +150,50 @@ const otraHabilitar = (id) => {
             .required("Obligatorio")
         }),
         onSubmit: values => {
+            console.log(formik.values.ambiente);
+            console.log(ambientes);
             if(enterPressed){
-                
             buscarAmbientPorFecha(values.ambiente, values.fecha);
-            console.log(values);
             setEnterPressed(false);
+            setAmbientes([formik.values.ambiente]);
+            
+            
+            
             }else{
                 
+                console.log(ambientes[0].id);
                 buscarAmbientPorFecha(ambientes[0], values.fecha);
+                formik.setFieldValue("ambiente", { id: ambientes[0].id, nombre: ambientes[0].nombre });
+                console.log(ambientes[0].id);
             }
+            inputAmbienteRef.current.blur();
             console.log(show);
         }
     });
-    
+    const handleKeyPress = event => {
+        if (event.key === 'Enter') {
+            if (!formik.values.fecha && enterPressed!=true) {
+                formik.setFieldValue("ambiente", { id: ambientes[0].id, nombre: ambientes[0].nombre });
+            }
+        }
+    };
+
     const setNombreDelAmbiente = (ambiente) => {
         formik.setFieldValue("ambiente", { id: ambiente.id, nombre: ambiente.nombre });
+        
         setEnterPressed(true);
+        setConsultarPresionado(false);
         setShow("")
     }
     const setFechaDelAmbiente = (event, callback) => {
         setAmbiente({ ...ambiente, periodos: null })
+        setConsultarPresionado(false);
         callback(event);
     }
     return (
         <div className="buscar-container">
             <h1 className='bb'>Modifica ambiente por periodo</h1>
-          <Form onSubmit={formik.handleSubmit}>
+          <Form onSubmit={formik.handleSubmit}  onKeyPress={handleKeyPress}>
             <div className="search-field12">
             
             <Form.Group as={Row} className="mb-3" >
@@ -245,122 +264,84 @@ const otraHabilitar = (id) => {
                 <Button className="consultar-button" type="submit">Consultar</Button>
             </Col>
             </Form>
-            <Form.Group as={Row} className="mb-3" >
-            <Col sm="3">
-            {consultarPresionado  && ambientes.length>0 && ( // Renderizar los checkbox y el botón de modificar solo si se ha presionado el botón de consultar
+            <Form.Group as={Row} className="mb-3">
+    <Col sm="3">
+        {consultarPresionado && ambientes.length > 0 && (
+            
             <div className="periodos-container">
-            <h1 >Periodos:</h1>
-                <div>
-                    <input
-                        type="checkbox"
-                        id="1"
-                        name="periodo1"
-                        value="periodo1"
-                    />
-                    <label htmlFor="periodo1" className={cambiarColorLabels(1)}>6:45-8:15</label>
+                
+
+                <h2>Periodos:</h2>
+                <div className="circle-container">
+      <div className="circle" style={{ backgroundColor: "white" }}>
+        
+      </div>
+      <span className="text" >{"Periodos habilitados"}</span>
+      
+      <div className="circle" style={{ backgroundColor: "#a4a6a6" }}>
+        
+      </div>
+      <span className="text" >{"Periodos inhabilitados"}</span>
                 </div>
-                <div>
-                    <input
-                        type="checkbox"
-                        id="2"
-                        name="periodo2"
-                        value="periodo2"
-                    />
-                    <label htmlFor="periodo2" className={cambiarColorLabels(2)} >8:15-9:45</label>
-                </div>
-                <div>
-                    <input
-                        type="checkbox"
-                        id="3"
-                        name="periodo3"
-                        value="periodo3"
-                    />
-                    <label htmlFor="periodo3" className={cambiarColorLabels(3)} >9:45-11:15</label>
-                </div>
-                <div>
-                    <input
-                        type="checkbox"
-                        id="4"
-                        name="periodo4"
-                        value="periodo4"
-                    />
-                    <label htmlFor="periodo4" className={cambiarColorLabels(4)}>11:15-12:45</label>
-                </div>
-                <div>
-                    <input
-                        type="checkbox"
-                        id="5"
-                        name="periodo5"
-                        value="periodo5"
-                    />
-                    <label  htmlFor="periodo5" className={cambiarColorLabels(5)}>12:45-14:15</label>
-                </div>
-                <div>
-                    <input
-                        type="checkbox"
-                        id="6"
-                        name="periodo6"
-                        value="periodo6"
-                    />
-                    <label htmlFor="periodo6" className={cambiarColorLabels(6)}>14:15-15:45</label>
-                </div>
-                <div>
-                    <input
-                        type="checkbox"
-                        id="7"
-                        name="periodo7"
-                        value="periodo7"
-                    />
-                    <label htmlFor="periodo7" className={cambiarColorLabels(7)}>15:45-17:15</label>
-                </div>
-                <div>
-                    <input
-                        type="checkbox"
-                        id="8"
-                        name="periodo8"
-                        value="periodo8"
-                    />
-                    <label htmlFor="periodo8" className={cambiarColorLabels(8)}>17:15-16:45</label>
-                </div>
-                <div>
-                    <input
-                        type="checkbox"
-                        id="9"
-                        name="periodo9"
-                        value="periodo9"
-                    />
-                    <label htmlFor="periodo9" className={cambiarColorLabels(9)}>16:45-20:15</label>
-                </div>
-                <div>
-                    <input
-                        type="checkbox"
-                        id="10"
-                        name="periodo10"
-                        value="periodo10"
-                    />
-                    <label htmlFor="periodo10" className={cambiarColorLabels(10)}>20:15-21:45</label>
+
+                <div className="periodos-grid">
+                    <div className='ggg'>
+                        <h5>Mañana</h5>
+                    <div>
+                        <input type="checkbox" id="1" name="periodo1" value="periodo1" />
+                        <label htmlFor="1" className={cambiarColorLabels(1)}>6:45-8:15</label>
+                    </div>
+                    <div>
+                        <input type="checkbox" id="2" name="periodo2" value="periodo2" />
+                        <label htmlFor="2" className={cambiarColorLabels(2)}>8:15-9:45</label>
+                    </div>
+                    <div>
+                        <input type="checkbox" id="3" name="periodo3" value="periodo3" />
+                        <label htmlFor="periodo3" className={cambiarColorLabels(3)}>9:45-11:15</label>
+                    </div>
+                    <div>
+                        <input type="checkbox" id="4" name="periodo4" value="periodo4" />
+                        <label htmlFor="periodo4" className={cambiarColorLabels(4)}>11:15-12:45</label>
+                    </div>
+                    </div>
+                    <div className='ggg'>
+                    <h5>Tarde</h5>
+                    <div>
+                        <input type="checkbox" id="5" name="periodo5" value="periodo5" />
+                        <label htmlFor="periodo5" className={cambiarColorLabels(5)}>12:45-14:15</label>
+                    </div>
+                    <div>
+                        <input type="checkbox" id="6" name="periodo6" value="periodo6" />
+                        <label htmlFor="periodo6" className={cambiarColorLabels(6)}>14:15-15:45</label>
+                    </div>
+                    <div>
+                        <input type="checkbox" id="7" name="periodo7" value="periodo7" />
+                        <label htmlFor="periodo7" className={cambiarColorLabels(7)}>15:45-17:15</label>
+                    </div>
+                    <div>
+                        <input type="checkbox" id="8" name="periodo8" value="periodo8" />
+                        <label htmlFor="periodo8" className={cambiarColorLabels(8)}>17:15-18:45</label>
+                    </div>
+                    </div>
+                    <div className='ggg'>
+                    <h5>Noche</h5>
+                    <div>
+                        <input type="checkbox" id="9" name="periodo9" value="periodo9" />
+                        <label htmlFor="periodo9" className={cambiarColorLabels(9)}>18:45-20:15</label>
+                    </div>
+                    <div>
+                        <input type="checkbox" id="10" name="periodo10" value="periodo10" />
+                        <label htmlFor="periodo10" className={cambiarColorLabels(10)}>20:15-21:45</label>
+                    </div>
+                    </div>
                 </div>
                 {/* Agrega más periodos aquí si es necesario */}
-            
-            <Button className="modi" onClick={estado}>Modificar</Button>
-            
+                <Button className="modi" onClick={estado}>Modificar</Button>
             </div>
-            
-            )}
-            </Col>
-            <Col sm="5">
-            <div className="ambiente-details">
-          <h1>Detalle</h1>
-          <div className="datos">
-          <p>Color blanco hace a periodos habilitados.</p>
-          <p>Color gris hace referencia a periodos  </p>
-          <p>inhabilitados. </p>
-          <p>Color rojo para periodos ya reservados </p>
-          {/* Mostrar el id y el nombre del ambiente */}
-          </div>
-        </div>
-        </Col>
-        </Form.Group>
+        )}
+    </Col>
+</Form.Group>
+
         </div>
         
     );

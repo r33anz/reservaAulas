@@ -93,9 +93,10 @@
   padding-left: 400px;
 }
 
-.ambientedetails {
-  
+.ambientedetails{
   margin-top: -40px;
+}
+.datos1 {
   margin-left: 50px;
   width: 400px;
   background-color: #f9f9f9;
@@ -105,10 +106,7 @@
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
 }
 
-.datos {
-  margin-top: 20px;
-  margin-left: -40px;
-}
+
 
 .datos p {
   /* Aplicar estilo de cursiva */
