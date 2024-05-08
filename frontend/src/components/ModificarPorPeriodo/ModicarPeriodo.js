@@ -55,7 +55,7 @@ const Modificarperdiodo = () => {
         setAmbienteOptions([]);
     }
 };*/const buscarAmbiente = async (event) => {
-    
+    setConsultarPresionado(false);
     if (event.hasOwnProperty('target') && event.target.hasOwnProperty('value')) {
         const value = event.target.value
         formik.setFieldValue("ambiente", { ...formik.values.ambiente, nombre: value })
@@ -166,6 +166,7 @@ const otraHabilitar = (id) => {
                 formik.setFieldValue("ambiente", { id: ambientes[0].id, nombre: ambientes[0].nombre });
                 console.log(ambientes[0].id);
             }
+            inputAmbienteRef.current.blur();
             console.log(show);
         }
     });
@@ -181,10 +182,12 @@ const otraHabilitar = (id) => {
         formik.setFieldValue("ambiente", { id: ambiente.id, nombre: ambiente.nombre });
         
         setEnterPressed(true);
+        setConsultarPresionado(false);
         setShow("")
     }
     const setFechaDelAmbiente = (event, callback) => {
         setAmbiente({ ...ambiente, periodos: null })
+        setConsultarPresionado(false);
         callback(event);
     }
     return (
@@ -268,14 +271,14 @@ const otraHabilitar = (id) => {
             <div className="periodos-container">
                 
 
-                <h1>Periodos:</h1>
+                <h2>Periodos:</h2>
                 <div className="circle-container">
       <div className="circle" style={{ backgroundColor: "white" }}>
         
       </div>
       <span className="text" >{"Periodos habilitados"}</span>
       
-      <div className="circle" style={{ backgroundColor: "#636c72" }}>
+      <div className="circle" style={{ backgroundColor: "#a4a6a6" }}>
         
       </div>
       <span className="text" >{"Periodos inhabilitados"}</span>

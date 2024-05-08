@@ -40,6 +40,8 @@ const Buscar = () => {
             })
         }),
         onSubmit: values => {
+            inputAmbienteRef.current.blur();
+            setAmbienteDetails([]);
           if (ambientes.length > 0) {
             for (let i = 0; i < ambientes.length; i++) {
                 recuperar(ambientes[i].id);
@@ -49,13 +51,16 @@ const Buscar = () => {
                 setAmbienteDetails([]); // Limpiar los detalles del ambiente en caso de no encontrar coincidencias
                 setEnterPressed(true);
             }
+            inputAmbienteRef.current.blur();
         }
     });
 
     const setNombreDelAmbiente = (ambiente) => {
         formik.setFieldValue("ambiente", { id: ambiente.id, nombre: ambiente.nombre });
+        setAmbienteDetails([]);
         recuperar(ambiente.id);
         setShow("")
+        
     };
 
     useEffect(() => {
@@ -141,7 +146,7 @@ const Buscar = () => {
     <div className="ambientedetails" style={{ height:"30rem",overflowY: "auto", maxHeight: "30rem" }}>
         {ambienteDetails.map((ambiente, index) => (
             <div key={index} className="datos1" style={{ marginBottom: '20px' }}>
-                <h2>{ambiente.nombre}</h2>
+                <h4>{ambiente.nombre}</h4>
                 <p>Capacidad: {ambiente.capacidad}</p>
                 <p>Tipo de Ambiente: {ambiente.tipo}</p>
                 <p>Bloque: {ambiente.nombreBloque}</p>

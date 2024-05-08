@@ -64,21 +64,7 @@ const SolcitarReserva = () => {
   // (FIX:Marco) 'nombre' is assigned a value but never used
   // eslint-disable-next-line
   // Función para buscar los ambientes que coinciden con el nombre
-  const buscarAmbiente2 = async (nombre) => {
-    if (nombre.trim() !== "") {
-      buscarAmbientePorNombre(nombre)
-        .then((data) => {
-          setAmbienteOptions(data.respuesta); // Actualizar las opciones de ambiente con los datos obtenidos
-        })
-        .catch((error) => {
-          console.log("Error al buscar los ambientes:", error);
-          setAmbienteOptions([]); // Limpiar las opciones de ambiente en caso de error
-        });
-    } else {
-      // Si el input está vacío, limpiar las opciones de ambiente
-      setAmbienteOptions([]);
-    }
-  };
+
   const buscarAmbiente = async (event) => {
     if (event.hasOwnProperty('target') && event.target.hasOwnProperty('value')) {
         const value = event.target.value;
@@ -88,6 +74,7 @@ const SolcitarReserva = () => {
         
     }
 };
+ 
   const docente = (nombre) => {
 
     getDocente(nombre)
@@ -100,17 +87,6 @@ const SolcitarReserva = () => {
           setAmbienteOptions([]); // Limpiar las opciones de ambiente en caso de error
         });
 
-  };
-
-  // Función para manejar el cambio en el campo de entrada
-  const handleInputChange = (e) => {
-    console.log(nombreAmbiente.length);
-    const newValue = e.target.value;
-    if (/^[a-zA-Z0-9\s]*$/.test(newValue)) {
-      setNombreAmbiente(newValue);
-      formik.setFieldValue("nombreAmbiente", newValue);
-      buscarAmbiente(newValue);
-    }
   };
   // Función para hacer scroll al elemento seleccionado
   useEffect(() => {
@@ -167,6 +143,9 @@ const SolcitarReserva = () => {
         .required("Obligatorio"),
       materia: Yup.string().required("Obligatorio"),
       grupo: Yup.string().required("Obligatorio"),
+      fechaReserva: Yup.date()
+            .min(new Date(new Date().setDate(new Date().getDate() - 1)), 'La fecha no puede ser anterior a la fecha actual')
+            .required("Obligatorio")
     }),
     onSubmit: (values) => {
       const periodosSeleccionados = periodos.filter((item) => item.isCheck);

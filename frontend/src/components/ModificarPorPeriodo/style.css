@@ -61,7 +61,7 @@
 
     width: 130px;
     margin-left: 20px;
-    margin-top: -50px;
+    margin-top: -20px;
     display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
@@ -100,13 +100,13 @@
 }
 
 .text {
-  font-size: 20px;
+  font-size: 18px;
   width: 200px;
 }
 
 
 .periodos-inhabilitados{
-    background-color: #636c72;
+    background-color: #a4a6a6;
 }
 .periodos-habilitados{
     background-color: #ffffff;
