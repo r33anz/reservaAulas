@@ -86,7 +86,6 @@ const buscarAmbientPorFecha = async (ambiente, fecha) => {
         checkboxes.forEach(checkbox => {
             if (checkbox.checked) {
                 seleccionados.push({ id: checkbox.id });
-                
                 // Convertir checkbox.id a número
                 const checkboxIdAsNumber = parseInt(checkbox.id, 10);
                 // Verifica si el ID del checkbox está en periodosModificados
@@ -95,7 +94,6 @@ const buscarAmbientPorFecha = async (ambiente, fecha) => {
                 } else {
                     otraFuncion(checkbox.id);
                 }
-                
             }
         });
         // Desmarcar todas las casillas de verificación
