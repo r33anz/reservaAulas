@@ -5,7 +5,6 @@ const apiUrl = process.env.REACT_APP_URL;
 export const buscarAmbientePorNombre = (nombre) => {
     return axios.post(`${apiUrl}/busquedaAula`, { patron: nombre })
         .then(function (response) {
-            
             return response.data; // Devuelve los datos del ambiente encontrado
         })
         .catch(function (error) {
@@ -26,7 +25,6 @@ export const modificarPerio = (idAmbiente,fecha) => {
 }
 
 export const estadoinhabilitado = (idAmbiente, idPeriodos, fecha) => {
-
     return axios.post(`${apiUrl}/inhabilitarAmbiente`, {
             idAmbiente: idAmbiente,
             idPeriodos: idPeriodos,
