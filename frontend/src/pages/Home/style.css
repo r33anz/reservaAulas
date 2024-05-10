@@ -23,8 +23,8 @@
     /* position: relative; */
     /* left: 0; */
     /* bottom: 0; */
-    height: 6%;
-    /* height: -webkit-fill-available; */
+    /* height: 6%; */
+    height: -webkit-fill-available;
     width: 100%;
 }
 
