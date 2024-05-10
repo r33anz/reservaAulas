@@ -17,7 +17,6 @@ export const buscarAmbientePorNombre = (nombre) => {
 export const modificarPerio = (idAmbiente,fecha) => {
     return axios.post(`${apiUrl}/buscarInhabilitados`,{idAmbiente:idAmbiente, fecha:fecha })
         .then(function (response) {
-            console.log(response.data);
             return response.data; // Devuelve los datos del ambiente encontrado
         })
         .catch(function (error) {

@@ -38,19 +38,16 @@ const ModificarEstadoDelAmbientePorFecha = () => {
             ambiente: Yup.object().shape({
                 nombre: Yup.string()
                     .required("Obligatorio")
-                    .test('hasOptions', 'No exite ese ambiente', function(value) {
+                    .test('hasOptions', 'No exite el ambiente', function (value) {
                         // 'this.options' contiene las opciones que pasas al esquema de validación
-                        if(ambientes.length>0){
-                          
-                          return true;
-                        }else{
-                          
-                          return false;
-                        }
+                        return ambientes.length > 0;
                     })
             }),
             fecha: Yup.date()
-            .min(new Date(new Date().setDate(new Date().getDate() - 1)), 'La fecha no puede ser anterior a la fecha actual')
+                .min(new Date(new Date().setDate(new Date().getDate() - 1)), 'La fecha no puede ser anterior a la fecha actual')
+                .test('is-not-sundays', 'No se admiten domigos', function (value) {
+                    return value.getDay() !== 0;
+                })
                 .required("Obligatorio")
         }),
         onSubmit: values => {
@@ -63,6 +60,9 @@ const ModificarEstadoDelAmbientePorFecha = () => {
         setEstado("");
         setAmbientes([]);
         setAmbiente({});
+        setSelected(null);
+        setShow("");
+        setShowMensajeDeConfirmacion(false);
         formik.resetForm();
     }
 
@@ -92,12 +92,11 @@ const ModificarEstadoDelAmbientePorFecha = () => {
     const buscarAmbientPorFecha = async (ambiente, fecha) => {
         const data = await modificarPerio(ambiente.id, fecha);
         if (data != null) {
-            console.log(ambiente.id);
             setAmbiente({
                 id: ambiente.id, nombre: ambiente.nombre, fecha, periodos: data.periodos
             })
         }
-        
+
     }
 
     const modificarPeriodos = async (estado) => {
@@ -125,6 +124,13 @@ const ModificarEstadoDelAmbientePorFecha = () => {
     const mostrarMensajeDeConfirmacion = (estado) => {
         setEstado(estado);
         setShowMensajeDeConfirmacion(true);
+    }
+
+    const handlerOnClickAmbiente = ({ target }) => {
+        let ambiente = ambientes.find((item) => item.nombre === target.value);
+        setNombreDelAmbiente(ambiente);
+        setSelected(null);
+        setShow("");
     }
 
     const handleKeyUp = ({ code }) => {
@@ -170,13 +176,13 @@ const ModificarEstadoDelAmbientePorFecha = () => {
                                             onKeyUp={(e) => handleKeyUp(e)}
                                             className="form-control"
                                             bsPrefix="dropdown-toggle" />
-                                        {formik.values.ambiente.nombre !== "" &&
+                                        {ambientes && ambientes.length > 0 && formik.values.ambiente.nombre !== "" &&
                                             <Dropdown.Menu className={show} style={{ width: "100%", overflowY: "auto", maxHeight: "5rem" }} show>
                                                 {ambientes.map((ambiente) =>
                                                     <Dropdown.Item
                                                         eventKey={ambiente.nombre}
                                                         key={ambiente.nombre}
-                                                        // onKeyUp={() => setNombreDelAmbiente(ambiente)}
+                                                        onClick={handlerOnClickAmbiente}
                                                     >
                                                         <option>{ambiente.nombre}</option>
                                                     </Dropdown.Item>
@@ -226,18 +232,61 @@ const ModificarEstadoDelAmbientePorFecha = () => {
                                         : <Button type="submit">Consultar</Button>}
                                 </Stack>
                             </Row>
-                            {ambiente.periodos && <label>Periodos</label>}
-                            {ambiente.periodos && periodos.map(item => <>
-                                <div key={item.id} style={{
-                                    border: '1px solid black',
-                                    width: '8rem',
-                                    padding: '10px',
-                                    color: `${ambiente.periodos.includes(item.id) ? "white" : "black"}`,
-                                    background: `${ambiente.periodos.includes(item.id) ? "#71a3cc" : "white"}`
-                                }}>
-                                    {item.hora}
-                                </div>
-                            </>)}
+                            {ambiente.periodos && <h6>Periodos</h6>}
+                            {ambiente.periodos &&
+                                <Row>
+                                    <Col sm={4}>
+                                        <h6>Mañana</h6>
+                                        {ambiente.periodos && periodos.map((item) => <>
+                                            {item.id >= 1 && item.id <= 4 &&
+                                                <div key={item.id} style={{
+                                                    border: '1px solid black',
+                                                    width: '100px',
+                                                    padding: '2px',
+                                                    textAlign: 'center',
+                                                    color: `${ambiente.periodos.includes(item.id) ? "white" : "black"}`,
+                                                    background: `${ambiente.periodos.includes(item.id) ? "gray" : "white"}`,
+                                                    marginBottom: "5px"
+                                                }}>
+                                                    {item.hora}
+                                                </div>}
+                                        </>)}
+                                    </Col>
+                                    <Col sm={4}>
+                                        <h6>Tarde</h6>
+                                        {ambiente.periodos && periodos.map((item) => <>
+                                            {item.id >= 5 && item.id <= 8 &&
+                                                <div key={item.id} style={{
+                                                    border: '1px solid black',
+                                                    width: '105px',
+                                                    padding: '2px',
+                                                    textAlign: 'center',
+                                                    color: `${ambiente.periodos.includes(item.id) ? "white" : "black"}`,
+                                                    background: `${ambiente.periodos.includes(item.id) ? "gray" : "white"}`,
+                                                    marginBottom: "5px"
+                                                }}>
+                                                    {item.hora}
+                                                </div>}
+                                        </>)}
+                                    </Col>
+                                    <Col sm={4}>
+                                        <h6>Noche</h6>
+                                        {ambiente.periodos && periodos.map((item) => <>
+                                            {item.id >= 9 && item.id <= 10 &&
+                                                <div key={item.id} style={{
+                                                    border: '1px solid black',
+                                                    width: '105px',
+                                                    padding: '2px',
+                                                    textAlign: 'center',
+                                                    color: `${ambiente.periodos.includes(item.id) ? "white" : "black"}`,
+                                                    background: `${ambiente.periodos.includes(item.id) ? "gray" : "white"}`,
+                                                    marginBottom: "5px"
+                                                }}>
+                                                    {item.hora}
+                                                </div>}
+                                        </>)}
+                                    </Col>
+                                </Row>}
                         </Form>
                     </Col>
                 </Row>
