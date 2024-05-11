@@ -13,9 +13,9 @@ export const getSolicitudPorId = (solicitudId) => {
         });
 }
 
-export const vertificarDisponibilidad = (fechaReserva, ambiente, periodos) => {
+export const vertificarDisponibilidad = (fechaReserva, id, periodos) => {
     return axios
-        .post(`${apiUrl}/consultarFechaPeriodAmbiente`, { fechaReserva, ambiente, periodos })
+        .post(`${apiUrl}/consultarFechaPeriodAmbiente`, { fechaReserva, ambiente: id, periodos })
         .then(function (response) {
             return response.data;
         })
@@ -26,7 +26,12 @@ export const vertificarDisponibilidad = (fechaReserva, ambiente, periodos) => {
 }
 
 export const aceptarSolicitud = (id) => {
-    return axios.put(`${apiUrl}/aceptarSolicitud`, { id })
+    const date = new Date();
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    const formattedDate = `${year}-${month}-${day}`;
+    return axios.put(`${apiUrl}/aceptarSolicitud`, { idSolicitud: id, fechaAtendida: formattedDate })
         .then(function (response) {
             return response.data;
         })

@@ -39,8 +39,8 @@ const AtenderSolicitud = ({ solicitudId }) => {
     }
 
     const onClickParaVerificarDisponibilidad = async () => {
-        if (solicitud.length > 0) {
-            const response = await vertificarDisponibilidad(solicitud.fecha, solicitud.ambiente_nombre, [solicitud.periodo_ini_id, solicitud.periodo_fin_id]);
+        if (Object.getOwnPropertyNames(solicitud).length > 0) {
+            const response = await vertificarDisponibilidad(solicitud.fecha, solicitud.id_ambiente, [solicitud.periodo_ini_id, solicitud.periodo_fin_id]);
             if (response) {
                 setMostrarMensajeDeVerificacion(response);
             }
@@ -130,7 +130,7 @@ const AtenderSolicitud = ({ solicitudId }) => {
                                     <Col sm="1"></Col>
                                     <Col sm="5" style={{ background: "white" }}>
                                         <Row style={{ background: "white" }}>
-                                            <h5><strong>Detalles Peticion docente</strong></h5>
+                                            <h5><strong>Detalles del Ambiente</strong></h5>
                                         </Row>
                                         <Row style={{ background: "white" }}>
                                             <div>
@@ -146,7 +146,7 @@ const AtenderSolicitud = ({ solicitudId }) => {
                                 </Row>
                                 <Row xs="auto" sm="auto" style={{ paddingTop: "1rem" }} className="justify-content-end">
                                     <div style={{ width: "60%", padding: 0 }} className="justify-content-start text-left">
-                                        {solicitud.length > 0 && mostrarMensajeDeVerificacion !== null ?
+                                        {Object.getOwnPropertyNames(solicitud).length > 0 && mostrarMensajeDeVerificacion !== null ?
                                             mostrarMensajeDeVerificacion.valido ?
                                                 "Ambiente disponible"
                                                 : "Ambiente no disponible"
