@@ -33,7 +33,22 @@ export const getBloques = (id) => {
         
     ];
 }
-}
+} 
+
+
+export const razon = () => {
+   
+    return [
+        { id: 1, name: "Primer Parcial"},
+        { id: 2, name: "Segundo Parcial"},
+        { id: 3, name: "Examen Final"},
+        { id: 4, name: "Segunda Instancia"},
+        { id: 5, name: "Examen de mesa"},
+        
+        
+    ];
+
+} 
 
 
 export const getGruposPorBloque = (nombreMateria) => {
