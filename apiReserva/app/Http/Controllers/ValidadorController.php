@@ -42,18 +42,13 @@ class ValidadorController extends Controller
             ->pluck('ambiente_id');
 
         $solicitudes = Solicitud::whereDate('fechaReserva', $fecha)
+            ->where('estado', 'aprobado') 
             ->where('periodo_ini_id', '>=', $periodoInicial)
             ->where('periodo_fin_id', '<=', $periodoFinal)
             ->pluck('id');
 
-        $solicitudesReservadas = DB::table('reservas')
-            ->whereIn('idSolicitud', $solicitudes)
-            ->pluck('idSolicitud')
-            ->unique()
-            ->values();
-
         $ambientesReservados = DB::table('ambiente_solicitud')
-            ->whereIn('solicitud_id', $solicitudesReservadas)
+            ->whereIn('solicitud_id', $solicitudes)
             ->pluck('ambiente_id')
             ->unique()
             ->values();
@@ -93,6 +88,4 @@ class ValidadorController extends Controller
             "valido"=>$valido
         ]);
     }
-
-    
 }

@@ -11,9 +11,9 @@ class ValidadorService{
 
         $ambienteDisponible = true;
         $coincidenciasInhabilitados = Inhabilitado::where('ambiente_id', $idAmbiente)
-        ->where('fecha', $fecha)
-        ->whereIn('periodo_id', $idPeriodos)
-        ->exists();
+                                                ->where('fecha', $fecha)
+                                                ->whereIn('periodo_id', $idPeriodos)
+                                                ->exists();
         if($coincidenciasInhabilitados){
             return false;
         }
@@ -21,7 +21,8 @@ class ValidadorService{
         $idSolicitudes = DB::table('ambiente_solicitud')
             ->where('ambiente_id', $idAmbiente)
             ->pluck('solicitud_id');
-        $solicitudesCoincidencia = Solicitud::where('estado', true)
+
+        $solicitudesCoincidencia = Solicitud::where('estado', 'aprobado')
             ->whereDate('fechaReserva', $fecha)
             ->whereIn('id', $idSolicitudes)
             ->pluck('id');   
