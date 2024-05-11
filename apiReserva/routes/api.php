@@ -3,6 +3,7 @@
 use App\Http\Controllers\AmbienteController;
 use App\Http\Controllers\BloqueController;
 use App\Http\Controllers\PeriodoController;
+use App\Http\Controllers\ReservaController;
 use App\Http\Resources\BloqueResource;
 use App\Http\Resources\PisoResource;
 use App\Models\Piso;
@@ -57,3 +58,7 @@ Route::put('/rechazarSolicitud',[SolicitudController::class,'rechazarSolicitud']
 //validador
 Route::post('/consultarFechaPeriodo',[ValidadorController::class,'consultaFechaPeriodo']);  //devuelves los ambientes habiles
 Route::post('/consultarFechaPeriodAmbiente',[ValidadorController::class,'consultarFechaPeriodoAmbiente']);
+
+//reservas 
+Route::get('/docentes/{id}/reservas', [ReservaController::class,'reservasPorDocente']);
+Route::delete('/reservas/{id}', [ReservaController::class,'cancelarReserva']);

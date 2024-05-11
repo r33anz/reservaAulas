@@ -16,7 +16,7 @@ import NotFound from "./pages/NotFound";
 import ListaDeSolicitudes from "./components/ListaDeSolicitudes";
 import SolcitarReserva from "./components/SolicitudReserva/SolicitarReserva"
 import AtenderSolicitud from "./components/AtenderSolicitud/AtenderSolicitud";
-
+import CancelarReservas from "./components/CancelarReserva/CancelarReservas";
 function App() {
 
   return (
@@ -36,6 +36,9 @@ function App() {
         } />
         <Route exact path="/admin/listaDeSolicitudesDeReservaPorLlegada" element={
           <ListaDeSolicitudes tipoDeUsuario="Admin" titulo="Lista de Solicitudes de Reserva Por Llegada" />
+        } />
+        <Route exact path="/docente/listaReservas" element={
+          <CancelarReservas tipoDeUsuario="Docente" titulo="Lsita de reservas" />
         } />
         <Route exact path="/admin/buscarPorNombre" element={<Buscar />} />
         <Route exact path="/admin/registroAmbiente" element={
