@@ -23,7 +23,7 @@ class SolicitudSeeder extends Seeder
             'fechaReserva'=>'2024-04-25',
             'periodo_ini_id'=>3, //AUDITORIO EDIFICIO NUEVO
             'periodo_fin_id'=>4,
-            'estado'=>'esperando'
+            'estado'=>'en espera'
         ]);
 
         DB::table('ambiente_solicitud')->insert([
@@ -40,7 +40,7 @@ class SolicitudSeeder extends Seeder
             'fechaReserva'=>'2024-04-25',
             'periodo_ini_id'=>5,
             'periodo_fin_id'=>8,
-            'estado'=>'esperando'
+            'estado'=>'en espera'
         ]);
 
         DB::table('ambiente_solicitud')->insert([
@@ -57,7 +57,7 @@ class SolicitudSeeder extends Seeder
             'fechaReserva'=>'2024-04-26',
             'periodo_ini_id'=>1,
             'periodo_fin_id'=>2,
-            'estado'=>'esperando'
+            'estado'=>'en espera'
         ]);
 
         DB::table('ambiente_solicitud')->insert([
@@ -92,7 +92,7 @@ class SolicitudSeeder extends Seeder
             'fechaReserva'=>'2024-04-23',  //655 
             'periodo_ini_id'=>4,
             'periodo_fin_id'=>5,
-            'estado'=>'esperando'
+            'estado'=>'en espera'
         ]);
 
         DB::table('ambiente_solicitud')->insert([
@@ -244,7 +244,7 @@ class SolicitudSeeder extends Seeder
             'fechaReserva'=>'2024-05-25',
             'periodo_ini_id'=>3, 
             'periodo_fin_id'=>3,
-            'estado'=>'esperando'
+            'estado'=>'en espera'
         ]);
 
         DB::table('ambiente_solicitud')->insert([
@@ -261,7 +261,7 @@ class SolicitudSeeder extends Seeder
             'fechaReserva'=>'2024-05-15',
             'periodo_ini_id'=>4, 
             'periodo_fin_id'=>7,
-            'estado'=>'esperando'
+            'estado'=>'en espera'
             
         ]);
 
@@ -279,7 +279,7 @@ class SolicitudSeeder extends Seeder
             'fechaReserva'=>'2024-04-29',
             'periodo_ini_id'=>8, 
             'periodo_fin_id'=>8,
-            'estado'=>'esperando'
+            'estado'=>'en espera'
             
         ]);
 
