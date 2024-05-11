@@ -21,9 +21,11 @@ class CreateSolicitudsTable extends Migration
             $table->integer('cantidad');
             $table->string('razon');
             $table->date('fechaReserva');
+            $table->date('fechaAtendida')->nullable();
             $table->unsignedBigInteger('periodo_ini_id');
             $table->unsignedBigInteger('periodo_fin_id');
-            $table->boolean('estado');
+            $table->string('estado');  
+            $table->string('razonRechazo')->nullable();
             $table->timestamps();
         });
     }
