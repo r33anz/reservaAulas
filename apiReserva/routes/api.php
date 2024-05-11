@@ -49,12 +49,12 @@ Route::post('/buscarInhabilitados',[InhabilitadoController::class,'buscarPeriodo
 Route::get('/fechasSolicitud',[SolicitudController::class,'conseguirFechas']);
 Route::post('/realizarSolicitud',[SolicitudController::class,'registroSolicitud']);
 Route::post('/informacionSolicitud',[SolicitudController::class,'informacionSolicitud']);
-Route::get('/solicitudesPorLlegada',[SolicitudController::class,'solicitudesPorLlegada']);
-Route::get('/solicitudesAceptadas',[SolicitudController::class,'solicitudesAtendidas']);
+Route::get('/solicitudesPorLlegada',[SolicitudController::class,'solicitudesPorLlegada']); // DEL
+Route::get('/solicitudesAceptadas',[SolicitudController::class,'solicitudesAtendidas']);  // DEL
 Route::get('/{idSolicitud}/recuperarInformacion',[SolicitudController::class,'recuperarInformacion']);
 Route::put('/aceptarSolicitud',[SolicitudController::class,'aceptarSolicitud']);
 Route::put('/rechazarSolicitud',[SolicitudController::class,'rechazarSolicitud']);
-
+Route::post('/verListas',[SolicitudController::class,'verListas']);
 //validador
 Route::post('/consultarFechaPeriodo',[ValidadorController::class,'consultaFechaPeriodo']);  //devuelves los ambientes habiles
 Route::post('/consultarFechaPeriodAmbiente',[ValidadorController::class,'consultarFechaPeriodoAmbiente']);
