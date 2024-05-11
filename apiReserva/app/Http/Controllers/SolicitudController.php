@@ -56,13 +56,13 @@ class SolicitudController extends Controller
         $cantidad = $request->input('capacidad');
         $razon = $request->input('razon');
         $fechaReserva = $request->input('fechaReserva');
-        $estado = 'espera';
+        $estado = "en espera";
         $idAmbiente = $request->input('ambiente');
         $periodos = $request->input('periodos');
         // verificar si el ambiente es valido
         $ambienteDisponible = $this->ambienteValido->ambienteValido($idAmbiente, $fechaReserva, $periodos);
 
-        echo $ambienteDisponible;
+        //echo $ambienteDisponible;
         if (!$ambienteDisponible) {
             return response()->json(['mensaje' => 'El ambiente no esta disponible en la fecha y/o periodos especificados'], 400);
         }
