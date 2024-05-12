@@ -197,6 +197,7 @@ class SolicitudController extends Controller
                 $datosSolicitud['fechaAtendida'] = $solicitud->fechaAtendida;
                 $datosSolicitud['razonRechazo'] = $solicitud->razonRechazo;
             }
+            
 
 
             $datosSolicitudes[] = $datosSolicitud;
