@@ -75,16 +75,27 @@ export const getDocente = (id) => {
     });
   };
 
-export const getReserva =(reserva)=>{
+export const postReserva =(reserva)=>{
     console.log(reserva);
     return axios.post(`${apiUrl}/realizarSolicitud`,reserva)
     .then((response) => {
-        
+        console.log();
         return response.data;
         //return response.data.materias["Algoritmos Avanzados"];
     })
     .catch(function (error) {
-        console.log(error);
-        return null; // Manejo del error: retorna null si hay un error en la búsqueda
+        if (error.response) {
+            console.log(error.response.data);
+            
+           
+            return Promise.reject(error.response.data);
+        } else if (error.request) {
+            console.log(error.request);
+            return Promise.reject(error.request);
+        } else {
+            console.log("Error", error.message);
+            return Promise.reject(error.message);
+        }
+        // Manejo del error: retorna null si hay un error en la búsqueda
     });
 }

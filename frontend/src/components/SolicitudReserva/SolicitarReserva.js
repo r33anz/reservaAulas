@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState, useRef } from "react";
 import {
   getBloques,
   getGruposPorBloque,
-  getReserva,
+  postReserva,
   getDocente,
   razon,
 } from "../../services/SolicitarReserva.service";
@@ -187,20 +187,23 @@ values.periodos = periodoIDs;
       values.ambiente=ida;
       values.idDocente = id;
 console.log(periodoIDs);
-        getReserva(values)
+        postReserva(values)
         .then((response) => {
+          
           agregarAlert({
+            
             icon: <CheckCircleFill />,
             severidad: "success",
             mensaje: "Se a registrado correctamente el ambiente",
           });
           formik.resetForm();
+          setCapacidadDelAmbienteSeleccionado(null);
         })
         .catch((error) => {
           agregarAlert({
             icon: <ExclamationCircleFill />,
             severidad: "danger",
-            mensaje: error,
+            mensaje: error.mensaje,
           });
         });
     },
@@ -210,9 +213,9 @@ console.log(periodoIDs);
   const handleKeyPress = (event) => {
     
     if (event.code === "Enter") {
-       
+       if(ambienteOptions.length > 0){
         setNombreDelAmbiente(ambienteOptions[0]);
-        
+       }
     }
     
   };
@@ -231,13 +234,13 @@ console.log(periodoIDs);
     
     setidambiente(ambiente.id);
     console.log(ida);
-    setShow("");
+    
     recuperarAmbientePorID(ambiente.id)
       .then((data) => {
         // Actualizar estado con los detalles del ambiente
         setCapacidadDelAmbienteSeleccionado(data.capacidad);
         console.log(data.capacidad);
-        
+        setShow("");
       })
       .catch((error) => {
         console.log("Error al buscar el ambiente:", error);
@@ -420,7 +423,7 @@ console.log(periodoIDs);
                       className="mb-3 RegistrarAmbiente-entrada-numero"
                       controlId="capacidad"
                     >
-                      <Form.Label>Capacidad</Form.Label>
+                      <Form.Label>Cantidad de alumnos</Form.Label>
                       <Form.Control
                         type="number"
                         onKeyDown={(e) => {
@@ -533,7 +536,11 @@ console.log(periodoIDs);
                       <Button
                         className="btn RegistrarAmbiente-button-cancel"
                         size="sm"
-                        onClick={() => formik.resetForm()}
+                        onClick={() => {
+                          setCapacidadDelAmbienteSeleccionado(null)
+                          formik.resetForm()
+                          setAmbienteOptions([]);
+                        }}
                         
                       >
                         Cancelar
@@ -543,10 +550,7 @@ console.log(periodoIDs);
   size="sm"
   type="submit"
   disabled={!formik.isValid || !formik.dirty}
-  onClick={() => {
-    setCapacidadDelAmbienteSeleccionado(null);
-    formik.handleSubmit(); // Esto envía el formulario
-  }}
+  
 >
   Registrar
 </Button>
