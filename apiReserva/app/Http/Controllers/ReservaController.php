@@ -13,14 +13,13 @@ class ReservaController extends Controller
 {
     public function reservasPorDocente($id)
     {
-        // Obtener los IDs de las solicitudes del docente
-        $idsSolicitudes = Solicitud::where('docente_id', $id)->pluck('id');
-
-        // Obtener los IDs de las reservas asociadas a las solicitudes del docente
-        $idsReservas = DB::table('reservas')->whereIn('idSolicitud', $idsSolicitudes)->pluck('idSolicitud');
+        // Obtener los IDs de las solicitudes aprobadas del docente
+        $idsSolicitudesAprobadas = Solicitud::where('docente_id', $id)
+            ->where('estado', 'aprobado')
+            ->pluck('id');
 
         // Obtener los datos de las solicitudes correspondientes a esos IDs
-        $solicitudesAceptadas = Solicitud::whereIn('id', $idsReservas)->get();
+        $solicitudesAceptadas = Solicitud::whereIn('id', $idsSolicitudesAprobadas)->get();
 
         $datosSolicitudesAceptadas = [];
 
@@ -69,18 +68,20 @@ class ReservaController extends Controller
     }
 
 
+
     public function cancelarReserva($id)
     {
-        // Buscar la reserva asociada al ID de la solicitud
-        $reserva = Reserva::where('idSolicitud', $id)->first();
+        // Buscar la solicitud asociada al ID de la reserva
+        $solicitud = Solicitud::find($id);
 
-        // Verificar si se encontró la reserva
-        if (!$reserva) {
-            return response()->json(['message' => 'No se encontró la reserva asociada a la solicitud'], 404);
+        // Verificar si se encontró la solicitud
+        if (!$solicitud) {
+            return response()->json(['message' => 'No se encontró la solicitud asociada a la reserva'], 404);
         }
 
-        // Eliminar la reserva encontrada
-        $reserva->delete();
+        // Cambiar el estado de la solicitud a "cancelado"
+        $solicitud->estado = 'cancelado';
+        $solicitud->save();
 
         return response()->json(['message' => 'Reserva cancelada correctamente'], 200);
     }
