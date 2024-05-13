@@ -1,6 +1,6 @@
 import React, { useCallback, useContext, useEffect, useState } from "react";
-import { Col, Container, Modal, OverlayTrigger, Row, Table, Tooltip, Button, Alert } from "react-bootstrap";
-import { ArrowClockwise, CardHeading, CheckCircleFill, XSquareFill, QuestionCircleFill, XCircleFill } from "react-bootstrap-icons";
+import { Col, Container, Modal, OverlayTrigger, Row, Table, Tooltip } from "react-bootstrap";
+import { ArrowClockwise, CardHeading, CheckCircleFill, XSquareFill, XCircleFill } from "react-bootstrap-icons";
 import { cancelarReserva, recuperarReservas, recuperarSolicitudesDeReserva } from "../../services/Reserva.service";
 import { AlertsContext } from "../Alert/AlertsContext";
 
