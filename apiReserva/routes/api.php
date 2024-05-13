@@ -61,4 +61,4 @@ Route::post('/consultarFechaPeriodAmbiente',[ValidadorController::class,'consult
 
 //reservas 
 Route::get('/docentes/{id}/reservas', [ReservaController::class,'reservasPorDocente']);
-Route::delete('/reservas/{id}', [ReservaController::class,'cancelarReserva']);
+Route::put('/reservas/{id}', [ReservaController::class,'cancelarReserva']);

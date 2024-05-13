@@ -22,7 +22,7 @@ export const recuperarReservas = (id) => {
         });
 }
 export const cancelarReserva = (id) => {
-    return axios.delete(`${apiUrl}/reservas/${id}`)
+    return axios.put(`${apiUrl}/reservas/${id}`)
         .then(function (response) {
             return response.data;
         })

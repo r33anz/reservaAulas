@@ -1,15 +1,14 @@
 import React, { useCallback, useContext, useEffect, useState } from "react";
-import { Col, Container, Modal, OverlayTrigger, Row, Table, Tooltip } from "react-bootstrap";
-import "./style.css";
-import { recuperarSolicitudesDeReserva, recuperarSolicitudesDeReservaAceptadas, recuperarReservas, cancelarReserva } from "../../services/Reserva.service";
-import { ArrowClockwise, CardHeading, CheckCircleFill, XSquareFill,XCircleFill } from "react-bootstrap-icons";
+import { Col, Container, Modal, OverlayTrigger, Row, Table, Tooltip, Button, Alert } from "react-bootstrap";
+import { ArrowClockwise, CardHeading, CheckCircleFill, XSquareFill, QuestionCircleFill, XCircleFill } from "react-bootstrap-icons";
+import { cancelarReserva, recuperarReservas, recuperarSolicitudesDeReserva } from "../../services/Reserva.service";
 import { AlertsContext } from "../Alert/AlertsContext";
-
 
 const ListaDeSolicitudes = ({ titulo, tipoDeUsuario }) => {
     const [solicitudes, setSolicitudes] = useState([]);
     const [solicitud, setSolicitud] = useState({});
     const [show, setShow] = useState(false);
+    const [showConfirmacion, setShowConfirmacion] = useState(false);
     const { agregarAlert } = useContext(AlertsContext);
     const periodos = [
         { id: 1, hora: '6:45 - 8:15', isHabilitado: true },
@@ -22,32 +21,30 @@ const ListaDeSolicitudes = ({ titulo, tipoDeUsuario }) => {
         { id: 8, hora: '17:15 - 18:45', isHabilitado: false },
         { id: 9, hora: '18:45 - 20:15', isHabilitado: false },
         { id: 10, hora: '20:15 - 21:45', isHabilitado: false },
-    ]
+    ];
 
     const getPeriodo = (periodoInicioId, periodoFinId) => {
         const periodoReserva = periodos.filter((periodo) => {
             return periodo.id === periodoInicioId || periodo.id === periodoFinId;
         }).map((periodo) => periodo.hora);
-        return <>{periodoReserva[0]} <br /> {periodoReserva[1]}</>
-    }
+        return <>{periodoReserva[0]} <br /> {periodoReserva[1]}</>;
+    };
 
     const reloadSolicitudes = async () => {
         await getSolicitudes();
-        agregarAlert({ icon: <CheckCircleFill />, severidad: "success", mensaje: "Actualizacion con exito" });
-    }
+        agregarAlert({ icon: <CheckCircleFill />, severidad: "success", mensaje: "Actualización con éxito" });
+    };
 
     const getSolicitudes = useCallback(async () => {
         if (tipoDeUsuario === "Admin") {
             const id = window.sessionStorage.getItem("admin_id");
-            const data = await recuperarSolicitudesDeReserva(id)
+            const data = await recuperarSolicitudesDeReserva(id);
             setSolicitudes(data.solicitudes_por_llegada);
-            console.log(data.solicitudes_por_llegada);
         }
         if (tipoDeUsuario === "Docente") {
             const id = window.sessionStorage.getItem("docente_id");
             const data = await recuperarReservas(id);
 
-            // Iterar sobre las reservas para encontrar las del docente actual
             let reservasDelDocente = [];
             for (const nombreDocente in data.reservas) {
                 if (data.reservas.hasOwnProperty(nombreDocente)) {
@@ -62,27 +59,24 @@ const ListaDeSolicitudes = ({ titulo, tipoDeUsuario }) => {
 
             setSolicitudes(reservasDelDocente);
         }
-    }, [tipoDeUsuario])
+    }, [tipoDeUsuario]);
 
     const handleCancelarReserva = async (id) => {
         try {
-            // Llamar a la función para cancelar la reserva
+            setShow(false); // Cerrar modal primero
+            setShowConfirmacion(false); // Ocultar mensaje de confirmación
             await cancelarReserva(id);
-            // Actualizar la lista de solicitudes después de la cancelación
             await getSolicitudes();
-            // Mostrar una alerta de éxito
             agregarAlert({ icon: <CheckCircleFill />, severidad: "success", mensaje: "Reserva cancelada correctamente" });
         } catch (error) {
-            // Manejar cualquier error que pueda surgir
             agregarAlert({ icon: <XCircleFill />, severidad: "error", mensaje: "Error al cancelar la reserva" });
             console.error("Error al cancelar la reserva:", error);
         }
     };
-    
 
     useEffect(() => {
         getSolicitudes();
-    }, [getSolicitudes])
+    }, [getSolicitudes]);
 
     return (<>
         <Container fluid>
@@ -167,7 +161,29 @@ const ListaDeSolicitudes = ({ titulo, tipoDeUsuario }) => {
                 <h6>Grupo: </h6><p>{solicitud.grupo}</p>
                 <h6>Razon: </h6><p>{solicitud.razon}</p>
                 {/* Botón para cancelar reserva */}
-                <button onClick={() => handleCancelarReserva(solicitud.id)}>Cancelar Reserva</button>
+                <button className="btn RegistrarAmbiente-button-register" onClick={() => setShowConfirmacion(true)}>Cancelar Reserva</button>
+            </Row>
+        </Modal>
+        {/* Mensaje de confirmación */}
+        <Modal
+            size="xs"
+            aria-labelledby="contained-modal-title-vcenter"
+            show={showConfirmacion}
+            onHide={() => setShowConfirmacion(false)}
+            centered
+        >
+            <Row sm className="text-white RegistrarAmbiente-header">
+                <Col xs="10" className="d-flex justify-content-start align-items-center" style={{ height: '100%' }}>
+                    <h4 style={{ fontWeight: "bold" }} className="">Confirmación</h4>
+                </Col>
+            </Row>
+            <Row className="RegistrarAmbiente-body justify-content-center">
+                <p>¿Está seguro de cancelar la reserva?</p>
+                <div className="d-flex justify-content-center">
+                    <button className="btn RegistrarAmbiente-button-register" onClick={() => handleCancelarReserva(solicitud.id)}>Aceptar</button>
+                    <div style={{ width: '10px' }}></div> {/* Espacio entre botones */}
+                    <button className="btn RegistrarAmbiente-button-cancel" onClick={() => setShowConfirmacion(false)}>Cancelar</button>
+                </div>
             </Row>
         </Modal>
     </>
@@ -175,3 +191,5 @@ const ListaDeSolicitudes = ({ titulo, tipoDeUsuario }) => {
 }
 
 export default ListaDeSolicitudes;
+
+
