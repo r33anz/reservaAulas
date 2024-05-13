@@ -6,10 +6,16 @@ use Illuminate\Support\Facades\DB;
 use App\Models\Solicitud;
 class ValidadorService{
 
-    public function ambienteValido($idAmbiente, $fecha, $idPeriodos){ //verifica si un ambiente/fecha/periodo
+    public function ambienteValido($idAmbiente, $fecha, $idPeriodosT){ //verifica si un ambiente/fecha/periodo
                                       // sigue siendo valido, ya que alguine podira haberle ganado
-
-        $ambienteDisponible = true;
+        if(count($idPeriodosT) == 1){
+                $idPeriodos[] = $idPeriodosT[0];
+        }else{
+            for ($i=$idPeriodosT[0] ; $i <= $idPeriodosT[count($idPeriodosT) - 1] ; $i++ ) { 
+                $idPeriodos[] = $i;
+            }
+        }
+       $ambienteDisponible = true;
         $coincidenciasInhabilitados = Inhabilitado::where('ambiente_id', $idAmbiente)
                                                 ->where('fecha', $fecha)
                                                 ->whereIn('periodo_id', $idPeriodos)

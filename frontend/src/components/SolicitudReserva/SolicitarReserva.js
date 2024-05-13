@@ -2,8 +2,9 @@ import React, { useContext, useEffect, useState, useRef } from "react";
 import {
   getBloques,
   getGruposPorBloque,
-  getReserva,
+  postReserva,
   getDocente,
+  razon,
 } from "../../services/SolicitarReserva.service";
 import {
   buscarAmbientePorNombre,
@@ -31,15 +32,12 @@ import { AlertsContext } from "../Alert/AlertsContext";
 
 const SolcitarReserva = () => {
   const inputAmbienteRef = useRef();
-  const [show, setShow] = useState("");
+  const [showDropdown, setShowDropdown] = useState(false);
   const [
     capacidadDelAmbienteSeleccionado,
     setCapacidadDelAmbienteSeleccionado,
   ] = useState(null);
-  const [
-    ida,
-    setidambiente,
-  ] = useState(null);
+  const [ida, setidambiente] = useState(null);
   const [bloques, setBloques] = useState([]);
   const [docentes, setDocente] = useState([]);
   const [grupos, setGrupos] = useState([]);
@@ -47,17 +45,39 @@ const SolcitarReserva = () => {
   const [nombreAmbiente, setNombreAmbiente] = useState(""); // Estado para almacenar el nombre del ambiente
   const [ambienteOptions, setAmbienteOptions] = useState([]); // Estado para almacenar las opciones de ambiente
   const [periodos, setPeriodos] = useState([
-    { id: 1, hora: "6:45 - 8:15", isCheck: false },
-    { id: 2, hora: "8:15 - 9:45", isCheck: false },
-    { id: 3, hora: "9:45 - 11:15", isCheck: false },
-    { id: 4, hora: "11:15 - 12:45", isCheck: false },
-    { id: 5, hora: "12:45 - 14:15", isCheck: false },
-    { id: 6, hora: "14:15 - 15:45", isCheck: false },
-    { id: 7, hora: "15:45 - 17:15", isCheck: false },
-    { id: 8, hora: "17:15 - 18:45", isCheck: false },
-    { id: 9, hora: "18:45 - 20:15", isCheck: false },
-    { id: 10, hora: "20:15 - 21:45", isCheck: false },
+    { id: 1, hora: "6:45" },
+    { id: 2, hora: "8:15" },
+    { id: 3, hora: "9:45" },
+    { id: 4, hora: "11:15" },
+    { id: 5, hora: "12:45" },
+    { id: 6, hora: "14:15" },
+    { id: 7, hora: "15:45" },
+    { id: 8, hora: "17:15" },
+    { id: 9, hora: "18:45" },
+    { id: 10, hora: "20:15" },
   ]);
+  const [periodos1, setPeriodos1] = useState([
+    { id: 1, hora: "8:15" },
+    { id: 2, hora: "9:45" },
+    { id: 3, hora: "11:15" },
+    { id: 4, hora: "12:45" },
+    { id: 5, hora: "14:15" },
+    { id: 6, hora: "15:45" },
+    { id: 7, hora: "17:15" },
+    { id: 8, hora: "18:45" },
+    { id: 9, hora: "20:15" },
+    { id: 10, hora: "21:45" },
+  ]);
+  const [razon, setRazon] = useState([
+    { id: 1, name: "Primer Parcial" },
+    { id: 2, name: "Segundo Parcial" },
+    { id: 3, name: "Examen Final" },
+    { id: 4, name: "Segunda Instancia" },
+    { id: 5, name: "Examen de mesa" },
+    { id: 6, name: "Otro " },
+  ]);
+  const [periodosFin, setPeriodosFin] = useState(periodos1);
+
   // (FIX:Marco) 'id' is assigned a value but never used
   // eslint-disable-next-line
 
@@ -66,53 +86,42 @@ const SolcitarReserva = () => {
   // Función para buscar los ambientes que coinciden con el nombre
 
   const buscarAmbiente = async (event) => {
-    if (event.hasOwnProperty('target') && event.target.hasOwnProperty('value')) {
-        const value = event.target.value;
-        formik.setFieldValue("nombreAmbiente", { ...formik.values.nombreAmbiente, nombre: value });
-        const { respuesta } = await buscarAmbientePorNombre(value);
-        setAmbienteOptions(respuesta);
-        
+    if (
+      event.hasOwnProperty("target") &&
+      event.target.hasOwnProperty("value")
+    ) {
+      const value = event.target.value.toUpperCase();
+
+      formik.setFieldValue("nombreAmbiente", value); // Actualiza el estado directamente con el nombre
+      const { respuesta } = await buscarAmbientePorNombre(value);
+      setAmbienteOptions(respuesta);
+
+      const ambienteEncontrado = respuesta.find(
+        (ambiente) => ambiente.nombre === value
+      );
+      setShowDropdown(true);
+      if (ambienteEncontrado) {
+        // Si se encontró el ambiente, enviarlo a setNombreDelAmbiente
+        setNombreDelAmbiente(ambienteEncontrado);
+      } else {
+        setCapacidadDelAmbienteSeleccionado(null);
+        console.log("No existe el ambiente");
+      }
     }
-};
- 
+  };
+
   const docente = (nombre) => {
-
     getDocente(nombre)
-        .then((data) => {
-          setDocente(data.nombre);
-          console.log(docentes); // Actualizar las opciones de ambiente con los datos obtenidos
-        })
-        .catch((error) => {
-          console.log("Error al buscar los ambientes:", error);
-          setAmbienteOptions([]); // Limpiar las opciones de ambiente en caso de error
-        });
+      .then((data) => {
+        setDocente(data.nombre);
+        console.log(docentes); // Actualizar las opciones de ambiente con los datos obtenidos
+      })
+      .catch((error) => {
+        console.log("Error al buscar los ambientes:", error);
+        setAmbienteOptions([]); // Limpiar las opciones de ambiente en caso de error
+      });
+  };
 
-  };
-  // Función para hacer scroll al elemento seleccionado
-  useEffect(() => {
-    function handleClickOutside() {
-      setAmbienteOptions([]); // Limpiar las opciones de ambiente al hacer clic fuera del campo
-    }
-    // Agregar un event listener para hacer clic fuera del campo de entrada
-    document.addEventListener("click", handleClickOutside);
-    return () => {
-      document.removeEventListener("click", handleClickOutside);
-    };
-  }, []);
-  const handleClick = (e, check, index) => {
-    console.log(index);
-    console.log(check);
-    
-    setPeriodos(prevPeriodos => {
-      const updatedPeriodos = [...prevPeriodos];
-      updatedPeriodos[index] = { ...updatedPeriodos[index], isCheck: check };
-      
-      return updatedPeriodos;
-    });
-    console.log(periodos);
-  };
-  
-  
   // Función para seleccionar un ambiente de la lista de opciones
   const validosKey = [
     "0",
@@ -132,49 +141,89 @@ const SolcitarReserva = () => {
       razon: "",
       capacidad: "",
       materia: "",
-      nombreAmbiente: { nombre: "", id: "" },
+      nombreAmbiente: "",
       grupo: "", // Nuevo campo para el grupo
       fechaReserva: "",
+      periodoInicio: "",
+      periodoFin: "",
     },
     validationSchema: Yup.object({
+      nombreAmbiente: Yup.string() // Validar como cadena en lugar de objeto
+        .test("existe-ambiente", "No existe el ambiente", function (value) {
+          const ambientes = ambienteOptions.map((ambiente) => ambiente.nombre);
+          // Verificar si el valor ingresado está presente en la lista de nombres de ambientes
+          return ambientes.includes(value);
+        })
+        .required("Obligatorio"),
       razon: Yup.string().required("Obligatorio"),
+      periodoInicio: Yup.string().required("Obligatorio"),
+      periodoFin: Yup.string().required("Obligatorio"),
       capacidad: Yup.number()
         .positive("Debe ser mayor a 0")
-        .required("Obligatorio"),
+        .required("Obligatorio")
+        .max(
+          capacidadDelAmbienteSeleccionado,
+          "No puede ser mayor que otro número"
+        ),
       materia: Yup.string().required("Obligatorio"),
       grupo: Yup.string().required("Obligatorio"),
       fechaReserva: Yup.date()
-            .min(new Date(new Date().setDate(new Date().getDate() - 1)), 'La fecha no puede ser anterior a la fecha actual')
-            .required("Obligatorio")
+        .min(
+          new Date(new Date().setDate(new Date().getDate() - 1)),
+          "La fecha no puede ser anterior a la fecha actual"
+        )
+        .test(
+          "is-not-sunday",
+          "No puedes reservar para un domingo",
+          function (value) {
+            // Verificar si la fecha seleccionada es un domingo (domingo = 0)
+            return value.getDay() !== 0;
+          }
+        )
+        .required("Obligatorio"),
     }),
     onSubmit: (values) => {
-      const periodosSeleccionados = periodos.filter((item) => item.isCheck);
       const id = window.localStorage.getItem("docente_id");
-      const listaIDs = periodosSeleccionados.map(item => item.id);
+      const periodoInicioID = parseInt(values.periodoInicio, 10);
+      const periodoFinID = parseInt(values.periodoFin, 10);
 
-// Asignar la lista de IDs a values.periodos
-values.periodos = listaIDs;
+      // Combinar los IDs de periodoInicio y periodoFin en un solo array
+      const periodoIDs = [periodoInicioID, periodoFinID];
 
+      // Asignar la lista de IDs a values.periodos
+      values.periodos = periodoIDs;
+      values.ambiente = ida;
       values.idDocente = id;
-
-        getReserva(values)
+      console.log(periodoIDs);
+      postReserva(values)
         .then((response) => {
+          
           agregarAlert({
+            
             icon: <CheckCircleFill />,
             severidad: "success",
             mensaje: "Se a registrado correctamente el ambiente",
           });
           formik.resetForm();
+          setCapacidadDelAmbienteSeleccionado(null);
         })
         .catch((error) => {
           agregarAlert({
             icon: <ExclamationCircleFill />,
             severidad: "danger",
-            mensaje: error,
+            mensaje: error.mensaje,
           });
         });
     },
   });
+
+  const handleKeyPress = (event) => {
+    if (event.code === "Enter") {
+      if (ambienteOptions.length > 0) {
+        setNombreDelAmbiente(ambienteOptions[0]);
+      }
+    }
+  };
   const setPisosPorBloqueSeleccionado = (e) => {
     // Obtener y establecer los grupos asociados con el bloque seleccionado
     const gruposAsociados = getGruposPorBloque(e.target.value);
@@ -184,17 +233,14 @@ values.periodos = listaIDs;
     formik.setFieldValue("grupo", "");
   };
 
-  const setNombreDelAmbiente = (ambiente) => {
-    formik.setFieldValue("nombreAmbiente", { id: ambiente.id, nombre: ambiente.nombre });
-    setShow("");
+  const setNombreDelAmbiente = async (ambiente) => {
+    formik.setFieldValue("nombreAmbiente", ambiente.nombre); // Asigna el nombre directamente
     setidambiente(ambiente.id);
     console.log(ida);
-    
+    setShowDropdown(false);
     recuperarAmbientePorID(ambiente.id)
-
       .then((data) => {
         // Actualizar estado con los detalles del ambiente
-
         setCapacidadDelAmbienteSeleccionado(data.capacidad);
         console.log(data.capacidad);
       })
@@ -204,6 +250,11 @@ values.periodos = listaIDs;
   };
 
   useEffect(() => {
+    console.log("showDropdown", showDropdown);
+  }, [showDropdown]);
+
+  useEffect(() => {
+    console.log(razon);
     const id = window.localStorage.getItem("docente_id");
     const bloquesData = getBloques(id);
     docente(id);
@@ -229,19 +280,17 @@ values.periodos = listaIDs;
               Registrar Solicitud de Reserva
             </h1>
             <Col xs lg="9">
-              <Form onSubmit={formik.handleSubmit}>
+              <Form onSubmit={formik.handleSubmit} onKeyPress={handleKeyPress}>
                 <Stack gap={2} direction="vertical">
                   <Col lg="9">
-                  <p>Docente: {docentes}</p>
-                  <Form.Group
+                    <p>Docente: {docentes}</p>
+                    <Form.Group
                       as={Row}
                       className="mb-3"
                       controlId="fechaReserva"
                     >
-                      <Form.Label >
-                        Fecha Reserva
-                      </Form.Label>
-                      <Col >
+                      <Form.Label>Fecha Reserva</Form.Label>
+                      <Col>
                         <FormControl
                           type="text"
                           placeholder="Ingrese la fecha para la reserva"
@@ -325,7 +374,7 @@ values.periodos = listaIDs;
                     >
                       <Form.Label>Nombre del Ambiente</Form.Label>
                       <Col>
-                        <Dropdown id="nombreAmbientes">
+                        <Dropdown id="solicitudnombreAmbientes">
                           <Dropdown.Toggle
                             ref={inputAmbienteRef}
                             as={"input"}
@@ -334,19 +383,20 @@ values.periodos = listaIDs;
                             placeholder="Ingrese el nombre del ambiente"
                             onChange={buscarAmbiente}
                             onBlur={formik.handleBlur}
-                            value={formik.values.nombreAmbiente.nombre}
+                            value={formik.values.nombreAmbiente}
                             className="form-control"
                             bsPrefix="dropdown-toggle"
                           />
-                          {formik.values.nombreAmbiente.nombre !== "" && (
+                          {formik.values.nombreAmbiente !== "" && (
                             <Dropdown.Menu
-                              className={show}
+                              class={`dropdown-menu ${
+                                showDropdown ? "show" : ""
+                              }`}
                               style={{
                                 width: "100%",
                                 overflowY: "auto",
                                 maxHeight: "5rem",
                               }}
-                              show
                             >
                               {ambienteOptions.map((ambiente) => (
                                 <Dropdown.Item
@@ -369,12 +419,15 @@ values.periodos = listaIDs;
                         </Form.Text>
                       </Col>
                     </Form.Group>
+                    {capacidadDelAmbienteSeleccionado !== null && (
+                      <p>Capacidad:{capacidadDelAmbienteSeleccionado}</p>
+                    )}
 
                     <Form.Group
                       className="mb-3 RegistrarAmbiente-entrada-numero"
                       controlId="capacidad"
                     >
-                      <Form.Label>Capacidad</Form.Label>
+                      <Form.Label>Cantidad de alumnos</Form.Label>
                       <Form.Control
                         type="number"
                         onKeyDown={(e) => {
@@ -386,7 +439,7 @@ values.periodos = listaIDs;
                         onChange={formik.handleChange}
                         onBlur={formik.handleBlur}
                         value={formik.values.capacidad}
-                        disabled={!formik.values.nombreAmbiente.nombre}
+                        disabled={!formik.values.nombreAmbiente}
                       />
                       <Form.Text className="text-danger">
                         {formik.touched.capacidad && formik.errors.capacidad ? (
@@ -398,13 +451,20 @@ values.periodos = listaIDs;
                     </Form.Group>
                     <Form.Group className="mb-3" controlId="razon">
                       <Form.Label>Razon</Form.Label>
-                      <Form.Control
-                        as="textarea" // Cambia el tipo a "textarea"
-                        placeholder="Ingrese la razon de uso"
+                      <Form.Select
                         onChange={formik.handleChange}
                         onBlur={formik.handleBlur}
                         value={formik.values.razon}
-                      />
+                      >
+                        <option value="" disabled selected>
+                          Seleccione un razon
+                        </option>
+                        {razon.map((razon) => (
+                          <option key={razon.id} value={razon.name}>
+                            {razon.name}
+                          </option>
+                        ))}
+                      </Form.Select>
                       <Form.Text className="text-danger">
                         {formik.touched.razon && formik.errors.razon ? (
                           <div className="text-danger">
@@ -414,33 +474,82 @@ values.periodos = listaIDs;
                       </Form.Text>
                     </Form.Group>
 
-                    
-                    
-                    {capacidadDelAmbienteSeleccionado !== null && (
-                      <p>
-                        Capacidad:{capacidadDelAmbienteSeleccionado}
-                       
-                      </p>
-                    )}
-                    <h1>Periodos:</h1>
-                    {periodos.map((item, index) => (
-  <div key={index}>
-    <input
-      type="checkbox"
-      onClick={() => handleClick(this, !item.isCheck, index)}
-      checked={item.isCheck}
-    />
-    <label>{item.hora}</label>
-  </div>
-))}
-
+                    <div className="periodos-columna">
+                      <Form.Group className="mb-3" controlId="periodoInicio">
+                        <Form.Label>Periodo Inicio</Form.Label>
+                        <Form.Select
+                          onChange={(e) => {
+                            formik.handleChange(e);
+                            // Filtrar los periodos fin basado en el periodo inicio seleccionado
+                            const selectedPeriodoInicio = parseInt(
+                              e.target.value,
+                              10
+                            );
+                            const filteredPeriodos1 = periodos1.filter(
+                              (item) => item.id >= selectedPeriodoInicio
+                            );
+                            // Actualizar los periodos fin disponibles
+                            setPeriodosFin(filteredPeriodos1);
+                          }}
+                          onBlur={formik.handleBlur}
+                          value={formik.values.periodoInicio}
+                        >
+                          <option value="" disabled selected>
+                            Hora inicio
+                          </option>
+                          {periodos.map((item, index) => (
+                            <option key={index} value={item.id}>
+                              {item.hora}
+                            </option>
+                          ))}
+                        </Form.Select>
+                        <Form.Text className="text-danger">
+                          {formik.touched.periodoInicio &&
+                          formik.errors.periodoInicio ? (
+                            <div className="text-danger">
+                              {formik.errors.periodoInicio}
+                            </div>
+                          ) : null}
+                        </Form.Text>
+                      </Form.Group>
+                      <Form.Group className="mb-3" controlId="periodoFin">
+                        <Form.Label>Periodo Fin</Form.Label>
+                        <Form.Select
+                          onChange={formik.handleChange}
+                          onBlur={formik.handleBlur}
+                          value={formik.values.periodoFin}
+                          disabled={!formik.values.periodoInicio}
+                        >
+                          <option value="" disabled selected>
+                            Hora final
+                          </option>
+                          {periodosFin.map((item) => (
+                            <option key={item.id} value={item.id}>
+                              {item.hora}
+                            </option>
+                          ))}
+                        </Form.Select>
+                        <Form.Text className="text-danger">
+                          {formik.touched.periodoFin &&
+                          formik.errors.periodoFin ? (
+                            <div className="text-danger">
+                              {formik.errors.periodoFin}
+                            </div>
+                          ) : null}
+                        </Form.Text>
+                      </Form.Group>
+                    </div>
                   </Col>
                   <Row xs="auto" className="justify-content-md-end">
                     <Stack direction="horizontal" gap={2}>
                       <Button
                         className="btn RegistrarAmbiente-button-cancel"
                         size="sm"
-                        onClick={() => formik.resetForm()}
+                        onClick={() => {
+                          setCapacidadDelAmbienteSeleccionado(null);
+                          formik.resetForm();
+                          setAmbienteOptions([]);
+                        }}
                       >
                         Cancelar
                       </Button>

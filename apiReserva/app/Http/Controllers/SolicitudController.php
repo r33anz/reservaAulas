@@ -42,7 +42,7 @@ class SolicitudController extends Controller
         return response()->json(['listaFechas' => $listaFechas]);
     }
 
-    // FINISH v2
+    // FINISH
     public function registroSolicitud(Request $request)
     {
         /**
@@ -64,12 +64,12 @@ class SolicitudController extends Controller
 
         //echo $ambienteDisponible;
         if (!$ambienteDisponible) {
-            return response()->json(['mensaje' => 'El ambiente no esta disponible en la fecha y/o periodos especificados'], 400);
+            return response()->json(['mensaje' => 'El ambiente no esta disponible en los periodos especificados'], 400);
         }
 
         if (count($periodos) === 1) {
             $periodoInicial = $periodos[0];
-            $periodoFinal = $periodos[0];
+            $periodoFinal = $periodos[0] + 1;
         } else { // Si hay más de un periodo, determina el periodo inicial y final
             $periodoInicial = $periodos[0];
             $periodoFinal = $periodos[count($periodos) - 1];
@@ -87,7 +87,6 @@ class SolicitudController extends Controller
             'estado' => $estado,
         ]);
 
-        // Obtener el ID de la solicitud recién creada
         $ultimoIdSolicitud = $solicitud->latest()->value('id');
 
         DB::table('ambiente_solicitud')->insert([
@@ -100,7 +99,7 @@ class SolicitudController extends Controller
         ]);
     }
 
-    // FINISH T
+    // FINISH
     public function informacionSolicitud(Request $request)
     {
         $id = $request->input('id');
@@ -126,7 +125,6 @@ class SolicitudController extends Controller
         ]);
     }
 
-    // FINISH T
     public function recuperarInformacion($idSolicitud)
     {
         $solicitud = Solicitud::find($idSolicitud);
@@ -152,19 +150,21 @@ class SolicitudController extends Controller
         ]);
     }
 
-    // TO DO
+
+    //FINISH v2
     public function verListas(Request $request)
     {
         $estado = $request->input('estado');
+        $pagina = $request->input('pagina', 1);
 
         if ($estado === 'aprobadas') {
-            $solicitudes = Solicitud::where('estado', 'aprobado')->paginate(3);
+            $solicitudes = Solicitud::where('estado', 'aprobado')->paginate(3, ['*'], 'pagina', $pagina);
         } elseif ($estado === 'rechazadas') {
-            $solicitudes = Solicitud::where('estado', 'rechazado')->paginate(3);
-        } elseif ($estado === 'espera') {
-            $solicitudes = Solicitud::where('estado', 'esperando')->paginate(3);
+            $solicitudes = Solicitud::where('estado', 'rechazado')->paginate(3, ['*'], 'pagina', $pagina);
+        } elseif ($estado === 'en espera') {
+            $solicitudes = Solicitud::where('estado', 'en espera')->paginate(3, ['*'], 'pagina', $pagina);
         } else {
-            return response()->json(['error' => 'Estado no válido'], 400);
+            $solicitudes = Solicitud::paginate(3, ['*'], 'pagina', $pagina);
         }
 
         $datosSolicitudes = [];
@@ -182,9 +182,11 @@ class SolicitudController extends Controller
                 'razon' => $solicitud->razon,
                 'periodo_ini_id' => $solicitud->periodo_ini_id,
                 'periodo_fin_id' => $solicitud->periodo_fin_id,
-                'fecha' => $solicitud->fechaReserva,
+                'fechaReserva' => $solicitud->fechaReserva,
                 'ambiente_nombre' => $ambiente->nombre,
                 'ambienteCantidadMax' => $ambiente->capacidad,
+                'fechaEnviada' => substr($solicitud->created_at, 0, 10),
+                'estado' => $solicitud->estado
             ];
 
             if ($estado === 'aprobadas') {
@@ -193,62 +195,21 @@ class SolicitudController extends Controller
                 $datosSolicitud['fechaAtendida'] = $solicitud->fechaAtendida;
                 $datosSolicitud['razonRechazo'] = $solicitud->razonRechazo;
             }
+            
 
             $datosSolicitudes[] = $datosSolicitud;
         }
 
-        return response()->json(['solicitudes' => $datosSolicitudes]);
+        return response()->json([
+            'numeroItemsPagina' => $solicitudes->perPage(),
+            'paginaActual' => $solicitudes->currentPage(),
+            'numeroPaginasTotal' => $solicitudes->lastPage(),
+            'contenido' => $datosSolicitudes,
+        ]);
     }
-    /*
-    // FINISH  paginacion
-    public function solicitudesPorLlegada()
-    {
-        $solicitudes = Solicitud::where('estado', false)
-            ->orderBy('created_at', 'asc')
-            ->get();
-
-        $datosSolicitudes = [];
-
-        foreach ($solicitudes as $solicitud) {
-            // Obtener el nombre del docente
-            $docente = Docente::find($solicitud->docente_id);
-
-            // Obtener el ID del ambiente asociado a la solicitud desde la tabla ambiente_solicitud
-            $idAmbiente = DB::table('ambiente_solicitud')
-                ->where('solicitud_id', $solicitud->id)
-                ->value('ambiente_id');
-
-            // Obtener el nombre del ambiente
-            $nombreAmbiente = null;
-            if ($idAmbiente) {
-                $ambiente = Ambiente::find($idAmbiente);
-                if ($ambiente) {
-                    $nombreAmbiente = $ambiente->nombre;
-                }
-            }
-
-            $datosSolicitud = [
-                'id_docente' => $solicitud->docente_id,
-                'nombre_docente' => $docente->nombre ?? null, // Suponiendo que el campo se llama "nombre" en la tabla de docentes
-                'materia' => $solicitud->materia,
-                'grupo' => $solicitud->grupo,
-                'cantidad' => $solicitud->cantidad,
-                'razon' => $solicitud->razon,
-                'fechaReserva' => $solicitud->fechaReserva,
-                'periodo_ini_id' => $solicitud->periodo_ini_id,
-                'periodo_fin_id' => $solicitud->periodo_fin_id,
-                'ambiente_nombre' => $nombreAmbiente,
-                'fechaEnviada' => substr($solicitud->created_at, 0, 10),
-            ];
-
-            // Agregar los datos de la solicitud al array de datos de solicitudes
-            $datosSolicitudes[] = $datosSolicitud;
-        }
-
-        return response()->json(['solicitudes_por_llegada' => $datosSolicitudes]);
-    }
-    // FINISH  paginacion
-    public function solicitudesAtendidas()
+    
+    // FINISH v2
+    public function aceptarSolicitud(Request $request)
     {
         $idsSolicitudesAceptadas = DB::table('reservas')->pluck('idSolicitud');
 
@@ -298,25 +259,11 @@ class SolicitudController extends Controller
         }
 
         return response()->json(['solicitudes_aceptadas_por_profesor' => $datosSolicitudesAceptadas]);
-    }*/
-
-    // FINISH v2
-    public function aceptarSolicitud(Request $request)
-    {
-        $id = $request->input('idSolicitud');
-        $fechaAtendido = $request->input('fechaAtendida');
-        $solicitud = Solicitud::find($id);
-        if (!$solicitud) {
-            return response()->json(['mensaje' => 'Solicitud no encontrada'], 404);
-        }
-        $solicitud->estado = 'aprobado';
-        $solicitud->fechaAtendida = $fechaAtendido;
-        $solicitud->save();
-
-        return response()->json(['mensaje' => 'Solicitud atendida correctamente']);
     }
 
-    // FINISH v2
+    
+
+    // TO DO
     public function rechazarSolicitud(Request $request)
     {
         $id = $request->input('id');
@@ -331,6 +278,13 @@ class SolicitudController extends Controller
         $solicitud->fechaAtendida = $fechaAtendido;
         $solicitud->save();
 
-        return response()->json(['mensaje' => 'Solicitud rechazada correctamente']);
+        // Inserta datos en tablas externas
+        DB::table('rechazados')->insert([
+            'idSolicitud' => $id,
+            'razonRechazo' => $razon,
+        ]);
+
+        // Retorna una respuesta de éxito
+        return response()->json(['mensaje' => 'Solicitud atendida correctamente']);
     }
 }
