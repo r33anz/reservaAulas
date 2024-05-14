@@ -72,15 +72,43 @@ class AmbienteController extends Controller
             'respuesta' => $resultado
         ]);
     }
-   public function ambientesMismoBloque($id)
-    {
-        $ambiente = Ambiente::findOrFail($id);
-        $ambientesEnMismoBloque = Ambiente::whereHas('piso', function ($query) use ($ambiente) {
-            $query->where('bloque_id', $ambiente->piso->bloque_id);
-        })->get();
 
-        return response()->json(['ambientes' => $ambientesEnMismoBloque]);
+    public function buscarV2(Request $request){
+        $patron = $request->input('patron');
+        $resultados = Ambiente::where('nombre', 'like', '%' . $patron . '%')
+        ->with(['piso.bloque'])
+        ->get();
+
+    $listaCoincidencias = [];
+    foreach ($resultados as $resultado) {
+        $piso = $resultado->piso;
+        $bloque = $piso->bloque;
+
+        $detalleAula = [
+            'id' => $resultado->id,
+            'nombre' => $resultado->nombre,
+            'capacidad' => $resultado->capacidad,
+            'tipo' => $resultado->tipo,
+            'nombreBloque' => $bloque->nombreBloque,
+            'nroPiso' => $piso->nroPiso,
+        ];
+
+        $listaCoincidencias[] = $detalleAula;
     }
+
+    return response()->json([
+        'coincidencias' => $listaCoincidencias
+    ]);
+    }
+    public function ambientesMismoBloque($id)
+        {
+            $ambiente = Ambiente::findOrFail($id);
+            $ambientesEnMismoBloque = Ambiente::whereHas('piso', function ($query) use ($ambiente) {
+                $query->where('bloque_id', $ambiente->piso->bloque_id);
+            })->get();
+
+            return response()->json(['ambientes' => $ambientesEnMismoBloque]);
+        }
 
     public function ambientesMismoPiso($id)
     {
