@@ -24,9 +24,10 @@ import {
   habilita,
   modificarPerio,
 } from "../../../services/ModificarPeriodo.service";
-import { buscarAmbientePorNombre } from "../../../services/Busqueda.service";
 import { AlertsContext } from "../../Alert/AlertsContext";
 import "./style.css";
+import { useEffect } from "react";
+import { getAmbientes } from "../../../services/Ambiente.service";
 
 const ModificarEstadoDelAmbientePorFecha = () => {
   const [ambientes, setAmbientes] = useState([]);
@@ -88,7 +89,6 @@ const ModificarEstadoDelAmbientePorFecha = () => {
 
   const handleOnClickLimpiar = () => {
     setEstado("");
-    setAmbientes([]);
     setAmbiente({});
     setSelected(null);
     setShow("");
@@ -106,13 +106,8 @@ const ModificarEstadoDelAmbientePorFecha = () => {
         ...formik.values.ambiente,
         nombre: value,
       });
-      const response = await buscarAmbientePorNombre(value);
-      console.log(response);
-      if (response !== null) {
-        setAmbientes(response.respuesta);
-        setShow("show");
-        setSelected(null)
-      }
+      setShow("show");
+      setSelected(null);
     }
   };
 
@@ -204,6 +199,15 @@ const ModificarEstadoDelAmbientePorFecha = () => {
     }
   };
 
+  const fetchAmbientes = async () => {
+    let { respuesta } = await getAmbientes();
+    setAmbientes(respuesta);
+  };
+
+  useEffect(() => {
+    fetchAmbientes();
+  }, []);
+
   return (
     <>
       <div style={{ width: "574px" }}>
@@ -261,13 +265,18 @@ const ModificarEstadoDelAmbientePorFecha = () => {
                         className="form-control"
                         bsPrefix="dropdown-toggle"
                       />
-                      {formik.values.ambiente.nombre !== "" &&
-                        ambientes &&
-                        ambientes.length > 0 && (
+                      {ambientes &&
+                        ambientes.length > 0 &&
+                        formik.values.ambiente.nombre !== "" &&
+                        ambientes.filter((ambiente) =>
+                          ambiente.nombre
+                            .toLowerCase()
+                            .includes(
+                              formik.values.ambiente.nombre.toLowerCase()
+                            )
+                        ).length > 0 && (
                           <Dropdown.Menu
-                            className={
-                              show
-                            }
+                            className={show}
                             style={{
                               width: "100%",
                               overflowY: "auto",
@@ -275,15 +284,23 @@ const ModificarEstadoDelAmbientePorFecha = () => {
                             }}
                             show
                           >
-                            {ambientes.map((ambiente) => (
-                              <Dropdown.Item
-                                eventKey={ambiente.nombre}
-                                key={ambiente.nombre}
-                                onClick={handlerOnClickAmbiente}
-                              >
-                                <option>{ambiente.nombre}</option>
-                              </Dropdown.Item>
-                            ))}
+                            {ambientes
+                              .filter((ambiente) =>
+                                ambiente.nombre
+                                  .toLowerCase()
+                                  .includes(
+                                    formik.values.ambiente.nombre.toLowerCase()
+                                  )
+                              )
+                              .map((ambiente) => (
+                                <Dropdown.Item
+                                  eventKey={ambiente.nombre}
+                                  key={ambiente.nombre}
+                                  onClick={handlerOnClickAmbiente}
+                                >
+                                  <option>{ambiente.nombre}</option>
+                                </Dropdown.Item>
+                              ))}
                           </Dropdown.Menu>
                         )}
                     </Dropdown>
@@ -326,7 +343,9 @@ const ModificarEstadoDelAmbientePorFecha = () => {
                 <Row xs="auto" className="justify-content-md-end">
                   <Stack direction="horizontal" gap={2}>
                     <Button onClick={handleOnClickLimpiar}>Limpiar</Button>
-                    {ambiente.periodos ? (
+                    {ambiente &&
+                    Object.keys(ambiente).length > 0 &&
+                    ambiente.periodos ? (
                       <>
                         <Button
                           onClick={() =>
@@ -351,107 +370,113 @@ const ModificarEstadoDelAmbientePorFecha = () => {
                     )}
                   </Stack>
                 </Row>
-                {ambiente.periodos && <h6>Periodos</h6>}
-                {ambiente.periodos && (
-                  <Row>
-                    <Col sm={4}>
-                      <h6>Mañana</h6>
-                      {ambiente.periodos &&
-                        periodos.map((item) => (
-                          <>
-                            {item.id >= 1 && item.id <= 4 && (
-                              <div
-                                key={item.id}
-                                style={{
-                                  border: "1px solid black",
-                                  width: "100px",
-                                  padding: "2px",
-                                  textAlign: "center",
-                                  color: `${
-                                    ambiente.periodos.includes(item.id)
-                                      ? "white"
-                                      : "black"
-                                  }`,
-                                  background: `${
-                                    ambiente.periodos.includes(item.id)
-                                      ? "gray"
-                                      : "white"
-                                  }`,
-                                  marginBottom: "5px",
-                                }}
-                              >
-                                {item.hora}
-                              </div>
-                            )}
-                          </>
-                        ))}
-                    </Col>
-                    <Col sm={4}>
-                      <h6>Tarde</h6>
-                      {ambiente.periodos &&
-                        periodos.map((item) => (
-                          <>
-                            {item.id >= 5 && item.id <= 8 && (
-                              <div
-                                key={item.id}
-                                style={{
-                                  border: "1px solid black",
-                                  width: "105px",
-                                  padding: "2px",
-                                  textAlign: "center",
-                                  color: `${
-                                    ambiente.periodos.includes(item.id)
-                                      ? "white"
-                                      : "black"
-                                  }`,
-                                  background: `${
-                                    ambiente.periodos.includes(item.id)
-                                      ? "gray"
-                                      : "white"
-                                  }`,
-                                  marginBottom: "5px",
-                                }}
-                              >
-                                {item.hora}
-                              </div>
-                            )}
-                          </>
-                        ))}
-                    </Col>
-                    <Col sm={4}>
-                      <h6>Noche</h6>
-                      {ambiente.periodos &&
-                        periodos.map((item) => (
-                          <>
-                            {item.id >= 9 && item.id <= 10 && (
-                              <div
-                                key={item.id}
-                                style={{
-                                  border: "1px solid black",
-                                  width: "105px",
-                                  padding: "2px",
-                                  textAlign: "center",
-                                  color: `${
-                                    ambiente.periodos.includes(item.id)
-                                      ? "white"
-                                      : "black"
-                                  }`,
-                                  background: `${
-                                    ambiente.periodos.includes(item.id)
-                                      ? "gray"
-                                      : "white"
-                                  }`,
-                                  marginBottom: "5px",
-                                }}
-                              >
-                                {item.hora}
-                              </div>
-                            )}
-                          </>
-                        ))}
-                    </Col>
-                  </Row>
-                )}
+                {ambiente &&
+                  Object.keys(ambiente).length > 0 &&
+                  ambiente.periodos &&
+                  ambiente.periodos && <h6>Periodos</h6>}
+                {ambiente &&
+                  Object.keys(ambiente).length > 0 &&
+                  ambiente.periodos &&
+                  ambiente.periodos && (
+                    <Row>
+                      <Col sm={4}>
+                        <h6>Mañana</h6>
+                        {ambiente.periodos &&
+                          periodos.map((item) => (
+                            <>
+                              {item.id >= 1 && item.id <= 4 && (
+                                <div
+                                  key={item.id}
+                                  style={{
+                                    border: "1px solid black",
+                                    width: "100px",
+                                    padding: "2px",
+                                    textAlign: "center",
+                                    color: `${
+                                      ambiente.periodos.includes(item.id)
+                                        ? "white"
+                                        : "black"
+                                    }`,
+                                    background: `${
+                                      ambiente.periodos.includes(item.id)
+                                        ? "gray"
+                                        : "white"
+                                    }`,
+                                    marginBottom: "5px",
+                                  }}
+                                >
+                                  {item.hora}
+                                </div>
+                              )}
+                            </>
+                          ))}
+                      </Col>
+                      <Col sm={4}>
+                        <h6>Tarde</h6>
+                        {ambiente.periodos &&
+                          periodos.map((item) => (
+                            <>
+                              {item.id >= 5 && item.id <= 8 && (
+                                <div
+                                  key={item.id}
+                                  style={{
+                                    border: "1px solid black",
+                                    width: "105px",
+                                    padding: "2px",
+                                    textAlign: "center",
+                                    color: `${
+                                      ambiente.periodos.includes(item.id)
+                                        ? "white"
+                                        : "black"
+                                    }`,
+                                    background: `${
+                                      ambiente.periodos.includes(item.id)
+                                        ? "gray"
+                                        : "white"
+                                    }`,
+                                    marginBottom: "5px",
+                                  }}
+                                >
+                                  {item.hora}
+                                </div>
+                              )}
+                            </>
+                          ))}
+                      </Col>
+                      <Col sm={4}>
+                        <h6>Noche</h6>
+                        {ambiente.periodos &&
+                          periodos.map((item) => (
+                            <>
+                              {item.id >= 9 && item.id <= 10 && (
+                                <div
+                                  key={item.id}
+                                  style={{
+                                    border: "1px solid black",
+                                    width: "105px",
+                                    padding: "2px",
+                                    textAlign: "center",
+                                    color: `${
+                                      ambiente.periodos.includes(item.id)
+                                        ? "white"
+                                        : "black"
+                                    }`,
+                                    background: `${
+                                      ambiente.periodos.includes(item.id)
+                                        ? "gray"
+                                        : "white"
+                                    }`,
+                                    marginBottom: "5px",
+                                  }}
+                                >
+                                  {item.hora}
+                                </div>
+                              )}
+                            </>
+                          ))}
+                      </Col>
+                    </Row>
+                  )}
               </Form>
             </Col>
           </Row>
