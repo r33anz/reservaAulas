@@ -14,10 +14,16 @@ export const recuperarSolicitudesDeReservaAceptadas = (id) => {
     return response.data;
   });
 };
-
+export const recuperarSolicitudesDeReservaDocente = (pagina, estado, docente_id) => {
+  return axios
+    .post(`${apiUrl}/docentes/reservas`, { pagina, estado, docente_id})
+    .then(function (response) {
+      return response.data;
+    });
+};
 export const recuperarReservas = (id) => {
   return axios
-    .get(`${apiUrl}/docentes/${id}/reservas`)
+    .get(`${apiUrl}/docentes/reservas`)
     .then(function (response) {
       return response.data;
     });
