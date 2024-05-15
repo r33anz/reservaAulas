@@ -136,10 +136,11 @@ const Modificarperdiodo = () => {
         nombre: Yup.string()
           .required("Obligatorio")
           .test("existe-ambiente", "No existe el ambiente", function (value) {
-            const ambients = ambientes.map((ambiente) => ambiente.nombre);
-            // Verificar si el valor ingresado está presente en la lista de nombres de ambientes
-            return ambients.includes(value);
-          })
+            const ambients = ambientes.map((ambiente) => ambiente.nombre.trim());
+            // Verificar si el valor ingresado (sin espacios al final) está presente en la lista de nombres de ambientes
+            return ambients.includes(value.trim());
+        })
+        
           /*.test("hasOptions", "No exite ese ambiente", function (value) {
             // 'this.options' contiene las opciones que pasas al esquema de validación
             if (ambientes.length > 0) {
@@ -184,11 +185,11 @@ const Modificarperdiodo = () => {
   });
 
   const handleKeyPress = (event) => {
-    const fechaLimite = new Date().toISOString().slice(0, 10);
+    
     if (event.key === "Enter") {
       if (ambientes.length > 0) {
         const ambienteEncontrado = ambientes.find(ambiente =>
-          ambiente.nombre.toLowerCase().includes(formik.values.ambiente.nombre.toLowerCase())
+          ambiente.nombre.toLowerCase().includes(formik.values.ambiente.nombre.trim().toLowerCase())
         );
 
         if (ambienteEncontrado) {
@@ -266,7 +267,7 @@ const Modificarperdiodo = () => {
                       bsPrefix="dropdown-toggle"
                     />
                     {formik.values.ambiente.nombre !== "" && ambientes.filter((ambiente) =>
-  ambiente.nombre.toLowerCase().includes(formik.values.ambiente.nombre.toLowerCase())
+  ambiente.nombre.toLowerCase().includes(formik.values.ambiente.nombre.trim().toLowerCase())
 ).length > 0 && (
                       <Dropdown.Menu
                         className={show}
@@ -278,7 +279,7 @@ const Modificarperdiodo = () => {
                         show
                       >
                               {ambientes.filter((ambiente) =>
-                                ambiente.nombre.toLowerCase().includes(formik.values.ambiente.nombre.toLowerCase())
+                                ambiente.nombre.toLowerCase().includes(formik.values.ambiente.nombre.trim().toLowerCase())
                               )
                               .map((ambiente) => (
                                 <Dropdown.Item
