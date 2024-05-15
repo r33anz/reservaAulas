@@ -28,9 +28,11 @@ import { AlertsContext } from "../../Alert/AlertsContext";
 import "./style.css";
 import { useEffect } from "react";
 import { getAmbientes } from "../../../services/Ambiente.service";
+import { useRef } from "react";
 
 const ModificarEstadoDelAmbientePorFecha = () => {
   const [ambientes, setAmbientes] = useState([]);
+  const [ambientesEncontradas, setAmbientesEncontradas] = useState([]);
   const [ambiente, setAmbiente] = useState({});
   const [show, setShow] = useState("");
   const [estado, setEstado] = useState("");
@@ -38,6 +40,9 @@ const ModificarEstadoDelAmbientePorFecha = () => {
     useState(false);
   const [selected, setSelected] = useState(null);
   const { agregarAlert } = useContext(AlertsContext);
+  const refDropdownMenu = useRef(null);
+  const refDropdownToggle = useRef(null);
+  const refDropdown = useRef(null);
   const periodos = [
     { id: 1, hora: "6:45 - 8:15" },
     { id: 2, hora: "8:15 - 9:45" },
@@ -65,11 +70,7 @@ const ModificarEstadoDelAmbientePorFecha = () => {
             "Solo letras y numeros"
           )
           .trim("No se admiten valores vacios")
-          .strict(true)
-          .test("hasOptions", "No exite el ambiente", function (value) {
-            // 'this.options' contiene las opciones que pasas al esquema de validación
-            return ambientes.length > 0;
-          }),
+          .strict(true),
       }),
       fecha: Yup.date()
         .min(
@@ -82,16 +83,19 @@ const ModificarEstadoDelAmbientePorFecha = () => {
         .required("Obligatorio"),
     }),
     onSubmit: (values) => {
-      buscarAmbientPorFecha(values.ambiente, values.fecha);
-      setShow("");
+      if (ambiente.id) {
+        getAmbientPorFecha(values.ambiente, values.fecha);
+      }
+      setShow(false);
     },
   });
 
   const handleOnClickLimpiar = () => {
     setEstado("");
     setAmbiente({});
+    setAmbientesEncontradas([]);
     setSelected(null);
-    setShow("");
+    setShow(show);
     setShowMensajeDeConfirmacion(false);
     formik.resetForm();
   };
@@ -102,23 +106,34 @@ const ModificarEstadoDelAmbientePorFecha = () => {
       event.target.hasOwnProperty("value")
     ) {
       const value = event.target.value;
+      if (value === "") {
+        setAmbientesEncontradas([]);
+        setShow(false);
+      } else {
+        setShow(true);
+        setSelected(null);
+        let ambientesEncontradas = ambientes.filter((ambiente) =>
+          ambiente.nombre.toLowerCase().includes(value.toLowerCase())
+        );
+        setAmbientesEncontradas(ambientesEncontradas);
+      }
       formik.setFieldValue("ambiente", {
-        ...formik.values.ambiente,
+        id: "",
         nombre: value,
       });
-      setShow("show");
-      setSelected(null);
+      setAmbiente({});
     }
   };
 
   const setNombreDelAmbiente = (ambiente) => {
     if (ambiente !== undefined) {
-      formik.setFieldValue("ambiente", {
+      let data = {
         id: ambiente.id,
         nombre: ambiente.nombre,
-      });
-      setShow("");
-      setAmbiente({});
+      };
+      formik.setFieldValue("ambiente", data);
+      setShow(false);
+      setAmbiente(data);
     }
   };
 
@@ -127,7 +142,7 @@ const ModificarEstadoDelAmbientePorFecha = () => {
     callback(event);
   };
 
-  const buscarAmbientPorFecha = async (ambiente, fecha) => {
+  const getAmbientPorFecha = async (ambiente, fecha) => {
     const data = await modificarPerio(ambiente.id, fecha);
     if (data != null) {
       setAmbiente({
@@ -171,7 +186,7 @@ const ModificarEstadoDelAmbientePorFecha = () => {
         mensaje: "Modificacion fallida",
       });
     }
-    buscarAmbientPorFecha(formik.values.ambiente, formik.values.fecha);
+    getAmbientPorFecha(formik.values.ambiente, formik.values.fecha);
     setShowMensajeDeConfirmacion(false);
   };
 
@@ -181,21 +196,28 @@ const ModificarEstadoDelAmbientePorFecha = () => {
   };
 
   const handlerOnClickAmbiente = ({ target }) => {
-    let ambiente = ambientes.find((item) => item.nombre === target.value);
+    let ambiente = ambientesEncontradas.find(
+      (item) => item.nombre === target.value
+    );
     setNombreDelAmbiente(ambiente);
-    setSelected(null);
-    setShow("");
+    setSelected(target.value);
+    setShow(false);
+    setAmbientesEncontradas([]);
   };
 
   const handleKeyUp = ({ code }) => {
-    if (code === "Enter" && ambientes.length > 0) {
-      let ambiente = ambientes[0];
+    if (code === "Enter" && ambientesEncontradas.length > 0) {
+      let ambiente = ambientesEncontradas[0];
       if (selected !== null) {
-        ambiente = ambientes.find((item) => item.nombre === selected);
+        ambiente = ambientesEncontradas.find(
+          (item) => item.nombre === selected
+        );
+      } else {
+        setSelected(ambiente.nombre);
       }
       setNombreDelAmbiente(ambiente);
-      setSelected(null);
-      setShow("");
+      setShow(false);
+      setAmbientesEncontradas([]);
     }
   };
 
@@ -207,6 +229,24 @@ const ModificarEstadoDelAmbientePorFecha = () => {
   useEffect(() => {
     fetchAmbientes();
   }, []);
+
+  useEffect(() => {
+    const handleOutSideClick = (event) => {
+      if (
+        !refDropdownMenu.current?.contains(event.target) &&
+        !refDropdown.current?.contains(event.target) &&
+        !refDropdownToggle.current?.contains(event.target)
+      ) {
+        setShow(false);
+      }
+    };
+
+    window.addEventListener("mousedown", handleOutSideClick);
+
+    return () => {
+      window.removeEventListener("mousedown", handleOutSideClick);
+    };
+  }, [refDropdownMenu, refDropdown, refDropdownToggle]);
 
   return (
     <>
@@ -234,81 +274,74 @@ const ModificarEstadoDelAmbientePorFecha = () => {
                   <Form.Label column sm="2">
                     Nombre
                   </Form.Label>
-                  <Col sm="10">
+                  <Col sm="10" onBlur={() => console.log("col")} id="ambientes">
                     <Dropdown
+                      ref={refDropdown}
                       id="ambientes"
+                      show
+                      onBlur={() => console.log("dropdown")}
                       onSelect={(e) => {
-                        setShow("");
                         setSelected(e);
+                        let ambiente = ambientesEncontradas.find(
+                          (item) => item.nombre === e
+                        );
+                        setNombreDelAmbiente(ambiente);
+                        setAmbientesEncontradas([]);
                       }}
                     >
                       <Dropdown.Toggle
+                        ref={refDropdownToggle}
                         as={"input"}
-                        id="ambiente"
+                        id="ambientes"
                         type="text"
                         placeholder="Ingrese el nombre del ambiente"
                         onChange={buscarAmbiente}
                         onBlur={(e) => {
-                          setShow("");
-                          if (e.target.value === "") {
-                            setAmbientes([]);
-                            setNombreDelAmbiente({});
-                          } else if (selected == null) {
-                            let ambiente =
-                              ambientes.length > 0 ? ambientes[0] : {};
-                            setNombreDelAmbiente(ambiente);
-                          }
+                          console.log("input");
                           formik.handleBlur(e);
                         }}
                         value={formik.values.ambiente.nombre}
+                        onFocus={() => setShow(true)}
                         onKeyUp={(e) => handleKeyUp(e)}
                         className="form-control"
                         bsPrefix="dropdown-toggle"
                       />
-                      {ambientes &&
-                        ambientes.length > 0 &&
-                        formik.values.ambiente.nombre !== "" &&
-                        ambientes.filter((ambiente) =>
-                          ambiente.nombre
-                            .toLowerCase()
-                            .includes(
-                              formik.values.ambiente.nombre.toLowerCase()
-                            )
-                        ).length > 0 && (
-                          <Dropdown.Menu
-                            className={show}
-                            style={{
-                              width: "100%",
-                              overflowY: "auto",
-                              maxHeight: "5rem",
-                            }}
-                            show
-                          >
-                            {ambientes
-                              .filter((ambiente) =>
-                                ambiente.nombre
-                                  .toLowerCase()
-                                  .includes(
-                                    formik.values.ambiente.nombre.toLowerCase()
-                                  )
-                              )
-                              .map((ambiente) => (
-                                <Dropdown.Item
-                                  eventKey={ambiente.nombre}
-                                  key={ambiente.nombre}
-                                  onClick={handlerOnClickAmbiente}
-                                >
-                                  <option>{ambiente.nombre}</option>
-                                </Dropdown.Item>
-                              ))}
-                          </Dropdown.Menu>
-                        )}
+                      {show && ambientesEncontradas.length > 0 && (
+                        <Dropdown.Menu
+                          ref={refDropdownMenu}
+                          id="ambientes"
+                          style={{
+                            width: "100%",
+                            overflowY: "auto",
+                            maxHeight: "5rem",
+                          }}
+                          onBlur={(e) => console.log("menu")}
+                        >
+                          {ambientesEncontradas.map((ambiente) => (
+                            <Dropdown.Item
+                              eventKey={ambiente.nombre}
+                              key={ambiente.nombre}
+                              onClick={(e) => handlerOnClickAmbiente(e)}
+                            >
+                              <option>{ambiente.nombre}</option>
+                            </Dropdown.Item>
+                          ))}
+                        </Dropdown.Menu>
+                      )}
                     </Dropdown>
                     <Form.Text className="text-danger">
                       {formik.touched.ambiente && formik.errors.ambiente ? (
                         <div className="text-danger">
                           {formik.errors.ambiente.nombre}
                         </div>
+                      ) : formik.values.ambiente.nombre !== "" &&
+                        selected === null &&
+                        ambientesEncontradas.length === 0 ? (
+                        "No exite el ambiente"
+                      ) : formik.values.ambiente.nombre !== "" &&
+                        selected === null &&
+                        ambientesEncontradas.length > 0 ? (
+                        "Seleccione un ambiente"
                       ) : null}
                     </Form.Text>
                   </Col>
