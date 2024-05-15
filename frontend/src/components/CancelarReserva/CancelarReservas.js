@@ -142,7 +142,7 @@ const ListaDeSolicitudes = ({ titulo, tipoDeUsuario }) => {
         >
             <Row sm className="text-white RegistrarAmbiente-header">
                 <Col xs="10" className="d-flex justify-content-start align-items-center" style={{ height: '100%' }}>
-                    <h4 style={{ fontWeight: "bold" }} className="">Detalle de la Solicitud de Reserva</h4>
+                    <h4 style={{ fontWeight: "bold" }} className="">Detalle de la Reserva</h4>
                 </Col>
                 <Col xs="2" className="d-flex justify-content-end align-items-end" style={{ padding: 0 }}>
                     <div onClick={() => setShow(false)}

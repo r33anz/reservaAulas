@@ -56,13 +56,13 @@ class SolicitudController extends Controller
         $cantidad = $request->input('capacidad');
         $razon = $request->input('razon');
         $fechaReserva = $request->input('fechaReserva');
-        $estado = "en espera";
+        $estado = 'en espera';
         $idAmbiente = $request->input('ambiente');
         $periodos = $request->input('periodos');
         // verificar si el ambiente es valido
         $ambienteDisponible = $this->ambienteValido->ambienteValido($idAmbiente, $fechaReserva, $periodos);
 
-        //echo $ambienteDisponible;
+        // echo $ambienteDisponible;
         if (!$ambienteDisponible) {
             return response()->json(['mensaje' => 'El ambiente no esta disponible en los periodos especificados'], 400);
         }
@@ -150,8 +150,7 @@ class SolicitudController extends Controller
         ]);
     }
 
-
-    //FINISH v2
+    // FINISH v2
     public function verListas(Request $request)
     {
         $estado = $request->input('estado');
@@ -186,7 +185,7 @@ class SolicitudController extends Controller
                 'ambiente_nombre' => $ambiente->nombre,
                 'ambienteCantidadMax' => $ambiente->capacidad,
                 'fechaEnviada' => substr($solicitud->created_at, 0, 10),
-                'estado' => $solicitud->estado
+                'estado' => $solicitud->estado,
             ];
 
             if ($estado === 'aprobadas') {
@@ -207,7 +206,7 @@ class SolicitudController extends Controller
             'contenido' => $datosSolicitudes,
         ]);
     }
-    
+
     // FINISH v2
     public function aceptarSolicitud(Request $request)
     {

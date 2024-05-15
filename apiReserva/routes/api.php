@@ -34,6 +34,7 @@ Route::get('/periodos', [PeriodoController::class, 'getPeriodos']);
 
 //Ambiente
 Route::post('/busquedaAula',[AmbienteController::class,'buscar']);
+Route::post('/busquedaAulaNew',[AmbienteController::class,'buscarV2']);
 Route::get('/ambiente/{id}', [AmbienteController::class, 'show']);
 Route::get('/ambientes', [AmbienteController::class, 'index']);
 Route::post('/registroAmbiente',[AmbienteController::class,'store']);
