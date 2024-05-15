@@ -4,11 +4,11 @@ import {
   getGruposPorBloque,
   postReserva,
   getDocente,
-  razon,
+  recuperarAmbientePorID,
 } from "../../services/SolicitarReserva.service";
 import {
   buscarAmbientePorNombre,
-  recuperarAmbientePorID,
+  
 } from "../../services/Busqueda.service";
 import {
   Container,
@@ -74,7 +74,6 @@ const SolcitarReserva = () => {
     { id: 3, name: "Examen Final" },
     { id: 4, name: "Segunda Instancia" },
     { id: 5, name: "Examen de mesa" },
-    { id: 6, name: "Otro " },
   ]);
   const [periodosFin, setPeriodosFin] = useState(periodos1);
 
@@ -90,25 +89,31 @@ const SolcitarReserva = () => {
       event.hasOwnProperty("target") &&
       event.target.hasOwnProperty("value")
     ) {
-      const value = event.target.value.toUpperCase();
-
-      formik.setFieldValue("nombreAmbiente", value); // Actualiza el estado directamente con el nombre
-      const { respuesta } = await buscarAmbientePorNombre(value);
-      setAmbienteOptions(respuesta);
-
-      const ambienteEncontrado = respuesta.find(
-        (ambiente) => ambiente.nombre === value
-      );
-      setShowDropdown(true);
-      if (ambienteEncontrado) {
-        // Si se encontró el ambiente, enviarlo a setNombreDelAmbiente
-        setNombreDelAmbiente(ambienteEncontrado);
-      } else {
-        setCapacidadDelAmbienteSeleccionado(null);
-        console.log("No existe el ambiente");
+      const originalValue = event.target.value;
+      const trimmedValue = originalValue.trim(); // Eliminar espacios al inicio y al final
+      
+      if (trimmedValue === "") {
+        formik.setFieldValue("nombreAmbiente", ""); // Actualiza el estado directamente con una cadena vacía
+        setShowDropdown(false); // Oculta el desplegable si el valor está vacío
+      } else if (!trimmedValue.startsWith(" ")) { // Verificar si el primer carácter no es un espacio
+        const value = originalValue.toUpperCase(); // Convertir a mayúsculas si pasa la validación del espacio inicial
+        
+        if (/^[a-zA-Z0-9\s]*$/.test(value)) {
+          formik.setFieldValue("nombreAmbiente", value); // Actualiza el estado directamente con el nombre
+          setShowDropdown(true); // Muestra el desplegable si el valor es válido
+        }
       }
     }
-  };
+};
+
+
+const buscar = async (nombre)=>{
+  const { respuesta } = await buscarAmbientePorNombre(nombre);
+      setAmbienteOptions(respuesta);
+      console.log(ambienteOptions);
+};
+
+
 
   const docente = (nombre) => {
     getDocente(nombre)
@@ -135,6 +140,7 @@ const SolcitarReserva = () => {
     "8",
     "9",
     "Backspace",
+    "Tab",
   ];
   const formik = useFormik({
     initialValues: {
@@ -202,7 +208,7 @@ const SolcitarReserva = () => {
             
             icon: <CheckCircleFill />,
             severidad: "success",
-            mensaje: "Se a registrado correctamente el ambiente",
+            mensaje: "Se realizo la solicitud correctamente",
           });
           formik.resetForm();
           setCapacidadDelAmbienteSeleccionado(null);
@@ -219,11 +225,16 @@ const SolcitarReserva = () => {
 
   const handleKeyPress = (event) => {
     if (event.code === "Enter") {
-      if (ambienteOptions.length > 0) {
-        setNombreDelAmbiente(ambienteOptions[0]);
+      const ambienteEncontrado = ambienteOptions.find(ambiente =>
+        ambiente.nombre.toLowerCase().includes(formik.values.nombreAmbiente.toLowerCase())
+      );
+      if (ambienteEncontrado) {
+        setNombreDelAmbiente(ambienteEncontrado);
+        console.log(ambienteEncontrado);
       }
     }
   };
+  
   const setPisosPorBloqueSeleccionado = (e) => {
     // Obtener y establecer los grupos asociados con el bloque seleccionado
     const gruposAsociados = getGruposPorBloque(e.target.value);
@@ -249,6 +260,7 @@ const SolcitarReserva = () => {
       });
   };
 
+  
   useEffect(() => {
     console.log("showDropdown", showDropdown);
   }, [showDropdown]);
@@ -259,6 +271,7 @@ const SolcitarReserva = () => {
     const bloquesData = getBloques(id);
     docente(id);
     setBloques(bloquesData);
+    buscar(" ");
   }, []);
 
   return (
@@ -289,7 +302,7 @@ const SolcitarReserva = () => {
                       className="mb-3"
                       controlId="fechaReserva"
                     >
-                      <Form.Label>Fecha Reserva</Form.Label>
+                      <Form.Label className="RegistrarSolicitud-required">Fecha Reserva</Form.Label>
                       <Col>
                         <FormControl
                           type="text"
@@ -315,7 +328,7 @@ const SolcitarReserva = () => {
                       </Col>
                     </Form.Group>
                     <Form.Group className="mb-3" controlId="materia">
-                      <Form.Label>Materia</Form.Label>
+                      <Form.Label className="RegistrarSolicitud-required">Materia</Form.Label>
                       <Form.Select
                         onChange={(e) => {
                           setPisosPorBloqueSeleccionado(e);
@@ -342,7 +355,7 @@ const SolcitarReserva = () => {
                       </Form.Text>
                     </Form.Group>
                     <Form.Group className="mb-3" controlId="grupo">
-                      <Form.Label>Grupo</Form.Label>
+                      <Form.Label className="RegistrarSolicitud-required">Grupo</Form.Label>
                       <Form.Select
                         onChange={formik.handleChange}
                         onBlur={formik.handleBlur}
@@ -372,7 +385,7 @@ const SolcitarReserva = () => {
                       className="mb-3"
                       controlId="nombreAmbiente"
                     >
-                      <Form.Label>Nombre del Ambiente</Form.Label>
+                      <Form.Label className="RegistrarSolicitud-required">Nombre del Ambiente</Form.Label>
                       <Col>
                         <Dropdown id="solicitudnombreAmbientes">
                           <Dropdown.Toggle
@@ -387,18 +400,23 @@ const SolcitarReserva = () => {
                             className="form-control"
                             bsPrefix="dropdown-toggle"
                           />
-                          {formik.values.nombreAmbiente !== "" && (
+                          {formik.values.nombreAmbiente !== "" && ambienteOptions.filter((ambiente) =>
+                          ambiente.nombre.toLowerCase().includes(formik.values.nombreAmbiente.toLowerCase())
+                          ).length > 0 &&
+                          (
                             <Dropdown.Menu
-                              class={`dropdown-menu ${
-                                showDropdown ? "show" : ""
-                              }`}
-                              style={{
-                                width: "100%",
-                                overflowY: "auto",
-                                maxHeight: "5rem",
-                              }}
-                            >
-                              {ambienteOptions.map((ambiente) => (
+                            class={`dropdown-menu ${showDropdown ? "show" : ""}`}
+                            style={{
+                              width: "100%",
+                              overflowY: "auto",
+                              maxHeight: "5rem",
+                            }}
+                          >
+                            {ambienteOptions
+                              .filter((ambiente) =>
+                                ambiente.nombre.toLowerCase().includes(formik.values.nombreAmbiente.toLowerCase())
+                              )
+                              .map((ambiente) => (
                                 <Dropdown.Item
                                   key={ambiente.nombre}
                                   onClick={() => setNombreDelAmbiente(ambiente)}
@@ -406,7 +424,7 @@ const SolcitarReserva = () => {
                                   {ambiente.nombre}
                                 </Dropdown.Item>
                               ))}
-                            </Dropdown.Menu>
+                          </Dropdown.Menu>
                           )}
                         </Dropdown>
                         <Form.Text className="text-danger">
@@ -427,7 +445,7 @@ const SolcitarReserva = () => {
                       className="mb-3 RegistrarAmbiente-entrada-numero"
                       controlId="capacidad"
                     >
-                      <Form.Label>Cantidad de alumnos</Form.Label>
+                      <Form.Label className="RegistrarSolicitud-required">Cantidad de alumnos</Form.Label>
                       <Form.Control
                         type="number"
                         onKeyDown={(e) => {
@@ -450,7 +468,7 @@ const SolcitarReserva = () => {
                       </Form.Text>
                     </Form.Group>
                     <Form.Group className="mb-3" controlId="razon">
-                      <Form.Label>Razon</Form.Label>
+                      <Form.Label className="RegistrarSolicitud-required">Razon</Form.Label>
                       <Form.Select
                         onChange={formik.handleChange}
                         onBlur={formik.handleBlur}
@@ -476,7 +494,7 @@ const SolcitarReserva = () => {
 
                     <div className="periodos-columna">
                       <Form.Group className="mb-3" controlId="periodoInicio">
-                        <Form.Label>Periodo Inicio</Form.Label>
+                        <Form.Label className="RegistrarSolicitud-required">Periodo Inicio</Form.Label>
                         <Form.Select
                           onChange={(e) => {
                             formik.handleChange(e);
@@ -513,7 +531,7 @@ const SolcitarReserva = () => {
                         </Form.Text>
                       </Form.Group>
                       <Form.Group className="mb-3" controlId="periodoFin">
-                        <Form.Label>Periodo Fin</Form.Label>
+                        <Form.Label className="RegistrarSolicitud-required">Periodo Fin</Form.Label>
                         <Form.Select
                           onChange={formik.handleChange}
                           onBlur={formik.handleBlur}

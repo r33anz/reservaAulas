@@ -2,8 +2,8 @@ import axios from 'axios';
 
 const apiUrl = process.env.REACT_APP_URL;
 
-export const buscarAmbientePorNombre = (nombre) => {
-    return axios.post(`${apiUrl}/busquedaAula`, { patron: nombre })
+export const buscarAmbientePorNombre = () => {
+    return axios.get(`${apiUrl}/ambientes`)
         .then(function (response) {
             return response.data; // Devuelve los datos del ambiente encontrado
         })
