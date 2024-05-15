@@ -36,8 +36,8 @@ const Buscar = () => {
     };
     
 
-    const buscar = async (nombre)=>{
-        const { respuesta } = await buscarAmbientePorNombre(nombre);
+    const buscar = async ()=>{
+        const { respuesta } = await buscarAmbientePorNombre();
         setAmbientes(respuesta);
             console.log(ambientes);
       };
@@ -111,7 +111,7 @@ const Buscar = () => {
     };
 
     useEffect(() => {
-        buscar(" ");
+        buscar();
       }, []);
 
     return (
