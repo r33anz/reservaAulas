@@ -230,7 +230,7 @@ const AtenderSolicitud = ({ solicitudId }) => {
                       Verificar Disponibilidad
                     </Button>
                   </Row>
-                  {mostrarMensajeDeVerificacion.valido && (
+                  {mostrarMensajeDeVerificacion !== null &&mostrarMensajeDeVerificacion.valido && (
                     <Row xs="auto" style={{ paddingTop: "1rem" }}>
                       <Stack direction="horizontal" gap={2}>
                         <Button
