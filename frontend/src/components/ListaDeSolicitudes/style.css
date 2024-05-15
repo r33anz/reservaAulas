@@ -7,3 +7,11 @@
     background-color: #D9D9D9;
     padding: 1rem;
 }
+
+.page-item.active.color-blue, .page-item.color-blue {
+    --bs-pagination-color: #003F70;
+    --bs-pagination-hover-color: #003F70;
+    --bs-pagination-focus-color: #003F70;
+    --bs-pagination-active-bg: #003F70;
+    --bs-pagination-active-border-color: #003F70
+}
