@@ -226,9 +226,10 @@ const buscar = async (nombre)=>{
   const handleKeyPress = (event) => {
     if (event.code === "Enter") {
       const ambienteEncontrado = ambienteOptions.find(ambiente =>
-        ambiente.nombre.toLowerCase().includes(formik.values.nombreAmbiente.toLowerCase())
+        ambiente.nombre.toLowerCase().includes(formik.values.nombreAmbiente.trim().toLowerCase())
       );
       if (ambienteEncontrado) {
+        //inputAmbienteRef.current.blur();
         setNombreDelAmbiente(ambienteEncontrado);
         console.log(ambienteEncontrado);
       }
@@ -247,7 +248,7 @@ const buscar = async (nombre)=>{
   const setNombreDelAmbiente = async (ambiente) => {
     formik.setFieldValue("nombreAmbiente", ambiente.nombre); // Asigna el nombre directamente
     setidambiente(ambiente.id);
-    console.log(ida);
+    //inputAmbienteRef.current.blur();
     setShowDropdown(false);
     recuperarAmbientePorID(ambiente.id)
       .then((data) => {
@@ -258,6 +259,7 @@ const buscar = async (nombre)=>{
       .catch((error) => {
         console.log("Error al buscar el ambiente:", error);
       });
+      inputAmbienteRef.current.blur();
   };
 
   
@@ -401,7 +403,7 @@ const buscar = async (nombre)=>{
                             bsPrefix="dropdown-toggle"
                           />
                           {formik.values.nombreAmbiente !== "" && ambienteOptions.filter((ambiente) =>
-                          ambiente.nombre.toLowerCase().includes(formik.values.nombreAmbiente.toLowerCase())
+                          ambiente.nombre.toLowerCase().includes(formik.values.nombreAmbiente.trim().toLowerCase())
                           ).length > 0 &&
                           (
                             <Dropdown.Menu
@@ -414,7 +416,7 @@ const buscar = async (nombre)=>{
                           >
                             {ambienteOptions
                               .filter((ambiente) =>
-                                ambiente.nombre.toLowerCase().includes(formik.values.nombreAmbiente.toLowerCase())
+                                ambiente.nombre.toLowerCase().includes(formik.values.nombreAmbiente.trim().toLowerCase())
                               )
                               .map((ambiente) => (
                                 <Dropdown.Item
@@ -575,7 +577,7 @@ const buscar = async (nombre)=>{
                         className="btn RegistrarAmbiente-button-register"
                         size="sm"
                         type="submit"
-                        disabled={!formik.isValid || !formik.dirty}
+                        //disabled={!formik.isValid || !formik.dirty}
                       >
                         Registrar
                       </Button>
