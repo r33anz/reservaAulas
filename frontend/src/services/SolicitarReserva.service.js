@@ -99,3 +99,10 @@ export const postReserva =(reserva)=>{
         // Manejo del error: retorna null si hay un error en la búsqueda
     });
 }
+
+export const recuperarAmbientePorID = (id) => {
+    return axios.get(`${apiUrl}/ambiente/${id}`).then(function (response) {
+      
+      return response.data; // Devuelve los datos del ambiente encontrado
+    });
+  };

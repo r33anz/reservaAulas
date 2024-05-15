@@ -150,7 +150,8 @@ class SolicitudController extends Controller
         ]);
     }
 
-    // FINISH v2
+
+    //FINISH v2
     public function verListas(Request $request)
     {
         $estado = $request->input('estado');
@@ -187,7 +188,7 @@ class SolicitudController extends Controller
                 'ambiente_nombre' => $ambiente->nombre,
                 'ambienteCantidadMax' => $ambiente->capacidad,
                 'fechaEnviada' => substr($solicitud->created_at, 0, 10),
-                'estado' => $solicitud->estado,
+                'estado' => $solicitud->estado
             ];
 
             if ($estado === 'aprobadas') {
@@ -197,6 +198,7 @@ class SolicitudController extends Controller
                 $datosSolicitud['razonRechazo'] = $solicitud->razonRechazo;
             }
             
+
 
             $datosSolicitudes[] = $datosSolicitud;
         }
@@ -261,8 +263,6 @@ class SolicitudController extends Controller
 
         return response()->json(['solicitudes_aceptadas_por_profesor' => $datosSolicitudesAceptadas]);
     }
-
-    
 
     // TO DO
     public function rechazarSolicitud(Request $request)

@@ -17,13 +17,31 @@ const Buscar = () => {
 
     const buscarAmbiente = async (event) => {
         if (event.hasOwnProperty('target') && event.target.hasOwnProperty('value')) {
-            const value = event.target.value;
-            formik.setFieldValue("ambiente", { ...formik.values.ambiente, nombre: value });
-            const { respuesta } = await buscarAmbientePorNombre(value);
-            setAmbientes(respuesta);
-            setAmbienteDetails([]);
+            const originalValue = event.target.value;
+            const trimmedValue = originalValue.trim(); // Eliminar espacios al inicio y al final
+            
+            if (trimmedValue === "") {
+                formik.setFieldValue("ambiente", { ...formik.values.ambiente, nombre: "" });
+            } else if (!trimmedValue.startsWith(" ")) { // Verificar si el primer carácter no es un espacio
+                const value = originalValue.toUpperCase(); // Convertir a mayúsculas si pasa la validación del espacio inicial
+                
+                if (/^[a-zA-Z0-9\s]*$/.test(value)) {
+                    formik.setFieldValue("ambiente", { ...formik.values.ambiente, nombre: value });
+                    //const { respuesta } = await buscarAmbientePorNombre(value);
+                    //setAmbientes(respuesta);
+                    setAmbienteDetails([]);
+                }
+            }
         }
     };
+    
+
+    const buscar = async ()=>{
+        const { respuesta } = await buscarAmbientePorNombre();
+        setAmbientes(respuesta);
+            console.log(ambientes);
+      };
+
 
     const formik = useFormik({
         initialValues: {
@@ -35,17 +53,21 @@ const Buscar = () => {
                 nombre: Yup.string()
                     .required("Obligatorio")
                     .test('hasOptions', 'No existe ese ambiente', function (value) {
-                        return ambientes.length > 0;
+                        if(ambientes
+                            .filter((ambiente) =>
+                                ambiente.nombre.toLowerCase().includes(formik.values.ambiente.nombre.toLowerCase())
+                            ).length>0){
+                                return true;
+                            }
                     })
             })
         }),
         onSubmit: values => {
-            inputAmbienteRef.current.blur();
+            
             setAmbienteDetails([]);
           if (ambientes.length > 0) {
-            for (let i = 0; i < ambientes.length; i++) {
-                recuperar(ambientes[i].id);
-            }
+            console.log(formik.values.ambiente.nombre);
+            recuperar(formik.values.ambiente.nombre);
             //console.log(ambientes);
         } else {
                 setAmbienteDetails([]); // Limpiar los detalles del ambiente en caso de no encontrar coincidencias
@@ -58,7 +80,7 @@ const Buscar = () => {
     const setNombreDelAmbiente = (ambiente) => {
         formik.setFieldValue("ambiente", { id: ambiente.id, nombre: ambiente.nombre });
         setAmbienteDetails([]);
-        recuperar(ambiente.id);
+        recuperar(ambiente.nombre);
         setShow("")
         
     };
@@ -76,9 +98,10 @@ const Buscar = () => {
     const recuperar = (id) => {
         recuperarAmbientePorID(id)
             .then(data => {
-                // Almacenar los detalles del ambiente en el array
-                setAmbienteDetails(prevDetails => [...prevDetails, data]);
                 
+                // Almacenar los detalles del ambiente en el array
+                setAmbienteDetails(data.coincidencias);
+                console.log(ambienteDetails);
                 setShow("");
             })
             .catch(error => {
@@ -86,6 +109,10 @@ const Buscar = () => {
                 setAmbienteDetails([]); // Limpiar los detalles del ambiente en caso de error
             });
     };
+
+    useEffect(() => {
+        buscar();
+      }, []);
 
     return (
         <div className="buscarcontainer" style={{ width: "574px" }}>
@@ -118,15 +145,33 @@ const Buscar = () => {
                                             value={formik.values.ambiente.nombre}
                                             className="form-control"
                                             bsPrefix="dropdown-toggle" />
-                                        {formik.values.ambiente.nombre !== "" &&
-                                            <Dropdown.Menu className={show} style={{ width: "100%", overflowY: "auto", maxHeight: "5rem" }} show>
-                                                {ambientes.map((ambiente) =>
+                                        {ambientes.filter((ambiente) =>
+                                                    ambiente.nombre.toLowerCase().includes(formik.values.ambiente.nombre.toLowerCase())
+                                                ).length > 0&& formik.values.ambiente.nombre !== "" &&
+
+                                            <Dropdown.Menu
+                                            className={show}
+                                            style={{
+                                            width: "100%",
+                                            overflowY: "auto",
+                                            maxHeight: "5rem",
+                                            }}
+                                            show
+                                            >
+                                                {ambientes
+                                                .filter((ambiente) =>
+                                                    ambiente.nombre.toLowerCase().includes(formik.values.ambiente.nombre.toLowerCase())
+                                                )
+                                                .map((ambiente) => (
                                                     <Dropdown.Item
-                                                        key={ambiente.nombre}
-                                                        onClick={() => setNombreDelAmbiente(ambiente)}>
-                                                        {ambiente.nombre}
-                                                    </Dropdown.Item>)}
-                                            </Dropdown.Menu>}
+                                                    key={ambiente.nombre}
+                                                    onClick={() => setNombreDelAmbiente(ambiente)}
+                                                    >
+                                                    {ambiente.nombre}
+                                                    </Dropdown.Item>
+                                                ))}
+                                            </Dropdown.Menu>
+                                            }
                                     </Dropdown>
                                     <Form.Text className="text-danger">
                                         {formik.touched.ambiente && formik.errors.ambiente ? (
@@ -155,14 +200,7 @@ const Buscar = () => {
         ))}
     </div>
 )}
-
-
-            {/* Mostrar mensaje si no se encuentra ningún ambiente */}
-            {enterPressed && ambienteDetails.length === 0 && (
-                <div className="noexiste" style={{ marginLeft: "40px" }}>
-                    <h1>No existe el aula</h1>
-                </div>
-            )}
+            
         </div>
     );
 };
