@@ -61,8 +61,6 @@ function Calendario() {
           views={["month"]}
           defaultView="month"
           culture="es"
-          onSelectSlot
-          onSelectEvent
           selectable
           messages={{
             next: "Siguiente",
