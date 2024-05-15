@@ -163,9 +163,9 @@ class SolicitudController extends Controller
             $solicitudes = Solicitud::where('estado', 'rechazado')->paginate(3, ['*'], 'pagina', $pagina);
         } elseif ($estado === 'en espera') {
             $solicitudes = Solicitud::where('estado', 'en espera')->paginate(3, ['*'], 'pagina', $pagina);
-        }elseif ($estado === 'canceladas') {
+        } elseif ($estado === 'canceladas') {
             $solicitudes = Solicitud::where('estado', 'cancelado')->paginate(3, ['*'], 'pagina', $pagina);
-        }  else {
+        } else {
             $solicitudes = Solicitud::paginate(3, ['*'], 'pagina', $pagina);
         }
 
@@ -263,8 +263,6 @@ class SolicitudController extends Controller
 
         return response()->json(['solicitudes_aceptadas_por_profesor' => $datosSolicitudesAceptadas]);
     }
-
-
 
     // TO DO
     public function rechazarSolicitud(Request $request)
