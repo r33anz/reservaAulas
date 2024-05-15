@@ -10,8 +10,14 @@ class AmbienteController extends Controller
 {
     public function index()
     {
-        $ambientes = Ambiente::all();
-        return response()->json($ambientes);
+        $ambientes = Ambiente::all()->map(function ($ambiente) {
+            return [
+                'id' => $ambiente->id,
+                'nombre' => $ambiente->nombre,
+            ];
+        });
+    
+        return response()->json(['respuesta' => $ambientes]);
     }
 
     public function show($id)
