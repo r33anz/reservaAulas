@@ -13,9 +13,21 @@ export const buscarAmbientePorNombre = (nombre) => {
     });
 };
 
-export const recuperarAmbientePorID = (id) => {
+export const recuperarAmbientePorID = (nombre) => {
+  return axios.post(`${apiUrl}/busquedaAulaNew`, { patron: nombre })
+    .then(function (response) {
+      return response.data; // Devuelve los datos del ambiente encontrado
+    })
+    .catch(function (error) {
+      console.log(error);
+      return null; // Manejo del error: retorna null si hay un error en la búsqueda
+    });
+};
+///busquedaAulaNew
+
+/*export const recuperarAmbientePorID = (id) => {
   return axios.get(`${apiUrl}/ambiente/${id}`).then(function (response) {
     
     return response.data; // Devuelve los datos del ambiente encontrado
   });
-};
+};*/

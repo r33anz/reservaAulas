@@ -26,3 +26,7 @@
   grid-template-columns: repeat(  2,  1fr); /* Divide los elementos en tres columnas */
   gap: 20px; /* Espacio entre los elementos */
 }
+.RegistrarSolicitud-required:after {
+  content:"*";
+  color:red;
+}
