@@ -65,6 +65,11 @@ class AmbienteController extends Controller
 
     public function buscar(Request $request){
         $patron = $request->input('patron');
+        $patronSinEspacios = trim($patron);
+
+        if (empty($patronSinEspacios)) {
+            return response()->json(["respuesta"  =>  []]);
+        }
         $resultado = Ambiente::where('nombre','like','%'.$patron.'%')
                                 ->select('id','nombre')
                                 ->get();
@@ -75,25 +80,30 @@ class AmbienteController extends Controller
 
     public function buscarV2(Request $request){
         $patron = $request->input('patron');
+        $patronSinEspacios = trim($patron);
+
+        if (empty($patronSinEspacios)) {
+            return response()->json(["coincidencias"  =>  []]);
+        }
         $resultados = Ambiente::where('nombre', 'like', '%' . $patron . '%')
         ->with(['piso.bloque'])
         ->get();
 
-    $listaCoincidencias = [];
-    foreach ($resultados as $resultado) {
-        $piso = $resultado->piso;
-        $bloque = $piso->bloque;
+        $listaCoincidencias = [];
+        foreach ($resultados as $resultado) {
+            $piso = $resultado->piso;
+            $bloque = $piso->bloque;
 
-        $detalleAula = [
-            'id' => $resultado->id,
-            'nombre' => $resultado->nombre,
-            'capacidad' => $resultado->capacidad,
-            'tipo' => $resultado->tipo,
-            'nombreBloque' => $bloque->nombreBloque,
-            'nroPiso' => $piso->nroPiso,
-        ];
+            $detalleAula = [
+                'id' => $resultado->id,
+                'nombre' => $resultado->nombre,
+                'capacidad' => $resultado->capacidad,
+                'tipo' => $resultado->tipo,
+                'nombreBloque' => $bloque->nombreBloque,
+                'nroPiso' => $piso->nroPiso,
+            ];
 
-        $listaCoincidencias[] = $detalleAula;
+            $listaCoincidencias[] = $detalleAula;
     }
 
     return response()->json([
