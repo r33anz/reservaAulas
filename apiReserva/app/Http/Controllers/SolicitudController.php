@@ -25,7 +25,7 @@ class SolicitudController extends Controller
         $listaFechas = [];
         foreach ($fechas as $fecha) {
             $solicitudesEspera = Solicitud::where('fechaReserva', $fecha)
-                ->where('estado', 'espera')
+                ->where('estado', 'en espera')
                 ->pluck('id');
 
             $solicitudesReserva = Solicitud::where('fechaReserva', $fecha)
@@ -211,62 +211,22 @@ class SolicitudController extends Controller
         ]);
     }
 
-    // FINISH v2
-    public function aceptarSolicitud(Request $request)
-    {
-        $idsSolicitudesAceptadas = DB::table('reservas')->pluck('idSolicitud');
-
-        // Obtener los datos de las solicitudes correspondientes a esos IDs
-        $solicitudesAceptadas = Solicitud::whereIn('id', $idsSolicitudesAceptadas)->get();
-
-        $datosSolicitudesAceptadas = [];
-
-        foreach ($solicitudesAceptadas as $solicitud) {
-            // Obtener el nombre del docente
-            $docente = Docente::find($solicitud->docente_id);
-
-            // Obtener el ID del ambiente asociado a la solicitud desde la tabla ambiente_solicitud
-            $idAmbiente = DB::table('ambiente_solicitud')
-                ->where('solicitud_id', $solicitud->id)
-                ->value('ambiente_id');
-
-            // Obtener el nombre del ambiente
-            $nombreAmbiente = null;
-            if ($idAmbiente) {
-                $ambiente = Ambiente::find($idAmbiente);
-                if ($ambiente) {
-                    $nombreAmbiente = $ambiente->nombre;
-                }
-            }
-
-            $datosSolicitud = [
-                'id_docente' => $solicitud->docente_id,
-                'materia' => $solicitud->materia,
-                'grupo' => $solicitud->grupo,
-                'cantidad' => $solicitud->cantidad,
-                'razon' => $solicitud->razon,
-                'fechaReserva' => $solicitud->fechaReserva,
-                'periodo_ini_id' => $solicitud->periodo_ini_id,
-                'periodo_fin_id' => $solicitud->periodo_fin_id,
-                'ambiente_nombre' => $nombreAmbiente,
-                'fechaEnviada' => substr($solicitud->created_at, 0, 10),
-            ];
-
-            // Agregar los datos de la solicitud al array de datos de solicitudes aceptadas,
-            // agrupados por el nombre del profesor
-            $profesorNombre = $docente->nombre ?? 'Desconocido'; // Si no se encuentra el nombre del profesor, se asigna 'Desconocido'
-            if (!isset($datosSolicitudesAceptadas[$profesorNombre])) {
-                $datosSolicitudesAceptadas[$profesorNombre] = [];
-            }
-            $datosSolicitudesAceptadas[$profesorNombre][] = $datosSolicitud;
+    
+    public function aceptarSolicitud(Request $request){
+        $id = $request->input('idSolicitud');
+        $fechaAtendido = $request->input('fechaAtendida');
+        $solicitud = Solicitud::find($id);
+        if (!$solicitud) {
+            return response()->json(['mensaje' => 'Solicitud no encontrada'], 404);
         }
-
-        return response()->json(['solicitudes_aceptadas_por_profesor' => $datosSolicitudesAceptadas]);
+        $solicitud->estado = 'aprobado';
+        $solicitud->fechaAtendida = $fechaAtendido;
+        $solicitud->save();
+        return response()->json(['mensaje' => 'Solicitud atendida correctamente']);
     }
 
     // TO DO
-    public function rechazarSolicitud(Request $request)
-    {
+    public function rechazarSolicitud(Request $request){
         $id = $request->input('id');
         $fechaAtendido = $request->input('fechaAtendida');
         $razon = $request->input('razonRechazo');
@@ -279,13 +239,6 @@ class SolicitudController extends Controller
         $solicitud->fechaAtendida = $fechaAtendido;
         $solicitud->save();
 
-        // Inserta datos en tablas externas
-        DB::table('rechazados')->insert([
-            'idSolicitud' => $id,
-            'razonRechazo' => $razon,
-        ]);
-
-        // Retorna una respuesta de éxito
-        return response()->json(['mensaje' => 'Solicitud atendida correctamente']);
+        return response()->json(['mensaje' => 'Solicitud rechazada correctamente']);
     }
 }
