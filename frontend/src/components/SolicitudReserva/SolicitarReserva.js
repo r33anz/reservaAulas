@@ -495,70 +495,73 @@ const buscar = async (nombre)=>{
                     </Form.Group>
 
                     <div className="periodos-columna">
-                      <Form.Group className="mb-3" controlId="periodoInicio">
-                        <Form.Label className="RegistrarSolicitud-required">Periodo Inicio</Form.Label>
-                        <Form.Select
-                          onChange={(e) => {
-                            formik.handleChange(e);
-                            // Filtrar los periodos fin basado en el periodo inicio seleccionado
-                            const selectedPeriodoInicio = parseInt(
-                              e.target.value,
-                              10
-                            );
-                            const filteredPeriodos1 = periodos1.filter(
-                              (item) => item.id >= selectedPeriodoInicio
-                            );
-                            // Actualizar los periodos fin disponibles
-                            setPeriodosFin(filteredPeriodos1);
-                          }}
-                          onBlur={formik.handleBlur}
-                          value={formik.values.periodoInicio}
-                        >
-                          <option value="" disabled selected>
-                            Hora inicio
-                          </option>
-                          {periodos.map((item, index) => (
-                            <option key={index} value={item.id}>
-                              {item.hora}
-                            </option>
-                          ))}
-                        </Form.Select>
-                        <Form.Text className="text-danger">
-                          {formik.touched.periodoInicio &&
-                          formik.errors.periodoInicio ? (
-                            <div className="text-danger">
-                              {formik.errors.periodoInicio}
-                            </div>
-                          ) : null}
-                        </Form.Text>
-                      </Form.Group>
-                      <Form.Group className="mb-3" controlId="periodoFin">
-                        <Form.Label className="RegistrarSolicitud-required">Periodo Fin</Form.Label>
-                        <Form.Select
-                          onChange={formik.handleChange}
-                          onBlur={formik.handleBlur}
-                          value={formik.values.periodoFin}
-                          disabled={!formik.values.periodoInicio}
-                        >
-                          <option value="" disabled selected>
-                            Hora final
-                          </option>
-                          {periodosFin.map((item) => (
-                            <option key={item.id} value={item.id}>
-                              {item.hora}
-                            </option>
-                          ))}
-                        </Form.Select>
-                        <Form.Text className="text-danger">
-                          {formik.touched.periodoFin &&
-                          formik.errors.periodoFin ? (
-                            <div className="text-danger">
-                              {formik.errors.periodoFin}
-                            </div>
-                          ) : null}
-                        </Form.Text>
-                      </Form.Group>
-                    </div>
+                    <Form.Group className="mb-3" controlId="periodoInicio">
+                    <Form.Label className="RegistrarSolicitud-required">Periodo Inicio</Form.Label>
+                    <Form.Select
+                      onChange={(e) => {
+                        formik.handleChange(e);
+                        // Filtrar los periodos fin basado en el periodo inicio seleccionado
+                        const selectedPeriodoInicio = parseInt(
+                          e.target.value,
+                          10
+                        );
+                        const filteredPeriodos1 = periodos1.filter(
+                          (item) => item.id >= selectedPeriodoInicio
+                        );
+                        // Actualizar los periodos fin disponibles
+                        setPeriodosFin(filteredPeriodos1);
+                        // Restablecer el valor del periodo fin
+                        formik.setFieldValue('periodoFin', '');
+                      }}
+                      onBlur={formik.handleBlur}
+                      value={formik.values.periodoInicio}
+                    >
+                      <option value="" disabled selected>
+                        Hora inicio
+                      </option>
+                      {periodos.map((item, index) => (
+                        <option key={index} value={item.id}>
+                          {item.hora}
+                        </option>
+                      ))}
+                    </Form.Select>
+                    <Form.Text className="text-danger">
+                      {formik.touched.periodoInicio &&
+                      formik.errors.periodoInicio ? (
+                        <div className="text-danger">
+                          {formik.errors.periodoInicio}
+                        </div>
+                      ) : null}
+                    </Form.Text>
+                  </Form.Group>
+                  <Form.Group className="mb-3" controlId="periodoFin">
+                    <Form.Label className="RegistrarSolicitud-required">Periodo Fin</Form.Label>
+                    <Form.Select
+                      onChange={formik.handleChange}
+                      onBlur={formik.handleBlur}
+                      value={formik.values.periodoFin}
+                      disabled={!formik.values.periodoInicio}
+                    >
+                      <option value="" disabled selected>
+                        Hora final
+                      </option>
+                      {periodosFin.map((item) => (
+                        <option key={item.id} value={item.id}>
+                          {item.hora}
+                        </option>
+                      ))}
+                    </Form.Select>
+                    <Form.Text className="text-danger">
+                      {formik.touched.periodoFin &&
+                      formik.errors.periodoFin ? (
+                        <div className="text-danger">
+                          {formik.errors.periodoFin}
+                        </div>
+                      ) : null}
+                    </Form.Text>
+                  </Form.Group>
+                </div>
+
                   </Col>
                   <Row xs="auto" className="justify-content-md-end">
                     <Stack direction="horizontal" gap={2}>
