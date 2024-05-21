@@ -48,6 +48,7 @@ export const rechazarSolicitud = (id, razonRechazo) => {
     const day = String(date.getDate()).padStart(2, '0');
     const formattedDate = `${year}-${month}-${day}`;
     return axios.put(`${apiUrl}/rechazarSolicitud`, { id, razonRechazo,  fechaAtendida: formattedDate })
+
         .then(function (response) {
             return response.data;
         })
