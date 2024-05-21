@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useEffect, useState,XCircleFill } from "react";
+import React, { useCallback, useContext, useEffect, useState } from "react";
 import {
   Col,
   Container,
@@ -12,12 +12,11 @@ import {
 } from "react-bootstrap";
 import "./style.css";
 import {
-  recuperarSolicitudesDeReserva,
-  recuperarSolicitudesDeReservaAceptadas, cancelarReserva, recuperarSolicitudesDeReservaDocente
+  recuperarSolicitudesDeReservaDocente,
+  cancelarReserva,
 } from "../../services/Reserva.service";
 import {
   ArrowClockwise,
-  CardHeading,
   CheckCircleFill,
   XSquareFill,
 } from "react-bootstrap-icons";
@@ -27,7 +26,6 @@ const ListaDeReservas = ({ titulo, tipoDeUsuario }) => {
   const [solicitudes, setSolicitudes] = useState([]);
   const [solicitud, setSolicitud] = useState({});
   const [show, setShow] = useState(false);
-  const [showConfirmacion, setShowConfirmacion] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
   const [estado, setEstado] = useState("");
@@ -63,17 +61,14 @@ const ListaDeReservas = ({ titulo, tipoDeUsuario }) => {
     agregarAlert({
       icon: <CheckCircleFill />,
       severidad: "success",
-      mensaje: "Actualizacion con exito",
+      mensaje: "Actualización con éxito",
     });
   };
 
   const getSolicitudes = useCallback(async () => {
     const id = window.sessionStorage.getItem("docente_id");
     const data = await recuperarSolicitudesDeReservaDocente(currentPage, estado, id);
-    console.log(estado);
-    console.log(data);
-    console.log(id);
-    setSolicitudes(data.contenido);
+    setSolicitudes(data.contenido.filter((item) => item.estado !== "rechazadas"));
     setTotalPages(data.numeroPaginasTotal);
   }, [currentPage, estado]);
 
@@ -148,15 +143,23 @@ const ListaDeReservas = ({ titulo, tipoDeUsuario }) => {
 
     return items;
   };
+
   const handleCancelarReserva = async (id) => {
     try {
-      setShow(false); // Cerrar modal primero
-      setShowConfirmacion(false); // Ocultar mensaje de confirmación
+      setShow(false);
       await cancelarReserva(id);
       await getSolicitudes();
-      agregarAlert({ icon: <CheckCircleFill />, severidad: "success", mensaje: "Reserva cancelada correctamente" });
+      agregarAlert({
+        icon: <CheckCircleFill />,
+        severidad: "success",
+        mensaje: "Reserva cancelada correctamente",
+      });
     } catch (error) {
-      agregarAlert({ icon: <XCircleFill />, severidad: "error", mensaje: "Error al cancelar la reserva" });
+      agregarAlert({
+        icon: <XSquareFill />,
+        severidad: "error",
+        mensaje: "Error al cancelar la reserva",
+      });
       console.error("Error al cancelar la reserva:", error);
     }
   };
@@ -196,7 +199,7 @@ const ListaDeReservas = ({ titulo, tipoDeUsuario }) => {
               </Col>
             </Row>
             <Row className="ListaDeSolicitudes-body justify-content-center">
-              <Form >
+              <Form>
                 {["radio"].map((type) => (
                   <div key={`inline-${type}`} className="mb-3">
                     <strong>Estado: </strong>
@@ -222,7 +225,7 @@ const ListaDeReservas = ({ titulo, tipoDeUsuario }) => {
                       inline
                       checked={estado === "canceladas"}
                       onClick={() => setEstado("canceladas")}
-                      label="cancelados"
+                      label="canceladas"
                       name="estado"
                       type={type}
                       id={`inline-${type}-1`}
@@ -235,15 +238,6 @@ const ListaDeReservas = ({ titulo, tipoDeUsuario }) => {
                       name="estado"
                       type={type}
                       id={`inline-${type}-2`}
-                    />
-                    <Form.Check
-                      inline
-                      checked={estado === "rechazadas"}
-                      label="rechazadas"
-                      onClick={() => setEstado("rechazadas")}
-                      name="estado"
-                      type={type}
-                      id={`inline-${type}-3`}
                     />
                   </div>
                 ))}
@@ -258,32 +252,36 @@ const ListaDeReservas = ({ titulo, tipoDeUsuario }) => {
                     <th>Fecha de Reserva</th>
                     <th>Fecha Creada</th>
                     <th>Estado</th>
-                    <th>Detalle</th>
+                    <th>Acciones</th>
                   </tr>
                 </thead>
                 <tbody>
                   {solicitudes.map((item) => (
-                    <tr>
+                    <tr key={item.id}>
                       <td>{item.ambiente_nombre}</td>
                       {tipoDeUsuario === "Admin" && (
                         <td>{item.nombreDocente}</td>
                       )}
                       <td>{item.materia}</td>
-                      <td>
-                        {getPeriodo(item.periodo_ini_id, item.periodo_fin_id)}
-                      </td>
+                      <td>{getPeriodo(item.periodo_ini_id, item.periodo_fin_id)}</td>
                       <td>{item.fechaReserva}</td>
                       <td>{item.fechaEnviada}</td>
                       <td>{item.estado}</td>
-                      <td>
-                        <CardHeading
-                          size={30}
-                          onClick={() => {
-                            setSolicitud(item);
-                            setShow(true);
-                          }}
-                        />
-                      </td>
+                      {(item.estado === "aprobado" || item.estado === "en espera") ? (
+                        <td>
+                          <button
+                            className="btn RegistrarAmbiente-button-register"
+                            onClick={() => {
+                              setSolicitud(item);
+                              setShow(true);
+                            }}
+                          >
+                            Cancelar
+                          </button>
+                        </td>
+                      ) : (
+                        <td></td>
+                      )}
                     </tr>
                   ))}
                 </tbody>
@@ -309,7 +307,7 @@ const ListaDeReservas = ({ titulo, tipoDeUsuario }) => {
             style={{ height: "100%" }}
           >
             <h4 style={{ fontWeight: "bold" }} className="">
-              Detalle de la Solicitud de Reserva
+            ¿Está seguro de cancelar la reserva?
             </h4>
           </Col>
           <Col
@@ -331,13 +329,11 @@ const ListaDeReservas = ({ titulo, tipoDeUsuario }) => {
           {tipoDeUsuario === "Admin" && (
             <>
               <h6>Nombre del Docente: </h6>
-              <p>{solicitud.nombre_docente}</p>
+              <p>{solicitud.nombreDocente}</p>
             </>
           )}
           <h6>Periodo: </h6>
-          <p>
-            {getPeriodo(solicitud.periodo_ini_id, solicitud.periodo_fin_id)}
-          </p>
+          <p>{getPeriodo(solicitud.periodo_ini_id, solicitud.periodo_fin_id)}</p>
           <h6>Materia: </h6>
           <p>{solicitud.materia}</p>
           <h6>Fecha Reserva:</h6>
@@ -348,31 +344,23 @@ const ListaDeReservas = ({ titulo, tipoDeUsuario }) => {
           <p>{solicitud.grupo}</p>
           <h6>Razon: </h6>
           <p>{solicitud.razon}</p>
-          {solicitud.estado === "aprobado" && (
-                        <button className="btn RegistrarAmbiente-button-register" onClick={() => setShowConfirmacion(true)}>Cancelar Reserva</button>
-                      )}
-          
-        </Row>
-      </Modal>
-      <Modal
-        size="xs"
-        aria-labelledby="contained-modal-title-vcenter"
-        show={showConfirmacion}
-        onHide={() => setShowConfirmacion(false)}
-        centered
-      >
-        <Row sm className="text-white RegistrarAmbiente-header">
-          <Col xs="10" className="d-flex justify-content-start align-items-center" style={{ height: '100%' }}>
-            <h4 style={{ fontWeight: "bold" }} className="">Confirmación</h4>
-          </Col>
-        </Row>
-        <Row className="RegistrarAmbiente-body justify-content-center">
-          <p>¿Está seguro de cancelar la reserva?</p>
-          <div className="d-flex justify-content-center">
-            <button className="btn RegistrarAmbiente-button-register" onClick={() => handleCancelarReserva(solicitud.id)}>Aceptar</button>
-            <div style={{ width: '10px' }}></div> {/* Espacio entre botones */}
-            <button className="btn RegistrarAmbiente-button-cancel" onClick={() => setShowConfirmacion(false)}>Cancelar</button>
-          </div>
+          {(solicitud.estado === "aprobado" || solicitud.estado === "en espera") && (
+            <div className="d-flex justify-content-center mt-3">
+              <button
+                className="btn RegistrarAmbiente-button-register"
+                onClick={() => handleCancelarReserva(solicitud.id)}
+              >
+                Aceptar
+              </button>
+              <div style={{ width: "10px" }}></div> {/* Espacio entre botones 
+              <button
+                className="btn RegistrarAmbiente-button-cancel"
+                onClick={() => setShow(false)}
+              >
+                Cancelar
+              </button>  */}
+            </div>
+          )}
         </Row>
       </Modal>
     </>
