@@ -38,7 +38,7 @@ function App() {
           <ListaDeSolicitudes tipoDeUsuario="Admin" titulo="Lista de Solicitudes de Reserva Por Llegada" />
         } />
         <Route exact path="/docente/listaReservas" element={
-          <CancelarReservas tipoDeUsuario="Docente" titulo="Lista de Reservas" />
+          <CancelarReservas tipoDeUsuario="Docente" titulo="Lista de Solicitudes y Reservas" />
         } />
         <Route exact path="/admin/buscarPorNombre" element={<Buscar />} />
         <Route exact path="/admin/registroAmbiente" element={
