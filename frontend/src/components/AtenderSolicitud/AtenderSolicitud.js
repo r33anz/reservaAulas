@@ -230,26 +230,28 @@ const AtenderSolicitud = ({ solicitudId }) => {
                       Verificar Disponibilidad
                     </Button>
                   </Row>
-                  {mostrarMensajeDeVerificacion !== null &&mostrarMensajeDeVerificacion.valido && (
-                    <Row xs="auto" style={{ paddingTop: "1rem" }}>
-                      <Stack direction="horizontal" gap={2}>
-                        <Button
-                          size="sm"
-                          className="btn AtenderSolicitud-button-rechazar"
-                          onClick={() => setShow(!show)}
-                        >
-                          Rechazar
-                        </Button>
-                        <Button
-                          size="sm"
-                          className="btn AtenderSolicitud-button-aceptar"
-                          onClick={onClickAceptarSolicitud}
-                        >
-                          Aceptar
-                        </Button>
-                      </Stack>
-                    </Row>
-                  )}
+
+                  <Row xs="auto" style={{ paddingTop: "1rem" }}>
+                    <Stack direction="horizontal" gap={2}>
+                      <Button
+                        size="sm"
+                        className="btn AtenderSolicitud-button-rechazar"
+                        onClick={() => setShow(!show)}
+                      >
+                        Rechazar
+                      </Button>
+                      {mostrarMensajeDeVerificacion !== null &&
+                        mostrarMensajeDeVerificacion.valido && (
+                          <Button
+                            size="sm"
+                            className="btn AtenderSolicitud-button-aceptar"
+                            onClick={onClickAceptarSolicitud}
+                          >
+                            Aceptar
+                          </Button>
+                        )}
+                    </Stack>
+                  </Row>
                 </Container>
               </Col>
             </Row>
