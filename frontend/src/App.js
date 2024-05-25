@@ -12,6 +12,7 @@ import {
 } from "react-router-dom";
 import ModificarEstadoDelAmbientePorFecha from './components/ModificarAmbiente/EstadoPorFecha';
 import Buscar from "./components/Busquedanombre/Buscar";
+import BuscarCantidad from "./components/BusquedaCantidad/BusquedaPorCantidad";
 import NotFound from "./pages/NotFound";
 import ListaDeSolicitudes from "./components/ListaDeSolicitudes";
 import SolcitarReserva from "./components/SolicitudReserva/SolicitarReserva"
@@ -41,6 +42,7 @@ function App() {
           <CancelarReservas tipoDeUsuario="Docente" titulo="Lista de Solicitudes y Reservas" />
         } />
         <Route exact path="/admin/buscarPorNombre" element={<Buscar />} />
+        <Route exact path="/docente/buscarPorCantidad" element={<BuscarCantidad />} />
         <Route exact path="/admin/registroAmbiente" element={
           <RegistrarAmbiente />
         } />
