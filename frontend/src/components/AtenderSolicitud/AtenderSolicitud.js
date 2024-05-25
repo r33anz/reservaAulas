@@ -24,7 +24,7 @@ import {
 } from "../../services/AtenderSolicitud.service";
 import { useParams } from "react-router-dom";
 
-const AtenderSolicitud = ({solicitudId}) => {
+const AtenderSolicitud = ({ solicitudId, onClose }) => {
   const { id } = useParams("id");
   const [show, setShow] = useState(false);
   const [esSolicitudAtentida, setEsSolicitudAtentida] = useState(false);
@@ -279,6 +279,122 @@ const AtenderSolicitud = ({solicitudId}) => {
               </Col>
             </Row>
           </Col>
+          <Button
+            className="AtenderSolicitud-header-button-close"
+            style={{ width: "58px", height: "3rem" }}
+            onClick={onClose}
+          >
+            <XSquareFill style={{ width: "24px", height: "24px" }} />
+          </Button>
+        </Row>
+        <Row className="AtenderSolicitud-body justify-content-center">
+          <Stack gap={3}>
+            <Row style={{ margin: 0 }}>
+              <Row style={{ background: "white", margin: 0 }}>
+                <h5>
+                  <strong>Detalles del Ambiente</strong>
+                </h5>
+              </Row>
+              <Row style={{ background: "white", margin: 0 }}>
+                <div>
+                  <strong>Nombre del ambiente:</strong>{" "}
+                  {solicitud.ambiente_nombre}
+                </div>
+                <div>
+                  <strong>Cantidad Maxima de Alumnos:</strong>{" "}
+                  {solicitud.ambienteCantidadMax}
+                </div>
+              </Row>
+            </Row>
+            <Row style={{ margin: 0 }}>
+              <Row style={{ background: "white", margin: 0 }}>
+                <h5>
+                  <strong>Detalles Peticion docente</strong>
+                </h5>
+              </Row>
+              <Row style={{ background: "white", margin: 0 }}>
+                <div>
+                  <strong>Nombre del docente:</strong> {solicitud.nombreDocente}
+                </div>
+                <div>
+                  <strong>Materia:</strong> {solicitud.materia}
+                </div>
+                <div>
+                  <strong>Grupo</strong> {solicitud.grupo}
+                </div>
+                <div>
+                  <strong>Nombre del ambiente:</strong>{" "}
+                  {solicitud.ambiente_nombre}
+                </div>
+                <div>
+                  <strong>Cantidad de Alumnos:</strong> {solicitud.cantidad}
+                </div>
+                <div>
+                  <strong>Razon:</strong> {solicitud.razon}
+                </div>
+                <div>
+                  <strong>Fecha:</strong> {solicitud.fecha}
+                </div>
+                <div>
+                  <strong>Periodos:</strong>
+                </div>
+                <div>
+                  {solicitud.periodo_ini_id && solicitud.periodo_fin_id
+                    ? getPeriodoPorId(
+                        solicitud.periodo_ini_id,
+                        solicitud.periodo_fin_id
+                      )
+                    : ""}
+                </div>
+              </Row>
+            </Row>
+          </Stack>
+          <Row
+            xs="auto"
+            sm="auto"
+            style={{ paddingTop: "1rem" }}
+            className="justify-content-end"
+          >
+            <div
+              style={{ width: "60%", padding: 0 }}
+              className="justify-content-start text-left"
+            >
+              {Object.getOwnPropertyNames(solicitud).length > 0 &&
+              mostrarMensajeDeVerificacion !== null
+                ? mostrarMensajeDeVerificacion.valido
+                  ? "Ambiente disponible"
+                  : "Ambiente no disponible"
+                : ""}
+            </div>
+            <Button
+              size="sm"
+              className="btn AtenderSolicitud-button-disponibilidad"
+              onClick={onClickParaVerificarDisponibilidad}
+            >
+              Verificar Disponibilidad
+            </Button>
+          </Row>
+          {mostrarMensajeDeVerificacion !== null &&
+            mostrarMensajeDeVerificacion.valido && (
+              <Row xs="auto" style={{ paddingTop: "1rem" }}>
+                <Stack direction="horizontal" gap={2}>
+                  <Button
+                    size="sm"
+                    className="btn AtenderSolicitud-button-rechazar"
+                    onClick={() => setShow(!show)}
+                  >
+                    Rechazar
+                  </Button>
+                  <Button
+                    size="sm"
+                    className="btn AtenderSolicitud-button-aceptar"
+                    onClick={onClickAceptarSolicitud}
+                  >
+                    Aceptar
+                  </Button>
+                </Stack>
+              </Row>
+            )}
         </Row>
       </Container>
       <Modal

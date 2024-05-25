@@ -189,7 +189,7 @@ const SolicitarReserva = ({ onClose }) => {
         .required("Obligatorio"),
     }),
     onSubmit: (values) => {
-      const id = window.localStorage.getItem("docente_id");
+      const id = window.sessionStorage.getItem("docente_id");
       const periodoInicioID = parseInt(values.periodoInicio, 10);
       const periodoFinID = parseInt(values.periodoFin, 10);
 
@@ -267,7 +267,7 @@ const SolicitarReserva = ({ onClose }) => {
 
   useEffect(() => {
     console.log(razon);
-    const id = window.localStorage.getItem("docente_id");
+    const id = window.sessionStorage.getItem("docente_id");
     const bloquesData = getBloques(id);
     docente(id);
     setBloques(bloquesData);

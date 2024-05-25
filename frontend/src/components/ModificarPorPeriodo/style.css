@@ -63,4 +63,23 @@
   margin-top: -40px;
   margin-left: 307px;
 }
+.ModificarPorPeriodo-button-periodo {
+  color: #ffffff;
+  background-color: #003F70;
+  border-color: #003F70;
+  width: 12rem;
+  font-weight: bold;
+}
 
+.ModificarPorPeriodo-button-periodo:hover,
+.ModificarPorPeriodo-button-periodo:active,
+.ModificarPorPeriodo-button-periodo:focus,
+.ModificarPorPeriodo-button-periodo:disabled,
+.ModificarPorPeriodo-button-periodo.active {
+/* let's darken #004E64 a bit for hover effect */
+color: #ffffff;
+background: #003F70;
+border-color: #003F70;
+--bs-btn-active-bg: #003F70;
+--bs-btn-active-border-color: #003F70;
+}

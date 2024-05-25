@@ -1,6 +1,5 @@
 .Home-body {
-    padding-top: 1.5rem;
-    padding-bottom: 1.5rem;
+    padding: 1rem;
     height: calc(100% - 13.5rem);
     overflow-y: auto;
 }
@@ -29,7 +28,7 @@
 }
 
 .ico-header {
-    margin-left: calc(100% - 22rem);
+    margin-left: calc(100% - 20rem);
 }
 
 .App-logo {
@@ -40,4 +39,8 @@
 
 .Home-busqueda {
     margin-left: calc(100% - 25.5rem)
+}
+
+.titulo-header {
+    color: white;
 }

@@ -30,7 +30,7 @@ import { useEffect } from "react";
 import { getAmbientes } from "../../../services/Ambiente.service";
 import { useRef } from "react";
 
-const ModificarEstadoDelAmbientePorFecha = () => {
+const ModificarEstadoDelAmbientePorFecha = ({onclose}) => {
   const [ambientes, setAmbientes] = useState([]);
   const [ambientesEncontradas, setAmbientesEncontradas] = useState([]);
   const [ambiente, setAmbiente] = useState({});
@@ -254,13 +254,14 @@ const ModificarEstadoDelAmbientePorFecha = () => {
         <Container className="ModificarEstadoDelAmbientePorFecha-header" fluid>
           <Row xs="auto" className="justify-content-md-end">
             <Col xs lg="10" style={{ alignContent: "center", padding: 0 }}>
-              <h4 style={{ color: "white", fontWeight: "bold" }}>
+              <h5 style={{ color: "white", fontWeight: "bold" }}>
                 Modificar Estado de Ambiente por fecha
-              </h4>
+              </h5>
             </Col>
             <Button
               className="ModificarEstadoDelAmbientePorFecha-header-button-close"
-              style={{ width: "58px", height: "58px" }}
+              style={{ width: "58px", height: "3rem" }}
+              onClick={onclose}
             >
               <XSquareFill style={{ width: "24px", height: "24px" }} />
             </Button>

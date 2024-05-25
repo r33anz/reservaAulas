@@ -1,6 +1,5 @@
 .RegistrarAmbiente-header {
   background-color: #003F70;
-  height: 3.5rem;
 }
 
 .RegistrarAmbiente-header-button-close {
@@ -22,6 +21,7 @@
   border-color: #D51809;
   --bs-btn-active-bg: #D51809;
   --bs-btn-active-border-color: #D51809;
+  cursor: pointer;
 }
 
 .RegistrarAmbiente-body {

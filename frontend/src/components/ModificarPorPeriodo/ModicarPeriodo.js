@@ -1,5 +1,5 @@
-import React, { useCallback, useState, useRef,useEffect } from "react";
-import { Button } from "react-bootstrap";
+import React, { useCallback, useState, useRef, useEffect } from "react";
+import { Button, Modal } from "react-bootstrap";
 import {
   buscarAmbientePorNombre,
   modificarPerio,
@@ -20,7 +20,7 @@ import { XSquareFill } from "react-bootstrap-icons";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 
-const Modificarperdiodo = () => {
+const Modificarperdiodo = ({ onClose }) => {
   const inputAmbienteRef = useRef();
   const [show, setShow] = useState("");
   const [periodosModificados, setPeriodosModificados] = useState([]);
@@ -31,37 +31,40 @@ const Modificarperdiodo = () => {
 
   const buscarAmbiente = async (event) => {
     setConsultarPresionado(false);
-    
+
     if (
       event.hasOwnProperty("target") &&
       event.target.hasOwnProperty("value")
     ) {
       const originalValue = event.target.value;
       const trimmedValue = originalValue.trim(); // Eliminar espacios al inicio y al final
-      
+
       if (trimmedValue === "") {
         // Si el valor es una cadena vacía, establecer el campo "ambiente" a una cadena vacía
-        formik.setFieldValue("ambiente", { ...formik.values.ambiente, nombre: "" });
-      } else if (!trimmedValue.startsWith(" ")) { // Verificar si el primer carácter no es un espacio
+        formik.setFieldValue("ambiente", {
+          ...formik.values.ambiente,
+          nombre: "",
+        });
+      } else if (!trimmedValue.startsWith(" ")) {
+        // Verificar si el primer carácter no es un espacio
         const value = originalValue.toUpperCase(); // Convertir a mayúsculas si pasa la validación del espacio inicial
-        
+
         if (/^[a-zA-Z0-9\s]*$/.test(value)) {
           // Si pasa la validación de caracteres especiales, establecer el campo "ambiente" con el valor ingresado
-          formik.setFieldValue("ambiente", { ...formik.values.ambiente, nombre: value });
+          formik.setFieldValue("ambiente", {
+            ...formik.values.ambiente,
+            nombre: value,
+          });
         }
       }
     }
   };
-  
 
-
-  const buscar = async (nombre)=>{
+  const buscar = async (nombre) => {
     const { respuesta } = await buscarAmbientePorNombre(nombre);
     setAmbientes(respuesta);
-        console.log(ambientes);
+    console.log(ambientes);
   };
-
-
 
   const buscarAmbientPorFecha = async (ambiente, fecha) => {
     const data = await modificarPerio(ambiente.id, fecha);
@@ -136,12 +139,14 @@ const Modificarperdiodo = () => {
         nombre: Yup.string()
           .required("Obligatorio")
           .test("existe-ambiente", "No existe el ambiente", function (value) {
-            const ambients = ambientes.map((ambiente) => ambiente.nombre.trim());
+            const ambients = ambientes.map((ambiente) =>
+              ambiente.nombre.trim()
+            );
             // Verificar si el valor ingresado (sin espacios al final) está presente en la lista de nombres de ambientes
             return ambients.includes(value.trim());
-        })
-        
-          /*.test("hasOptions", "No exite ese ambiente", function (value) {
+          }),
+
+        /*.test("hasOptions", "No exite ese ambiente", function (value) {
             // 'this.options' contiene las opciones que pasas al esquema de validación
             if (ambientes.length > 0) {
               const ambienteEncontrado = ambientes.find(ambiente =>
@@ -168,41 +173,37 @@ const Modificarperdiodo = () => {
         }),
     }),
     onSubmit: (values) => {
-      
-        
-        
-        buscarAmbientPorFecha(values.ambiente, values.fecha);
-        setEnterPressed(true);
-      
-       // buscarAmbientPorFecha(values.ambiente, values.fecha);
-        setEnterPressed(false);
-        console.log();
-        //setAmbientes([formik.values.ambiente]);
-      
+      buscarAmbientPorFecha(values.ambiente, values.fecha);
+      setEnterPressed(true);
+
+      // buscarAmbientPorFecha(values.ambiente, values.fecha);
+      setEnterPressed(false);
+      console.log();
+      //setAmbientes([formik.values.ambiente]);
+
       inputAmbienteRef.current.blur();
-      
     },
   });
 
   const handleKeyPress = (event) => {
-    
     if (event.key === "Enter") {
       if (ambientes.length > 0) {
-        const ambienteEncontrado = ambientes.find(ambiente =>
-          ambiente.nombre.toLowerCase().includes(formik.values.ambiente.nombre.trim().toLowerCase())
+        const ambienteEncontrado = ambientes.find((ambiente) =>
+          ambiente.nombre
+            .toLowerCase()
+            .includes(formik.values.ambiente.nombre.trim().toLowerCase())
         );
 
         if (ambienteEncontrado) {
           setNombreDelAmbiente(ambienteEncontrado);
           console.log(ambienteEncontrado);
           setEnterPressed(true);
-        }else{
+        } else {
           setEnterPressed(false);
         }
-        
+
         inputAmbienteRef.current.blur();
       }
-      
     }
   };
 
@@ -231,13 +232,14 @@ const Modificarperdiodo = () => {
       <Container className="ModificarEstadoDelAmbientePorFecha-header" fluid>
         <Row xs="auto" className="justify-content-md-end">
           <Col xs lg="10" style={{ alignContent: "center", padding: 0 }}>
-            <h4 style={{ color: "white", fontWeight: "bold" }}>
+            <h5 style={{ color: "white", fontWeight: "bold" }}>
               Modificar Estado de Ambiente por Periodo
-            </h4>
+            </h5>
           </Col>
           <Button
             className="ModificarEstadoDelAmbientePorFecha-header-button-close"
-            style={{ width: "58px", height: "58px" }}
+            style={{ width: "58px", height: "3rem" }}
+            onClick={onClose}
           >
             <XSquareFill style={{ width: "24px", height: "24px" }} />
           </Button>
@@ -266,31 +268,43 @@ const Modificarperdiodo = () => {
                       className="form-control"
                       bsPrefix="dropdown-toggle"
                     />
-                    {formik.values.ambiente.nombre !== "" && ambientes.filter((ambiente) =>
-  ambiente.nombre.toLowerCase().includes(formik.values.ambiente.nombre.trim().toLowerCase())
-).length > 0 && (
-                      <Dropdown.Menu
-                        className={show}
-                        style={{
-                          width: "100%",
-                          overflowY: "auto",
-                          maxHeight: "5rem",
-                        }}
-                        show
-                      >
-                              {ambientes.filter((ambiente) =>
-                                ambiente.nombre.toLowerCase().includes(formik.values.ambiente.nombre.trim().toLowerCase())
-                              )
-                              .map((ambiente) => (
-                                <Dropdown.Item
-                                  key={ambiente.nombre}
-                                  onClick={() => setNombreDelAmbiente(ambiente)}
-                                >
-                                  {ambiente.nombre}
-                                </Dropdown.Item>
-                              ))}
-                      </Dropdown.Menu>
-                    )}
+                    {formik.values.ambiente.nombre !== "" &&
+                      ambientes.filter((ambiente) =>
+                        ambiente.nombre
+                          .toLowerCase()
+                          .includes(
+                            formik.values.ambiente.nombre.trim().toLowerCase()
+                          )
+                      ).length > 0 && (
+                        <Dropdown.Menu
+                          className={show}
+                          style={{
+                            width: "100%",
+                            overflowY: "auto",
+                            maxHeight: "5rem",
+                          }}
+                          show
+                        >
+                          {ambientes
+                            .filter((ambiente) =>
+                              ambiente.nombre
+                                .toLowerCase()
+                                .includes(
+                                  formik.values.ambiente.nombre
+                                    .trim()
+                                    .toLowerCase()
+                                )
+                            )
+                            .map((ambiente) => (
+                              <Dropdown.Item
+                                key={ambiente.nombre}
+                                onClick={() => setNombreDelAmbiente(ambiente)}
+                              >
+                                {ambiente.nombre}
+                              </Dropdown.Item>
+                            ))}
+                        </Dropdown.Menu>
+                      )}
                   </Dropdown>
                   <Form.Text className="text-danger">
                     {formik.touched.ambiente && formik.errors.ambiente ? (
