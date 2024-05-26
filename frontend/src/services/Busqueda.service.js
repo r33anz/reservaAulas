@@ -31,3 +31,14 @@ export const recuperarAmbientePorID = (nombre) => {
     return response.data; // Devuelve los datos del ambiente encontrado
   });
 };*/
+
+export const buscarAmbientePorCantidad = (minCapacidad, maxCapacidad) => {
+  return axios.post(`${apiUrl}/buscarPorCapacidad`, { minCapacidad, maxCapacidad })
+    .then(function (response) {
+      return response.data; // Devuelve los datos de los ambientes encontrados
+    })
+    .catch(function (error) {
+      console.error('Error al buscar ambientes por capacidad:', error);
+      return null; // Manejo del error: retorna null si hay un error en la búsqueda
+    });
+};

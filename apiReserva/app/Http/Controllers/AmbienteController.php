@@ -133,4 +133,33 @@ class AmbienteController extends Controller
 
         return response()->json(['ambientes' => $ambientesEnMismoPiso]);
     }
+    public function buscarPorCapacidad(Request $request)
+    {
+        $minCapacidad = $request->input('minCapacidad', 0);
+        $maxCapacidad = $request->input('maxCapacidad', 100);
+
+        // Realiza la búsqueda en la base de datos
+        $resultados = Ambiente::whereBetween('capacidad', [$minCapacidad, $maxCapacidad])->get();
+
+        $ambientes = [];
+        foreach ($resultados as $resultado) {
+            $piso = $resultado->piso;
+            $bloque = $piso->bloque;
+
+            $detalleAula = [
+                'id' => $resultado->id,
+                'nombre' => $resultado->nombre,
+                'capacidad' => $resultado->capacidad,
+                'tipo' => $resultado->tipo,
+                'nombreBloque' => $bloque->nombreBloque,
+                'nroPiso' => $piso->nroPiso,
+            ];
+
+            $ambientes[] = $detalleAula;
+    }
+
+    return response()->json([
+        'respuesta' => $ambientes
+    ]);
+    }
 }

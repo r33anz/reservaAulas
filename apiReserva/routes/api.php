@@ -40,6 +40,7 @@ Route::get('/ambientes', [AmbienteController::class, 'index']);
 Route::post('/registroAmbiente',[AmbienteController::class,'store']);
 Route::get('/{id}/ambientesMismoPiso', [AmbienteController::class, 'ambientesMismoPiso']);
 Route::get('/{id}/ambientesMismoBloque', [AmbienteController::class, 'ambientesMismoBloque']);
+Route::post('/buscarPorCapacidad', [AmbienteController::class, 'buscarPorCapacidad']);
 
 //Habilitado/DeshabilitadoAula
 Route::post('/inhabilitarAmbiente',[InhabilitadoController::class,'inhabilitarAmbiente']);
