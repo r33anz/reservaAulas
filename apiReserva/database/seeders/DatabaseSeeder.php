@@ -7,6 +7,7 @@ use Database\Seeders\DocenteSeeder;
 use Database\Seeders\MateriaSeeder;
 use Database\Seeders\InhabilitadoSeeder;
 use Database\Seeders\SolicitudSeeder;
+use Database\Seeders\UserSeeder;
 class DatabaseSeeder extends Seeder
 {
     /**
@@ -23,7 +24,8 @@ class DatabaseSeeder extends Seeder
             PisoSeeder::class,
             PeriodoSeeder::class,
             InhabilitadoSeeder::class,
-            SolicitudSeeder::class
+            SolicitudSeeder::class,
+            UserSeeder::class
            
         ]);
     }

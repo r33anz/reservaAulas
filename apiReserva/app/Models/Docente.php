@@ -20,5 +20,10 @@ class Docente extends Model
     {
         return $this->hasMany(Solicitud::class);
     }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
     
 } 
