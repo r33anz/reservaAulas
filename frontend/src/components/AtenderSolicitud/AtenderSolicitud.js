@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useCallback, useContext, useEffect, useState } from "react";
 import {
   Button,
   Col,
@@ -19,11 +19,13 @@ import {
   aceptarSolicitud,
   getSolicitudPorId,
   rechazarSolicitud,
+  validarSolicitudAtentida,
   vertificarDisponibilidad,
 } from "../../services/AtenderSolicitud.service";
 
 const AtenderSolicitud = ({ solicitudId }) => {
   const [show, setShow] = useState(false);
+  const [esSolicitudAtentida, setEsSolicitudAtentida] = useState(false);
   const [razonRechazo, setRazonRechazo] = useState();
   const [mostrarMensajeDeVerificacion, setMostrarMensajeDeVerificacion] =
     useState(null);
@@ -91,6 +93,7 @@ const AtenderSolicitud = ({ solicitudId }) => {
         severidad: "success",
         mensaje: "Solicitud rechazada enviada.",
       });
+      setEsSolicitudAtentida(true);
     } else {
       agregarAlert({
         icon: <ExclamationCircleFill />,
@@ -109,6 +112,7 @@ const AtenderSolicitud = ({ solicitudId }) => {
         severidad: "success",
         mensaje: response.mensaje,
       });
+      setEsSolicitudAtentida(true);
     } else {
       agregarAlert({
         icon: <ExclamationCircleFill />,
@@ -118,9 +122,16 @@ const AtenderSolicitud = ({ solicitudId }) => {
     }
   };
 
+  const validarSolicitud = useCallback(async (solicitudId) => {
+    const response = await validarSolicitudAtentida(solicitudId);
+    if (response) {
+      setEsSolicitudAtentida(response.atendida);
+    }
+  }, []);
+
   useEffect(() => {
     loadSolicitudPorId(solicitudId);
-  }, [solicitudId]);
+  }, [solicitudId, validarSolicitud]);
 
   return (
     <>
@@ -205,53 +216,62 @@ const AtenderSolicitud = ({ solicitudId }) => {
                       </Row>
                     </Col>
                   </Row>
-                  <Row
-                    xs="auto"
-                    sm="auto"
-                    style={{ paddingTop: "1rem" }}
-                    className="justify-content-end"
-                  >
-                    <div
-                      style={{ width: "60%", padding: 0 }}
-                      className="justify-content-start text-left"
+                  {esSolicitudAtentida && (
+                    <Row
+                      style={{ paddingTop: "1rem" }}
                     >
-                      {Object.getOwnPropertyNames(solicitud).length > 0 &&
-                      mostrarMensajeDeVerificacion !== null
-                        ? mostrarMensajeDeVerificacion.valido
-                          ? "Ambiente disponible"
-                          : "Ambiente no disponible"
-                        : ""}
-                    </div>
-                    <Button
-                      size="sm"
-                      className="btn AtenderSolicitud-button-disponibilidad"
-                      onClick={onClickParaVerificarDisponibilidad}
+                      Solicitud atendida
+                    </Row>
+                  )}
+                  <>
+                    <Row
+                      xs="auto"
+                      sm="auto"
+                      style={{ paddingTop: "1rem" }}
                     >
-                      Verificar Disponibilidad
-                    </Button>
-                  </Row>
-
-                  <Row xs="auto" style={{ paddingTop: "1rem" }}>
-                    <Stack direction="horizontal" gap={2}>
+                      <div
+                        style={{ width: "71%", padding: 0 }}
+                        className="justify-content-start text-left"
+                      >
+                        {Object.getOwnPropertyNames(solicitud).length > 0 &&
+                        mostrarMensajeDeVerificacion !== null
+                          ? mostrarMensajeDeVerificacion.valido
+                            ? "Ambiente disponible"
+                            : "Ambiente no disponible"
+                          : ""}
+                      </div>
                       <Button
                         size="sm"
-                        className="btn AtenderSolicitud-button-rechazar"
-                        onClick={() => setShow(!show)}
+                        className="btn AtenderSolicitud-button-disponibilidad"
+                        onClick={onClickParaVerificarDisponibilidad}
                       >
-                        Rechazar
+                        Verificar Disponibilidad
                       </Button>
-                      {mostrarMensajeDeVerificacion !== null &&
-                        mostrarMensajeDeVerificacion.valido && (
+                    </Row>
+                    {mostrarMensajeDeVerificacion && (
+                      <Row xs="auto" style={{ paddingTop: "1rem" }}>
+                        <Stack direction="horizontal" gap={2}>
                           <Button
                             size="sm"
-                            className="btn AtenderSolicitud-button-aceptar"
-                            onClick={onClickAceptarSolicitud}
+                            className="btn AtenderSolicitud-button-rechazar"
+                            onClick={() => setShow(!show)}
                           >
-                            Aceptar
+                            Rechazar
                           </Button>
-                        )}
-                    </Stack>
-                  </Row>
+                          {mostrarMensajeDeVerificacion !== null &&
+                            mostrarMensajeDeVerificacion.valido && (
+                              <Button
+                                size="sm"
+                                className="btn AtenderSolicitud-button-aceptar"
+                                onClick={onClickAceptarSolicitud}
+                              >
+                                Aceptar
+                              </Button>
+                            )}
+                        </Stack>
+                      </Row>
+                    )}
+                  </>
                 </Container>
               </Col>
             </Row>
