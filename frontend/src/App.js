@@ -15,6 +15,7 @@ import Buscar from "./components/Busquedanombre/Buscar";
 import BuscarCantidad from "./components/BusquedaCantidad/BusquedaPorCantidad";
 import NotFound from "./pages/NotFound";
 import ListaDeSolicitudes from "./components/ListaDeSolicitudes";
+import ListaDedocentes from "./components/ListaDeDocentes/ListaDeDocentes"
 import SolcitarReserva from "./components/SolicitudReserva/SolicitarReserva"
 import AtenderSolicitud from "./components/AtenderSolicitud/AtenderSolicitud";
 import CancelarReservas from "./components/CancelarReserva/CancelarReservas";
@@ -40,6 +41,12 @@ function App() {
         } />
         <Route exact path="/docente/listaReservas" element={
           <CancelarReservas tipoDeUsuario="Docente" titulo="Lista de Solicitudes y Reservas" />
+        } />
+        <Route exact path="/admin/listaDeDocentes" element={
+          <ListaDedocentes tipoDeUsuario="Admin" titulo="Lista de Docentes" />
+        } />
+        <Route exact path="/docente/listaDeDocentes" element={
+          <ListaDedocentes tipoDeUsuario="Docente" titulo="Lista de Docentes" />
         } />
         <Route exact path="/admin/buscarPorNombre" element={<Buscar />} />
         <Route exact path="/docente/buscarPorCantidad" element={<BuscarCantidad />} />
