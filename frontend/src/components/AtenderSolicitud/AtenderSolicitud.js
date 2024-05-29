@@ -22,8 +22,10 @@ import {
   validarSolicitudAtentida,
   vertificarDisponibilidad,
 } from "../../services/AtenderSolicitud.service";
+import { useParams } from "react-router-dom";
 
-const AtenderSolicitud = ({ solicitudId }) => {
+const AtenderSolicitud = ({solicitudId}) => {
+  const { id } = useParams("id");
   const [show, setShow] = useState(false);
   const [esSolicitudAtentida, setEsSolicitudAtentida] = useState(false);
   const [razonRechazo, setRazonRechazo] = useState();
@@ -74,6 +76,7 @@ const AtenderSolicitud = ({ solicitudId }) => {
       );
       if (response) {
         setMostrarMensajeDeVerificacion(response);
+        validarSolicitud(id);
       }
     } else {
       agregarAlert({
@@ -86,7 +89,7 @@ const AtenderSolicitud = ({ solicitudId }) => {
 
   const onClickRechazarSolicitud = async () => {
     setShow(false);
-    let response = await rechazarSolicitud(solicitudId, razonRechazo);
+    let response = await rechazarSolicitud(id, razonRechazo);
     if (response !== null) {
       agregarAlert({
         icon: <CheckCircleFill />,
@@ -105,7 +108,7 @@ const AtenderSolicitud = ({ solicitudId }) => {
 
   const onClickAceptarSolicitud = async () => {
     setShow(false);
-    let response = await aceptarSolicitud(solicitudId);
+    let response = await aceptarSolicitud(id);
     if (response !== null) {
       agregarAlert({
         icon: <CheckCircleFill />,
@@ -130,8 +133,8 @@ const AtenderSolicitud = ({ solicitudId }) => {
   }, []);
 
   useEffect(() => {
-    loadSolicitudPorId(solicitudId);
-  }, [solicitudId, validarSolicitud]);
+    loadSolicitudPorId(id);
+  }, [id]);
 
   return (
     <>
