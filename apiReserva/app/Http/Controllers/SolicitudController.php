@@ -8,14 +8,15 @@ use App\Models\Solicitud;
 use App\Services\ValidadorService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-
+use App\Services\NotificadorService;
 class SolicitudController extends Controller
 {
     protected $ambienteValido;
-
-    public function __construct(ValidadorService $ambienteValido)
+    protected $notificadorService;
+    public function __construct(ValidadorService $ambienteValido, NotificadorService $notificadorService)
     {
         $this->ambienteValido = $ambienteValido;
+        $this->notificadorService = $notificadorService;
     }
 
     // FINISH v2
@@ -42,7 +43,7 @@ class SolicitudController extends Controller
         return response()->json(['listaFechas' => $listaFechas]);
     }
 
-    // FINISH
+    // FINISH v2
     public function registroSolicitud(Request $request)
     {
         /**
@@ -69,7 +70,7 @@ class SolicitudController extends Controller
 
         if (count($periodos) === 1) {
             $periodoInicial = $periodos[0];
-            $periodoFinal = $periodos[0] + 1;
+            $periodoFinal = $periodos[0];
         } else { // Si hay más de un periodo, determina el periodo inicial y final
             $periodoInicial = $periodos[0];
             $periodoFinal = $periodos[count($periodos) - 1];
@@ -94,12 +95,16 @@ class SolicitudController extends Controller
             'solicitud_id' => $ultimoIdSolicitud,
         ]);
 
+
+        // notificar nuevo registro de solicitud
+        //TODO
+        //
         return response()->json([
             'mensaje' => 'Resgistro existoso',
         ]);
     }
 
-    // FINISH
+    // FINISH T
     public function informacionSolicitud(Request $request)
     {
         $id = $request->input('id');
@@ -115,8 +120,13 @@ class SolicitudController extends Controller
             return response()->json(['mensaje' => 'No se encontró información del ambiente asociado a la solicitud'], 404);
         }
 
+        
+        $nombreDocente = Docente::where('id',$solicitud->docente_id)
+                                    ->value('nombre');
         return response()->json([
             'cantidad' => $solicitud->cantidad,
+            'materia' => $solicitud->materia,
+            'nombreDocente'=>$nombreDocente,
             'razon' => $solicitud->razon,
             'periodo_ini_id' => $solicitud->periodo_ini_id,
             'periodo_fin_id' => $solicitud->periodo_fin_id,
@@ -125,6 +135,7 @@ class SolicitudController extends Controller
         ]);
     }
 
+    // FINISH T
     public function recuperarInformacion($idSolicitud)
     {
         $solicitud = Solicitud::find($idSolicitud);
@@ -165,7 +176,9 @@ class SolicitudController extends Controller
             $solicitudes = Solicitud::where('estado', 'en espera')->paginate(3, ['*'], 'pagina', $pagina);
         } elseif ($estado === 'canceladas') {
             $solicitudes = Solicitud::where('estado', 'cancelado')->paginate(3, ['*'], 'pagina', $pagina);
-        } else {
+        } elseif ($estado === 'inhabilitada') {
+            $solicitudes = Solicitud::where('estado', 'inhabilitada')->paginate(3, ['*'], 'pagina', $pagina);
+        }else {
             $solicitudes = Solicitud::paginate(3, ['*'], 'pagina', $pagina);
         }
 
@@ -198,8 +211,6 @@ class SolicitudController extends Controller
                 $datosSolicitud['razonRechazo'] = $solicitud->razonRechazo;
             }
             
-
-
             $datosSolicitudes[] = $datosSolicitud;
         }
 
@@ -211,7 +222,7 @@ class SolicitudController extends Controller
         ]);
     }
 
-    
+    //FINISH v2
     public function aceptarSolicitud(Request $request){
         $id = $request->input('idSolicitud');
         $fechaAtendido = $request->input('fechaAtendida');
@@ -222,10 +233,13 @@ class SolicitudController extends Controller
         $solicitud->estado = 'aprobado';
         $solicitud->fechaAtendida = $fechaAtendido;
         $solicitud->save();
+        
+        $this->notificadorService->notificarAceptacion($id);
+        
         return response()->json(['mensaje' => 'Solicitud atendida correctamente']);
     }
 
-    // TO DO
+    //FINISH v2
     public function rechazarSolicitud(Request $request){
         $id = $request->input('id');
         $fechaAtendido = $request->input('fechaAtendida');
@@ -239,6 +253,7 @@ class SolicitudController extends Controller
         $solicitud->fechaAtendida = $fechaAtendido;
         $solicitud->save();
 
+        $this->notificadorService->notificarRechazo($id);
         return response()->json(['mensaje' => 'Solicitud rechazada correctamente']);
     }
 }
