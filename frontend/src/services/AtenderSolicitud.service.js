@@ -13,6 +13,18 @@ export const getSolicitudPorId = (solicitudId) => {
         });
 }
 
+export const validarSolicitudAtentida = (solicitudId) => {
+  return axios
+    .get(`${apiUrl}/solicitudAtendida/${solicitudId}`)
+    .then((response) => {
+      return response.data;
+    })
+    .catch(function (error) {
+      console.log(error);
+      return null;
+    });
+};
+
 export const vertificarDisponibilidad = (fechaReserva, id, periodos) => {
     return axios
         .post(`${apiUrl}/consultarFechaPeriodAmbiente`, { fechaReserva, ambiente: id, periodos })
