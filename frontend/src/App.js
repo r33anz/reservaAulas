@@ -3,6 +3,7 @@ import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import RegistrarAmbiente from './components/RegistrarAmbiente';
 import Calendario from './components/Calendario';
+import CalendarioDocente from './components/Calendariodocente/CalendarioDocente';
 import Home from './pages/Home';
 import { AlertsProvider } from './components/Alert/AlertsContext';
 import ModificarPeriodo from './components/ModificarPorPeriodo/ModicarPeriodo';
@@ -61,6 +62,9 @@ function App() {
         } />
         <Route exact path="/admin/calendario" element={
           <Calendario />
+        } />
+        <Route exact path="/docente/calendario" element={
+          <CalendarioDocente />
         } />
       </Route>
       <Route path="*" element={<NotFound />} />
