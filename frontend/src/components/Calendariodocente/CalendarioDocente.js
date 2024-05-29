@@ -2,31 +2,25 @@ import { Calendar, dayjsLocalizer } from "react-big-calendar";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import dayjs from "dayjs";
 import "dayjs/locale/es";
-import "./style.css";
-import { recuperarFechasSolicitud, recuperarInformacionSolicitud } from "../../services/Fechas.service";
-import { useState, useEffect } from "react";
 import { Col, Modal, Row, Form,Pagination } from "react-bootstrap";
 import { XSquareFill } from "react-bootstrap-icons";
+import { recuperarFechasSolicitud, recuperarInformacionSolicitud } from "../../services/Fechas.service";
+import { useState, useEffect } from "react";
+import "./style.css";
 
 dayjs.locale("es");
 
-function Calendario() {
+function CalendarioDocente() {
   const localizer = dayjsLocalizer(dayjs);
   const [event, setEvent] = useState([]);
   const [datos, setDatos] = useState([]);
   const [reservas, setReservas] = useState([]);
-  const [show, setShow] = useState(false);
-  const [nombre, setNombre] = useState("");
-  const [searchTerm, setSearchTerm] = useState("");
   const [filteredReservas, setFilteredReservas] = useState([]);
+  const [show, setShow] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-const reservasPerPage = 4; // Número de reservas por página
-const indexOfLastReserva = currentPage * reservasPerPage;
-const indexOfFirstReserva = indexOfLastReserva - reservasPerPage;
-const currentReservas = filteredReservas.slice(indexOfFirstReserva, indexOfLastReserva);
-const paginate = (pageNumber) => setCurrentPage(pageNumber);
+const reservasPerPage = 4;
 const totalPages = Math.ceil(filteredReservas.length / reservasPerPage);
-
 
   const periodos = [
     { id: 1, hora: "6:45" },
@@ -40,7 +34,7 @@ const totalPages = Math.ceil(filteredReservas.length / reservasPerPage);
     { id: 9, hora: "18:45" },
     { id: 10, hora: "20:15" },
   ];
-  
+
   const periodosF = [
     { id: 1, hora: "8:15" },
     { id: 2, hora: "9:45" },
@@ -57,6 +51,7 @@ const totalPages = Math.ceil(filteredReservas.length / reservasPerPage);
   const getPeriodo = (periodoInicioId, periodoFinId) => {
     const periodoInicio = periodos.find((periodo) => periodo.id === periodoInicioId);
     const periodoFin = periodosF.find((periodo) => periodo.id === periodoFinId);
+  
     return (
       <>
         {periodoInicio ? periodoInicio.hora : "N/A"}-{periodoFin ? periodoFin.hora : "N/A"}
@@ -66,33 +61,38 @@ const totalPages = Math.ceil(filteredReservas.length / reservasPerPage);
 
   const getFechas = async () => {
     const data = await recuperarFechasSolicitud();
-    const fechas = data.listaFechas;
+    let fechas = data.listaFechas;
     setDatos(fechas);
-    const events2 = [];
-
-    fechas.forEach(fecha => {
-      if (fecha.reservas.length > 0) {
-        const eventoReserva = {
-          start: dayjs(fecha.fecha).toDate(),
-          end: dayjs(fecha.fecha).toDate(),
-          title: `${fecha.reservas.length} ${fecha.reservas.length > 1 ? "reservas" : "reserva"}`,
-          type: "reserva",
+    let events2 = [];
+    for (let i = 0; i < fechas.length; i++) {
+      if (fechas[i].reservas.length > 0) {
+        const evento = {
+          start: dayjs(fechas[i].fecha).toDate(),
+          end: dayjs(fechas[i].fecha).toDate(),
+          title: `${fechas[i].reservas.length} ${
+            fechas[i].reservas.length > 1 ? "reservas" : "reserva"
+          }`,
         };
-        events2.push(eventoReserva);
+        events2.push(evento);
       }
-
-      if (fecha.solicitudes.length > 0) {
-        const eventoSolicitud = {
-          start: dayjs(fecha.fecha).toDate(),
-          end: dayjs(fecha.fecha).toDate(),
-          title: `${fecha.solicitudes.length} ${fecha.solicitudes.length > 1 ? "solicitudes" : "solicitud"}`,
-          type: "solicitud",
-        };
-        events2.push(eventoSolicitud);
-      }
-    });
-
+    }
+    
     setEvent(events2);
+  };
+
+  const onSelectEvent = async (event) => {
+    setReservas([]);
+    setFilteredReservas([]);
+    const formattedDate = dayjs(event.start).format("YYYY-MM-DD");
+    const datosEncontrados = datos.find(fechaObj => fechaObj.fecha === formattedDate);
+      
+    for (const reservaId of datosEncontrados.reservas) {
+      const data = await recuperarInformacionSolicitud(reservaId);
+      setReservas(prevReservas => [...prevReservas, data]);
+      setFilteredReservas(prevReservas => [...prevReservas, data]);
+    }
+    console.log(filteredReservas);
+    setShow(true);
   };
 
   useEffect(() => {
@@ -102,50 +102,21 @@ const totalPages = Math.ceil(filteredReservas.length / reservasPerPage);
   useEffect(() => {
     filtrarReservas();
   }, [searchTerm]);
-
+  
   const filtrarReservas = () => {
     let filtered = reservas;
     if (searchTerm) {
-      filtered = filtered.filter(reserva =>
+      filtered = filtered.filter(reserva => 
         reserva.ambiente_nombre.toLowerCase().includes(searchTerm.toLowerCase())
       );
     }
     setFilteredReservas(filtered);
   };
 
-  const onSelectEvent = async (event) => {
-    setFilteredReservas([]);
-    const formattedDate = dayjs(event.start).format("YYYY-MM-DD");
-
-    const datosEncontrados = datos.find(fechaObj => fechaObj.fecha === formattedDate);
-    
-    if (event.type === "reserva") {
-      for (const reservaId of datosEncontrados.reservas) {
-        const data = await recuperarInformacionSolicitud(reservaId);
-        setReservas(prevReservas => [...prevReservas, data]);
-        setFilteredReservas(prevReservas => [...prevReservas, data]);
-      }
-      setNombre("Detalle de Reservas");
-    } else if (event.type === "solicitud") {
-      for (const solicitudId of datosEncontrados.solicitudes) {
-        const data = await recuperarInformacionSolicitud(solicitudId);
-        setReservas(prevReservas => [...prevReservas, data]);
-        setFilteredReservas(prevReservas => [...prevReservas, data]);
-        console.log(data);
-      }
-      console.log(filteredReservas);
-      setNombre("Detalle de Solicitudes");
-    }
-    setShow(true);
-  };
-
   const handleClose = () => {
     setShow(false);
     setSearchTerm("");
-    setReservas([]);
-    setFilteredReservas([]);
   };
-  
   const renderPaginationItems = () => {
     const items = [];
 
@@ -213,13 +184,13 @@ const totalPages = Math.ceil(filteredReservas.length / reservasPerPage);
 
     return items;
   };
-  
+
   return (
     <>
       <div
         style={{
           height: "505px",
-          width: "1040px",
+          width: "1040px"
         }}
       >
         <Calendar
@@ -254,7 +225,7 @@ const totalPages = Math.ceil(filteredReservas.length / reservasPerPage);
               style={{ height: "100%" }}
             >
               <h4 style={{ fontWeight: "bold" }} className="">
-                {nombre}
+                Detalle de Reservas
               </h4>
             </Col>
             <Col
@@ -271,7 +242,7 @@ const totalPages = Math.ceil(filteredReservas.length / reservasPerPage);
             </Col>
           </Row>
           <Row className="RegistrarAmbiente-body1 justify-content-center">
-            <Form inline className="d-flex mb-2">
+            <Form inline className="d-flex  mb-2">
               <Form.Group controlId="searchTerm" className="mr-2 d-flex align-items-center">
                 <Form.Label className="mr-2">Buscar por Ambiente</Form.Label>
                 <Form.Control
@@ -285,7 +256,7 @@ const totalPages = Math.ceil(filteredReservas.length / reservasPerPage);
             </Form>
           </Row>
           <Row className="RegistrarAmbiente-body justify-content-center">
-            {currentReservas.map((reserva, index) => (
+            {filteredReservas.map((reserva, index) => (
               <div key={index} className="reserva">
                 <div className="reserva-row">
                   <h6>Docente:</h6>
@@ -295,11 +266,12 @@ const totalPages = Math.ceil(filteredReservas.length / reservasPerPage);
                   <h6>Nombre del Ambiente:</h6>
                   <p>{reserva.ambiente_nombre}</p>
                 </div>
+                
                 <div className="reserva-row">
                   <h6>Periodo:</h6>
                   <p>{getPeriodo(reserva.periodo_ini_id, reserva.periodo_fin_id)}</p>
                 </div>
-                {index < currentReservas.length - 1 && <hr />}
+                {index < filteredReservas.length - 1 && <hr />}
               </div>
             ))}
             <Pagination style={{ justifyContent: "center" }}>
@@ -311,7 +283,6 @@ const totalPages = Math.ceil(filteredReservas.length / reservasPerPage);
       </div>
     </>
   );
-  
 }
 
-export default Calendario;
+export default CalendarioDocente;

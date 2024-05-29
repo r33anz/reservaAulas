@@ -5,7 +5,6 @@ const apiUrl = process.env.REACT_APP_URL;
 export const recuperarFechasSolicitud = () => {
     return axios.get(`${apiUrl}/fechasSolicitud`)
         .then(function (response) {
-            console.log(response)
             return response.data;
         });
 }

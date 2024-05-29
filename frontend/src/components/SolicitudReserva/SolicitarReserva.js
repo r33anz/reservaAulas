@@ -8,7 +8,6 @@ import {
 } from "../../services/SolicitarReserva.service";
 import {
   buscarAmbientePorNombre,
-  
 } from "../../services/Busqueda.service";
 import {
   Container,
@@ -30,13 +29,10 @@ import * as Yup from "yup";
 import "./style.css";
 import { AlertsContext } from "../Alert/AlertsContext";
 
-const SolcitarReserva = () => {
+const SolicitarReserva = () => {
   const inputAmbienteRef = useRef();
   const [showDropdown, setShowDropdown] = useState(false);
-  const [
-    capacidadDelAmbienteSeleccionado,
-    setCapacidadDelAmbienteSeleccionado,
-  ] = useState(null);
+  const [capacidadDelAmbienteSeleccionado, setCapacidadDelAmbienteSeleccionado] = useState(null);
   const [ida, setidambiente] = useState(null);
   const [bloques, setBloques] = useState([]);
   const [docentes, setDocente] = useState([]);
@@ -76,14 +72,9 @@ const SolcitarReserva = () => {
     { id: 5, name: "Examen de mesa" },
   ]);
   const [periodosFin, setPeriodosFin] = useState(periodos1);
+  const [step, setStep] = useState(1); // Nuevo estado para manejar los pasos del formulario
 
-  // (FIX:Marco) 'id' is assigned a value but never used
-  // eslint-disable-next-line
-
-  // (FIX:Marco) 'nombre' is assigned a value but never used
-  // eslint-disable-next-line
   // Función para buscar los ambientes que coinciden con el nombre
-
   const buscarAmbiente = async (event) => {
     if (
       event.hasOwnProperty("target") &&
@@ -101,6 +92,14 @@ const SolcitarReserva = () => {
         if (/^[a-zA-Z0-9\s]*$/.test(value)) {
           formik.setFieldValue("nombreAmbiente", value); // Actualiza el estado directamente con el nombre
           setShowDropdown(true); // Muestra el desplegable si el valor es válido
+          setCapacidadDelAmbienteSeleccionado(null);
+          
+          const matchingOption = ambienteOptions.find(option => option.nombre === value);
+        if (matchingOption) {
+          console.log( matchingOption);
+          setNombreDelAmbiente(matchingOption);
+          // Aquí puedes usar matchingOption para acceder a toda la información de la opción que coincide
+        }
         }
       }
     }
@@ -157,7 +156,7 @@ const buscar = async (nombre)=>{
       nombreAmbiente: Yup.string() // Validar como cadena en lugar de objeto
         .test("existe-ambiente", "No existe el ambiente", function (value) {
           const ambientes = ambienteOptions.map((ambiente) => ambiente.nombre);
-          // Verificar si el valor ingresado está presente en la lista de nombres de ambientes
+          //setCapacidadDelAmbienteSeleccionado(null);
           return ambientes.includes(value);
         })
         .required("Obligatorio"),
@@ -212,6 +211,7 @@ const buscar = async (nombre)=>{
           });
           formik.resetForm();
           setCapacidadDelAmbienteSeleccionado(null);
+          setStep(1);
         })
         .catch((error) => {
           agregarAlert({
@@ -229,8 +229,9 @@ const buscar = async (nombre)=>{
         ambiente.nombre.toLowerCase().includes(formik.values.nombreAmbiente.trim().toLowerCase())
       );
       if (ambienteEncontrado) {
-        //inputAmbienteRef.current.blur();
         setNombreDelAmbiente(ambienteEncontrado);
+        setShowDropdown(false);
+        inputAmbienteRef.current.blur();
         console.log(ambienteEncontrado);
       }
     }
@@ -240,16 +241,13 @@ const buscar = async (nombre)=>{
     // Obtener y establecer los grupos asociados con el bloque seleccionado
     const gruposAsociados = getGruposPorBloque(e.target.value);
     setGrupos(gruposAsociados);
-    //setGrupos(Array.isArray(gruposAsociados) ? gruposAsociados : []);
-    // Resetear el valor del grupo seleccionado
     formik.setFieldValue("grupo", "");
   };
 
   const setNombreDelAmbiente = async (ambiente) => {
     formik.setFieldValue("nombreAmbiente", ambiente.nombre); // Asigna el nombre directamente
     setidambiente(ambiente.id);
-    //inputAmbienteRef.current.blur();
-    setShowDropdown(false);
+    //setShowDropdown(false);
     recuperarAmbientePorID(ambiente.id)
       .then((data) => {
         // Actualizar estado con los detalles del ambiente
@@ -259,7 +257,7 @@ const buscar = async (nombre)=>{
       .catch((error) => {
         console.log("Error al buscar el ambiente:", error);
       });
-      inputAmbienteRef.current.blur();
+      //inputAmbienteRef.current.blur();
   };
 
   
@@ -276,11 +274,13 @@ const buscar = async (nombre)=>{
     buscar(" ");
   }, []);
 
-  return (
-    <>
-      <div style={{ width: "574px" }}>
-        <Container className="RegistrarAmbiente-header" fluid>
+  const renderFirstStep = () => (
+    <div style={{ width: "574px" }}>
+     <Container className="RegistrarAmbiente-header" fluid>
           <Row xs="auto" className="justify-content-md-end">
+          <h2 style={{ fontWeight: "bold" ,color:"white"}} className="text-center">
+              Registrar Solicitud de Reserva
+            </h2>
             <Button
               className="RegistrarAmbiente-header-button-close"
               style={{ width: "58px", height: "58px" }}
@@ -291,9 +291,6 @@ const buscar = async (nombre)=>{
         </Container>
         <Container className="RegistrarAmbiente-body" fluid>
           <Row className="justify-content-md-center">
-            <h1 style={{ fontWeight: "bold" }} className="text-center">
-              Registrar Solicitud de Reserva
-            </h1>
             <Col xs lg="9">
               <Form onSubmit={formik.handleSubmit} onKeyPress={handleKeyPress}>
                 <Stack gap={2} direction="vertical">
@@ -381,8 +378,56 @@ const buscar = async (nombre)=>{
                         ) : null}
                       </Form.Text>
                     </Form.Group>
+                    </Col>
+          
+        </Stack>
+      </Form>
+      <Button
+                        className="btn RegistrarAmbiente-button-cancel"
+                        size="sm"
+                        onClick={() => {
+                          setCapacidadDelAmbienteSeleccionado(null);
+                          formik.resetForm();
+                          setAmbienteOptions([]);
+                          setStep(1);
+                        }}
+                      >
+                       Limpiar
+                      </Button>
+      <Button className="btn RegistrarAmbiente-button-register"
+                        size="sm"
+                        type="submit" onClick={() => setStep(2)}>
+          Siguiente
+        </Button>
+      </Col>
+      </Row>
+    </Container>
+    </div>
+  );
 
-                    <Form.Group
+  const renderSecondStep = () => (
+    <div style={{ width: "574px" }}>
+        <Container className="RegistrarAmbiente-header" fluid>
+          <Row xs="auto" className="justify-content-md-end">
+          <h2 style={{ fontWeight: "bold" ,color:"white"}} className="text-center">
+              Registrar Solicitud de Reserva
+            </h2>
+            <Button
+              className="RegistrarAmbiente-header-button-close"
+              style={{ width: "58px", height: "58px" }}
+            >
+              <XSquareFill style={{ width: "24px", height: "24px" }} />
+            </Button>
+          </Row>
+        </Container>
+        <Container className="RegistrarAmbiente-body" fluid>
+          <Row className="justify-content-md-center">
+            
+            <Col xs lg="9">
+              <Form onSubmit={formik.handleSubmit} onKeyPress={handleKeyPress}>
+                <Stack gap={2} direction="vertical">
+                  <Col lg="9">
+                  <Form.Group
                       as={Row}
                       className="mb-3"
                       controlId="nombreAmbiente"
@@ -561,10 +606,13 @@ const buscar = async (nombre)=>{
                     </Form.Text>
                   </Form.Group>
                 </div>
-
                   </Col>
                   <Row xs="auto" className="justify-content-md-end">
                     <Stack direction="horizontal" gap={2}>
+                    <Button className="btn RegistrarAmbiente-button-cancel"
+                        size="sm" onClick={() => setStep(1)}>
+                        Anterior
+                    </Button>
                       <Button
                         className="btn RegistrarAmbiente-button-cancel"
                         size="sm"
@@ -572,27 +620,35 @@ const buscar = async (nombre)=>{
                           setCapacidadDelAmbienteSeleccionado(null);
                           formik.resetForm();
                           setAmbienteOptions([]);
+                          setStep(1);
                         }}
                       >
-                        Cancelar
+                       Limpiar
                       </Button>
                       <Button
                         className="btn RegistrarAmbiente-button-register"
                         size="sm"
                         type="submit"
+                        
                         //disabled={!formik.isValid || !formik.dirty}
                       >
                         Registrar
                       </Button>
                     </Stack>
                   </Row>
-                </Stack>
+        </Stack>
               </Form>
             </Col>
           </Row>
-        </Container>
-      </div>
-    </>
+          </Container>
+    </div>
+  );
+
+  return (
+    <Container>
+      {step === 1 ? renderFirstStep() : renderSecondStep()}
+    </Container>
   );
 };
-export default SolcitarReserva;
+
+export default SolicitarReserva;
