@@ -20,4 +20,14 @@ class Solicitud extends Model
     {
         return $this->belongsToMany(Ambiente::class, 'solicitud_ambiente', 'solicitud_id', 'ambiente_id');
     }
+
+    public function periodoInicial()
+    {
+        return $this->belongsTo(Periodo::class, 'periodo_ini_id');
+    }
+
+    public function periodoFinal()
+    {
+        return $this->belongsTo(Periodo::class, 'periodo_fin_id');
+    }
 }

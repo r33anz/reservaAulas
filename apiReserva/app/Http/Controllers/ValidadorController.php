@@ -88,4 +88,13 @@ class ValidadorController extends Controller
             "valido"=>$valido
         ]);
     }
+
+    public function solicitudAtendida($idSolicitud){
+        $solicitud = Solicitud::find($idSolicitud);
+        if($solicitud->estado === "en espera"){
+            return response()->json([ "atendida" => false]);
+        }else{
+            return response()->json([ "atendida" => true]);
+        }
+    }
 }
