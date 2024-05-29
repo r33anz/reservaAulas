@@ -16,7 +16,7 @@ use App\Http\Controllers\SolicitudController;
 use App\Http\Controllers\ValidadorController;
 ///Docente
 Route::get('/docentes/{id}', [DocenteController::class, 'getMaterias']);
-
+Route::get('/listaDocentes', [DocenteController::class, 'getAllDocenteNames']);
 
 ///Administrador
 /*Route::get('/pisos', function (Request $request) {

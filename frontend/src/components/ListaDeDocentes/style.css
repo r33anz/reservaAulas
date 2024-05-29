@@ -1,0 +1,41 @@
+.ListaDeSolicitudes-header {
+    background-color: #003F70;
+    height: 3.5rem;
+}
+
+.ListaDeSolicitudes-body {
+    background-color: #D9D9D9;
+    padding: 1rem;
+}
+.table-container {
+    max-height: 400px; /* Puedes ajustar esta altura según tus necesidades */
+    overflow-y: auto;
+  }
+.page-item.active.color-blue, .page-item.color-blue {
+    --bs-pagination-color: #003F70;
+    --bs-pagination-hover-color: #003F70;
+    --bs-pagination-focus-color: #003F70;
+    --bs-pagination-active-bg: #003F70;
+    --bs-pagination-active-border-color: #003F70
+}
+.RegistrarAmbiente-button-register {
+    color: #ffffff;
+    background-color: #003F70;
+    border-color: #003F70;
+  }
+  
+  .RegistrarAmbiente-button-register:hover,
+  .RegistrarAmbiente-button-register:active,
+  .RegistrarAmbiente-button-register:focus,
+  .RegistrarAmbiente-button-register:disabled,
+  .RegistrarAmbiente-button-register.active {
+    /* let's darken #004E64 a bit for hover effect */
+    color: #ffffff;
+    background: #003F70;
+    border-color: #003F70;
+  }
+
+  
+  
+  
+  

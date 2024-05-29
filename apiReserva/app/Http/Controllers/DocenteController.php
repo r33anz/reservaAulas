@@ -21,4 +21,26 @@ class DocenteController extends Controller
             'materias' => $materiasConGrupos
         ]);
     }
+    public function getAllDocenteNames()
+    {
+        $docentes = Docente::with('materias')->get();
+        $docentes = $docentes->sortBy('nombre')->values();
+
+        // Estructurar los datos
+        $docentesConMaterias = $docentes->map(function ($docente) {
+            $materiasConGrupos = $docente->materias->groupBy('nombreMateria')->map(function ($materias) {
+                $grupos = $materias->pluck('pivot.grupo');
+                return [
+                    'grupos' => $grupos
+                ];
+            });
+
+            return [
+                'nombre' => $docente->nombre,
+                'materias' => $materiasConGrupos
+            ];
+        });
+
+        return response()->json($docentesConMaterias);
+    }
 }
