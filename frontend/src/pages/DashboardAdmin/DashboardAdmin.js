@@ -87,7 +87,7 @@ const DashboardAdmin = ({ showCalendar }) => {
                       onClick={() => setRegistrarAmbiente(!registrarAmbiente)}
                     >
                       <h5 style={{ fontWeight: "bold" }}>
-                        RegistrarAmbiente de Ambiente
+                        Registrar Ambiente
                       </h5>
                     </Button>
                     <div>
