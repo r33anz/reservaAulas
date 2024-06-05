@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Services\NotificadorService;
 use App\Mail\SolicitudRealizada;
+
 class SolicitudController extends Controller
 {
     protected $ambienteValido;
@@ -62,7 +63,7 @@ class SolicitudController extends Controller
         $idAmbiente = $request->input('ambiente');
         $periodos = $request->input('periodos');
         // verificar si el ambiente es valido
-        $ambienteDisponible = $this->ambienteValido->ambienteValido($idAmbiente, $fechaReserva, $periodos,$idDocente);
+        $ambienteDisponible = $this->ambienteValido->ambienteValido($idAmbiente, $fechaReserva, $periodos, $idDocente);
 
         // echo $ambienteDisponible;
         if ($ambienteDisponible->alerta != 'exito') {
@@ -160,7 +161,7 @@ class SolicitudController extends Controller
             'mensaje' => 'Resgistro existoso',
         ]);
     }
-    
+
 
     // FINISH T
     public function informacionSolicitud(Request $request)

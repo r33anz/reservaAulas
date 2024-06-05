@@ -22,10 +22,8 @@ import {
   validarSolicitudAtentida,
   vertificarDisponibilidad,
 } from "../../services/AtenderSolicitud.service";
-import { useParams } from "react-router-dom";
 
 const AtenderSolicitud = ({ solicitudId, onClose }) => {
-  const { id } = useParams("id");
   const [show, setShow] = useState(false);
   const [esSolicitudAtentida, setEsSolicitudAtentida] = useState(false);
   const [razonRechazo, setRazonRechazo] = useState();
@@ -75,13 +73,26 @@ const AtenderSolicitud = ({ solicitudId, onClose }) => {
         [solicitud.periodo_ini_id, solicitud.periodo_fin_id]
       );
       if (response) {
-        setMostrarMensajeDeVerificacion(response);
-        validarSolicitud(id);
+        setMostrarMensajeDeVerificacion(response[0]);
+        validarSolicitud(solicitudId);
+        if (response[0].estado) {
+          agregarAlert({
+            icon: <ExclamationCircleFill />,
+            severidad: "warning",
+            mensaje: response[0].mensaje,
+          });
+        }
+      } else {
+        agregarAlert({
+          icon: <ExclamationCircleFill />,
+          severidad: "danger",
+          mensaje: "Error al verificar disponibilidad.",
+        });
       }
     } else {
       agregarAlert({
         icon: <ExclamationCircleFill />,
-        severidad: "danger",
+        severidad: "warning",
         mensaje: "Hay solicitud para realizar la verificacion.",
       });
     }
@@ -89,18 +100,19 @@ const AtenderSolicitud = ({ solicitudId, onClose }) => {
 
   const onClickRechazarSolicitud = async () => {
     setShow(false);
-    let response = await rechazarSolicitud(id, razonRechazo);
+    let response = await rechazarSolicitud(solicitudId, razonRechazo);
     if (response !== null) {
       agregarAlert({
         icon: <CheckCircleFill />,
         severidad: "success",
         mensaje: "Solicitud rechazada enviada.",
       });
+      onClose();
       setEsSolicitudAtentida(true);
     } else {
       agregarAlert({
         icon: <ExclamationCircleFill />,
-        severidad: "danger",
+        severidad: "warning",
         mensaje: "No se pudo enviar la solicitud rechazada.",
       });
     }
@@ -108,7 +120,7 @@ const AtenderSolicitud = ({ solicitudId, onClose }) => {
 
   const onClickAceptarSolicitud = async () => {
     setShow(false);
-    let response = await aceptarSolicitud(id);
+    let response = await aceptarSolicitud(solicitudId);
     if (response !== null) {
       agregarAlert({
         icon: <CheckCircleFill />,
@@ -119,7 +131,7 @@ const AtenderSolicitud = ({ solicitudId, onClose }) => {
     } else {
       agregarAlert({
         icon: <ExclamationCircleFill />,
-        severidad: "danger",
+        severidad: "warning",
         mensaje: "No se pudo enviar la solicitud aceptada.",
       });
     }
@@ -133,8 +145,9 @@ const AtenderSolicitud = ({ solicitudId, onClose }) => {
   }, []);
 
   useEffect(() => {
-    loadSolicitudPorId(id);
-  }, [id]);
+    setMostrarMensajeDeVerificacion(null);
+    loadSolicitudPorId(solicitudId);
+  }, [solicitudId]);
 
   return (
     <>
@@ -158,7 +171,7 @@ const AtenderSolicitud = ({ solicitudId, onClose }) => {
               onClick={() => setShow(false)}
               className="AtenderSolicitud-header-button-close d-flex justify-content-center align-items-center"
             >
-              <XSquareFill size={24} onClick={onClose}/>
+              <XSquareFill size={24} onClick={onClose} />
             </div>
           </Col>
         </Row>
@@ -249,10 +262,10 @@ const AtenderSolicitud = ({ solicitudId, onClose }) => {
               Verificar Disponibilidad
             </Button>
           </Row>
-          {mostrarMensajeDeVerificacion !== null &&
-            mostrarMensajeDeVerificacion.valido && (
-              <Row xs="auto" style={{ paddingTop: "1rem" }}>
-                <Stack direction="horizontal" gap={2}>
+          <Row xs="auto" style={{ paddingTop: "1rem" }}>
+            <Stack direction="horizontal" gap={2}>
+              {mostrarMensajeDeVerificacion !== null && (
+                <>
                   <Button
                     size="sm"
                     className="btn AtenderSolicitud-button-rechazar"
@@ -260,16 +273,19 @@ const AtenderSolicitud = ({ solicitudId, onClose }) => {
                   >
                     Rechazar
                   </Button>
-                  <Button
-                    size="sm"
-                    className="btn AtenderSolicitud-button-aceptar"
-                    onClick={onClickAceptarSolicitud}
-                  >
-                    Aceptar
-                  </Button>
-                </Stack>
-              </Row>
-            )}
+                  {mostrarMensajeDeVerificacion.valido && (
+                    <Button
+                      size="sm"
+                      className="btn AtenderSolicitud-button-aceptar"
+                      onClick={onClickAceptarSolicitud}
+                    >
+                      Aceptar
+                    </Button>
+                  )}
+                </>
+              )}
+            </Stack>
+          </Row>
         </Row>
       </Container>
       <Modal

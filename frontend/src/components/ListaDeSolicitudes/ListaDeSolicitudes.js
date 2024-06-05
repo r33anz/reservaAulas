@@ -68,7 +68,6 @@ const ListaDeSolicitudes = ({ titulo, tipoDeUsuario }) => {
   };
 
   const getSolicitudes = useCallback(async () => {
-    // const id = window.sessionStorage.getItem("admin_id");
     const data = await recuperarSolicitudesDeReserva(currentPage, estado);
     console.log(estado);
     console.log(data);
@@ -293,7 +292,10 @@ const ListaDeSolicitudes = ({ titulo, tipoDeUsuario }) => {
         {solicitud.estado === "en espera" ? (
           <AtenderSolicitud
             solicitudId={solicitud.id}
-            onClose={() => setShow(false)}
+            onClose={() => {
+              setShow(false);
+              getSolicitudes();
+            }}
           />
         ) : (
           <>
