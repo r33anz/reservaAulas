@@ -7,6 +7,11 @@ button.nav-link.active {
     color: white !important;
 }
 
+button.nav-link {
+    border: 1px groove #003F70 !important;
+    border-bottom: 3px solid #003F70 !important;
+}
+
 .tabs-admin {
     margin-bottom: 0 !important;
     border: none;
