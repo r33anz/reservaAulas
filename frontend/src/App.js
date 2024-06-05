@@ -1,75 +1,27 @@
-import React from "react";
+import React, { useState } from "react";
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import RegistrarAmbiente from './components/RegistrarAmbiente';
-import Calendario from './components/Calendario';
-import CalendarioDocente from './components/Calendariodocente/CalendarioDocente';
 import Home from './pages/Home';
 import { AlertsProvider } from './components/Alert/AlertsContext';
-import ModificarPeriodo from './components/ModificarPorPeriodo/ModicarPeriodo';
 import {
   Route,
   Routes,
 } from "react-router-dom";
-import ModificarEstadoDelAmbientePorFecha from './components/ModificarAmbiente/EstadoPorFecha';
-import Buscar from "./components/Busquedanombre/Buscar";
-import BuscarCantidad from "./components/BusquedaCantidad/BusquedaPorCantidad";
 import NotFound from "./pages/NotFound";
-import ListaDeSolicitudes from "./components/ListaDeSolicitudes";
-import ListaDedocentes from "./components/ListaDeDocentes/ListaDeDocentes"
-import SolcitarReserva from "./components/SolicitudReserva/SolicitarReserva"
-import AtenderSolicitud from "./components/AtenderSolicitud/AtenderSolicitud";
-import CancelarReservas from "./components/CancelarReserva/CancelarReservas";
 import DashboardDocente from "./pages/DashboardDocente";
 import DashboardAdmin from "./pages/DashboardAdmin";
 function App() {
+  const [showCalendar, setShowCalendar] = useState(false);
 
   return (
     <Routes>
       <Route exact path="/" element={
         <AlertsProvider>
-          <Home />
+          <Home setShowCalendar={setShowCalendar} showCalendar={showCalendar} />
         </AlertsProvider>
       }>
-        {/* <Route index e /> */}
-        <Route exact path="/docente/:id" element={<DashboardDocente />} />
-        <Route exact path="/admin" element={<DashboardAdmin />} />
-        <Route exact path="/docente/buscarPorNombre" element={<Buscar />} />
-        <Route exact path="/admin/atenderSolicitud/:id" element={<AtenderSolicitud solicitudId={2} />} />
-        <Route exact path="/docente/enviarSolicitud" element={<SolcitarReserva />} />
-        
-        <Route exact path="/docente/listaDeSolicitudesDeReservaAceptadas" element={
-          <ListaDeSolicitudes tipoDeUsuario="Docente" titulo="Lista de Solicitudes de Reserva Aceptadas" />
-        } />
-        <Route exact path="/admin/listaDeSolicitudesDeReservaPorLlegada" element={
-          <ListaDeSolicitudes tipoDeUsuario="Admin" titulo="Lista de Solicitudes de Reserva Por Llegada" />
-        } />
-        <Route exact path="/docente/listaReservas" element={
-          <CancelarReservas tipoDeUsuario="Docente" titulo="Lista de Solicitudes y Reservas" />
-        } />
-        <Route exact path="/admin/listaDeDocentes" element={
-          <ListaDedocentes tipoDeUsuario="Admin" titulo="Lista de Docentes" />
-        } />
-        <Route exact path="/docente/listaDeDocentes" element={
-          <ListaDedocentes tipoDeUsuario="Docente" titulo="Lista de Docentes" />
-        } />
-        <Route exact path="/admin/buscarPorNombre" element={<Buscar />} />
-        <Route exact path="/docente/buscarPorCantidad" element={<BuscarCantidad />} />
-        <Route exact path="/admin/registroAmbiente" element={
-          <RegistrarAmbiente />
-        } />
-        <Route exact path="/admin/modificarPorPeriodo" element={
-          <ModificarPeriodo />
-        } />
-        <Route exact path="/admin/modificarPorFecha" element={
-          <ModificarEstadoDelAmbientePorFecha />
-        } />
-        <Route exact path="/admin/calendario" element={
-          <Calendario />
-        } />
-        <Route exact path="/docente/calendario" element={
-          <CalendarioDocente />
-        } />
+        <Route exact path="/docente/:id" element={<DashboardDocente showCalendar={showCalendar} />} />
+        <Route exact path="/admin" element={<DashboardAdmin showCalendar={showCalendar} />} />
       </Route>
       <Route path="*" element={<NotFound />} />
     </Routes >
