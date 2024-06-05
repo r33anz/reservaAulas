@@ -112,7 +112,28 @@ const totalPages = Math.ceil(filteredReservas.length / reservasPerPage);
     }
     setFilteredReservas(filtered);
   };
+  const handleInputChange = async (event) => {
+    if (event.hasOwnProperty('target') && event.target.hasOwnProperty('value')) {
+      const originalValue = event.target.value;
+      const trimmedValue = originalValue.trim(); // Eliminar espacios al inicio y al final
 
+      if (trimmedValue === "") {
+        setSearchTerm("");
+        //formValueUpdate(""); // Actualiza el valor en Formik o el estado correspondiente
+      } else if (!trimmedValue.startsWith(" ")) { // Verificar si el primer carácter no es un espacio
+        const value = originalValue.toUpperCase(); // Convertir a mayúsculas si pasa la validación del espacio inicial
+        
+        if (/^[a-zA-Z0-9\s]*$/.test(value)) {
+          setSearchTerm(value);
+          // Actualiza el valor en Formik o el estado correspondiente
+         // formValueUpdate(value);
+          //const { respuesta } = await buscarAmbientePorNombre(value);
+          //setAmbientes(respuesta);
+          //setAmbienteDetails([]);
+        }
+      }
+    }
+  };
   const handleClose = () => {
     setShow(false);
     setSearchTerm("");
@@ -244,11 +265,11 @@ const totalPages = Math.ceil(filteredReservas.length / reservasPerPage);
           <Row className="RegistrarAmbiente-body1 justify-content-center">
             <Form inline className="d-flex  mb-2">
               <Form.Group controlId="searchTerm" className="mr-2 d-flex align-items-center">
-                <Form.Label className="mr-2">Buscar por Ambiente</Form.Label>
+                <Form.Label className="mr-2">Buscar</Form.Label>
                 <Form.Control
                   type="text"
                   value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
+                  onChange={handleInputChange}
                   placeholder="Nombre del Ambiente"
                   style={{ width: "100%" }}
                 />
@@ -256,24 +277,27 @@ const totalPages = Math.ceil(filteredReservas.length / reservasPerPage);
             </Form>
           </Row>
           <Row className="RegistrarAmbiente-body justify-content-center">
-            {filteredReservas.map((reserva, index) => (
-              <div key={index} className="reserva">
-                <div className="reserva-row">
-                  <h6>Docente:</h6>
-                  <p>{reserva.nombreDocente}</p>
-                </div>
-                <div className="reserva-row">
-                  <h6>Nombre del Ambiente:</h6>
-                  <p>{reserva.ambiente_nombre}</p>
-                </div>
-                
-                <div className="reserva-row">
-                  <h6>Periodo:</h6>
-                  <p>{getPeriodo(reserva.periodo_ini_id, reserva.periodo_fin_id)}</p>
-                </div>
-                {index < filteredReservas.length - 1 && <hr />}
-              </div>
-            ))}
+          {filteredReservas.length === 0 ? (
+        <p>No hay ambientes disponibles</p>
+      ) : (
+        filteredReservas.map((reserva, index) => (
+          <div key={index} className="reserva">
+            <div className="reserva-row">
+              <h6>Docente:</h6>
+              <p>{reserva.nombreDocente}</p>
+            </div>
+            <div className="reserva-row">
+              <h6>Nombre del Ambiente:</h6>
+              <p>{reserva.ambiente_nombre}</p>
+            </div>
+            <div className="reserva-row">
+              <h6>Periodo:</h6>
+              <p>{getPeriodo(reserva.periodo_ini_id, reserva.periodo_fin_id)}</p>
+            </div>
+            {index < filteredReservas.length - 1 && <hr />}
+          </div>
+        ))
+      )}
             <Pagination style={{ justifyContent: "center" }}>
                 {renderPaginationItems()}
               </Pagination>

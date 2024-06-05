@@ -25,7 +25,7 @@ const Home = () => {
     <Container fluid className="Home-body" >
       <Row xs="auto" sm="auto"> {/** xs= <576px, sm= >= 576 */}
         <Col>
-          <h4>HOME</h4>
+          <h4>Inicio</h4>
         </Col>
         {/* <Col className="Home-busqueda">
           <Stack direction="horizontal" gap={2}>

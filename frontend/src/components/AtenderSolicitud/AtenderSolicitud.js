@@ -134,6 +134,7 @@ const AtenderSolicitud = ({solicitudId}) => {
 
   useEffect(() => {
     loadSolicitudPorId(id);
+    validarSolicitud(id);
   }, [id]);
 
   return (
@@ -226,6 +227,7 @@ const AtenderSolicitud = ({solicitudId}) => {
                       Solicitud atendida
                     </Row>
                   )}
+                  {!esSolicitudAtentida &&
                   <>
                     <Row
                       xs="auto"
@@ -274,7 +276,7 @@ const AtenderSolicitud = ({solicitudId}) => {
                         </Stack>
                       </Row>
                     )}
-                  </>
+                  </>}
                 </Container>
               </Col>
             </Row>
