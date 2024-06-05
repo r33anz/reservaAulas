@@ -281,10 +281,10 @@ const SolicitarReserva = ({ onClose }) => {
           <Col
             xs="10"
             className="d-flex justify-content-start align-items-center"
-            style={{ height: "3rem" }}
+            style={{ height: "3rem", padding: 0, paddingLeft: "0.5rem" }}
           >
             <h5 style={{ fontWeight: "bold" }}>
-              Regustrar Solicitud de Reserva
+              Registrar reserva de Ambiente
             </h5>
           </Col>
           <Col
@@ -304,10 +304,10 @@ const SolicitarReserva = ({ onClose }) => {
       </Container>
       <Container className="RegistrarAmbiente-body" fluid>
         <Row className="justify-content-md-center">
-          <Col xs lg="9">
+          <Col xs lg="11">
             <Form onSubmit={formik.handleSubmit} onKeyPress={handleKeyPress}>
               <Stack gap={2} direction="vertical">
-                <Col lg="9">
+                <Col lg="12">
                   <p>Docente: {docentes}</p>
                   <Form.Group
                     as={Row}
@@ -398,26 +398,28 @@ const SolicitarReserva = ({ onClose }) => {
                 </Col>
               </Stack>
             </Form>
-            <Button
-              className="btn RegistrarAmbiente-button-cancel"
-              size="sm"
-              onClick={() => {
-                setCapacidadDelAmbienteSeleccionado(null);
-                formik.resetForm();
-                setAmbienteOptions([]);
-                setStep(1);
-              }}
-            >
-              Limpiar
-            </Button>
-            <Button
-              className="btn RegistrarAmbiente-button-register"
-              size="sm"
-              type="submit"
-              onClick={() => setStep(2)}
-            >
-              Siguiente
-            </Button>
+            <Stack gap={2} direction="horizontal" className="justify-content-end">
+              <Button
+                className="btn RegistrarAmbiente-button-cancel"
+                size="sm"
+                onClick={() => {
+                  setCapacidadDelAmbienteSeleccionado(null);
+                  formik.resetForm();
+                  setAmbienteOptions([]);
+                  setStep(1);
+                }}
+              >
+                Limpiar
+              </Button>
+              <Button
+                className="btn RegistrarAmbiente-button-register"
+                size="sm"
+                type="submit"
+                onClick={() => setStep(2)}
+              >
+                Siguiente
+              </Button>
+            </Stack>
           </Col>
         </Row>
       </Container>
@@ -425,29 +427,39 @@ const SolicitarReserva = ({ onClose }) => {
   );
 
   const renderSecondStep = () => (
-    <div style={{ width: "574px" }}>
+    <div style={{ width: "100%" }}>
       <Container className="RegistrarAmbiente-header" fluid>
-        <Row xs="auto" className="justify-content-md-end">
-          <h2
-            style={{ fontWeight: "bold", color: "white" }}
-            className="text-center"
+        <Row xs="auto" className="text-white justify-content-end">
+          <Col
+            xs="10"
+            className="d-flex justify-content-start align-items-center"
+            style={{ height: "3rem", padding: 0, paddingLeft: "0.5rem" }}
           >
-            Registrar Solicitud de Reserva
-          </h2>
-          <Button
-            className="RegistrarAmbiente-header-button-close"
-            style={{ width: "58px", height: "58px" }}
+            <h5 style={{ fontWeight: "bold" }}>
+              Registrar reserva de Ambiente
+            </h5>
+          </Col>
+          <Col
+            xs="2"
+            className="d-flex justify-content-end align-items-end"
+            style={{ padding: 0 }}
           >
-            <XSquareFill style={{ width: "24px", height: "24px" }} />
-          </Button>
+            <Button
+              className="btn SolicitarReserva-header-button-close"
+              style={{ width: "58px", height: "48px" }}
+              onClick={onClose}
+            >
+              <XSquareFill style={{ width: "24px", height: "24px" }} />
+            </Button>
+          </Col>
         </Row>
       </Container>
       <Container className="RegistrarAmbiente-body" fluid>
         <Row className="justify-content-md-center">
-          <Col xs lg="9">
+          <Col xs lg="11">
             <Form onSubmit={formik.handleSubmit} onKeyPress={handleKeyPress}>
               <Stack gap={2} direction="vertical">
-                <Col lg="9">
+                <Col lg="12">
                   <Form.Group
                     as={Row}
                     className="mb-3"
@@ -692,9 +704,7 @@ const SolicitarReserva = ({ onClose }) => {
     </div>
   );
 
-  return (
-    <Container>{step === 1 ? renderFirstStep() : renderSecondStep()}</Container>
-  );
+  return <>{step === 1 ? renderFirstStep() : renderSecondStep()}</>;
 };
 
 export default SolicitarReserva;

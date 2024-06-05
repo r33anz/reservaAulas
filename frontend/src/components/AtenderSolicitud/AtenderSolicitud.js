@@ -6,6 +6,7 @@ import {
   Form,
   Modal,
   Row,
+  Spinner,
   Stack,
 } from "react-bootstrap";
 import {
@@ -31,6 +32,7 @@ const AtenderSolicitud = ({ solicitudId, onClose }) => {
     useState(null);
   const { agregarAlert } = useContext(AlertsContext);
   const [solicitud, setSolicitud] = useState({});
+  const [loading, setLoading] = useState(false);
   const periodos = [
     { id: 1, hora: "6:45 - 8:15", isHabilitado: true },
     { id: 2, hora: "8:15 - 9:45", isHabilitado: true },
@@ -99,7 +101,7 @@ const AtenderSolicitud = ({ solicitudId, onClose }) => {
   };
 
   const onClickRechazarSolicitud = async () => {
-    setShow(false);
+    setLoading(true);
     let response = await rechazarSolicitud(solicitudId, razonRechazo);
     if (response !== null) {
       agregarAlert({
@@ -107,6 +109,7 @@ const AtenderSolicitud = ({ solicitudId, onClose }) => {
         severidad: "success",
         mensaje: "Solicitud rechazada enviada.",
       });
+      setShow(false);
       onClose();
       setEsSolicitudAtentida(true);
     } else {
@@ -119,7 +122,7 @@ const AtenderSolicitud = ({ solicitudId, onClose }) => {
   };
 
   const onClickAceptarSolicitud = async () => {
-    setShow(false);
+    setLoading(true);
     let response = await aceptarSolicitud(solicitudId);
     if (response !== null) {
       agregarAlert({
@@ -127,6 +130,7 @@ const AtenderSolicitud = ({ solicitudId, onClose }) => {
         severidad: "success",
         mensaje: response.mensaje,
       });
+      setShow(false);
       setEsSolicitudAtentida(true);
     } else {
       agregarAlert({
@@ -343,7 +347,14 @@ const AtenderSolicitud = ({ solicitudId, onClose }) => {
                 className="btn AtenderSolicitud-button-enviar"
                 onClick={onClickRechazarSolicitud}
               >
-                Enviar
+                {loading ? (
+                  <>
+                    <Spinner animation="grow" size="sm" />
+                    Enviando...
+                  </>
+                ) : (
+                  "Enviar"
+                )}
               </Button>
             </Stack>
           </Row>
