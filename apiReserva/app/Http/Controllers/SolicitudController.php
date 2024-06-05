@@ -9,6 +9,7 @@ use App\Services\ValidadorService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Services\NotificadorService;
+
 class SolicitudController extends Controller
 {
     protected $ambienteValido;
@@ -120,13 +121,13 @@ class SolicitudController extends Controller
             return response()->json(['mensaje' => 'No se encontró información del ambiente asociado a la solicitud'], 404);
         }
 
-        
-        $nombreDocente = Docente::where('id',$solicitud->docente_id)
-                                    ->value('nombre');
+
+        $nombreDocente = Docente::where('id', $solicitud->docente_id)
+            ->value('nombre');
         return response()->json([
             'cantidad' => $solicitud->cantidad,
             'materia' => $solicitud->materia,
-            'nombreDocente'=>$nombreDocente,
+            'nombreDocente' => $nombreDocente,
             'razon' => $solicitud->razon,
             'periodo_ini_id' => $solicitud->periodo_ini_id,
             'periodo_fin_id' => $solicitud->periodo_fin_id,
@@ -178,7 +179,7 @@ class SolicitudController extends Controller
             $solicitudes = Solicitud::where('estado', 'cancelado')->paginate(3, ['*'], 'pagina', $pagina);
         } elseif ($estado === 'inhabilitada') {
             $solicitudes = Solicitud::where('estado', 'inhabilitada')->paginate(3, ['*'], 'pagina', $pagina);
-        }else {
+        } else {
             $solicitudes = Solicitud::paginate(3, ['*'], 'pagina', $pagina);
         }
 
@@ -190,6 +191,7 @@ class SolicitudController extends Controller
             $docente = Docente::find($solicitud->docente_id);
 
             $datosSolicitud = [
+                'id' => $solicitud->id,
                 'nombreDocente' => $docente->nombre,
                 'materia' => $solicitud->materia,
                 'grupo' => $solicitud->grupo,
@@ -210,7 +212,7 @@ class SolicitudController extends Controller
                 $datosSolicitud['fechaAtendida'] = $solicitud->fechaAtendida;
                 $datosSolicitud['razonRechazo'] = $solicitud->razonRechazo;
             }
-            
+
             $datosSolicitudes[] = $datosSolicitud;
         }
 
@@ -223,7 +225,8 @@ class SolicitudController extends Controller
     }
 
     //FINISH v2
-    public function aceptarSolicitud(Request $request){
+    public function aceptarSolicitud(Request $request)
+    {
         $id = $request->input('idSolicitud');
         $fechaAtendido = $request->input('fechaAtendida');
         $solicitud = Solicitud::find($id);
@@ -233,14 +236,15 @@ class SolicitudController extends Controller
         $solicitud->estado = 'aprobado';
         $solicitud->fechaAtendida = $fechaAtendido;
         $solicitud->save();
-        
+
         $this->notificadorService->notificarAceptacion($id);
-        
+
         return response()->json(['mensaje' => 'Solicitud atendida correctamente']);
     }
 
     //FINISH v2
-    public function rechazarSolicitud(Request $request){
+    public function rechazarSolicitud(Request $request)
+    {
         $id = $request->input('id');
         $fechaAtendido = $request->input('fechaAtendida');
         $razon = $request->input('razonRechazo');

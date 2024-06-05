@@ -20,6 +20,8 @@ import ListaDedocentes from "./components/ListaDeDocentes/ListaDeDocentes"
 import SolcitarReserva from "./components/SolicitudReserva/SolicitarReserva"
 import AtenderSolicitud from "./components/AtenderSolicitud/AtenderSolicitud";
 import CancelarReservas from "./components/CancelarReserva/CancelarReservas";
+import DashboardDocente from "./pages/DashboardDocente";
+import DashboardAdmin from "./pages/DashboardAdmin";
 function App() {
 
   return (
@@ -29,7 +31,9 @@ function App() {
           <Home />
         </AlertsProvider>
       }>
-        <Route index element={<Buscar />} />
+        {/* <Route index e /> */}
+        <Route exact path="/docente/:id" element={<DashboardDocente />} />
+        <Route exact path="/admin" element={<DashboardAdmin />} />
         <Route exact path="/docente/buscarPorNombre" element={<Buscar />} />
         <Route exact path="/admin/atenderSolicitud/:id" element={<AtenderSolicitud solicitudId={2} />} />
         <Route exact path="/docente/enviarSolicitud" element={<SolcitarReserva />} />

@@ -1,5 +1,5 @@
 import React from "react";
-import { Col, Container, Row, Stack, Image } from 'react-bootstrap'
+import { Container, Stack, Image } from 'react-bootstrap'
 import { BellFill, Calendar3 } from 'react-bootstrap-icons'
 import './style.css';
 import logo from '../../assets/images/image.png';
@@ -11,7 +11,7 @@ const Home = () => {
   return (<>
     <header className="App-header">
       <img src={logo} className="App-logo" alt="logo" />
-      <div className="tamaño">
+      <div className="titulo-header">
         <h3>
           Intelligence<br />
           Software
@@ -23,29 +23,13 @@ const Home = () => {
       </div>
     </header>
     <Container fluid className="Home-body" >
-      <Row xs="auto" sm="auto"> {/** xs= <576px, sm= >= 576 */}
-        <Col>
-          <h4>HOME</h4>
-        </Col>
-        {/* <Col className="Home-busqueda">
-          <Stack direction="horizontal" gap={2}>
-            <h5>BUSQUEDA:</h5>
-            <Button>
-              Nombre
-            </Button>
-            <Button>
-              Fecha
-            </Button>
-          </Stack>
-        </Col> */}
-      </Row>
       <Outlet />
     </Container>
     <footer className="App-footer">
       <Container fluid="xs" style={{ padding: "5px" }}>
         <Stack direction="horizontal" gap={1}>
           <Image roundedCircle src={logo} style={{ height: "2rem", width: "2rem" }} />
-          <small style={{fontSize: ".5em"}}>
+          <small style={{fontSize: ".6em"}}>
             Copyright ©2024 <br />
             Intelligence Software S.R.L. <br />
             Todos los derechos reservados.
