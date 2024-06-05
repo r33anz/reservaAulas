@@ -3,7 +3,7 @@ import "./style.css"
 
 const AlertsWrapper = ({ children, show }) => {
     return (<>
-        {show && <div className=" align-items-end justify-content-md-end AlertsWrapper-container" >
+        {show && <div className="align-items-center justify-content-center AlertsWrapper-container" >
             {children}
         </div>}
     </>);
