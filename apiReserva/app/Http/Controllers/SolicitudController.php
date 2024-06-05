@@ -9,7 +9,7 @@ use App\Services\ValidadorService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Services\NotificadorService;
-
+use App\Mail\SolicitudRealizada;
 class SolicitudController extends Controller
 {
     protected $ambienteValido;
@@ -62,11 +62,11 @@ class SolicitudController extends Controller
         $idAmbiente = $request->input('ambiente');
         $periodos = $request->input('periodos');
         // verificar si el ambiente es valido
-        $ambienteDisponible = $this->ambienteValido->ambienteValido($idAmbiente, $fechaReserva, $periodos);
+        $ambienteDisponible = $this->ambienteValido->ambienteValido($idAmbiente, $fechaReserva, $periodos,$idDocente);
 
         // echo $ambienteDisponible;
-        if (!$ambienteDisponible) {
-            return response()->json(['mensaje' => 'El ambiente no esta disponible en los periodos especificados'], 400);
+        if ($ambienteDisponible->alerta != 'exito') {
+            return response()->json([$ambienteDisponible]);
         }
 
         if (count($periodos) === 1) {
@@ -98,12 +98,69 @@ class SolicitudController extends Controller
 
 
         // notificar nuevo registro de solicitud
-        //TODO
+        //CHECK
+        $this->notificadorService->solicitudRealizada($ultimoIdSolicitud);
         //
         return response()->json([
             'mensaje' => 'Resgistro existoso',
         ]);
     }
+
+    public function registroSolicitudP2(Request $request)
+    {
+        /**
+         * docente / materia / grupo / cantidad / razon / fecha / estado :false
+         * preProcesamineto: periodoId
+         * el idAmbiente y el idSolicitud ponerlo en tabla pivote.
+         */
+        $idDocente = $request->input('idDocente');
+        $materia = $request->input('materia');
+        $grupo = $request->input('grupo');
+        $cantidad = $request->input('capacidad');
+        $razon = $request->input('razon');
+        $fechaReserva = $request->input('fechaReserva');
+        $estado = 'en espera';
+        $idAmbiente = $request->input('ambiente');
+        $periodos = $request->input('periodos');
+        // verificar si el ambiente es valido
+
+        if (count($periodos) === 1) {
+            $periodoInicial = $periodos[0];
+            $periodoFinal = $periodos[0];
+        } else { // Si hay más de un periodo, determina el periodo inicial y final
+            $periodoInicial = $periodos[0];
+            $periodoFinal = $periodos[count($periodos) - 1];
+        }
+
+        $solicitud = Solicitud::create([
+            'docente_id' => $idDocente,
+            'materia' => $materia,
+            'grupo' => $grupo,
+            'cantidad' => $cantidad,
+            'razon' => $razon,
+            'fechaReserva' => $fechaReserva,
+            'periodo_ini_id' => $periodoInicial,
+            'periodo_fin_id' => $periodoFinal,
+            'estado' => $estado,
+        ]);
+
+        $ultimoIdSolicitud = $solicitud->latest()->value('id');
+
+        DB::table('ambiente_solicitud')->insert([
+            'ambiente_id' => $idAmbiente,
+            'solicitud_id' => $ultimoIdSolicitud,
+        ]);
+
+
+        // notificar nuevo registro de solicitud
+        //CHECK
+        $this->notificadorService->solicitudRealizada($ultimoIdSolicitud);
+        //
+        return response()->json([
+            'mensaje' => 'Resgistro existoso',
+        ]);
+    }
+    
 
     // FINISH T
     public function informacionSolicitud(Request $request)
