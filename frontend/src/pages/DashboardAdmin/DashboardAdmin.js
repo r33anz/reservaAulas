@@ -86,9 +86,7 @@ const DashboardAdmin = ({ showCalendar }) => {
                       className="btn text-center align-middle"
                       onClick={() => setRegistrarAmbiente(!registrarAmbiente)}
                     >
-                      <h5 style={{ fontWeight: "bold" }}>
-                        Registrar Ambiente
-                      </h5>
+                      <h5 style={{ fontWeight: "bold" }}>Registrar Ambiente</h5>
                     </Button>
                     <div>
                       <Tabs
@@ -97,12 +95,14 @@ const DashboardAdmin = ({ showCalendar }) => {
                         className="mb-3 tabs-admin"
                       >
                         <Tab
+                          className="tab-item"
                           eventKey="busqueda-por-nombre"
                           title="Busqueda por nombre"
                         >
                           <Buscar />
                         </Tab>
                         <Tab
+                          className="tab-item"
                           eventKey="buqueda-por-cantidad"
                           title="Busqueda por cantidad"
                         >

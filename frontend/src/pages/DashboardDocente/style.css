@@ -5,7 +5,12 @@
 button.nav-link.active {
     background-color: #003F70 !important;
     color: white !important;
-    
+    border: 2px solid #003F70 !important;
+}
+
+button.nav-link {
+    border: 1px groove #003F70 !important;
+    border-bottom: 3px solid #003F70 !important;
 }
 
 .tabs-admin {

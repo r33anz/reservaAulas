@@ -3,7 +3,7 @@ import { Alert, Col, Modal, Row, Stack } from "react-bootstrap";
 import { X } from "react-bootstrap-icons";
 import "./style.css";
 
-const Message = ({ alert }) => {
+const Message = ({ alert, setAlert }) => {
   const [message, setMessage] = useState(null);
   const [show, setShow] = useState(true);
 
@@ -12,6 +12,7 @@ const Message = ({ alert }) => {
     const timeId = setTimeout(() => {
       setMessage(null);
       setShow(false);
+      setAlert(null);
     }, 5000);
     setMessage(alert);
     return () => {

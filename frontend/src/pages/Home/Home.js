@@ -10,7 +10,7 @@ const Home = ({ setShowCalendar, showCalendar }) => {
   return (
     <>
       <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
+        <img src={logo} className="App-logo" alt="logo" onClick={() => setShowCalendar(false)} />
         <div className="titulo-header" onClick={() => setShowCalendar(false)}>
           <h3>
             Intelligence
