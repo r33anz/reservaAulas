@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Route;
 use App\Models\Bloque;
 use App\Http\Controllers\DocenteController;
 use App\Http\Controllers\InhabilitadoController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\SolicitudController;
 use App\Http\Controllers\ValidadorController;
 ///Docente
@@ -49,7 +50,8 @@ Route::post('/buscarInhabilitados',[InhabilitadoController::class,'buscarPeriodo
 
 //Solicitud
 Route::get('/fechasSolicitud',[SolicitudController::class,'conseguirFechas']);
-Route::post('/realizarSolicitud',[SolicitudController::class,'registroSolicitud']);
+Route::post('/realizarSolicitud',[SolicitudController::class,'registroSolicitud']); //primer 
+Route::post('/realizarSolicitudP2',[SolicitudController::class,'registroSolicitudP2']); //segundo
 Route::post('/informacionSolicitud',[SolicitudController::class,'informacionSolicitud']);
 Route::get('/{idSolicitud}/recuperarInformacion',[SolicitudController::class,'recuperarInformacion']);
 Route::put('/aceptarSolicitud',[SolicitudController::class,'aceptarSolicitud']);
@@ -66,3 +68,9 @@ Route::post('/docentes/reservas', [ReservaController::class,'reservasPorDocente'
 Route::put('/reservas/{id}', [ReservaController::class,'cancelarReserva']);
 Route::get('/periodosReservados/{fecha}/{idAmbiente}',[ReservaController::class,'periodosReservados']);
 Route::put('/inhabilitarReserva', [ReservaController::class, 'inhabilitarReserva']);
+
+
+//notificaciones
+Route::post('/marcarNotifiacionesLeidas',[NotificationController::class,'marcarNotificacionLeida']);
+Route::get('/noLeidas/{idUsuario}',[NotificationController::class,'recuperarNotificacionesNoLeidas']);
+Route::get('/todasNotificaciones/{idUsuario}',[NotificationController::class,'recuperarNotificaciones']);

@@ -70,5 +70,22 @@ class NotificadorService
         $user->notify(new Rechazar($nombreAmbiente, $solicitud->fechaReserva, $ini->horainicial, $fin->horafinal,$solicitud->razonRechazo));
     }
 
+    public function solicitudRealizada($idSolicitud){
+        $solicitud = Solicitud::find($idSolicitud);
+        $idAmbiente = DB::table('ambiente_solicitud')
+                            ->where('solicitud_id', $idSolicitud)
+                            ->value('ambiente_id');
+        $nombreAmbiente = Ambiente::where('id', $idAmbiente)
+                                    ->value('nombre');
+
+        $periodoIdIni=$solicitud->periodo_ini_id;
+        $periodoIdFin=$solicitud->periodo_fin_id;
+
+        $ini = Periodo::find($periodoIdIni);
+        $fin = Periodo::find($periodoIdFin);
+
+        $user = User::find($solicitud->docente_id);
+        $user->notify(new Solicitud($nombreAmbiente, $solicitud->fechaReserva, $ini->horainicial, $fin->horafinal));
+    }
 
 }
