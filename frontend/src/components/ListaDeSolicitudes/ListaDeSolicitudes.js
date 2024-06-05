@@ -76,6 +76,10 @@ const ListaDeSolicitudes = ({ titulo, tipoDeUsuario }) => {
   }, [currentPage, estado]);
 
   useEffect(() => {
+    setCurrentPage(1);
+  }, [estado]);
+
+  useEffect(() => {
     getSolicitudes();
   }, [getSolicitudes]);
 
