@@ -216,7 +216,7 @@ const SolicitarReserva = ({ onClose }) => {
           agregarAlert({
             icon: <ExclamationCircleFill />,
             severidad: "danger",
-            mensaje: error.mensaje,
+            mensaje: error[0].mensaje,
           });
         });
     },
