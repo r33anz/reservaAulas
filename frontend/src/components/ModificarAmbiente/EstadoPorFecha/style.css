@@ -15,12 +15,12 @@
 .ModificarEstadoDelAmbientePorFecha-header-button-close:focus,
 .ModificarEstadoDelAmbientePorFecha-header-button-close:disabled,
 .ModificarEstadoDelAmbientePorFecha-header-button-close.active {
-  color: #ffffff;
-  background: #D51809;
-  border-color: #D51809;
-  --bs-btn-active-bg: #D51809;
-  --bs-btn-active-border-color: #D51809;
-  cursor: pointer;
+    color: #ffffff;
+    background: #D51809;
+    border-color: #D51809;
+    --bs-btn-active-bg: #D51809;
+    --bs-btn-active-border-color: #D51809;
+    cursor: pointer;
 }
 
 
@@ -74,10 +74,47 @@
 .ModificarEstadoDelAmbientePorFecha-button-fecha:focus,
 .ModificarEstadoDelAmbientePorFecha-button-fecha:disabled,
 .ModificarEstadoDelAmbientePorFecha-button-fecha.active {
-  /* let's darken #004E64 a bit for hover effect */
-  color: #ffffff;
-  background: #003F70;
-  border-color: #003F70;
-  --bs-btn-active-bg: #003F70;
-  --bs-btn-active-border-color: #003F70;
+    /* let's darken #004E64 a bit for hover effect */
+    color: #ffffff;
+    background: #003F70;
+    border-color: #003F70;
+    --bs-btn-active-bg: #003F70;
+    --bs-btn-active-border-color: #003F70;
+}
+
+.ModificarEstadoDelAmbientePorFecha-button-limpiar,
+.ModificarEstadoDelAmbientePorFecha-button-consultar,
+.ModificarEstadoDelAmbientePorFecha-button-habilitar,
+.ModificarEstadoDelAmbientePorFecha-aceptar {
+    color: #ffffff;
+    background-color: #003F70;
+    border-color: #003F70;
+}
+
+.ModificarEstadoDelAmbientePorFecha-button-limpiar:hover,
+.ModificarEstadoDelAmbientePorFecha-button-limpiar:active,
+.ModificarEstadoDelAmbientePorFecha-button-limpiar:focus,
+.ModificarEstadoDelAmbientePorFecha-button-limpiar:disabled,
+.ModificarEstadoDelAmbientePorFecha-button-limpiar.active,
+.ModificarEstadoDelAmbientePorFecha-button-consultar:hover,
+.ModificarEstadoDelAmbientePorFecha-button-consultar:active,
+.ModificarEstadoDelAmbientePorFecha-button-consultar:focus,
+.ModificarEstadoDelAmbientePorFecha-button-consultar:disabled,
+.ModificarEstadoDelAmbientePorFecha-button-consultar.active,
+.ModificarEstadoDelAmbientePorFecha-button-habilitar:hover,
+.ModificarEstadoDelAmbientePorFecha-button-habilitar:active,
+.ModificarEstadoDelAmbientePorFecha-button-habilitar:focus,
+.ModificarEstadoDelAmbientePorFecha-button-habilitar:disabled,
+.ModificarEstadoDelAmbientePorFecha-aceptar.active,
+.ModificarEstadoDelAmbientePorFecha-aceptar:hover,
+.ModificarEstadoDelAmbientePorFecha-aceptar:active,
+.ModificarEstadoDelAmbientePorFecha-aceptar:focus,
+.ModificarEstadoDelAmbientePorFecha-aceptar:disabled,
+.ModificarEstadoDelAmbientePorFecha-aceptar.active {
+    /* let's darken #004E64 a bit for hover effect */
+    color: #ffffff;
+    background: #003F70;
+    border-color: #003F70;
+    --bs-btn-active-bg: #003F70;
+    --bs-btn-active-border-color: #003F70;
 }

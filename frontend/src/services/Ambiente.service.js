@@ -45,10 +45,22 @@ export const getAmbientes = () => {
   return axios
     .get(`${apiUrl}/ambientes`)
     .then(function (response) {
-      return response.data; // Devuelve los datos del ambiente encontrado
+      return response.data;
     })
     .catch(function (error) {
       console.log(error);
-      return null; // Manejo del error: retorna null si hay un error en la búsqueda
+      return null;
+    });
+};
+
+export const getPeriodosReservados = (ambienteId, fecha) => {
+  return axios
+    .get(`${apiUrl}/periodosReservados/${fecha}/${ambienteId}`)
+    .then(function (response) {
+      return response.data;
+    })
+    .catch(function (error) {
+      console.log(error);
+      return null;
     });
 };

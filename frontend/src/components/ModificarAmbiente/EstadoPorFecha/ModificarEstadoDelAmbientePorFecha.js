@@ -27,10 +27,13 @@ import {
 import { AlertsContext } from "../../Alert/AlertsContext";
 import "./style.css";
 import { useEffect } from "react";
-import { getAmbientes } from "../../../services/Ambiente.service";
+import {
+  getAmbientes,
+  getPeriodosReservados,
+} from "../../../services/Ambiente.service";
 import { useRef } from "react";
 
-const ModificarEstadoDelAmbientePorFecha = ({onclose}) => {
+const ModificarEstadoDelAmbientePorFecha = ({ onclose }) => {
   const [ambientes, setAmbientes] = useState([]);
   const [ambientesEncontradas, setAmbientesEncontradas] = useState([]);
   const [ambiente, setAmbiente] = useState({});
@@ -43,6 +46,7 @@ const ModificarEstadoDelAmbientePorFecha = ({onclose}) => {
   const refDropdownMenu = useRef(null);
   const refDropdownToggle = useRef(null);
   const refDropdown = useRef(null);
+  const [periodosReservados, setPeriodosReservados] = useState([]);
   const periodos = [
     { id: 1, hora: "6:45 - 8:15" },
     { id: 2, hora: "8:15 - 9:45" },
@@ -144,6 +148,11 @@ const ModificarEstadoDelAmbientePorFecha = ({onclose}) => {
 
   const getAmbientPorFecha = async (ambiente, fecha) => {
     const data = await modificarPerio(ambiente.id, fecha);
+    const response = await getPeriodosReservados(ambiente.id, fecha);
+    if (response) {
+      setPeriodosReservados(response.periodosReservados);
+      console.log(periodosReservados);
+    }
     if (data != null) {
       setAmbiente({
         id: ambiente.id,
@@ -224,6 +233,14 @@ const ModificarEstadoDelAmbientePorFecha = ({onclose}) => {
   const fetchAmbientes = async () => {
     let { respuesta } = await getAmbientes();
     setAmbientes(respuesta);
+  };
+
+  const isReservado = (periodoId) => {
+    return (
+      periodosReservados.filter((periodoReservado) => {
+        return periodoReservado.periodos.includes(periodoId);
+      }).length > 0
+    );
   };
 
   useEffect(() => {
@@ -376,12 +393,18 @@ const ModificarEstadoDelAmbientePorFecha = ({onclose}) => {
                 </Form.Group>
                 <Row xs="auto" className="justify-content-md-end">
                   <Stack direction="horizontal" gap={2}>
-                    <Button onClick={handleOnClickLimpiar}>Limpiar</Button>
+                    <Button
+                      className="btn ModificarEstadoDelAmbientePorFecha-button-limpiar"
+                      onClick={handleOnClickLimpiar}
+                    >
+                      Limpiar
+                    </Button>
                     {ambiente &&
                     Object.keys(ambiente).length > 0 &&
                     ambiente.periodos ? (
                       <>
                         <Button
+                          className="btn ModificarEstadoDelAmbientePorFecha-button-habilitar"
                           onClick={() =>
                             mostrarMensajeDeConfirmacion("Inhabilitar")
                           }
@@ -400,7 +423,12 @@ const ModificarEstadoDelAmbientePorFecha = ({onclose}) => {
                         </Button>
                       </>
                     ) : (
-                      <Button type="submit">Consultar</Button>
+                      <Button
+                        className="btn ModificarEstadoDelAmbientePorFecha-button-consultar"
+                        type="submit"
+                      >
+                        Consultar
+                      </Button>
                     )}
                   </Stack>
                 </Row>
@@ -432,7 +460,9 @@ const ModificarEstadoDelAmbientePorFecha = ({onclose}) => {
                                         : "black"
                                     }`,
                                     background: `${
-                                      ambiente.periodos.includes(item.id)
+                                      isReservado(item.id)
+                                        ? "ea4141"
+                                        : ambiente.periodos.includes(item.id)
                                         ? "gray"
                                         : "white"
                                     }`,
@@ -464,7 +494,9 @@ const ModificarEstadoDelAmbientePorFecha = ({onclose}) => {
                                         : "black"
                                     }`,
                                     background: `${
-                                      ambiente.periodos.includes(item.id)
+                                      isReservado(item.id)
+                                        ? "ea4141"
+                                        : ambiente.periodos.includes(item.id)
                                         ? "gray"
                                         : "white"
                                     }`,
@@ -496,7 +528,9 @@ const ModificarEstadoDelAmbientePorFecha = ({onclose}) => {
                                         : "black"
                                     }`,
                                     background: `${
-                                      ambiente.periodos.includes(item.id)
+                                      isReservado(item.id)
+                                        ? "ea4141"
+                                        : ambiente.periodos.includes(item.id)
                                         ? "gray"
                                         : "white"
                                     }`,
@@ -536,7 +570,7 @@ const ModificarEstadoDelAmbientePorFecha = ({onclose}) => {
                 <Row xs="auto" className="justify-content-md-end">
                   <Stack direction="horizontal" gap={2}>
                     <Button
-                      className="ModificarEstadoDelAmbientePorFecha-cancel"
+                      className="btn ModificarEstadoDelAmbientePorFecha-cancel"
                       size="sm"
                       variant="secondary"
                       onClick={() => setShowMensajeDeConfirmacion(false)}
@@ -544,6 +578,7 @@ const ModificarEstadoDelAmbientePorFecha = ({onclose}) => {
                       Cancelar
                     </Button>
                     <Button
+                      className="btn ModificarEstadoDelAmbientePorFecha-aceptar"
                       onClick={() => {
                         modificarPeriodos(estado);
                       }}
