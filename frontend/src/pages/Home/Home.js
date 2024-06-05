@@ -6,12 +6,12 @@ import logo from '../../assets/images/image.png';
 import '../../components/Busquedanombre/Style.css';
 import { Outlet } from "react-router-dom";
 
-const Home = () => {
+const Home = ({setShowCalendar, showCalendar}) => {
 
   return (<>
     <header className="App-header">
       <img src={logo} className="App-logo" alt="logo" />
-      <div className="titulo-header">
+      <div className="titulo-header" onClick={() => setShowCalendar(false)}>
         <h3>
           Intelligence<br />
           Software
@@ -19,7 +19,7 @@ const Home = () => {
       </div>
       <div className="ico-header">
         <BellFill color="white" size={30} />
-        <Calendar3 color="white" size={30} style={{ marginLeft: '20px' }} />
+        <Calendar3 color="white" size={30} style={{ marginLeft: '20px' }} onClick={() => setShowCalendar(!showCalendar)} />
       </div>
     </header>
     <Container fluid className="Home-body" >
