@@ -35,6 +35,7 @@
     background: rgba(0, 63, 112, 0.3);
     color: gray;
     padding-left: 1rem;
+    cursor: pointer;
 }
 
 .ListaDeNotificaciones-notification-unread {
@@ -42,6 +43,7 @@
     background: rgb(0, 63, 112);
     color: white;
     padding-left: 1rem;
+    cursor: pointer;
 }
 
 .ListaDeNotificaciones-container {
@@ -50,7 +52,12 @@
 
 .ListaDeNotificaciones-row-button-mark-all-as-read {
     height: 3rem;
-    padding-left: 1rem
+    padding-left: 1rem;
+}
+
+.ListaDeNotificaciones-sin-notigicaciones {
+    height: 3rem;
+    padding-left: 1rem;
 }
 
 .ListaDeNotificaciones-body {

@@ -51,81 +51,83 @@ const ListaDeNotificaciones = ({
   return (
     <div>
       <Container fluid className="ListaDeNotificaciones-container">
-        <Row className="align-items-center ListaDeNotificaciones-row-button-mark-all-as-read">
-          <Col>
-            <Button
-              size="sm"
-              className="Home-button-marcar-todas"
-              onClick={() => handleOnMarkAllAsRead()}
-            >
-              Marcar todo como leidas
-            </Button>
-          </Col>
-        </Row>
+        {notification.length > 0 && (
+          <Row className="align-items-center ListaDeNotificaciones-row-button-mark-all-as-read">
+            <Col>
+              <Button
+                size="sm"
+                className="Home-button-marcar-todas"
+                onClick={() => handleOnMarkAllAsRead()}
+              >
+                Marcar todo como leidas
+              </Button>
+            </Col>
+          </Row>
+        )}
         <div className="ListaDeNotificaciones-body">
           <Col>
-            <Row
-              className={`align-items-center ${
-                notification.read_at !== null
-                  ? "ListaDeNotificaciones-notification-read"
-                  : "ListaDeNotificaciones-notification-unread"
-              }`}
-            >
-              {notifications.map((notification) => (
-                <Stack
-                  key="{notification.id}"
-                  direction="horizontal"
-                  gap={2}
-                  onClick={() => handleShowNotification(notification)}
+            {notifications.length > 0 ? (
+              notifications.map((notification) => (
+                <Row
+                  className={`align-items-center ${
+                    notification.read_at !== null
+                      ? "ListaDeNotificaciones-notification-read"
+                      : "ListaDeNotificaciones-notification-unread"
+                  }`}
                 >
-                  <Col xs={1}>
-                    {notification.read_at ? (
-                      <EnvelopeOpen size={20} />
-                    ) : (
-                      <EnvelopeFill size={20} />
-                    )}
-                  </Col>
-                  <Col
-                    className="ListaDeNotificaciones-notification-title"
-                    xs={7}
+                  <Stack
+                    key="{notification.id}"
+                    direction="horizontal"
+                    gap={2}
+                    onClick={() => handleShowNotification(notification)}
                   >
-                    {notification.data.message}
-                  </Col>
-                  <Col>
-                    <small>
-                      {formatDistanceToNow(notification.created_at, {
-                        addSuffix: true,
-                      })}
-                    </small>
-                  </Col>
-                </Stack>
-              ))}
-            </Row>
+                    <Col xs={1}>
+                      {notification.read_at ? (
+                        <EnvelopeOpen size={20} />
+                      ) : (
+                        <EnvelopeFill size={20} />
+                      )}
+                    </Col>
+                    <Col
+                      className="ListaDeNotificaciones-notification-title"
+                      xs={7}
+                    >
+                      {notification.data.message}
+                    </Col>
+                    <Col>
+                      <small>
+                        {formatDistanceToNow(notification.created_at, {
+                          addSuffix: true,
+                        })}
+                      </small>
+                    </Col>
+                  </Stack>
+                </Row>
+              ))
+            ) : (
+              <Row className="align-items-center justify-content-center ListaDeNotificaciones-sin-notigicaciones">
+                Sin Notificaciones
+              </Row>
+            )}
           </Col>
         </div>
       </Container>
       {notification && notification.data && (
-        <Modal
-          // size="xs"
-          // aria-labelledby="contained-modal-title-vcenter"
-          // onHide={() => handleOnCloseNotification()}
-          show={notification.id}
-          centered
-        >
+        <Modal show={notification.id} centered>
           <Row sm className="text-white ListaDeNotificaciones-header">
             <Col
               ref={refModalTitleNotification}
               xs="10"
-              className="d-flex justify-content-start align-items-center"
-              style={{ height: "100%" }}
+              className="d-flex justify-content-start align-items-center ListaDeNotificationes-col-header-title"
             >
-              <h4 style={{ fontWeight: "bold" }}>Notification</h4>
+              <h4 className="ListaDeNotificationes-header-title">
+                Notification
+              </h4>
             </Col>
             <Col
               ref={refModalCloseNotification}
               xs="2"
-              className="d-flex justify-content-end align-items-end"
-              style={{ padding: 0 }}
+              className="d-flex justify-content-end align-items-end ListaDeNotificationes-header-close"
             >
               <div
                 onClick={() => handleOnCloseNotification()}
