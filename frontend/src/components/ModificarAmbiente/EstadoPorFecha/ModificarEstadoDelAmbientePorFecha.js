@@ -461,7 +461,7 @@ const ModificarEstadoDelAmbientePorFecha = ({ onclose }) => {
                                     }`,
                                     background: `${
                                       isReservado(item.id)
-                                        ? "ea4141"
+                                        ? "#ea4141"
                                         : ambiente.periodos.includes(item.id)
                                         ? "gray"
                                         : "white"
@@ -495,7 +495,7 @@ const ModificarEstadoDelAmbientePorFecha = ({ onclose }) => {
                                     }`,
                                     background: `${
                                       isReservado(item.id)
-                                        ? "ea4141"
+                                        ? "#ea4141"
                                         : ambiente.periodos.includes(item.id)
                                         ? "gray"
                                         : "white"
@@ -529,7 +529,7 @@ const ModificarEstadoDelAmbientePorFecha = ({ onclose }) => {
                                     }`,
                                     background: `${
                                       isReservado(item.id)
-                                        ? "ea4141"
+                                        ? "#ea4141"
                                         : ambiente.periodos.includes(item.id)
                                         ? "gray"
                                         : "white"
