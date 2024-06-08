@@ -251,6 +251,8 @@ class SolicitudController extends Controller
                           ELSE 1
                       END, ABS(DATEDIFF(fechaReserva, ?))
                   ", [$fechaActual, $fechaActual]);
+        }else{
+            $query = Solicitud::orderBy('created_at', 'desc');
         }
 
 
