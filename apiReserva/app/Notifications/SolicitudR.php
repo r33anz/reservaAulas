@@ -2,17 +2,14 @@
 
 namespace App\Notifications;
 
-use App\Mail\SolicitudRealizada;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
-
-class Solicitud extends Notification
+use App\Mail\SolicitudRealizada;
+class SolicitudR extends Notification
 {
-    use Queueable;
-
-    
+   
     protected $nombreAmbiente;
     protected $fecha;
     protected $ini;
@@ -27,7 +24,7 @@ class Solicitud extends Notification
 
     public function via($notifiable)
     {
-        return ['email'];
+        return ['mail'];
     }
 
     public function toMail($notifiable)
@@ -36,4 +33,9 @@ class Solicitud extends Notification
         ->to($notifiable->email); 
     }
 
+    public function toArray($notifiable)
+    {
+        return [
+        ];
+    }
 }
