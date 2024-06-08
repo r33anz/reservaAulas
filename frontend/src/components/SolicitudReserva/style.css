@@ -1,32 +1,72 @@
 .optionscontainer1 {
-    font-size: 20px;
-    margin-left: 0px;
-    margin-right: 110px;
-    max-height: 100px; /* Altura máxima para mostrar hasta 3 opciones */
-    overflow-y: auto; /* Habilitar el desplazamiento vertical cuando se supera la altura máxima */
-    position: absolute;
-    z-index: 1;
-    }
-    .search-field1{
-  
-        padding-left: 0px;
-        font-size: 16px;  
-      }
-      #buscar-input1{
-        margin-left: 0px;
-        border-radius:5px;
-        font-size: 16px;
-      }
-      .fecha1{
-        margin-top: 10px;
-        font-size: 16px;
-    }
-    .periodos-columna {
-  display: grid;
-  grid-template-columns: repeat(  2,  1fr); /* Divide los elementos en tres columnas */
-  gap: 20px; /* Espacio entre los elementos */
+  font-size: 20px;
+  margin-left: 0px;
+  margin-right: 110px;
+  max-height: 100px;
+  /* Altura máxima para mostrar hasta 3 opciones */
+  overflow-y: auto;
+  /* Habilitar el desplazamiento vertical cuando se supera la altura máxima */
+  position: absolute;
+  z-index: 1;
 }
-.RegistrarSolicitud-required:after {
-  content:"*";
-  color:red;
+
+.search-field1 {
+
+  padding-left: 0px;
+  font-size: 16px;
+}
+
+#buscar-input1 {
+  margin-left: 0px;
+  border-radius: 5px;
+  font-size: 16px;
+}
+
+.fecha1 {
+  margin-top: 10px;
+  font-size: 16px;
+}
+
+.periodos-columna {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  /* Divide los elementos en tres columnas */
+  gap: 20px;
+  /* Espacio entre los elementos */
+}
+
+.SolicitarReserva-required:after {
+  content: "*";
+  color: red;
+}
+
+.SolicitarReserva-body {
+  background-color: #D9D9D9;
+  padding: 1rem;
+}
+
+.SolicitarReserva-header-button-close {
+  color: #ffffff;
+  background-color: #D51809;
+  border-radius: 0%;
+  border-color: #D51809;
+  width: 58px;
+  height: 100%;
+}
+
+.SolicitarReserva-header-button-close:hover,
+.SolicitarReserva-header-button-close:active,
+.SolicitarReserva-header-button-close:focus,
+.SolicitarReserva-header-button-close:disabled,
+.SolicitarReserva-header-button-close.active {
+  color: #ffffff;
+  background: #D51809;
+  border-color: #D51809;
+  --bs-btn-active-bg: #D51809;
+  --bs-btn-active-border-color: #D51809;
+  cursor: pointer;
+}
+
+.SolicitarReserva-header {
+  background-color: #003F70;
 }

@@ -13,15 +13,16 @@ import {
 import "./style.css";
 import {
   recuperarSolicitudesDeReserva,
-  recuperarSolicitudesDeReservaAceptadas,
 } from "../../services/Reserva.service";
 import {
   ArrowClockwise,
   CardHeading,
   CheckCircleFill,
+  EnvelopeExclamation,
   XSquareFill,
 } from "react-bootstrap-icons";
 import { AlertsContext } from "../Alert/AlertsContext";
+import AtenderSolicitud from "../AtenderSolicitud/AtenderSolicitud";
 
 const ListaDeSolicitudes = ({ titulo, tipoDeUsuario }) => {
   const [solicitudes, setSolicitudes] = useState([]);
@@ -67,13 +68,16 @@ const ListaDeSolicitudes = ({ titulo, tipoDeUsuario }) => {
   };
 
   const getSolicitudes = useCallback(async () => {
-      // const id = window.sessionStorage.getItem("admin_id");
-      const data = await recuperarSolicitudesDeReserva(currentPage, estado);
-      console.log(estado);
-      console.log(data);
-      setSolicitudes(data.contenido);
-      setTotalPages(data.numeroPaginasTotal);
+    const data = await recuperarSolicitudesDeReserva(currentPage, estado);
+    console.log(estado);
+    console.log(data);
+    setSolicitudes(data.contenido);
+    setTotalPages(data.numeroPaginasTotal);
   }, [currentPage, estado]);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [estado]);
 
   useEffect(() => {
     getSolicitudes();
@@ -150,135 +154,136 @@ const ListaDeSolicitudes = ({ titulo, tipoDeUsuario }) => {
   return (
     <>
       <Container fluid>
-        <Row>
-          <Col sm="3"></Col>
-          <Col>
-            <Row sm className="text-white ListaDeSolicitudes-header">
-              <Col
-                xs="10"
-                className="d-flex justify-content-start align-items-center"
-              >
-                <h3 style={{ fontWeight: "bold" }} className="">
-                  {titulo}
-                </h3>
-              </Col>
-              <Col
-                xs="2"
-                className="d-flex justify-content-end align-items-end"
-                style={{ padding: 0 }}
-              >
-                <OverlayTrigger
-                  overlay={<Tooltip id="hi">Actualizar lista</Tooltip>}
-                  placement="left"
-                >
-                  <div
-                    onClick={reloadSolicitudes}
-                    className="RegistrarAmbiente-header-button-close d-flex 
-                                               justify-content-center align-items-center"
-                  >
-                    <ArrowClockwise size={24} />
-                  </div>
-                </OverlayTrigger>
-              </Col>
-            </Row>
-            <Row className="ListaDeSolicitudes-body justify-content-center">
-              <Form >
-                {["radio"].map((type) => (
-                    <div key={`inline-${type}`} className="mb-3">
-                    <strong>Estado: </strong>
-                    <Form.Check
-                      inline
-                      checked={estado === ""}
-                      onClick={() => setEstado("")}
-                      label="Todos"
-                      name="estado"
-                      type={type}
-                      id={`inline-${type}-1`}
-                      />
-                    <Form.Check
-                      inline
-                      checked={estado === "en espera"}
-                      onClick={() => setEstado("en espera")}
-                      label="en espera"
-                      name="estado"
-                      type={type}
-                      id={`inline-${type}-1`}
-                      />
-                    <Form.Check
-                      inline
-                      checked={estado === "canceladas"}
-                      onClick={() => setEstado("canceladas")}
-                      label="cancelados"
-                      name="estado"
-                      type={type}
-                      id={`inline-${type}-1`}
-                      />
-                    <Form.Check
-                      inline
-                      checked={estado === "aprobadas"}
-                      label="aprobadas"
-                      onClick={() => setEstado("aprobadas")}
-                      name="estado"
-                      type={type}
-                      id={`inline-${type}-2`}
-                      />
-                    <Form.Check
-                      inline
-                      checked={estado === "rechazadas"}
-                      label="rechazadas"
-                      onClick={() => setEstado("rechazadas")}
-                      name="estado"
-                      type={type}
-                      id={`inline-${type}-3`}
-                    />
-                  </div>
-                ))}
-              </Form>
-              <Table striped bordered hover responsive>
-                <thead>
-                  <tr>
-                    <th>Ambiente</th>
-                    {tipoDeUsuario === "Admin" && <th>Docente</th>}
-                    <th>Materia</th>
-                    <th>Periodo</th>
-                    <th>Fecha de Reserva</th>
-                    <th>Fecha Creada</th>
-                    <th>Estado</th>
-                    <th>Detalle</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {solicitudes.map((item) => (
-                    <tr>
-                      <td>{item.ambiente_nombre}</td>
-                      {tipoDeUsuario === "Admin" && (
-                        <td>{item.nombreDocente}</td>
-                      )}
-                      <td>{item.materia}</td>
-                      <td>
-                        {getPeriodo(item.periodo_ini_id, item.periodo_fin_id)}
-                      </td>
-                      <td>{item.fechaReserva}</td>
-                      <td>{item.fechaEnviada}</td>
-                      <td>{item.estado}</td>
-                      <td>
-                        <CardHeading
-                          size={30}
-                          onClick={() => {
-                            setSolicitud(item);
-                            setShow(true);
-                          }}
-                        />
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </Table>
-              <Pagination style={{ justifyContent: "center" }}>
-                {renderPaginationItems()}
-              </Pagination>
-            </Row>
+        <Row sm className="text-white ListaDeSolicitudes-header">
+          <Col
+            xs="10"
+            className="d-flex justify-content-start align-items-center"
+          >
+            <h5 style={{ fontWeight: "bold" }}>{titulo}</h5>
           </Col>
+          <Col
+            xs="2"
+            className="justify-content-end align-items-end"
+            style={{ padding: 0, display: "flex" }}
+          >
+            <OverlayTrigger
+              overlay={<Tooltip id="hi">Actualizar lista</Tooltip>}
+              placement="left"
+            >
+              <div
+                onClick={reloadSolicitudes}
+                className="RegistrarAmbiente-header-button-close d-flex 
+                                               justify-content-center align-items-center"
+              >
+                <ArrowClockwise size={24} />
+              </div>
+            </OverlayTrigger>
+          </Col>
+        </Row>
+        <Row className="ListaDeSolicitudes-body justify-content-center">
+          <Form>
+            {["radio"].map((type) => (
+              <div key={`inline-${type}`} className="mb-3">
+                <strong>Estado: </strong>
+                <Form.Check
+                  inline
+                  checked={estado === ""}
+                  onClick={() => setEstado("")}
+                  label="Todos"
+                  name="estado"
+                  type={type}
+                  id={`inline-${type}-1`}
+                />
+                <Form.Check
+                  inline
+                  checked={estado === "en espera"}
+                  onClick={() => setEstado("en espera")}
+                  label="en espera"
+                  name="estado"
+                  type={type}
+                  id={`inline-${type}-1`}
+                />
+                <Form.Check
+                  inline
+                  checked={estado === "canceladas"}
+                  onClick={() => setEstado("canceladas")}
+                  label="cancelados"
+                  name="estado"
+                  type={type}
+                  id={`inline-${type}-1`}
+                />
+                <Form.Check
+                  inline
+                  checked={estado === "aprobadas"}
+                  label="aprobadas"
+                  onClick={() => setEstado("aprobadas")}
+                  name="estado"
+                  type={type}
+                  id={`inline-${type}-2`}
+                />
+                <Form.Check
+                  inline
+                  checked={estado === "rechazadas"}
+                  label="rechazadas"
+                  onClick={() => setEstado("rechazadas")}
+                  name="estado"
+                  type={type}
+                  id={`inline-${type}-3`}
+                />
+              </div>
+            ))}
+          </Form>
+          <Table striped bordered hover responsive>
+            <thead>
+              <tr>
+                <th>Ambiente</th>
+                {tipoDeUsuario === "Admin" && <th>Docente</th>}
+                <th>Materia</th>
+                <th>Periodo</th>
+                <th>Fecha de Reserva</th>
+                <th>Fecha Creada</th>
+                <th>Estado</th>
+                <th>Detalle</th>
+              </tr>
+            </thead>
+            <tbody>
+              {solicitudes.map((item) => (
+                <tr>
+                  <td>{item.ambiente_nombre}</td>
+                  {tipoDeUsuario === "Admin" && <td>{item.nombreDocente}</td>}
+                  <td>{item.materia}</td>
+                  <td>
+                    {getPeriodo(item.periodo_ini_id, item.periodo_fin_id)}
+                  </td>
+                  <td>{item.fechaReserva}</td>
+                  <td>{item.fechaEnviada}</td>
+                  <td>{item.estado}</td>
+                  <td>
+                    {item.estado === "en espera" ? (
+                      <EnvelopeExclamation
+                        size={30}
+                        onClick={() => {
+                          setSolicitud(item);
+                          setShow(true);
+                        }}
+                      />
+                    ) : (
+                      <CardHeading
+                        size={30}
+                        onClick={() => {
+                          setSolicitud(item);
+                          setShow(true);
+                        }}
+                      />
+                    )}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </Table>
+          <Pagination style={{ justifyContent: "center" }}>
+            {renderPaginationItems()}
+          </Pagination>
         </Row>
       </Container>
       <Modal
@@ -288,53 +293,65 @@ const ListaDeSolicitudes = ({ titulo, tipoDeUsuario }) => {
         onHide={() => setShow(false)}
         centered
       >
-        <Row sm className="text-white RegistrarAmbiente-header">
-          <Col
-            xs="10"
-            className="d-flex justify-content-start align-items-center"
-            style={{ height: "100%" }}
-          >
-            <h4 style={{ fontWeight: "bold" }} className="">
-              Detalle de la Solicitud de Reserva
-            </h4>
-          </Col>
-          <Col
-            xs="2"
-            className="d-flex justify-content-end align-items-end"
-            style={{ padding: 0 }}
-          >
-            <div
-              onClick={() => setShow(false)}
-              className="RegistrarAmbiente-header-button-close d-flex justify-content-center align-items-center"
-            >
-              <XSquareFill size={24} />
-            </div>
-          </Col>
-        </Row>
-        <Row className="RegistrarAmbiente-body justify-content-center">
-          <h6>Nombre del Ambiente:</h6>
-          <p>{solicitud.ambiente_nombre}</p>
-          {tipoDeUsuario === "Admin" && (
-            <>
-              <h6>Nombre del Docente: </h6>
-              <p>{solicitud.nombre_docente}</p>
-            </>
-          )}
-          <h6>Periodo: </h6>
-          <p>
-            {getPeriodo(solicitud.periodo_ini_id, solicitud.periodo_fin_id)}
-          </p>
-          <h6>Materia: </h6>
-          <p>{solicitud.materia}</p>
-          <h6>Fecha Reserva:</h6>
-          <p>{solicitud.fechaReserva}</p>
-          <h6>Cantidad: </h6>
-          <p>{solicitud.cantidad}</p>
-          <h6>Grupo: </h6>
-          <p>{solicitud.grupo}</p>
-          <h6>Razon: </h6>
-          <p>{solicitud.razon}</p>
-        </Row>
+        {solicitud.estado === "en espera" ? (
+          <AtenderSolicitud
+            solicitudId={solicitud.id}
+            onClose={() => {
+              setShow(false);
+              getSolicitudes();
+            }}
+          />
+        ) : (
+          <>
+            <Row sm className="text-white ListaDeSolicitudes-header">
+              <Col
+                xs="10"
+                className="d-flex justify-content-start align-items-center"
+                style={{ height: "100%" }}
+              >
+                <h4 style={{ fontWeight: "bold" }} className="">
+                  Detalle de la Solicitud de Reserva
+                </h4>
+              </Col>
+              <Col
+                xs="2"
+                className="d-flex justify-content-end align-items-end"
+                style={{ padding: 0 }}
+              >
+                <div
+                  onClick={() => setShow(false)}
+                  className="RegistrarAmbiente-header-button-close d-flex justify-content-center align-items-center"
+                >
+                  <XSquareFill size={24} />
+                </div>
+              </Col>
+            </Row>
+            <Row className="RegistrarAmbiente-body justify-content-center">
+              <h6>Nombre del Ambiente:</h6>
+              <p>{solicitud.ambiente_nombre}</p>
+              {tipoDeUsuario === "Admin" && (
+                <>
+                  <h6>Nombre del Docente: </h6>
+                  <p>{solicitud.nombre_docente}</p>
+                </>
+              )}
+              <h6>Periodo: </h6>
+              <p>
+                {getPeriodo(solicitud.periodo_ini_id, solicitud.periodo_fin_id)}
+              </p>
+              <h6>Materia: </h6>
+              <p>{solicitud.materia}</p>
+              <h6>Fecha Reserva:</h6>
+              <p>{solicitud.fechaReserva}</p>
+              <h6>Cantidad: </h6>
+              <p>{solicitud.cantidad}</p>
+              <h6>Grupo: </h6>
+              <p>{solicitud.grupo}</p>
+              <h6>Razon: </h6>
+              <p>{solicitud.razon}</p>
+            </Row>
+          </>
+        )}
       </Modal>
     </>
   );

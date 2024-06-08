@@ -27,10 +27,13 @@ import {
 import { AlertsContext } from "../../Alert/AlertsContext";
 import "./style.css";
 import { useEffect } from "react";
-import { getAmbientes } from "../../../services/Ambiente.service";
+import {
+  getAmbientes,
+  getPeriodosReservados,
+} from "../../../services/Ambiente.service";
 import { useRef } from "react";
 
-const ModificarEstadoDelAmbientePorFecha = () => {
+const ModificarEstadoDelAmbientePorFecha = ({ onclose }) => {
   const [ambientes, setAmbientes] = useState([]);
   const [ambientesEncontradas, setAmbientesEncontradas] = useState([]);
   const [ambiente, setAmbiente] = useState({});
@@ -43,6 +46,7 @@ const ModificarEstadoDelAmbientePorFecha = () => {
   const refDropdownMenu = useRef(null);
   const refDropdownToggle = useRef(null);
   const refDropdown = useRef(null);
+  const [periodosReservados, setPeriodosReservados] = useState([]);
   const periodos = [
     { id: 1, hora: "6:45 - 8:15" },
     { id: 2, hora: "8:15 - 9:45" },
@@ -144,6 +148,11 @@ const ModificarEstadoDelAmbientePorFecha = () => {
 
   const getAmbientPorFecha = async (ambiente, fecha) => {
     const data = await modificarPerio(ambiente.id, fecha);
+    const response = await getPeriodosReservados(ambiente.id, fecha);
+    if (response) {
+      setPeriodosReservados(response.periodosReservados);
+      console.log(periodosReservados);
+    }
     if (data != null) {
       setAmbiente({
         id: ambiente.id,
@@ -226,6 +235,14 @@ const ModificarEstadoDelAmbientePorFecha = () => {
     setAmbientes(respuesta);
   };
 
+  const isReservado = (periodoId) => {
+    return (
+      periodosReservados.filter((periodoReservado) => {
+        return periodoReservado.periodos.includes(periodoId);
+      }).length > 0
+    );
+  };
+
   useEffect(() => {
     fetchAmbientes();
   }, []);
@@ -254,13 +271,14 @@ const ModificarEstadoDelAmbientePorFecha = () => {
         <Container className="ModificarEstadoDelAmbientePorFecha-header" fluid>
           <Row xs="auto" className="justify-content-md-end">
             <Col xs lg="10" style={{ alignContent: "center", padding: 0 }}>
-              <h4 style={{ color: "white", fontWeight: "bold" }}>
+              <h5 style={{ color: "white", fontWeight: "bold" }}>
                 Modificar Estado de Ambiente por fecha
-              </h4>
+              </h5>
             </Col>
             <Button
               className="ModificarEstadoDelAmbientePorFecha-header-button-close"
-              style={{ width: "58px", height: "58px" }}
+              style={{ width: "58px", height: "3rem" }}
+              onClick={onclose}
             >
               <XSquareFill style={{ width: "24px", height: "24px" }} />
             </Button>
@@ -375,12 +393,18 @@ const ModificarEstadoDelAmbientePorFecha = () => {
                 </Form.Group>
                 <Row xs="auto" className="justify-content-md-end">
                   <Stack direction="horizontal" gap={2}>
-                    <Button onClick={handleOnClickLimpiar}>Limpiar</Button>
+                    <Button
+                      className="btn ModificarEstadoDelAmbientePorFecha-button-limpiar"
+                      onClick={handleOnClickLimpiar}
+                    >
+                      Limpiar
+                    </Button>
                     {ambiente &&
                     Object.keys(ambiente).length > 0 &&
                     ambiente.periodos ? (
                       <>
                         <Button
+                          className="btn ModificarEstadoDelAmbientePorFecha-button-habilitar"
                           onClick={() =>
                             mostrarMensajeDeConfirmacion("Inhabilitar")
                           }
@@ -399,7 +423,12 @@ const ModificarEstadoDelAmbientePorFecha = () => {
                         </Button>
                       </>
                     ) : (
-                      <Button type="submit">Consultar</Button>
+                      <Button
+                        className="btn ModificarEstadoDelAmbientePorFecha-button-consultar"
+                        type="submit"
+                      >
+                        Consultar
+                      </Button>
                     )}
                   </Stack>
                 </Row>
@@ -431,7 +460,9 @@ const ModificarEstadoDelAmbientePorFecha = () => {
                                         : "black"
                                     }`,
                                     background: `${
-                                      ambiente.periodos.includes(item.id)
+                                      isReservado(item.id)
+                                        ? "ea4141"
+                                        : ambiente.periodos.includes(item.id)
                                         ? "gray"
                                         : "white"
                                     }`,
@@ -463,7 +494,9 @@ const ModificarEstadoDelAmbientePorFecha = () => {
                                         : "black"
                                     }`,
                                     background: `${
-                                      ambiente.periodos.includes(item.id)
+                                      isReservado(item.id)
+                                        ? "ea4141"
+                                        : ambiente.periodos.includes(item.id)
                                         ? "gray"
                                         : "white"
                                     }`,
@@ -495,7 +528,9 @@ const ModificarEstadoDelAmbientePorFecha = () => {
                                         : "black"
                                     }`,
                                     background: `${
-                                      ambiente.periodos.includes(item.id)
+                                      isReservado(item.id)
+                                        ? "ea4141"
+                                        : ambiente.periodos.includes(item.id)
                                         ? "gray"
                                         : "white"
                                     }`,
@@ -535,7 +570,7 @@ const ModificarEstadoDelAmbientePorFecha = () => {
                 <Row xs="auto" className="justify-content-md-end">
                   <Stack direction="horizontal" gap={2}>
                     <Button
-                      className="ModificarEstadoDelAmbientePorFecha-cancel"
+                      className="btn ModificarEstadoDelAmbientePorFecha-cancel"
                       size="sm"
                       variant="secondary"
                       onClick={() => setShowMensajeDeConfirmacion(false)}
@@ -543,6 +578,7 @@ const ModificarEstadoDelAmbientePorFecha = () => {
                       Cancelar
                     </Button>
                     <Button
+                      className="btn ModificarEstadoDelAmbientePorFecha-aceptar"
                       onClick={() => {
                         modificarPeriodos(estado);
                       }}

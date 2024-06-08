@@ -67,8 +67,14 @@ const ListaDeReservas = ({ titulo, tipoDeUsuario }) => {
 
   const getSolicitudes = useCallback(async () => {
     const id = window.sessionStorage.getItem("docente_id");
-    const data = await recuperarSolicitudesDeReservaDocente(currentPage, estado, id);
-    setSolicitudes(data.contenido.filter((item) => item.estado !== "rechazadas"));
+    const data = await recuperarSolicitudesDeReservaDocente(
+      currentPage,
+      estado,
+      id
+    );
+    setSolicitudes(
+      data.contenido.filter((item) => item.estado !== "rechazadas")
+    );
     setTotalPages(data.numeroPaginasTotal);
   }, [currentPage, estado]);
 
@@ -167,130 +173,125 @@ const ListaDeReservas = ({ titulo, tipoDeUsuario }) => {
   return (
     <>
       <Container fluid>
-        <Row>
-          <Col sm="3"></Col>
-          <Col>
-            <Row sm className="text-white ListaDeSolicitudes-header">
-              <Col
-                xs="10"
-                className="d-flex justify-content-start align-items-center"
-              >
-                <h3 style={{ fontWeight: "bold" }} className="">
-                  {titulo}
-                </h3>
-              </Col>
-              <Col
-                xs="2"
-                className="d-flex justify-content-end align-items-end"
-                style={{ padding: 0 }}
-              >
-                <OverlayTrigger
-                  overlay={<Tooltip id="hi">Actualizar lista</Tooltip>}
-                  placement="left"
-                >
-                  <div
-                    onClick={reloadSolicitudes}
-                    className="RegistrarAmbiente-header-button-close d-flex 
-                                               justify-content-center align-items-center"
-                  >
-                    <ArrowClockwise size={24} />
-                  </div>
-                </OverlayTrigger>
-              </Col>
-            </Row>
-            <Row className="ListaDeSolicitudes-body justify-content-center">
-              <Form>
-                {["radio"].map((type) => (
-                  <div key={`inline-${type}`} className="mb-3">
-                    <strong>Estado: </strong>
-                    <Form.Check
-                      inline
-                      checked={estado === ""}
-                      onClick={() => setEstado("")}
-                      label="Todos"
-                      name="estado"
-                      type={type}
-                      id={`inline-${type}-1`}
-                    />
-                    <Form.Check
-                      inline
-                      checked={estado === "en espera"}
-                      onClick={() => setEstado("en espera")}
-                      label="en espera"
-                      name="estado"
-                      type={type}
-                      id={`inline-${type}-1`}
-                    />
-                    <Form.Check
-                      inline
-                      checked={estado === "canceladas"}
-                      onClick={() => setEstado("canceladas")}
-                      label="canceladas"
-                      name="estado"
-                      type={type}
-                      id={`inline-${type}-1`}
-                    />
-                    <Form.Check
-                      inline
-                      checked={estado === "aprobadas"}
-                      label="aprobadas"
-                      onClick={() => setEstado("aprobadas")}
-                      name="estado"
-                      type={type}
-                      id={`inline-${type}-2`}
-                    />
-                  </div>
-                ))}
-              </Form>
-              <Table striped bordered hover responsive>
-                <thead>
-                  <tr>
-                    <th>Ambiente</th>
-                    {tipoDeUsuario === "Admin" && <th>Docente</th>}
-                    <th>Materia</th>
-                    <th>Periodo</th>
-                    <th>Fecha de Reserva</th>
-                    <th>Fecha Creada</th>
-                    <th>Estado</th>
-                    <th>Acciones</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {solicitudes.map((item) => (
-                    <tr key={item.id}>
-                      <td>{item.ambiente_nombre}</td>
-                      {tipoDeUsuario === "Admin" && (
-                        <td>{item.nombreDocente}</td>
-                      )}
-                      <td>{item.materia}</td>
-                      <td>{getPeriodo(item.periodo_ini_id, item.periodo_fin_id)}</td>
-                      <td>{item.fechaReserva}</td>
-                      <td>{item.fechaEnviada}</td>
-                      <td>{item.estado}</td>
-                      {(item.estado === "aprobado" || item.estado === "en espera") ? (
-                        <td>
-                          <button
-                            className="btn RegistrarAmbiente-button-register"
-                            onClick={() => {
-                              setSolicitud(item);
-                              setShow(true);
-                            }}
-                          >
-                            Cancelar
-                          </button>
-                        </td>
-                      ) : (
-                        <td></td>
-                      )}
-                    </tr>
-                  ))}
-                </tbody>
-              </Table>
-              <Pagination style={{ justifyContent: "center" }}>
-                {renderPaginationItems()}
-              </Pagination>
-            </Row>
+        <Row sm className="text-white ListaDeSolicitudes-header">
+          <Col
+            xs="10"
+            className="d-flex justify-content-start align-items-center"
+          >
+            <h5 style={{ fontWeight: "bold" }} className="">
+              {titulo}
+            </h5>
           </Col>
+          <Col
+            xs="2"
+            className="d-flex justify-content-end align-items-end"
+            style={{ padding: 0 }}
+          >
+            <OverlayTrigger
+              overlay={<Tooltip id="hi">Actualizar lista</Tooltip>}
+              placement="left"
+            >
+              <div
+                onClick={reloadSolicitudes}
+                className="RegistrarAmbiente-header-button-close d-flex 
+                                               justify-content-center align-items-center"
+              >
+                <ArrowClockwise size={24} />
+              </div>
+            </OverlayTrigger>
+          </Col>
+        </Row>
+        <Row className="ListaDeSolicitudes-body justify-content-center">
+          <Form>
+            {["radio"].map((type) => (
+              <div key={`inline-${type}`} className="mb-3">
+                <strong>Estado: </strong>
+                <Form.Check
+                  inline
+                  checked={estado === ""}
+                  onClick={() => setEstado("")}
+                  label="Todos"
+                  name="estado"
+                  type={type}
+                  id={`inline-${type}-1`}
+                />
+                <Form.Check
+                  inline
+                  checked={estado === "en espera"}
+                  onClick={() => setEstado("en espera")}
+                  label="en espera"
+                  name="estado"
+                  type={type}
+                  id={`inline-${type}-1`}
+                />
+                <Form.Check
+                  inline
+                  checked={estado === "canceladas"}
+                  onClick={() => setEstado("canceladas")}
+                  label="canceladas"
+                  name="estado"
+                  type={type}
+                  id={`inline-${type}-1`}
+                />
+                <Form.Check
+                  inline
+                  checked={estado === "aprobadas"}
+                  label="aprobadas"
+                  onClick={() => setEstado("aprobadas")}
+                  name="estado"
+                  type={type}
+                  id={`inline-${type}-2`}
+                />
+              </div>
+            ))}
+          </Form>
+          <Table striped bordered hover responsive>
+            <thead>
+              <tr>
+                <th>Ambiente</th>
+                {tipoDeUsuario === "Admin" && <th>Docente</th>}
+                <th>Materia</th>
+                <th>Periodo</th>
+                <th>Fecha de Reserva</th>
+                <th>Fecha Creada</th>
+                <th>Estado</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              {solicitudes.map((item) => (
+                <tr key={item.id}>
+                  <td>{item.ambiente_nombre}</td>
+                  {tipoDeUsuario === "Admin" && <td>{item.nombreDocente}</td>}
+                  <td>{item.materia}</td>
+                  <td>
+                    {getPeriodo(item.periodo_ini_id, item.periodo_fin_id)}
+                  </td>
+                  <td>{item.fechaReserva}</td>
+                  <td>{item.fechaEnviada}</td>
+                  <td>{item.estado}</td>
+                  {item.estado === "aprobado" || item.estado === "en espera" ? (
+                    <td>
+                      <button
+                        className="btn RegistrarAmbiente-button-register"
+                        onClick={() => {
+                          setSolicitud(item);
+                          setShow(true);
+                        }}
+                      >
+                        Cancelar
+                      </button>
+                    </td>
+                  ) : (
+                    <td></td>
+                  )}
+                </tr>
+              ))}
+            </tbody>
+          </Table>
+          <Pagination style={{ justifyContent: "center" }}>
+            {renderPaginationItems()}
+          </Pagination>
         </Row>
       </Container>
       <Modal
@@ -307,7 +308,7 @@ const ListaDeReservas = ({ titulo, tipoDeUsuario }) => {
             style={{ height: "100%" }}
           >
             <h4 style={{ fontWeight: "bold" }} className="">
-            ¿Está seguro de cancelar la reserva?
+              ¿Está seguro de cancelar la reserva?
             </h4>
           </Col>
           <Col
@@ -333,7 +334,9 @@ const ListaDeReservas = ({ titulo, tipoDeUsuario }) => {
             </>
           )}
           <h6>Periodo: </h6>
-          <p>{getPeriodo(solicitud.periodo_ini_id, solicitud.periodo_fin_id)}</p>
+          <p>
+            {getPeriodo(solicitud.periodo_ini_id, solicitud.periodo_fin_id)}
+          </p>
           <h6>Materia: </h6>
           <p>{solicitud.materia}</p>
           <h6>Fecha Reserva:</h6>
@@ -344,7 +347,8 @@ const ListaDeReservas = ({ titulo, tipoDeUsuario }) => {
           <p>{solicitud.grupo}</p>
           <h6>Razon: </h6>
           <p>{solicitud.razon}</p>
-          {(solicitud.estado === "aprobado" || solicitud.estado === "en espera") && (
+          {(solicitud.estado === "aprobado" ||
+            solicitud.estado === "en espera") && (
             <div className="d-flex justify-content-center mt-3">
               <button
                 className="btn RegistrarAmbiente-button-register"
@@ -352,7 +356,8 @@ const ListaDeReservas = ({ titulo, tipoDeUsuario }) => {
               >
                 Aceptar
               </button>
-              <div style={{ width: "10px" }}></div> {/* Espacio entre botones 
+              <div style={{ width: "10px" }}></div>{" "}
+              {/* Espacio entre botones 
               <button
                 className="btn RegistrarAmbiente-button-cancel"
                 onClick={() => setShow(false)}

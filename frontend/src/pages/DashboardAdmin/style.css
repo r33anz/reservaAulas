@@ -1,0 +1,22 @@
+.nav-link {
+    color: #003F70;
+}
+
+button.nav-link.active {
+    background-color: #003F70 !important;
+    color: white !important;
+}
+
+button.nav-link {
+    border: 1px groove #003F70 !important;
+    border-bottom: 3px solid #003F70 !important;
+}
+
+.tabs-admin {
+    margin-bottom: 0 !important;
+    border: none;
+    border-radius: 0;
+    --bs-nav-tabs-border-width: none;
+    --bs-nav-tabs-border-color: none;
+    --bs-nav-tabs-border-radius: 0.3rem;
+}

@@ -14,7 +14,7 @@ const AlertsProvider = ({ children }) => {
     return (
         <AlertsContext.Provider value={{ agregarAlert }}>
             <AlertsWrapper show={alert}>
-                {alert && <Message alert={alert} />}
+                {alert && <Message alert={alert} setAlert={setAlert} />}
             </AlertsWrapper>
             {children}
         </AlertsContext.Provider >
