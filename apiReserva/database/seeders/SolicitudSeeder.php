@@ -20,7 +20,7 @@ class SolicitudSeeder extends Seeder
             'grupo'=>1,
             'cantidad'=>148,
             'razon'=>'Examen segundo parcial',
-            'fechaReserva'=>'2024-04-25',
+            'fechaReserva'=>'2024-06-25',
             'periodo_ini_id'=>3, //AUDITORIO EDIFICIO NUEVO
             'periodo_fin_id'=>4,
             'estado'=>'en espera'
@@ -37,7 +37,7 @@ class SolicitudSeeder extends Seeder
             'cantidad'=>120,
             'grupo'=>2,
             'razon'=>'Examen segundo parcial', //AUDITORIO EDIFICIO NUEVO
-            'fechaReserva'=>'2024-04-25',
+            'fechaReserva'=>'2024-06-25',
             'periodo_ini_id'=>5,
             'periodo_fin_id'=>8,
             'estado'=>'en espera'
@@ -54,7 +54,7 @@ class SolicitudSeeder extends Seeder
             'cantidad'=>20,
             'grupo'=>1,
             'razon'=>'Examen Primer parcial', //LABORATORIO COMPUTADORAS 2
-            'fechaReserva'=>'2024-04-26',
+            'fechaReserva'=>'2024-06-26',
             'periodo_ini_id'=>1,
             'periodo_fin_id'=>2,
             'estado'=>'en espera'
@@ -71,10 +71,10 @@ class SolicitudSeeder extends Seeder
             'cantidad'=>45,
             'grupo'=>3,
             'razon'=>'Examen',   //692D 
-            'fechaReserva'=>'2024-04-23',
+            'fechaReserva'=>'2024-06-23',
             'periodo_ini_id'=>3,
             'periodo_fin_id'=>4,
-            'fechaAtendida'=>'2024-05-11',
+            'fechaAtendida'=>'2024-06-11',
             'estado'=>'aprobado',
         ]);
 
@@ -89,7 +89,7 @@ class SolicitudSeeder extends Seeder
             'cantidad'=>33,
             'grupo'=>5,
             'razon'=>'Examen',
-            'fechaReserva'=>'2024-04-23',  //655 
+            'fechaReserva'=>'2024-06-23',  //655 
             'periodo_ini_id'=>4,
             'periodo_fin_id'=>5,
             'estado'=>'en espera'
@@ -108,10 +108,10 @@ class SolicitudSeeder extends Seeder
             'cantidad' => 10,
             'grupo' => 1,
             'razon' => 'xyz',
-            'fechaReserva' => '2024-05-06',
+            'fechaReserva' => '2024-06-15',
             'periodo_ini_id'=>3,
             'periodo_fin_id'=>6,
-            'fechaAtendida'=>'2024-05-11',
+            'fechaAtendida'=>'2024-06-11',
             'estado' => 'aprobado' 
         ]);
 
@@ -126,10 +126,10 @@ class SolicitudSeeder extends Seeder
             'cantidad' => 10,
             'grupo' => 1,
             'razon' => 'xyz',
-            'fechaReserva' => '2024-05-11',
+            'fechaReserva' => '2024-06-11',
             'periodo_ini_id'=>3,
             'periodo_fin_id'=>3,
-            'fechaAtendida'=>'2024-05-12',
+            'fechaAtendida'=>'2024-06-9',
             'estado' => 'aprobado' 
         ]);
 
@@ -144,10 +144,10 @@ class SolicitudSeeder extends Seeder
             'cantidad' => 10,
             'grupo' => 1,
             'razon' => 'xyz',
-            'fechaReserva' => '2024-05-20',
+            'fechaReserva' => '2024-06-20',
             'periodo_ini_id'=>7,
             'periodo_fin_id'=>8,
-            'fechaAtendida'=>'2024-05-13',
+            'fechaAtendida'=>'2024-06-13',
             'estado' => 'aprobado' 
         ]);
 
@@ -164,10 +164,10 @@ class SolicitudSeeder extends Seeder
             'cantidad' => 10,
             'grupo' => 1,
             'razon' => 'xyz',
-            'fechaReserva' => '2024-05-10',
+            'fechaReserva' => '2024-06-20',
             'periodo_ini_id'=>3,
             'periodo_fin_id'=>4,
-            'fechaAtendida'=>'2024-05-11',
+            'fechaAtendida'=>'2024-06-09',
             'estado' => 'rechazado', 
             'razonRechazo'=>'abc'
         ]);
@@ -183,10 +183,10 @@ class SolicitudSeeder extends Seeder
             'cantidad' => 10,
             'grupo' => 1,
             'razon' => 'xyz',
-            'fechaReserva' => '2024-06-01',
+            'fechaReserva' => '2024-06-18',
             'periodo_ini_id'=>1,
             'periodo_fin_id'=>1,
-            'fechaAtendida'=>'2024-05-11',
+            'fechaAtendida'=>'2024-06-11',
             'estado' => 'rechazado', 
             'razonRechazo'=>'abc' 
         ]);
@@ -202,10 +202,10 @@ class SolicitudSeeder extends Seeder
             'cantidad' => 10,
             'grupo' => 1,
             'razon' => 'xyz',
-            'fechaReserva' => '2024-05-06',
+            'fechaReserva' => '2024-06-06',
             'periodo_ini_id'=>3,
             'periodo_fin_id'=>4,
-            'fechaAtendida'=>'2024-05-11',
+            'fechaAtendida'=>'2024-06-11',
             'estado' => 'rechazado' , 
             'razonRechazo'=>'abc'
         ]);
@@ -221,10 +221,10 @@ class SolicitudSeeder extends Seeder
             'cantidad' => 10,
             'grupo' => 1,
             'razon' => 'xyz',
-            'fechaReserva' => '2024-05-07',
+            'fechaReserva' => '2024-06-07',
             'periodo_ini_id'=>3,
             'periodo_fin_id'=>4,
-            'fechaAtendida'=>'2024-05-11',
+            'fechaAtendida'=>'2024-06-11',
             'estado' => 'rechazado', 
             'razonRechazo'=>'abc' 
         ]);
@@ -241,7 +241,7 @@ class SolicitudSeeder extends Seeder
             'grupo'=>1,
             'cantidad'=>14,
             'razon'=>'XYZ',
-            'fechaReserva'=>'2024-05-25',
+            'fechaReserva'=>'2024-06-25',
             'periodo_ini_id'=>3, 
             'periodo_fin_id'=>3,
             'estado'=>'en espera'
@@ -258,7 +258,7 @@ class SolicitudSeeder extends Seeder
             'grupo'=>1,
             'cantidad'=>14,
             'razon'=>'XYZ',
-            'fechaReserva'=>'2024-05-15',
+            'fechaReserva'=>'2024-06-15',
             'periodo_ini_id'=>4, 
             'periodo_fin_id'=>7,
             'estado'=>'en espera'
@@ -276,7 +276,7 @@ class SolicitudSeeder extends Seeder
             'grupo'=>1,
             'cantidad'=>14,
             'razon'=>'XYZ',
-            'fechaReserva'=>'2024-04-29',
+            'fechaReserva'=>'2024-06-29',
             'periodo_ini_id'=>8, 
             'periodo_fin_id'=>8,
             'estado'=>'en espera'

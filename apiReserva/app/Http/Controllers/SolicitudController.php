@@ -226,21 +226,35 @@ class SolicitudController extends Controller
     {
         $estado = $request->input('estado');
         $pagina = $request->input('pagina', 1);
-
-        if ($estado === 'aprobadas') {
-            $solicitudes = Solicitud::where('estado', 'aprobado')->paginate(3, ['*'], 'pagina', $pagina);
-        } elseif ($estado === 'rechazadas') {
-            $solicitudes = Solicitud::where('estado', 'rechazado')->paginate(3, ['*'], 'pagina', $pagina);
+        $fechaActual = now();
+        //$query = Solicitud::orderBy('created_at', 'desc');
+        if ($estado === 'aprobadas') { 
+            $query = Solicitud::orderBy('updated_at', 'asc');
+            $query->where('estado', 'aprobado');
+        } elseif ($estado === 'rechazadas') {    
+            $query = Solicitud::orderBy('updated_at', 'asc'); 
+            $query->where('estado', 'rechazado');
         } elseif ($estado === 'en espera') {
-            $solicitudes = Solicitud::where('estado', 'en espera')->paginate(3, ['*'], 'pagina', $pagina);
-        } elseif ($estado === 'canceladas') {
-            $solicitudes = Solicitud::where('estado', 'cancelado')->paginate(3, ['*'], 'pagina', $pagina);
+            $query = Solicitud::orderBy('updated_at', 'desc');       
+            $query->where('estado', 'en espera');
+        } elseif ($estado === 'canceladas') {    
+            $query = Solicitud::orderBy('updated_at', 'asc');    
+            $query->where('estado', 'cancelado');
         } elseif ($estado === 'inhabilitada') {
-            $solicitudes = Solicitud::where('estado', 'inhabilitada')->paginate(3, ['*'], 'pagina', $pagina);
-        } else {
-            $solicitudes = Solicitud::paginate(3, ['*'], 'pagina', $pagina);
+            $query = Solicitud::orderBy('updated_at', 'asc');
+            $query->where('estado', 'inhabilitada');
+        }elseif ($estado === 'prioridad') {
+            $query = Solicitud::where('estado', 'en espera')
+                  ->orderByRaw("
+                      CASE
+                          WHEN fechaReserva < ? THEN 0
+                          ELSE 1
+                      END, ABS(DATEDIFF(fechaReserva, ?))
+                  ", [$fechaActual, $fechaActual]);
         }
 
+
+        $solicitudes = $query->paginate(3, ['*'], 'pagina', $pagina);
         $datosSolicitudes = [];
 
         foreach ($solicitudes as $solicitud) {

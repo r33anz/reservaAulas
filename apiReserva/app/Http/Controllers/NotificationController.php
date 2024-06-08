@@ -7,36 +7,42 @@ use Illuminate\Http\Request;
 
 class NotificationController extends Controller
 {
-    public function marcarNotificacionLeida(Request $request){
+    public function marcarNotificacionLeida(Request $request){ // se hara de forma individual
         $idUsuario = $request->input('idUsuario');
-        $notificacionesId = $request->input('notificacionesID'); //[]
+        $notificacionId = $request->input('notificacioneID');
 
-        $user = User::find($idUsuario);
-        foreach($notificacionesId as $notificacion){
-            $noti = $user->notifications()->find($notificacion);
-            if($noti){
-                $noti->markAsRead();
-            }
+        $user = User::find($idUsuario);    
+        $noti = $user->notifications()->find($notificacionId);
+        if($noti){
+            $noti->markAsRead();
         }
-
-        return response()->json([
-            'message' => 'Notificaciones marcadas como leídas'
-        ]);
     }
-
-    public function recuperarNotificacionesNoLeidas($idUsuario){
-        $user = User::find($idUsuario);
-        $notificacionesNoLeidas = $user->unreadNotifications;
-    
-        return response()->json($notificacionesNoLeidas);
-    }
-
 
     public function recuperarNotificaciones($idUsuario){
         $user = User::find($idUsuario);
-        $notificaciones = $user->notifications;
-    
+        if (!$user) {
+            return response()->json(['error' => 'Usuario no encontrado'], 404);
+        }
+
+        $notificaciones = $user->notifications()->orderBy('created_at', 'desc')->get()->map(function($notificacion) {
+            return [
+                'id' => $notificacion->id,
+                'type' => $notificacion->type,
+                'data' => $notificacion->data,
+                'read_at' => $notificacion->read_at,
+            ];
+        });
+
         return response()->json($notificaciones);
+    }
+
+    public function notificacionIndividual(Request $request){
+        $id = $request->input('id');
+        $mensaje = $request->input('mensaje');
+    }
+
+    public function broadcast(Request $request){
+        $mensaje = $request->input('mensaje');
     }
 
 }

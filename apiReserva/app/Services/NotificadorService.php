@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\DB;
 use App\Models\Periodo;
 use App\Models\User;
 
-
+use App\Notifications\SolicitudR;
 use App\Notifications\Aceptar;
 use App\Notifications\Rechazar;
 use App\Notifications\Inhabilitar;
@@ -85,7 +85,7 @@ class NotificadorService
         $fin = Periodo::find($periodoIdFin);
 
         $user = User::find($solicitud->docente_id);
-        $user->notify(new Solicitud($nombreAmbiente, $solicitud->fechaReserva, $ini->horainicial, $fin->horafinal));
+        $user->notify(new SolicitudR($nombreAmbiente,$solicitud->fechaReserva,$ini->horainicial,$fin->horafinal));
     }
 
 }
