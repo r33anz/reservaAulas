@@ -20,9 +20,9 @@ const Home = ({ setShowCalendar, showCalendar }) => {
   const refModalTitleNotification = useRef(null);
   const refModalCloseNotification = useRef(null);
   const refModalBodyNotification = useRef(null);
+  const id = window.sessionStorage.getItem("docente_id");
 
   const fetchNotifications = async () => {
-    const id = window.sessionStorage.getItem("docente_id");
     const response = await getNotifications(id);
     console.log(response);
     setNotifications(response);
@@ -60,7 +60,9 @@ const Home = ({ setShowCalendar, showCalendar }) => {
   ]);
 
   useEffect(() => {
-    fetchNotifications();
+    if (id !== null) {
+      fetchNotifications();
+    }
   }, []);
 
   return (
