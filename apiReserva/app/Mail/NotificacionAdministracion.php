@@ -11,23 +11,19 @@ class NotificacionAdministracion extends Mailable
 {
     use Queueable, SerializesModels;
 
-    /**
-     * Create a new message instance.
-     *
-     * @return void
-     */
-    public function __construct()
+
+    
+    protected $mensaje;
+    public function __construct($mensaje)
     {
-        //
+        $this->mensaje = $mensaje;   
     }
 
-    /**
-     * Build the message.
-     *
-     * @return $this
-     */
+    
     public function build()
     {
-        return $this->view('view.name');
+        return $this->from('gestoradeambientesumss@gmail.com', 'Administracion')
+                    ->text('mails.base')
+                    ->with('texto', $this->mensaje);
     }
 }
