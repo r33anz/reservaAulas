@@ -1,0 +1,124 @@
+.App {
+  text-align: s;
+}
+
+.ico {
+  margin-left: 1000px;
+
+}
+
+.Calendar3 {
+  margin: 20px;
+}
+
+
+.selected {
+  background-color: #f2f2f2;
+  /* Color de fondo gris para la opción resaltada */
+}
+
+.buscarcontainer {
+  
+  background-color: #D9D9D9;
+  display: flex;
+  flex-direction: column;
+  color: #000000;
+}
+
+.titulo {
+  padding-left: 20px;
+  padding-bottom: 5px;
+  font-size: 35px;
+  color: #ffffff;
+  background-color: #003F70;
+
+}
+
+.optionscontainer {
+  font-size: 20px;
+  margin-left: 290px;
+  margin-right: 110px;
+  max-height: 100px;
+  /* Altura máxima para mostrar hasta 3 opciones */
+  overflow-y: auto;
+  /* Habilitar el desplazamiento vertical cuando se supera la altura máxima */
+  z-index: 1;
+}
+
+
+
+.option1:hover {
+  background-color: rgb(246, 243, 243);
+  /* Fondo de color más intenso al pasar el cursor sobre el elemento */
+}
+
+.search-field {
+
+  padding-left: 20px;
+  font-size: 26px;
+
+}
+#buscar-input:focus{
+  color: var(--bs-body-color);
+  background-color: var(--bs-body-bg);
+  border-color: #86b7fe;
+  outline: 0;
+  box-shadow: 0 0 0 .25rem rgba(13, 110, 253, .25);
+}
+#buscar-input {
+  width: 60%;
+  margin-left: 50px;
+  border: var(--bs-border-width) solid var(--bs-border-color);
+    border-radius: var(--bs-border-radius);
+  font-size: 16px;
+  transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
+  padding: .375rem .75rem;
+}
+
+
+.fecha {
+  padding-top: 20px;
+  padding-left: 30px;
+  font-size: 16px;
+}
+
+#fecha-input {
+  margin-left: 50px;
+  border-radius: 5px;
+  font-size: 16px;
+}
+
+.buttons-container {
+  margin-top: 30px;
+  padding-left: 400px;
+}
+
+.ambientedetails{
+  height: 27rem;
+    overflow-y: auto;
+    max-height: 39rem;
+    width: 100%;
+    display: flex;
+    padding: 0;
+    margin-left: 0;
+}
+.datos1 {
+  /* margin-left: 1rem; */
+  width: 12rem;
+  /* height: 11.5rem; */
+  max-height: 17rem;
+  padding-top: 0.5rem;
+  margin-bottom: 1rem;
+  background-color: #f9f9f9;
+  padding-left: 1rem;
+  /* padding-right: 75px; */
+  border-radius: 8px;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+}
+
+
+
+.datos p {
+  /* Aplicar estilo de cursiva */
+  font-style: italic;
+}

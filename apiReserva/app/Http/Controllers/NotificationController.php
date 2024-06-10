@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\NotificationCreated;
 use App\Models\User;
 use Illuminate\Http\Request;
-
+use App\Events\TeacherNotification;
+use App\Events\BroadcastNotification;
 class NotificationController extends Controller
 {
     public function marcarNotificacionLeida(Request $request){ // se hara de forma individual
@@ -36,6 +38,19 @@ class NotificationController extends Controller
         return response()->json($notificaciones);
     }
 
+
+
+
+
+    /*public function sendNotification(Request $request)
+    {
+        $message = $request->input('message');
+        
+        event(new NotificationCreated($message));
+        
+        return response()->json(['status' => 'Notification sent!']);
+    }*/
+
     public function notificacionIndividual(Request $request){
         $id = $request->input('id');
         $mensaje = $request->input('mensaje');
@@ -43,6 +58,25 @@ class NotificationController extends Controller
 
     public function broadcast(Request $request){
         $mensaje = $request->input('mensaje');
+    }
+
+    public function sendNotification(Request $request)
+    {
+        $teacherId = $request->input('teacher_id');
+        $message = $request->input('message');
+        
+        event(new TeacherNotification($teacherId, $message));
+        
+        return response()->json(['status' => 'Notification sent!']);
+    }
+
+    public function sendBroadcastNotification(Request $request)
+    {
+        $message = $request->input('message');
+
+        event(new BroadcastNotification($message));
+
+        return response()->json(['status' => 'Broadcast notification sent!']);
     }
 
 }

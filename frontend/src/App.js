@@ -10,6 +10,8 @@ import {
 import NotFound from "./pages/NotFound";
 import DashboardDocente from "./pages/DashboardDocente";
 import DashboardAdmin from "./pages/DashboardAdmin";
+import Prueba from "./components/pruebaDocente/PruebaD"
+import PruebaAdmin from "./components/pruebaAdmin/PruebaA"
 function App() {
   const [showCalendar, setShowCalendar] = useState(false);
 
@@ -22,6 +24,9 @@ function App() {
       }>
         <Route exact path="/docente/:id" element={<DashboardDocente showCalendar={showCalendar} />} />
         <Route exact path="/admin" element={<DashboardAdmin showCalendar={showCalendar} />} />
+        <Route exact path="/pruebadocente" element= {<Prueba/>}/>
+        <Route exact path="/pruebaadmin" element= {<PruebaAdmin/>}/>
+
       </Route>
       <Route path="*" element={<NotFound />} />
     </Routes >

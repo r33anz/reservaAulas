@@ -71,7 +71,9 @@ Route::put('/inhabilitarReserva', [ReservaController::class, 'inhabilitarReserva
 
 
 //notificaciones
-Route::post('/marcarNotifiacionLeida',[NotificationController::class,'marcarNotificacionLeida']);
-Route::get('/notificaciones/{idUsuario}',[NotificationController::class,'recuperarNotificaciones']);
-Route::post('/notificarIndividualmente',[NotificationController::class,'notificacionIndividual']);
-Route::post('/notificacionBroadcast',[NotificationController::class,'broadcast']);
+Route::post('/marcarNotifiacionesLeidas',[NotificationController::class,'marcarNotificacionLeida']);
+Route::get('/noLeidas/{idUsuario}',[NotificationController::class,'recuperarNotificacionesNoLeidas']);
+Route::get('/todasNotificaciones/{idUsuario}',[NotificationController::class,'recuperarNotificaciones']);
+Route::post('/prueba', [NotificationController::class,'sendNotification']);
+Route::post('/send-notification', [NotificationController::class, 'sendNotification']);
+Route::post('/send-broadcast-notification', [NotificationController::class, 'sendBroadcastNotification']);
