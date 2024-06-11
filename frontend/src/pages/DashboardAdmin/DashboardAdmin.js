@@ -89,7 +89,7 @@ const DashboardAdmin = ({ showCalendar }) => {
                       <h5 style={{ fontWeight: "bold" }}>Registrar Ambiente</h5>
                     </Button>
                     <div>
-                      <h5 style={{ fontWeight: "bold" }}>
+                      <h5>
                         BUSQUEDA POR:{" "}
                       </h5>
                       <Tabs
