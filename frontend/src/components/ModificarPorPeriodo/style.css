@@ -52,7 +52,9 @@
   font-size: 15px;
   width: 200px;
 }
-
+.periodos-reservado{
+  background-color: red;
+}
 .periodos-inhabilitados {
   background-color: #a4a6a6;
 }

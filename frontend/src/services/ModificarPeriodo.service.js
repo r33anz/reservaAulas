@@ -53,3 +53,28 @@ export const habilita = (idAmbiente, idPeriodos, fecha) => {
             return null; // Manejo del error: retorna null si hay un error en la búsqueda
         });
 }
+export const getPeriodosReservados = (ambienteId, fecha) => {
+    return axios
+      .get(`${apiUrl}/periodosReservados/${fecha}/${ambienteId}`)
+      .then(function (response) {
+        return response.data;
+      })
+      .catch(function (error) {
+        console.log(error);
+        return null;
+      });
+  };
+
+  export const inhabilitarReserva = (ids) => {
+    return axios
+      .put(`${apiUrl}/inhabilitarReserva/`,{idSolicitudes:ids})
+      .then(function (response) {
+        console.log(response);
+        return response.data;
+      })
+      .catch(function (error) {
+        
+        console.log(error);
+        return null;
+      });
+  };
