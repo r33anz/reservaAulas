@@ -253,7 +253,7 @@ const AtenderSolicitud = ({ solicitudId, onClose }) => {
             >
               {Object.getOwnPropertyNames(solicitud).length > 0 &&
               mostrarMensajeDeVerificacion !== null
-                ? mostrarMensajeDeVerificacion.valido
+                ? mostrarMensajeDeVerificacion.alerta === "exito"
                   ? "Ambiente disponible"
                   : "Ambiente no disponible"
                 : ""}
@@ -277,7 +277,7 @@ const AtenderSolicitud = ({ solicitudId, onClose }) => {
                   >
                     Rechazar
                   </Button>
-                  {mostrarMensajeDeVerificacion.valido && (
+                  {mostrarMensajeDeVerificacion.alerta === "exito" && (
                     <Button
                       size="sm"
                       className="btn AtenderSolicitud-button-aceptar"
