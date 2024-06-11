@@ -109,6 +109,7 @@ const AtenderSolicitud = ({ solicitudId, onClose }) => {
         severidad: "success",
         mensaje: "Solicitud rechazada enviada.",
       });
+      setLoading(false);
       setShow(false);
       onClose();
       setEsSolicitudAtentida(true);
@@ -125,12 +126,15 @@ const AtenderSolicitud = ({ solicitudId, onClose }) => {
     setLoading(true);
     let response = await aceptarSolicitud(solicitudId);
     if (response !== null) {
+      setLoading(false);
+      setShow(false);
+      onClose();
       agregarAlert({
         icon: <CheckCircleFill />,
         severidad: "success",
         mensaje: response.mensaje,
       });
-      setShow(false);
+
       setEsSolicitudAtentida(true);
     } else {
       agregarAlert({
@@ -285,7 +289,14 @@ const AtenderSolicitud = ({ solicitudId, onClose }) => {
                       className="btn AtenderSolicitud-button-aceptar"
                       onClick={onClickAceptarSolicitud}
                     >
-                      Aceptar
+                      {loading ? (
+                        <>
+                          <Spinner animation="grow" size="sm" />
+                          Enviando...
+                        </>
+                      ) : (
+                        "Aceptar"
+                      )}
                     </Button>
                   )}
                 </>
