@@ -244,17 +244,19 @@ const AtenderSolicitud = ({ solicitudId, onClose }) => {
           <Row
             xs="auto"
             sm="auto"
-            style={{ paddingTop: "1rem" }}
+            style={{ padding: 0, paddingTop: "0.5rem" }}
             className="justify-content-end"
           >
             <div
-              style={{ width: "60%", padding: 0 }}
+              style={{ width: "60%" }}
               className="justify-content-start text-left"
             >
               {Object.getOwnPropertyNames(solicitud).length > 0 &&
               mostrarMensajeDeVerificacion !== null
                 ? mostrarMensajeDeVerificacion.alerta === "exito"
                   ? "Ambiente disponible"
+                  : mostrarMensajeDeVerificacion.alerta === "advertencia"
+                  ? mostrarMensajeDeVerificacion.mensaje
                   : "Ambiente no disponible"
                 : ""}
             </div>
