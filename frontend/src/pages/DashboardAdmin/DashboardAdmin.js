@@ -89,22 +89,31 @@ const DashboardAdmin = ({ showCalendar }) => {
                       <h5 style={{ fontWeight: "bold" }}>Registrar Ambiente</h5>
                     </Button>
                     <div>
+                      <h5 style={{ fontWeight: "bold" }}>
+                        BUSQUEDA POR:{" "}
+                      </h5>
                       <Tabs
                         defaultActiveKey="busqueda-por-nombre"
                         id="uncontrolled-tab-example"
                         className="mb-3 tabs-admin"
                       >
                         <Tab
-                          className="tab-item"
                           eventKey="busqueda-por-nombre"
-                          title="Busqueda por nombre"
+                          title={
+                            <h5 style={{ fontWeight: "bold", margin: 0 }}>
+                              Nombre
+                            </h5>
+                          }
                         >
                           <Buscar />
                         </Tab>
                         <Tab
-                          className="tab-item"
                           eventKey="buqueda-por-cantidad"
-                          title="Busqueda por cantidad"
+                          title={
+                            <h5 style={{ fontWeight: "bold", margin: 0 }}>
+                              Cantidad
+                            </h5>
+                          }
                         >
                           <BuscarCantidad />
                         </Tab>

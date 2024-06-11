@@ -58,11 +58,9 @@ const DashboardDocente = ({ showCalendar }) => {
                       </h5>
                     </Button>
                     <div>
-                      {/* <Row className="text-center"> */}
-                        <Col className="text-center align-middle" style={{ background: "#003F70", color: "white" }}>
-                          Busqueda por
-                        </Col>
-                      {/* </Row> */}
+                      <h5 style={{ fontWeight: "bold" }}>
+                        BUSQUEDA POR:{" "}
+                      </h5>
                       <Tabs
                         defaultActiveKey="busqueda-por-nombre"
                         id="uncontrolled-tab-example"
@@ -70,13 +68,21 @@ const DashboardDocente = ({ showCalendar }) => {
                       >
                         <Tab
                           eventKey="busqueda-por-nombre"
-                          title="Nombre"
+                          title={
+                            <h5 style={{ fontWeight: "bold", margin: 0 }}>
+                              Nombre
+                            </h5>
+                          }
                         >
                           <Buscar />
                         </Tab>
                         <Tab
                           eventKey="buqueda-por-cantidad"
-                          title="Cantidad"
+                          title={
+                            <h5 style={{ fontWeight: "bold", margin: 0 }}>
+                              Cantidad
+                            </h5>
+                          }
                         >
                           <BuscarCantidad />
                         </Tab>
