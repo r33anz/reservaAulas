@@ -41,7 +41,6 @@ class SolicitudController extends Controller
                 'reservas' => $solicitudesReserva,
             ];
         }
-
         return response()->json(['listaFechas' => $listaFechas]);
     }
 
@@ -91,17 +90,15 @@ class SolicitudController extends Controller
         ]);
 
         $ultimoIdSolicitud = $solicitud->latest()->value('id');
-
+        
         DB::table('ambiente_solicitud')->insert([
             'ambiente_id' => $idAmbiente,
             'solicitud_id' => $ultimoIdSolicitud,
         ]);
-
-
-        // notificar nuevo registro de solicitud
-        //CHECK
+        // notificar nuevo registro de solicitud al docente
         $this->notificadorService->solicitudRealizada($ultimoIdSolicitud);
-        //
+        //avisar al administrador la creacion de una nueva solicitud
+        event(new NotificacionUsuario(0,'Nueva solicitud realizada.'));
         return response()->json([
             'mensaje' => 'Resgistro existoso',
         ]);
@@ -123,12 +120,11 @@ class SolicitudController extends Controller
         $estado = 'en espera';
         $idAmbiente = $request->input('ambiente');
         $periodos = $request->input('periodos');
-        // verificar si el ambiente es valido
 
         if (count($periodos) === 1) {
             $periodoInicial = $periodos[0];
             $periodoFinal = $periodos[0];
-        } else { // Si hay más de un periodo, determina el periodo inicial y final
+        } else { 
             $periodoInicial = $periodos[0];
             $periodoFinal = $periodos[count($periodos) - 1];
         }
@@ -151,17 +147,14 @@ class SolicitudController extends Controller
             'ambiente_id' => $idAmbiente,
             'solicitud_id' => $ultimoIdSolicitud,
         ]);
-
-
-        // notificar nuevo registro de solicitud
-        //CHECK
+        // notificar nuevo registro de solicitud al docente
         $this->notificadorService->solicitudRealizada($ultimoIdSolicitud);
-        //
+        //avisar al administrador la creacion de una nueva solicitud
+        event(new NotificacionUsuario(0,'Nueva solicitud realizada.'));
         return response()->json([
             'mensaje' => 'Resgistro existoso',
         ]);
     }
-
 
     // FINISH T
     public function informacionSolicitud(Request $request)
@@ -174,11 +167,9 @@ class SolicitudController extends Controller
         }
         $idAmbiente = DB::table('ambiente_solicitud')->where('solicitud_id', $id)->value('ambiente_id');
         $ambiente = Ambiente::where('id', $idAmbiente)->first();
-
         if (!$ambiente) {
             return response()->json(['mensaje' => 'No se encontró información del ambiente asociado a la solicitud'], 404);
         }
-
 
         $nombreDocente = Docente::where('id', $solicitud->docente_id)
             ->value('nombre');
@@ -220,7 +211,6 @@ class SolicitudController extends Controller
         ]);
     }
 
-
     //FINISH v2
     public function verListas(Request $request)
     {
@@ -252,7 +242,7 @@ class SolicitudController extends Controller
                       END, ABS(DATEDIFF(fechaReserva, ?))
                   ", [$fechaActual, $fechaActual]);
         }else{
-            $query = Solicitud::orderBy('created_at', 'desc');
+            $query = Solicitud::orderBy('updated_at', 'desc');
         }
 
 
@@ -315,7 +305,7 @@ class SolicitudController extends Controller
         //disparar notificacion
         $this->notificadorService->notificarAceptacion($id);
         //disparar evento
-        event(new NotificacionUsuario($solicitud->docente_id));
+        event(new NotificacionUsuario($solicitud->docente_id,'Nueva notificacion.'));
         return response()->json(['mensaje' => 'Solicitud atendida correctamente']);
     }
 
@@ -338,7 +328,7 @@ class SolicitudController extends Controller
         //disparar notificacion
         $this->notificadorService->notificarRechazo($id);
         //disparar evento
-        event(new NotificacionUsuario($solicitud->docente_id));
+        event(new NotificacionUsuario($solicitud->docente_id,'Nueva notificacion.'));
         return response()->json(['mensaje' => 'Solicitud rechazada correctamente']);
     }
 }

@@ -15,6 +15,7 @@ use App\Http\Controllers\InhabilitadoController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\SolicitudController;
 use App\Http\Controllers\ValidadorController;
+use App\Http\Controllers\ReporteController;
 ///Docente
 Route::get('/docentes/{id}', [DocenteController::class, 'getMaterias']);
 Route::get('/listaDocentes', [DocenteController::class, 'getAllDocenteNames']);
@@ -75,3 +76,6 @@ Route::post('/marcarNotifiacionLeida',[NotificationController::class,'marcarNoti
 Route::get('/notificaciones/{idUsuario}',[NotificationController::class,'recuperarNotificaciones']);
 Route::post('/notificarIndividualmente',[NotificationController::class,'notificacionIndividual']);
 Route::post('/notificacionBroadcast',[NotificationController::class,'broadcast']);
+
+//reportes
+Route::get('/generarReporte', [ReporteController::class, 'generarReporte']);
