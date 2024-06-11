@@ -46,7 +46,7 @@ class NotificationController extends Controller
         
         $user = User::find($id);
         $user->notify(new Individual($mensaje));
-        event(new NotificacionUsuario($id));
+        event(new NotificacionUsuario($id,'Nueva notificacion.'));
         return response()->json([
             'mensaje' => 'Mensaje mandado exitosamente'
         ]);

@@ -10,14 +10,16 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class NotificacionUsuario
+class NotificacionUsuario implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
     protected $idUsuario;
-    public function __construct($idUsuario)
+    protected $mensaje;
+    public function __construct($idUsuario,$mensaje)
     {
         $this->idUsuario = $idUsuario;
+        $this->mensaje = $mensaje;
     }
 
     public function broadcastOn()
@@ -31,57 +33,6 @@ class NotificacionUsuario
 
     public function broadcastWith()
     {
-        return ['message' => 'Nueva Notificacion'];
+        return ['message' => $this->mensaje];
     }
 }
-////
-
-/* Docente
-const userID = sessionStorage.getItem('id');
-
-    useEffect(() => {
-        if (userID) {
-            console.log(`Subscribing to channel: usuario.${userID}`);
-                const userChannel = echo.channel(`usuario.${userID}`);
-                userChannel.listen('.NotificacionUsuario', (e) => {
-                    console.log(`Event received: ${e.message}`);
-                });
-
-                const broadcastChannel = echo.channel('broadcast');
-                broadcastChannel.listen('.BroadcastNotification', (e) => {
-                    console.log(`Broadcast event received: ${e.message}`);
-                });
-
-            return () => {
-                userChannel.stopListening('.NotificacionUsuario');
-                echo.leaveChannel(`usuario.${userID}`);
-
-                broadcastChannel.stopListening('.BroadcastNotification');
-                echo.leaveChannel('broadcast');
-            };
-        }
-    }, [userID]);
-*/
-
-/* Admin
-const userID = sessionStorage.getItem('id');
-useEffect(() => {
-        if (userID) {
-            console.log(`Subscribing to channel: usuario.${userID}`);
-                const userChannel = echo.channel(`usuario.${userID}`);
-                userChannel.listen('.NotificacionUsuario', (e) => {
-                    console.log(`Event received: ${e.message}`);
-                });
-
-            return () => {
-                userChannel.stopListening('.NotificacionUsuario');
-                echo.leaveChannel(`usuario.${userID}`);
-
-            };
-        }
-    }, [userID]);
-*/
-
-/* echo 
-
-*/

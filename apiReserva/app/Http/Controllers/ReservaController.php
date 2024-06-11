@@ -91,7 +91,7 @@ class ReservaController extends Controller
         }
         $solicitud->estado = 'cancelado';
         $solicitud->save();
-
+        event(new NotificacionUsuario(0,'Reserva cancelada.'));
         return response()->json(['message' => 'Reserva cancelada correctamente'], 200);
     }
 
@@ -137,8 +137,6 @@ class ReservaController extends Controller
 
             // Notificar sobre la inhabilitación
             $this->notificadorService->notificarInhabilitacion($idSolicitud);
-
-            
         }
 
         return response()->json(['message' => 'Solicitudes inhabilitadas y notificaciones enviadas'], 200);
