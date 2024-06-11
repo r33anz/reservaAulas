@@ -203,6 +203,25 @@ const SolicitarReserva = ({ onClose }) => {
       console.log(periodoIDs);
       postReserva(values)
         .then((response) => {
+          console.log(response[0]);
+          if(response[0].alerta === "advertencia"){
+            
+            agregarAlert({
+              icon: <ExclamationCircleFill />,
+              severidad: "danger",
+              mensaje: response[0].mensaje,
+            });
+          }else if(response[0].alerta === "alerta"){
+            console.log("response[0]");
+            agregarAlert({
+              
+              icon: <ExclamationCircleFill />,
+              severidad: "warning",
+              mensaje: response[0].mensaje,
+            });
+          }else if (response[0].alerta === "success"){
+
+          
           agregarAlert({
             icon: <CheckCircleFill />,
             severidad: "success",
@@ -211,8 +230,10 @@ const SolicitarReserva = ({ onClose }) => {
           formik.resetForm();
           setCapacidadDelAmbienteSeleccionado(null);
           setStep(1);
+        }
         })
         .catch((error) => {
+          console.log("wwwwwwww");
           agregarAlert({
             icon: <ExclamationCircleFill />,
             severidad: "danger",
