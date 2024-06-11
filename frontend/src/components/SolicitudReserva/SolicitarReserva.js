@@ -3,6 +3,7 @@ import {
   getBloques,
   getGruposPorBloque,
   postReserva,
+  postReserva2,
   getDocente,
   recuperarAmbientePorID,
 } from "../../services/SolicitarReserva.service";
@@ -10,16 +11,19 @@ import { buscarAmbientePorNombre } from "../../services/Busqueda.service";
 import {
   Container,
   Row,
+  Modal,
   Col,
   Form,
   Button,
   Stack,
   Dropdown,
   FormControl,
+  Alert,
 } from "react-bootstrap";
 import {
   CheckCircleFill,
   ExclamationCircleFill,
+  QuestionCircleFill,
   XSquareFill,
 } from "react-bootstrap-icons";
 import { useFormik } from "formik";
@@ -74,6 +78,9 @@ const SolicitarReserva = ({ onClose }) => {
   ]);
   const [periodosFin, setPeriodosFin] = useState(periodos1);
   const [step, setStep] = useState(1); // Nuevo estado para manejar los pasos del formulario
+  const [estado, setEstado] = useState("");
+  const [showMensajeDeConfirmacion, setShowMensajeDeConfirmacion] =
+    useState(false);
 
   // Función para buscar los ambientes que coinciden con el nombre
   const buscarAmbiente = async (event) => {
@@ -202,44 +209,47 @@ const SolicitarReserva = ({ onClose }) => {
       values.idDocente = id;
       console.log(periodoIDs);
       postReserva(values)
-        .then((response) => {
-          console.log(response[0]);
-          if(response[0].alerta === "advertencia"){
-            
-            agregarAlert({
-              icon: <ExclamationCircleFill />,
-              severidad: "danger",
-              mensaje: response[0].mensaje,
-            });
-          }else if(response[0].alerta === "alerta"){
-            console.log("response[0]");
-            agregarAlert({
-              
-              icon: <ExclamationCircleFill />,
-              severidad: "warning",
-              mensaje: response[0].mensaje,
-            });
-          }else if (response[0].alerta === "success"){
+  .then((response) => {
 
-          
-          agregarAlert({
-            icon: <CheckCircleFill />,
-            severidad: "success",
-            mensaje: "Se realizo la solicitud correctamente",
-          });
-          formik.resetForm();
-          setCapacidadDelAmbienteSeleccionado(null);
-          setStep(1);
-        }
-        })
-        .catch((error) => {
-          console.log("wwwwwwww");
-          agregarAlert({
-            icon: <ExclamationCircleFill />,
-            severidad: "danger",
-            mensaje: error.mensaje,
-          });
-        });
+    if (response.mensaje === "Resgistro existoso") {
+      console.log("Registro exitoso");
+      agregarAlert({
+        icon: <CheckCircleFill />,
+        severidad: "success",
+        mensaje: "Se realizo la solicitud correctamente",
+      });
+      formik.resetForm();
+      setCapacidadDelAmbienteSeleccionado(null);
+      setStep(1);
+    } else if (response[0].alerta === "advertencia") {
+      agregarAlert({
+        icon: <ExclamationCircleFill />,
+        severidad: "danger",
+        mensaje: response[0].mensaje,
+      });
+    } else if (response[0].alerta === "alerta") {
+      setEstado("estado");
+      
+    setShowMensajeDeConfirmacion(true);
+      agregarAlert({
+        icon: <ExclamationCircleFill />,
+        severidad: "warning",
+        mensaje: response[0].mensaje,
+      });
+    } else {
+      // Manejar otros casos no esperados
+      throw new Error("Estado no esperado en la respuesta");
+    }
+  })
+  .catch((error) => {
+    console.log("Error capturado:", error);
+    agregarAlert({
+      icon: <ExclamationCircleFill />,
+      severidad: "danger",
+      mensaje: error.message || "Ha ocurrido un error",
+    });
+  });
+
     },
   });
 
@@ -281,7 +291,32 @@ const SolicitarReserva = ({ onClose }) => {
       });
     //inputAmbienteRef.current.blur();
   };
+  const reserva=async(val)=>{
+    setShowMensajeDeConfirmacion(false)
+    postReserva2(val)
+  .then((response) => {
 
+    if (response.mensaje === "Resgistro existoso") {
+      console.log("Registro exitoso");
+      agregarAlert({
+        icon: <CheckCircleFill />,
+        severidad: "success",
+        mensaje: "Se realizo la solicitud correctamente",
+      });
+      formik.resetForm();
+      setCapacidadDelAmbienteSeleccionado(null);
+      setStep(1);
+    }  
+  })
+  .catch((error) => {
+    console.log("Error capturado:", error);
+    agregarAlert({
+      icon: <ExclamationCircleFill />,
+      severidad: "danger",
+      mensaje: error.message || "Ha ocurrido un error",
+    });
+  });
+  }
   useEffect(() => {
     console.log("showDropdown", showDropdown);
   }, [showDropdown]);
@@ -722,6 +757,49 @@ const SolicitarReserva = ({ onClose }) => {
           </Col>
         </Row>
       </Container>
+      {estado !== "" && (
+          <Modal
+            size="xs"
+            aria-labelledby="contained-modal-title-vcenter"
+            show={showMensajeDeConfirmacion}
+            onHide={() => setShowMensajeDeConfirmacion(false)}
+            centered
+          >
+            <Alert
+              variant="primary"
+              show={showMensajeDeConfirmacion}
+              style={{ margin: 0 }}
+            >
+              <Container>
+                <Row xs="auto">
+                  <QuestionCircleFill size="2rem" />
+                  ¿Quiere continuar reservando?
+                </Row>
+                <Row xs="auto" className="justify-content-md-end">
+                  <Stack direction="horizontal" gap={2}>
+                    <Button
+                      className="btn ModificarEstadoDelAmbientePorFecha-cancel"
+                      size="sm"
+                      variant="secondary"
+                      onClick={() => setShowMensajeDeConfirmacion(false)}
+                    >
+                      Cancelar
+                    </Button>
+                    <Button
+                      className="btn ModificarEstadoDelAmbientePorFecha-aceptar"
+                      onClick={() => {
+                        reserva(formik.values);
+                      }}
+                      size="sm"
+                    >
+                      Aceptar
+                    </Button>
+                  </Stack>
+                </Row>
+              </Container>
+            </Alert>
+          </Modal>
+        )}
     </div>
   );
 
