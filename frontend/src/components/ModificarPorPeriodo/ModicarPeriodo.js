@@ -5,6 +5,8 @@ import {
   modificarPerio,
   estadoinhabilitado,
   habilita,
+  getPeriodosReservados,
+  inhabilitarReserva,
 } from "../../services/ModificarPeriodo.service";
 import "./style.css";
 import {
@@ -28,6 +30,7 @@ const Modificarperdiodo = ({ onClose }) => {
   const [enterPressed, setEnterPressed] = useState(false);
   const [ambientes, setAmbientes] = useState([]);
   const [ambiente, setAmbiente] = useState({});
+  const [periodosReservados, setPeriodosReservados] = useState([]);
 
   const buscarAmbiente = async (event) => {
     setConsultarPresionado(false);
@@ -68,6 +71,11 @@ const Modificarperdiodo = ({ onClose }) => {
 
   const buscarAmbientPorFecha = async (ambiente, fecha) => {
     const data = await modificarPerio(ambiente.id, fecha);
+    const response = await getPeriodosReservados(ambiente.id, fecha);
+    if (response) {
+      setPeriodosReservados(response.periodosReservados);
+      console.log(response);
+    }
     if (data != null) {
       setAmbiente({
         id: ambiente.id,
@@ -90,43 +98,68 @@ const Modificarperdiodo = ({ onClose }) => {
       id: ambiente.id,
       nombre: ambiente.nombre,
     });
+
     checkboxes.forEach((checkbox) => {
       if (checkbox.checked) {
         seleccionados.push({ id: checkbox.id });
-        // Convertir checkbox.id a número
         const checkboxIdAsNumber = parseInt(checkbox.id, 10);
-        // Verifica si el ID del checkbox está en periodosModificados
-        if (periodosModificados.includes(checkboxIdAsNumber)) {
+
+        // Verificar si el ID del checkbox está en periodosReservados y obtener el periodoReservado correspondiente
+        const periodoReservado = periodosReservados.find((reservado) =>
+          reservado.periodos.includes(checkboxIdAsNumber)
+        );
+
+        if (periodoReservado) {
+          // Recuperar el idSolicitud del periodoReservado
+          const idSolicitud = periodoReservado.idSolicitud;
+          inhabilitarReser(idSolicitud);
+          console.log(`Periodo ${checkboxIdAsNumber} está reservado con idSolicitud ${idSolicitud}`);
+        } else if (periodosModificados.includes(checkboxIdAsNumber)) {
           otraHabilitar(checkbox.id);
         } else {
           otraFuncion(checkbox.id);
         }
       }
     });
+
     // Desmarcar todas las casillas de verificación
     checkboxes.forEach((checkbox) => {
       checkbox.checked = false;
     });
+
     buscarAmbientPorFecha(formik.values.ambiente, formik.values.fecha);
+  };
+
+  const inhabilitarReser = (id) => {
+    const ids = [id];
+    inhabilitarReserva(ids);
   };
 
   const otraHabilitar = (id) => {
     const ids = [id];
     habilita(formik.values.ambiente.id, ids, formik.values.fecha);
   };
+
   const otraFuncion = (id) => {
     const ids = [id];
     estadoinhabilitado(formik.values.ambiente.id, ids, formik.values.fecha);
   };
 
   const cambiarColorLabels = useCallback(
-    (periodo) => {
-      const periodoModificado = periodosModificados.includes(periodo);
-      return periodoModificado
-        ? "periodos-inhabilitados"
-        : "periodos-habilitados";
+    (periodoId) => {
+      // Verificar si el periodo está en periodosReservados
+      const esReservado = periodosReservados.some((periodoReservado) =>
+        periodoReservado.periodos.includes(periodoId)
+      );
+
+      if (esReservado) {
+        return "periodos-reservado";
+      }
+
+      const periodoModificado = periodosModificados.includes(periodoId);
+      return periodoModificado ? "periodos-inhabilitados" : "periodos-habilitados";
     },
-    [periodosModificados]
+    [periodosModificados, periodosReservados]
   );
 
   const formik = useFormik({
@@ -146,20 +179,6 @@ const Modificarperdiodo = ({ onClose }) => {
             return ambients.includes(value.trim());
           }),
 
-        /*.test("hasOptions", "No exite ese ambiente", function (value) {
-            // 'this.options' contiene las opciones que pasas al esquema de validación
-            if (ambientes.length > 0) {
-              const ambienteEncontrado = ambientes.find(ambiente =>
-                ambiente.nombre.toLowerCase().includes(formik.values.ambiente.nombre.toLowerCase())
-              );
-              if (ambienteEncontrado) {
-                return true;
-              }else{
-                return false;
-              }
-              
-            }
-          }),*/
       }),
       fecha: Yup.date()
         .min(
@@ -366,153 +385,128 @@ const Modificarperdiodo = ({ onClose }) => {
                         style={{ backgroundColor: "#a4a6a6" }}
                       ></div>
                       <span className="text">{"Periodos inhabilitados"}</span>
+                      <div
+                        className="circle"
+                        style={{ backgroundColor: "#ffcccb" }}
+                      ></div>
+                      <span className="text">{"Periodos reservados"}</span>
                     </div>
                     <div className="periodos-grid">
                       <div className="periodos">
                         <h6>Mañana</h6>
-                        <div>
-                          <input
-                            type="checkbox"
-                            id="1"
-                            name="periodo1"
-                            value="periodo1"
-                          />
-                          <label htmlFor="1" className={cambiarColorLabels(1)}>
-                            6:45-8:15
-                          </label>
-                        </div>
-                        <div>
-                          <input
-                            type="checkbox"
-                            id="2"
-                            name="periodo2"
-                            value="periodo2"
-                          />
-                          <label htmlFor="2" className={cambiarColorLabels(2)}>
-                            8:15-9:45
-                          </label>
-                        </div>
-                        <div>
-                          <input
-                            type="checkbox"
-                            id="3"
-                            name="periodo3"
-                            value="periodo3"
-                          />
-                          <label
-                            htmlFor="periodo3"
-                            className={cambiarColorLabels(3)}
-                          >
-                            9:45-11:15
-                          </label>
-                        </div>
-                        <div>
-                          <input
-                            type="checkbox"
-                            id="4"
-                            name="periodo4"
-                            value="periodo4"
-                          />
-                          <label
-                            htmlFor="periodo4"
-                            className={cambiarColorLabels(4)}
-                          >
-                            11:15-12:45
-                          </label>
-                        </div>
+                        {[1, 2, 3, 4].map((periodo, index, array) => {
+                          const esReservado = periodosReservados.some(
+                            (reservado) => reservado.periodos.includes(periodo)
+                          );
+                          // Mostrar checkbox solo para el primer periodo reservado
+                          const esPrimerPeriodoDeRango =
+    esReservado &&
+    // Verificar si el período actual es el primero en cualquiera de los rangos de periodos reservados
+    periodosReservados.some((reservado) => periodo === reservado.periodos[0]);
+                          return (
+                            <div key={periodo}>
+                              {(!esReservado || esPrimerPeriodoDeRango) && (
+                                <input
+                                  type="checkbox"
+                                  id={periodo.toString()}
+                                  name={`periodo${periodo}`}
+                                  value={`periodo${periodo}`}
+                                />
+                              )}
+                              <label
+                                htmlFor={periodo.toString()}
+                                className={cambiarColorLabels(periodo)}
+                              >
+                                {`${
+                                  periodo === 1
+                                    ? "6:45-8:15"
+                                    : periodo === 2
+                                    ? "8:15-9:45"
+                                    : periodo === 3
+                                    ? "9:45-11:15"
+                                    : "11:15-12:45"
+                                }`}
+                              </label>
+                            </div>
+                          );
+                        })}
                       </div>
                       <div className="periodos">
                         <h6>Tarde</h6>
-                        <div>
-                          <input
-                            type="checkbox"
-                            id="5"
-                            name="periodo5"
-                            value="periodo5"
-                          />
-                          <label
-                            htmlFor="periodo5"
-                            className={cambiarColorLabels(5)}
-                          >
-                            12:45-14:15
-                          </label>
-                        </div>
-                        <div>
-                          <input
-                            type="checkbox"
-                            id="6"
-                            name="periodo6"
-                            value="periodo6"
-                          />
-                          <label
-                            htmlFor="periodo6"
-                            className={cambiarColorLabels(6)}
-                          >
-                            14:15-15:45
-                          </label>
-                        </div>
-                        <div>
-                          <input
-                            type="checkbox"
-                            id="7"
-                            name="periodo7"
-                            value="periodo7"
-                          />
-                          <label
-                            htmlFor="periodo7"
-                            className={cambiarColorLabels(7)}
-                          >
-                            15:45-17:15
-                          </label>
-                        </div>
-                        <div>
-                          <input
-                            type="checkbox"
-                            id="8"
-                            name="periodo8"
-                            value="periodo8"
-                          />
-                          <label
-                            htmlFor="periodo8"
-                            className={cambiarColorLabels(8)}
-                          >
-                            17:15-18:45
-                          </label>
-                        </div>
+                        {[5, 6, 7, 8].map((periodo, index, array) => {
+                          const esReservado = periodosReservados.some(
+                            (reservado) => reservado.periodos.includes(periodo)
+                          );
+                       
+                          // Mostrar checkbox solo para el primer periodo reservado
+                          const esPrimerPeriodoDeRango =
+    esReservado &&
+    // Verificar si el período actual es el primero en cualquiera de los rangos de periodos reservados
+    periodosReservados.some((reservado) => periodo === reservado.periodos[0]);
+                          return (
+                            <div key={periodo}>
+                              {(!esReservado || esPrimerPeriodoDeRango) && (
+                                <input
+                                  type="checkbox"
+                                  id={periodo.toString()}
+                                  name={`periodo${periodo}`}
+                                  value={`periodo${periodo}`}
+                                />
+                              )}
+                              <label
+                                htmlFor={periodo.toString()}
+                                className={cambiarColorLabels(periodo)}
+                              >
+                                {`${
+                                  periodo === 5
+                                    ? "12:45-14:15"
+                                    : periodo === 6
+                                    ? "14:15-15:45"
+                                    : periodo === 7
+                                    ? "15:45-17:15"
+                                    : "17:15-18:45"
+                                }`}
+                              </label>
+                            </div>
+                          );
+                        })}
                       </div>
                       <div className="periodos">
                         <h6>Noche</h6>
-                        <div>
-                          <input
-                            type="checkbox"
-                            id="9"
-                            name="periodo9"
-                            value="periodo9"
-                          />
-                          <label
-                            htmlFor="periodo9"
-                            className={cambiarColorLabels(9)}
-                          >
-                            18:45-20:15
-                          </label>
-                        </div>
-                        <div>
-                          <input
-                            type="checkbox"
-                            id="10"
-                            name="periodo10"
-                            value="periodo10"
-                          />
-                          <label
-                            htmlFor="periodo10"
-                            className={cambiarColorLabels(10)}
-                          >
-                            20:15-21:45
-                          </label>
-                        </div>
+                        {[9, 10].map((periodo, index, array) => {
+                          const esReservado = periodosReservados.some(
+                            (reservado) => reservado.periodos.includes(periodo)
+                            
+                          );
+                          
+                          // Mostrar checkbox solo para el primer periodo reservado
+                          const esPrimerPeriodoDeRango =
+    esReservado &&
+    // Verificar si el período actual es el primero en cualquiera de los rangos de periodos reservados
+    periodosReservados.some((reservado) => periodo === reservado.periodos[0]);
+                          return (
+                            <div key={periodo}>
+                              {(!esReservado || esPrimerPeriodoDeRango) && (
+                                <input
+                                  type="checkbox"
+                                  id={periodo.toString()}
+                                  name={`periodo${periodo}`}
+                                  value={`periodo${periodo}`}
+                                />
+                              )}
+                              <label
+                                htmlFor={periodo.toString()}
+                                className={cambiarColorLabels(periodo)}
+                              >
+                                {`${
+                                  periodo === 9 ? "18:45-20:15" : "20:15-21:45"
+                                }`}
+                              </label>
+                            </div>
+                          );
+                        })}
                       </div>
                     </div>
-                    {/* Agrega más periodos aquí si es necesario */}
                     <Row xs="auto" className="justify-content-md-end">
                       <Stack direction="horizontal" gap={2}>
                         <Button className="modi" onClick={estado}>

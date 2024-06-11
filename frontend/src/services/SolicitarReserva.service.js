@@ -79,7 +79,7 @@ export const postReserva =(reserva)=>{
     console.log(reserva);
     return axios.post(`${apiUrl}/realizarSolicitud`,reserva)
     .then((response) => {
-        console.log();
+        console.log("ooooo");
         return response.data;
         //return response.data.materias["Algoritmos Avanzados"];
     })
