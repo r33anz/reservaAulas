@@ -12,7 +12,7 @@ use App\Models\Periodo;
 use App\Models\Inhabilitado;
 use App\Services\InhabilitadorService;
 use App\Services\NotificadorService;
-
+use App\Events\NotificacionUsuario;
 class ReservaController extends Controller
 {
 
@@ -25,10 +25,7 @@ class ReservaController extends Controller
         $this->notificadorService = $notificadorService;
     }
 
-    public function reservasPorDocente(Request $request)
-
-
-    {
+    public function reservasPorDocente(Request $request){
         $docenteId = $request->input('docente_id');
         $estado = $request->input('estado');
         $pagina = $request->input('pagina', 1);
@@ -87,8 +84,7 @@ class ReservaController extends Controller
         ]);
     }
 
-    public function cancelarReserva($id)
-    {
+    public function cancelarReserva($id){
         $solicitud = Solicitud::find($id);
         if (!$solicitud) {
             return response()->json(['message' => 'No se encontró la solicitud asociada a la reserva'], 404);
@@ -141,6 +137,8 @@ class ReservaController extends Controller
 
             // Notificar sobre la inhabilitación
             $this->notificadorService->notificarInhabilitacion($idSolicitud);
+
+            
         }
 
         return response()->json(['message' => 'Solicitudes inhabilitadas y notificaciones enviadas'], 200);

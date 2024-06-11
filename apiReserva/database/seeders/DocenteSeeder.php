@@ -15,23 +15,28 @@ class DocenteSeeder extends Seeder
     {
         Docente::create([
             'id' =>1, 
-            'nombre'=> 'LETICIA BLANCO'
+            'nombre'=> 'LETICIA BLANCO',
+            'user_id'=>1
         ]);
         Docente::create([
             'id' =>2, 
-            'nombre'=> 'TATIANA APARICIO'
+            'nombre'=> 'TATIANA APARICIO',
+            'user_id'=>2
         ]);
         Docente::create([
             'id' =>3, 
-            'nombre'=> 'BORIS CALANCHA'
+            'nombre'=> 'BORIS CALANCHA',
+            'user_id'=>3
         ]);
         Docente::create([
             'id' =>4, 
-            'nombre'=> 'INDIRA CAMACHO'
+            'nombre'=> 'INDIRA CAMACHO',
+            'user_id'=>4
         ]);
         Docente::create([
             'id' =>5, 
-            'nombre'=> 'MARCELO FLORES'
+            'nombre'=> 'MARCELO FLORES',
+            'user_id'=>5
         ]);
         
     }
