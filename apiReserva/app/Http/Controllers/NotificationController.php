@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\NotificacionGeneral;
+use App\Events\NotificacionUsuario;
 use App\Models\User;
+use App\Notifications\Individual;
 use Illuminate\Http\Request;
-
+use App\Jobs\NotificacionGeneralJ;
 class NotificationController extends Controller
 {
     public function marcarNotificacionLeida(Request $request){ // se hara de forma individual
@@ -39,10 +42,24 @@ class NotificationController extends Controller
     public function notificacionIndividual(Request $request){
         $id = $request->input('id');
         $mensaje = $request->input('mensaje');
+
+        
+        $user = User::find($id);
+        $user->notify(new Individual($mensaje));
+        event(new NotificacionUsuario($id));
+        return response()->json([
+            'mensaje' => 'Mensaje mandado exitosamente'
+        ]);
     }
 
     public function broadcast(Request $request){
         $mensaje = $request->input('mensaje');
+
+        NotificacionGeneralJ::dispatch($mensaje);
+        event(new NotificacionGeneral($mensaje));
+        return response()->json([
+            'mensaje' => 'Mensaje mandado exitosamente'
+        ]);
     }
 
 }

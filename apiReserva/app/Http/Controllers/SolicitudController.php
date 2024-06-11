@@ -10,7 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Services\NotificadorService;
 use App\Mail\SolicitudRealizada;
-
+use App\Events\NotificacionUsuario;
 class SolicitudController extends Controller
 {
     protected $ambienteValido;
@@ -63,7 +63,7 @@ class SolicitudController extends Controller
         $idAmbiente = $request->input('ambiente');
         $periodos = $request->input('periodos');
         // verificar si el ambiente es valido
-        $ambienteDisponible = $this->ambienteValido->ambienteValido($idAmbiente, $fechaReserva, $periodos, $idDocente);
+        $ambienteDisponible = $this->ambienteValido->ambienteValido($idAmbiente, $fechaReserva, $periodos, $idDocente,$materia,$grupo,$razon);
 
         // echo $ambienteDisponible;
         if ($ambienteDisponible->alerta != 'exito') {
@@ -311,8 +311,11 @@ class SolicitudController extends Controller
         $solicitud->fechaAtendida = $fechaAtendido;
         $solicitud->save();
 
+        
+        //disparar notificacion
         $this->notificadorService->notificarAceptacion($id);
-
+        //disparar evento
+        event(new NotificacionUsuario($solicitud->docente_id));
         return response()->json(['mensaje' => 'Solicitud atendida correctamente']);
     }
 
@@ -331,7 +334,11 @@ class SolicitudController extends Controller
         $solicitud->fechaAtendida = $fechaAtendido;
         $solicitud->save();
 
+        
+        //disparar notificacion
         $this->notificadorService->notificarRechazo($id);
+        //disparar evento
+        event(new NotificacionUsuario($solicitud->docente_id));
         return response()->json(['mensaje' => 'Solicitud rechazada correctamente']);
     }
 }

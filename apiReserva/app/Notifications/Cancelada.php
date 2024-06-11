@@ -14,19 +14,19 @@ class Cancelada extends Notification
 
     public function __construct()
     {
-        //
+        
     }
 
     
     public function via($notifiable)
     {
-        return ['database'];
+        return ['database','mail'];
     }
 
     public function toArray($notifiable)
     {
         return [
-            //
+            
         ];
     }
 }

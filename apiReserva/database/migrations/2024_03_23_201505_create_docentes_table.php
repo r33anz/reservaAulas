@@ -16,7 +16,9 @@ class CreateDocentesTable extends Migration
         Schema::create('docentes', function (Blueprint $table) {
             $table->id();
             $table->string('nombre',150);
+            $table->unsignedBigInteger('user_id');
             $table->timestamps();
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
         });
     }
 

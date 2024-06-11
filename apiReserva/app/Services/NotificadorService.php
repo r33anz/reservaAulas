@@ -6,11 +6,11 @@ use App\Models\Ambiente;
 use Illuminate\Support\Facades\DB;
 use App\Models\Periodo;
 use App\Models\User;
-
 use App\Notifications\SolicitudR;
 use App\Notifications\Aceptar;
 use App\Notifications\Rechazar;
 use App\Notifications\Inhabilitar;
+use App\Events\NotificacionUsuario;
 class NotificadorService
 {
     public function notificarInhabilitacion($idSolicitud)
@@ -29,6 +29,8 @@ class NotificadorService
         $fin = Periodo::find($periodoIdFin);
 
         $user = User::find($solicitud->docente_id);
+        //disparar evento
+        event(new NotificacionUsuario($solicitud->docente_id));
         $user->notify(new Inhabilitar($nombreAmbiente, $solicitud->fechaReserva, $ini->horainicial, $fin->horafinal));
 
     }
