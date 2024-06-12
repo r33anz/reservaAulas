@@ -39,6 +39,7 @@ const SolicitarReserva = ({ onClose }) => {
     setCapacidadDelAmbienteSeleccionado,
   ] = useState(null);
   const [ida, setidambiente] = useState(null);
+  const [materiasData, setMateriasData] = useState({});
   const [bloques, setBloques] = useState([]);
   const [docentes, setDocente] = useState([]);
   const [grupos, setGrupos] = useState([]);
@@ -126,7 +127,15 @@ const SolicitarReserva = ({ onClose }) => {
     getDocente(nombre)
       .then((data) => {
         setDocente(data.nombre);
-        console.log(docentes); // Actualizar las opciones de ambiente con los datos obtenidos
+
+        // Obtener los nombres de las materias
+        const materiasNombres = Object.keys(data.materias);
+        setBloques(materiasNombres);
+
+        // Guardar los datos de las materias para su uso posterior
+        setMateriasData(data.materias);
+
+        console.log(data, "qa"); // Actualizar las opciones de ambiente con los datos obtenidos
       })
       .catch((error) => {
         console.log("Error al buscar los ambientes:", error);
@@ -252,9 +261,9 @@ const SolicitarReserva = ({ onClose }) => {
 
     },
   });
-
+ 
   const handleKeyPress = (event) => {
-    if (event.code === "Enter") {
+    if (event.code === "Enter" && formik.values.nombreAmbiente !== "" && document.activeElement === inputAmbienteRef.current) {
       const ambienteEncontrado = ambienteOptions.find((ambiente) =>
         ambiente.nombre
           .toLowerCase()
@@ -263,17 +272,22 @@ const SolicitarReserva = ({ onClose }) => {
       if (ambienteEncontrado) {
         setNombreDelAmbiente(ambienteEncontrado);
         setShowDropdown(false);
-        inputAmbienteRef.current.blur();
+        if (document.activeElement === inputAmbienteRef.current) {
+          inputAmbienteRef.current.blur();
+        }
         console.log(ambienteEncontrado);
       }
     }
   };
 
   const setPisosPorBloqueSeleccionado = (e) => {
+    const materiaSeleccionada = e.target.value;
+
     // Obtener y establecer los grupos asociados con el bloque seleccionado
-    const gruposAsociados = getGruposPorBloque(e.target.value);
+    const gruposAsociados = materiasData[materiaSeleccionada]?.grupos || [];
     setGrupos(gruposAsociados);
-    formik.setFieldValue("grupo", "");
+
+    formik.setFieldValue("grupo", ""); // Limpiar el campo grupo en el formulario, si estás usando Formik
   };
 
   const setNombreDelAmbiente = async (ambiente) => {
@@ -324,9 +338,9 @@ const SolicitarReserva = ({ onClose }) => {
   useEffect(() => {
     console.log(razon);
     const id = window.sessionStorage.getItem("docente_id");
-    const bloquesData = getBloques(id);
+    
     docente(id);
-    setBloques(bloquesData);
+    //setBloques(bloquesData);
     buscar(" ");
   }, []);
 
@@ -412,11 +426,11 @@ const SolicitarReserva = ({ onClose }) => {
                       <option value="" disabled selected>
                         Ingrese una materia
                       </option>
-                      {bloques.map((bloque) => (
-                        <option key={bloque.id} value={bloque.name}>
-                          {bloque.name}
-                        </option>
-                      ))}
+                      {bloques.map((bloque, index) => (
+                      <option key={index} value={bloque}>
+                        {bloque}
+                      </option>
+                    ))}
                     </Form.Select>
                     <Form.Text className="text-danger">
                       {formik.touched.materia && formik.errors.materia ? (
@@ -735,7 +749,6 @@ const SolicitarReserva = ({ onClose }) => {
                       onClick={() => {
                         setCapacidadDelAmbienteSeleccionado(null);
                         formik.resetForm();
-                        setAmbienteOptions([]);
                         setStep(1);
                       }}
                     >

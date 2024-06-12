@@ -36,6 +36,7 @@
 .AtenderSolicitud-button-cancel:hover,
 .AtenderSolicitud-button-cancel:active,
 .AtenderSolicitud-button-cancel:focus,
+.AtenderSolicitud-button-cancel:disabled,
 .AtenderSolicitud-button-cancel.active {
     /* let's darken #004E64 a bit for hover effect */
     color: #003F70;

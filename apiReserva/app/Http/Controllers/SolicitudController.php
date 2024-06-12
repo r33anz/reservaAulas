@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\DB;
 use App\Services\NotificadorService;
 use App\Mail\SolicitudRealizada;
 use App\Events\NotificacionUsuario;
+
 class SolicitudController extends Controller
 {
     protected $ambienteValido;
@@ -62,7 +63,7 @@ class SolicitudController extends Controller
         $idAmbiente = $request->input('ambiente');
         $periodos = $request->input('periodos');
         // verificar si el ambiente es valido
-        $ambienteDisponible = $this->ambienteValido->ambienteValido($idAmbiente, $fechaReserva, $periodos, $idDocente,$materia,$grupo,$razon);
+        $ambienteDisponible = $this->ambienteValido->ambienteValido($idAmbiente, $fechaReserva, $periodos, $idDocente, $materia, $grupo, $razon);
 
         // echo $ambienteDisponible;
         if ($ambienteDisponible->alerta != 'exito') {
@@ -90,7 +91,7 @@ class SolicitudController extends Controller
         ]);
 
         $ultimoIdSolicitud = $solicitud->latest()->value('id');
-        
+
         DB::table('ambiente_solicitud')->insert([
             'ambiente_id' => $idAmbiente,
             'solicitud_id' => $ultimoIdSolicitud,
@@ -98,7 +99,7 @@ class SolicitudController extends Controller
         // notificar nuevo registro de solicitud al docente
         $this->notificadorService->solicitudRealizada($ultimoIdSolicitud);
         //avisar al administrador la creacion de una nueva solicitud
-        event(new NotificacionUsuario(0,'Nueva solicitud realizada.'));
+        event(new NotificacionUsuario(0, 'Nueva solicitud realizada.'));
         return response()->json([
             'mensaje' => 'Resgistro existoso',
         ]);
@@ -124,7 +125,7 @@ class SolicitudController extends Controller
         if (count($periodos) === 1) {
             $periodoInicial = $periodos[0];
             $periodoFinal = $periodos[0];
-        } else { 
+        } else {
             $periodoInicial = $periodos[0];
             $periodoFinal = $periodos[count($periodos) - 1];
         }
@@ -150,7 +151,7 @@ class SolicitudController extends Controller
         // notificar nuevo registro de solicitud al docente
         $this->notificadorService->solicitudRealizada($ultimoIdSolicitud);
         //avisar al administrador la creacion de una nueva solicitud
-        event(new NotificacionUsuario(0,'Nueva solicitud realizada.'));
+        event(new NotificacionUsuario(0, 'Nueva solicitud realizada.'));
         return response()->json([
             'mensaje' => 'Resgistro existoso',
         ]);
@@ -218,30 +219,30 @@ class SolicitudController extends Controller
         $pagina = $request->input('pagina', 1);
         $fechaActual = now();
         //$query = Solicitud::orderBy('created_at', 'desc');
-        if ($estado === 'aprobadas') { 
+        if ($estado === 'aprobadas') {
             $query = Solicitud::orderBy('updated_at', 'asc');
             $query->where('estado', 'aprobado');
-        } elseif ($estado === 'rechazadas') {    
-            $query = Solicitud::orderBy('updated_at', 'asc'); 
+        } elseif ($estado === 'rechazadas') {
+            $query = Solicitud::orderBy('updated_at', 'asc');
             $query->where('estado', 'rechazado');
         } elseif ($estado === 'en espera') {
-            $query = Solicitud::orderBy('updated_at', 'desc');       
+            $query = Solicitud::orderBy('updated_at', 'desc');
             $query->where('estado', 'en espera');
-        } elseif ($estado === 'canceladas') {    
-            $query = Solicitud::orderBy('updated_at', 'asc');    
+        } elseif ($estado === 'canceladas') {
+            $query = Solicitud::orderBy('updated_at', 'asc');
             $query->where('estado', 'cancelado');
         } elseif ($estado === 'inhabilitada') {
             $query = Solicitud::orderBy('updated_at', 'asc');
             $query->where('estado', 'inhabilitada');
-        }elseif ($estado === 'prioridad') {
+        } elseif ($estado === 'prioridad') {
             $query = Solicitud::where('estado', 'en espera')
-                  ->orderByRaw("
+                ->orderByRaw("
                       CASE
                           WHEN fechaReserva < ? THEN 0
                           ELSE 1
                       END, ABS(DATEDIFF(fechaReserva, ?))
                   ", [$fechaActual, $fechaActual]);
-        }else{
+        } else {
             $query = Solicitud::orderBy('updated_at', 'desc');
         }
 
@@ -267,7 +268,8 @@ class SolicitudController extends Controller
                 'ambiente_nombre' => $ambiente->nombre,
                 'ambienteCantidadMax' => $ambiente->capacidad,
                 'fechaEnviada' => substr($solicitud->created_at, 0, 10),
-                'estado' => $solicitud->estado
+                'estado' => $solicitud->estado,
+                'updated_at' => substr($solicitud->updated_at, 0, 10),
             ];
 
             if ($estado === 'aprobadas') {
@@ -301,11 +303,11 @@ class SolicitudController extends Controller
         $solicitud->fechaAtendida = $fechaAtendido;
         $solicitud->save();
 
-        
+
         //disparar notificacion
         $this->notificadorService->notificarAceptacion($id);
         //disparar evento
-        event(new NotificacionUsuario($solicitud->docente_id,'Nueva notificacion.'));
+        event(new NotificacionUsuario($solicitud->docente_id, 'Nueva notificacion.'));
         return response()->json(['mensaje' => 'Solicitud atendida correctamente']);
     }
 
@@ -324,11 +326,11 @@ class SolicitudController extends Controller
         $solicitud->fechaAtendida = $fechaAtendido;
         $solicitud->save();
 
-        
+
         //disparar notificacion
         $this->notificadorService->notificarRechazo($id);
         //disparar evento
-        event(new NotificacionUsuario($solicitud->docente_id,'Nueva notificacion.'));
+        event(new NotificacionUsuario($solicitud->docente_id, 'Nueva notificacion.'));
         return response()->json(['mensaje' => 'Solicitud rechazada correctamente']);
     }
 }

@@ -12,13 +12,14 @@ import "./style.css";
 import {
   FormControl,
   Col,
+  Alert,
   Container,
   Dropdown,
   Form,
   Row,
   Stack,
 } from "react-bootstrap";
-import { XSquareFill } from "react-bootstrap-icons";
+import { XSquareFill ,QuestionCircleFill} from "react-bootstrap-icons";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 
@@ -31,6 +32,11 @@ const Modificarperdiodo = ({ onClose }) => {
   const [ambientes, setAmbientes] = useState([]);
   const [ambiente, setAmbiente] = useState({});
   const [periodosReservados, setPeriodosReservados] = useState([]);
+  const [estado1, setEstado] = useState("");
+  const [needsConfirmation, setNeedsConfirmation] = useState(false);
+
+  const [showMensajeDeConfirmacion, setShowMensajeDeConfirmacion] =
+  useState(false);
 
   const buscarAmbiente = async (event) => {
     setConsultarPresionado(false);
@@ -90,6 +96,7 @@ const Modificarperdiodo = ({ onClose }) => {
   };
 
   const estado = () => {
+    setEstado("estado");
     const checkboxes = document.querySelectorAll(
       '.periodos-container input[type="checkbox"]'
     );
@@ -98,19 +105,50 @@ const Modificarperdiodo = ({ onClose }) => {
       id: ambiente.id,
       nombre: ambiente.nombre,
     });
-
+    
+    let requiereConfirmacion = false;
+    
     checkboxes.forEach((checkbox) => {
       if (checkbox.checked) {
         seleccionados.push({ id: checkbox.id });
         const checkboxIdAsNumber = parseInt(checkbox.id, 10);
 
-        // Verificar si el ID del checkbox está en periodosReservados y obtener el periodoReservado correspondiente
+        // Verificar si el ID del checkbox está en periodosReservados
+        const periodoReservado = periodosReservados.find((reservado) =>
+          reservado.periodos.includes(checkboxIdAsNumber)
+        );
+        
+        if (periodoReservado) {
+          // Marcar que se requiere confirmación
+          requiereConfirmacion = true;
+        }
+      }
+    });
+
+    // Desmarcar todas las casillas de verificación
+    
+
+    if (requiereConfirmacion) {
+      setShowMensajeDeConfirmacion(true);
+    } else {
+      realizarCambios();
+    }
+};
+
+const realizarCambios = () => {
+    const checkboxes = document.querySelectorAll(
+      '.periodos-container input[type="checkbox"]'
+    );
+    
+    checkboxes.forEach((checkbox) => {
+      if (checkbox.checked) {
+        const checkboxIdAsNumber = parseInt(checkbox.id, 10);
+
         const periodoReservado = periodosReservados.find((reservado) =>
           reservado.periodos.includes(checkboxIdAsNumber)
         );
 
         if (periodoReservado) {
-          // Recuperar el idSolicitud del periodoReservado
           const idSolicitud = periodoReservado.idSolicitud;
           inhabilitarReser(idSolicitud);
           console.log(`Periodo ${checkboxIdAsNumber} está reservado con idSolicitud ${idSolicitud}`);
@@ -119,31 +157,34 @@ const Modificarperdiodo = ({ onClose }) => {
         } else {
           otraFuncion(checkbox.id);
         }
+
       }
     });
-
-    // Desmarcar todas las casillas de verificación
-    checkboxes.forEach((checkbox) => {
+checkboxes.forEach((checkbox) => {
       checkbox.checked = false;
     });
-
     buscarAmbientPorFecha(formik.values.ambiente, formik.values.fecha);
-  };
+    setShowMensajeDeConfirmacion(false);
+};
 
-  const inhabilitarReser = (id) => {
-    const ids = [id];
-    inhabilitarReserva(ids);
-  };
+const handleAceptar = () => {
+  realizarCambios();
+};
 
-  const otraHabilitar = (id) => {
-    const ids = [id];
-    habilita(formik.values.ambiente.id, ids, formik.values.fecha);
-  };
+const inhabilitarReser = (id) => {
+  const ids = [id];
+  inhabilitarReserva(ids);
+};
 
-  const otraFuncion = (id) => {
-    const ids = [id];
-    estadoinhabilitado(formik.values.ambiente.id, ids, formik.values.fecha);
-  };
+const otraHabilitar = (id) => {
+  const ids = [id];
+  habilita(formik.values.ambiente.id, ids, formik.values.fecha);
+};
+
+const otraFuncion = (id) => {
+  const ids = [id];
+  estadoinhabilitado(formik.values.ambiente.id, ids, formik.values.fecha);
+};
 
   const cambiarColorLabels = useCallback(
     (periodoId) => {
@@ -266,7 +307,7 @@ const Modificarperdiodo = ({ onClose }) => {
       </Container>
       <Container className="ModificarEstadoDelAmbientePorFecha-body" fluid>
         <Row className="justify-content-md-center">
-          <Col xs lg="9">
+          <Col xs lg="15">
             <Form onSubmit={formik.handleSubmit} onKeyPress={handleKeyPress}>
               <Form.Group as={Row} className="mb-3">
                 <Form.Label column sm="2">
@@ -363,7 +404,7 @@ const Modificarperdiodo = ({ onClose }) => {
               </Form.Group>
               <Row xs="auto" className="justify-content-md-end">
                 <Stack direction="horizontal" gap={2}>
-                  <Button className="consultar-button" type="submit">
+                  <Button className="consultar1-button" type="submit">
                     Consultar
                   </Button>
                 </Stack>
@@ -400,9 +441,9 @@ const Modificarperdiodo = ({ onClose }) => {
                           );
                           // Mostrar checkbox solo para el primer periodo reservado
                           const esPrimerPeriodoDeRango =
-    esReservado &&
-    // Verificar si el período actual es el primero en cualquiera de los rangos de periodos reservados
-    periodosReservados.some((reservado) => periodo === reservado.periodos[0]);
+                          esReservado &&
+                          // Verificar si el período actual es el primero en cualquiera de los rangos de periodos reservados
+                          periodosReservados.some((reservado) => periodo === reservado.periodos[0]);
                           return (
                             <div key={periodo}>
                               {(!esReservado || esPrimerPeriodoDeRango) && (
@@ -521,6 +562,48 @@ const Modificarperdiodo = ({ onClose }) => {
           </Col>
         </Row>
       </Container>
+      {estado1 !== "" && (
+  <Modal
+    size="xs"
+    aria-labelledby="contained-modal-title-vcenter"
+    show={showMensajeDeConfirmacion}
+    onHide={() => setShowMensajeDeConfirmacion(false)}
+    centered
+  >
+    <Alert
+      variant="primary"
+      show={showMensajeDeConfirmacion}
+      style={{ margin: 0 }}
+    >
+      <Container>
+        <Row xs="auto">
+          <QuestionCircleFill size="2rem" />
+          ¿Está seguro de hacer esta modificación?
+        </Row>
+        <Row xs="auto" className="justify-content-md-end">
+          <Stack direction="horizontal" gap={2}>
+            <Button
+              className="btn ModificarEstadoDelAmbientePorFecha-cancel"
+              size="sm"
+              variant="secondary"
+              onClick={() => setShowMensajeDeConfirmacion(false)}
+            >
+              Cancelar
+            </Button>
+            <Button
+              className="btn ModificarEstadoDelAmbientePorFecha-aceptar"
+              onClick={handleAceptar}
+              size="sm"
+            >
+              Aceptar
+            </Button>
+          </Stack>
+        </Row>
+      </Container>
+    </Alert>
+  </Modal>
+)}
+
     </div>
   );
 };
