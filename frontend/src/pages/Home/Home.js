@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Container, Stack, Image } from "react-bootstrap";
-import { Calendar3 } from "react-bootstrap-icons";
+import { Calendar3, FileEarmarkRuled } from "react-bootstrap-icons";
 import "./style.css";
 import logo from "../../assets/images/image.png";
 import "../../components/Busquedanombre/Style.css";
@@ -8,7 +8,7 @@ import { Outlet, useParams } from "react-router-dom";
 import NotificacionAdmin from "../DashboardAdmin/NotificacionAdmin";
 import NotificacionDocente from "../DashboardDocente/NotificacionDocente";
 
-const Home = ({ setShowCalendar, showCalendar }) => {
+const Home = ({ setShowCalendar, showCalendar, setShowReportes, showReportes }) => {
   const { id } = useParams("id");
   const [usuarioId, setUsuarioId] = useState(null);
 
@@ -39,17 +39,19 @@ const Home = ({ setShowCalendar, showCalendar }) => {
           </h3>
         </div>
         <div className="ico-header">
-          {usuarioId !== null && usuarioId === 0 ? (
-            <NotificacionAdmin adminId={usuarioId} />
-          ) : (
-            <NotificacionDocente docenteId={usuarioId} />
-          )}
-          <Calendar3
-            color="white"
-            size={30}
-            style={{ marginLeft: "20px" }}
-            onClick={() => setShowCalendar(!showCalendar)}
-          />
+          <Stack direction="horizontal" gap={2}>
+            <FileEarmarkRuled color="white" size={30} onClick={() => setShowReportes(!showReportes)} />
+            {usuarioId !== null && usuarioId === 0 ? (
+              <NotificacionAdmin adminId={usuarioId} />
+            ) : (
+              <NotificacionDocente docenteId={usuarioId} />
+            )}
+            <Calendar3
+              color="white"
+              size={30}
+              onClick={() => setShowCalendar(!showCalendar)}
+            />
+          </Stack>
         </div>
       </header>
       <Container fluid className="Home-body">
