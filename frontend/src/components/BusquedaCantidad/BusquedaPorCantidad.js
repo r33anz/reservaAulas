@@ -1,13 +1,12 @@
 import React, { useState } from "react";
 import { buscarAmbientePorCantidad } from '../../services/Busqueda.service';
 import { Button, Col, Container, Row, Form } from "react-bootstrap";
-import { XSquareFill } from "react-bootstrap-icons";
 import Slider from "rc-slider";
 import 'rc-slider/assets/index.css';
 import './Style.css';
 
 const BuscarCantidad = () => {
-    const [ambientes, setAmbientes] = useState([]);
+    const [ setAmbientes] = useState([]);
     const [cantidadRange, setCantidadRange] = useState([0, 300]);
     const [ambienteDetails, setAmbienteDetails] = useState([]);
     const [busquedaRealizada, setBusquedaRealizada] = useState(false);
