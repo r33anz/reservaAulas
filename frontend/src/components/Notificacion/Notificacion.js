@@ -84,7 +84,6 @@ const Notificacion = ({ notifications, id }) => {
       >
         <ListaDeNotificaciones
           notifications={notifications}
-          notificationsIdNotRead={notificationsIdNotRead}
           refModalTitleNotification={refModalTitleNotification}
           refModalCloseNotification={refModalCloseNotification}
           refModalBodyNotification={refModalBodyNotification}
