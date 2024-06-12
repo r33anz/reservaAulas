@@ -32,7 +32,8 @@ const AtenderSolicitud = ({ solicitudId, onClose }) => {
     useState(null);
   const { agregarAlert } = useContext(AlertsContext);
   const [solicitud, setSolicitud] = useState({});
-  const [loading, setLoading] = useState(false);
+  const [loadingRechazo, setLoadingRechazo] = useState(false);
+  const [loadingAceptar, setLoadingAceptar] = useState(false);
   const periodos = [
     { id: 1, hora: "6:45 - 8:15", isHabilitado: true },
     { id: 2, hora: "8:15 - 9:45", isHabilitado: true },
@@ -101,7 +102,7 @@ const AtenderSolicitud = ({ solicitudId, onClose }) => {
   };
 
   const onClickRechazarSolicitud = async () => {
-    setLoading(true);
+    setLoadingRechazo(true);
     let response = await rechazarSolicitud(solicitudId, razonRechazo);
     if (response !== null) {
       agregarAlert({
@@ -109,7 +110,7 @@ const AtenderSolicitud = ({ solicitudId, onClose }) => {
         severidad: "success",
         mensaje: "Solicitud rechazada enviada.",
       });
-      setLoading(false);
+      setLoadingRechazo(false);
       setShow(false);
       onClose();
       setEsSolicitudAtentida(true);
@@ -123,10 +124,10 @@ const AtenderSolicitud = ({ solicitudId, onClose }) => {
   };
 
   const onClickAceptarSolicitud = async () => {
-    setLoading(true);
+    setLoadingAceptar(true);
     let response = await aceptarSolicitud(solicitudId);
     if (response !== null) {
-      setLoading(false);
+      setLoadingAceptar(false);
       setShow(false);
       onClose();
       agregarAlert({
@@ -288,8 +289,9 @@ const AtenderSolicitud = ({ solicitudId, onClose }) => {
                       size="sm"
                       className="btn AtenderSolicitud-button-aceptar"
                       onClick={onClickAceptarSolicitud}
+                      disabled={loadingAceptar}
                     >
-                      {loading ? (
+                      {loadingAceptar ? (
                         <>
                           <Spinner animation="grow" size="sm" />
                           Enviando...
@@ -353,14 +355,16 @@ const AtenderSolicitud = ({ solicitudId, onClose }) => {
               <Button
                 className="btn AtenderSolicitud-button-cancel"
                 onClick={() => setShow(!show)}
+                disabled={loadingRechazo}
               >
                 Cancelar
               </Button>
               <Button
                 className="btn AtenderSolicitud-button-enviar"
                 onClick={onClickRechazarSolicitud}
+                disabled={loadingRechazo}
               >
-                {loading ? (
+                {loadingRechazo ? (
                   <>
                     <Spinner animation="grow" size="sm" />
                     Enviando...

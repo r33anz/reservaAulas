@@ -1,13 +1,11 @@
 import { Dropdown } from "react-bootstrap";
 import ListaDeNotificaciones from "../../components/ListaDeNotificaciones";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { BellFill } from "react-bootstrap-icons";
-import { getNotifications } from "../../services/Notification.service";
 import "./style.css";
 
-const Notificacion = () => {
+const Notificacion = ({ notifications, id }) => {
   const [show, setShow] = useState(false);
-  const [notifications, setNotifications] = useState([]);
   const [notificationsIdNotRead, setNotificationsIdNotRead] = useState([]);
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
@@ -17,17 +15,13 @@ const Notificacion = () => {
   const refModalTitleNotification = useRef(null);
   const refModalCloseNotification = useRef(null);
   const refModalBodyNotification = useRef(null);
-  const id = window.sessionStorage.getItem("docente_id");
 
-  const fetchNotifications = async () => {
-    const response = await getNotifications(id);
-    console.log(response);
-    setNotifications(response);
-    const notificationsIdNotRead = response
+  const cargarNotifications = useCallback(() => {
+    const notificationsIdNotRead = notifications
       .filter((notification) => notification.read_at === null)
       .map((notification) => notification.id);
     setNotificationsIdNotRead(notificationsIdNotRead);
-  };
+  }, [notifications]);
 
   useEffect(() => {
     const handleOutSideClick = (event) => {
@@ -57,10 +51,10 @@ const Notificacion = () => {
   ]);
 
   useEffect(() => {
-    if (id !== null) {
-      fetchNotifications();
+    if (id !== null && notifications.length > 0) {
+      cargarNotifications();
     }
-  }, []);
+  }, [notifications, cargarNotifications, id]);
 
   return (
     <Dropdown ref={refDropdown} autoClose={false} show={show}>
@@ -94,11 +88,11 @@ const Notificacion = () => {
           refModalTitleNotification={refModalTitleNotification}
           refModalCloseNotification={refModalCloseNotification}
           refModalBodyNotification={refModalBodyNotification}
-          fetchNotifications={fetchNotifications}
+          fetchNotifications={cargarNotifications}
         />
       </Dropdown.Menu>
     </Dropdown>
   );
-}
+};
 
 export default Notificacion;

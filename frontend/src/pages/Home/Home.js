@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Container, Stack, Image } from "react-bootstrap";
 import { Calendar3 } from "react-bootstrap-icons";
 import "./style.css";
@@ -10,12 +10,15 @@ import NotificacionDocente from "../DashboardDocente/NotificacionDocente";
 
 const Home = ({ setShowCalendar, showCalendar }) => {
   const { id } = useParams("id");
+  const [usuarioId, setUsuarioId] = useState(null);
 
   useEffect(() => {
     if (id === undefined) {
-      window.sessionStorage.setItem("admin_id", "0");
+      window.sessionStorage.setItem("admin_id", 0);
+      setUsuarioId(0);
     } else {
       window.sessionStorage.setItem("docente_id", id);
+      setUsuarioId(id);
     }
   }, [id]);
 
@@ -36,7 +39,11 @@ const Home = ({ setShowCalendar, showCalendar }) => {
           </h3>
         </div>
         <div className="ico-header">
-          {id === undefined ? <NotificacionAdmin /> : <NotificacionDocente />}
+          {usuarioId !== null && usuarioId === 0 ? (
+            <NotificacionAdmin adminId={usuarioId} />
+          ) : (
+            <NotificacionDocente docenteId={usuarioId} />
+          )}
           <Calendar3
             color="white"
             size={30}

@@ -40,3 +40,17 @@ export const cancelarReserva = (id) => {
       throw error; // Lanzar el error para que pueda ser manejado en otro lugar si es necesario
     });
 };
+
+export const inhabilitarReserva = (ids) => {
+  return axios
+    .put(`${apiUrl}/inhabilitarReserva/`,{idSolicitudes:ids})
+    .then(function (response) {
+      console.log(response);
+      return response.data;
+    })
+    .catch(function (error) {
+      
+      console.log(error);
+      return null;
+    });
+};
