@@ -12,7 +12,7 @@ class NotificationController extends Controller
 {
     public function marcarNotificacionLeida(Request $request){ // se hara de forma individual
         $idUsuario = $request->input('idUsuario');
-        $notificacionId = $request->input('notificacioneID');
+        $notificacionId = $request->input('notificacionId');
 
         $user = User::find($idUsuario);    
         $noti = $user->notifications()->find($notificacionId);
@@ -33,6 +33,7 @@ class NotificationController extends Controller
                 'type' => $notificacion->type,
                 'data' => $notificacion->data,
                 'read_at' => $notificacion->read_at,
+                'created_at'=>$notificacion->created_at
             ];
         });
 
