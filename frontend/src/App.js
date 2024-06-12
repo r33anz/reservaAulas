@@ -1,12 +1,9 @@
 import React, { useState } from "react";
-import './App.css';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import Home from './pages/Home';
-import { AlertsProvider } from './components/Alert/AlertsContext';
-import {
-  Route,
-  Routes,
-} from "react-router-dom";
+import "./App.css";
+import "bootstrap/dist/css/bootstrap.min.css";
+import Home from "./pages/Home";
+import { AlertsProvider } from "./components/Alert/AlertsContext";
+import { Route, Routes } from "react-router-dom";
 import NotFound from "./pages/NotFound";
 import DashboardDocente from "./pages/DashboardDocente";
 import DashboardAdmin from "./pages/DashboardAdmin";
@@ -31,7 +28,7 @@ function App() {
         } />
       </Route>
       <Route path="*" element={<NotFound />} />
-    </Routes >
+    </Routes>
   );
 }
 

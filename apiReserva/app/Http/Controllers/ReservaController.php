@@ -91,6 +91,9 @@ class ReservaController extends Controller
         }
         $solicitud->estado = 'cancelado';
         $solicitud->save();
+        //notificar admin cancelacion 
+        $this->notificadorService->cancelarReserva($id);
+        //
         event(new NotificacionUsuario(0,'Reserva cancelada.'));
         return response()->json(['message' => 'Reserva cancelada correctamente'], 200);
     }

@@ -5,6 +5,7 @@ import "./style.css";
 import { readNotification } from "../../services/Notification.service";
 
 const ListaDeNotificaciones = ({
+  usuarioId,
   notifications,
   refModalTitleNotification,
   refModalCloseNotification,
@@ -30,9 +31,8 @@ const ListaDeNotificaciones = ({
   };
 
   const handleOnReadNotification = async (notificacion) => {
-    const docenteId = window.sessionStorage.getItem("docente_id");
-    await readNotification(docenteId, notificacion.id);
-    fetchNotifications();
+    await readNotification(usuarioId, notificacion.id);
+    fetchNotifications(usuarioId);
   };
 
   const handleShowNotification = (notification) => {

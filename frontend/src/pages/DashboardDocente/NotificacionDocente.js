@@ -35,7 +35,7 @@ const NotificacionDocente = ({ docenteId }) => {
     }
   }, [docenteId]);
 
-  return <Notificacion notifications={notifications} id={docenteId} />;
+  return <Notificacion notifications={notifications} id={docenteId} fetchNotifications={fetchNotifications} />;
 };
 
 export default NotificacionDocente;

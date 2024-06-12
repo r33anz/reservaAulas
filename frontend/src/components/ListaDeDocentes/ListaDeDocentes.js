@@ -212,6 +212,7 @@ const ListaDeSolicitudes = ({ titulo, tipoDeUsuario }) => {
           {tipoDeUsuario === "Admin" && (
             <Row className="justify-content-center mt-3">
               <Button
+                style={{ width: '300px'}}
                 className="btn RegistrarAmbiente-button-register"
                 onClick={() => setShowModal(true)}
               >

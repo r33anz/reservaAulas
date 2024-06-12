@@ -11,6 +11,10 @@ use App\Notifications\Aceptar;
 use App\Notifications\Rechazar;
 use App\Notifications\Inhabilitar;
 use App\Events\NotificacionUsuario;
+use App\Models\Docente;
+use App\Notifications\Cancelada;
+use App\Notifications\SolicitudRAdmin;
+
 class NotificadorService
 {
     public function notificarInhabilitacion($idSolicitud)
@@ -85,9 +89,30 @@ class NotificadorService
 
         $ini = Periodo::find($periodoIdIni);
         $fin = Periodo::find($periodoIdFin);
-
+        $nombre = Docente::where('id',$solicitud->docente_id)->value('nombre');
         $user = User::find($solicitud->docente_id);
         $user->notify(new SolicitudR($nombreAmbiente,$solicitud->fechaReserva,$ini->horainicial,$fin->horafinal));
+
+        $admin = User::find(0);
+        $admin->notify(new SolicitudRAdmin($nombreAmbiente, $nombre,$solicitud->materia));
+    }
+
+    public function cancelarReserva($idSolicitud){
+        $solicitud = Solicitud::find($idSolicitud);
+        $idAmbiente = DB::table('ambiente_solicitud')
+                            ->where('solicitud_id', $idSolicitud)
+                            ->value('ambiente_id');
+        $nombreAmbiente = Ambiente::where('id', $idAmbiente)
+                                    ->value('nombre');
+
+        $periodoIdIni=$solicitud->periodo_ini_id;
+        $periodoIdFin=$solicitud->periodo_fin_id;
+
+        $ini = Periodo::find($periodoIdIni);
+        $fin = Periodo::find($periodoIdFin);
+        $nombre = Docente::where('id',$solicitud->docente_id)->value('nombre');
+        $user = User::find(0);
+        $user->notify(new Cancelada($nombreAmbiente,$solicitud->fechaReserva,$ini->horainicial,$fin->horafinal,$nombre));
     }
 
 }

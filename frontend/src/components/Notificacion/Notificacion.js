@@ -4,7 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { BellFill } from "react-bootstrap-icons";
 import "./style.css";
 
-const Notificacion = ({ notifications, id }) => {
+const Notificacion = ({ notifications, id, fetchNotifications }) => {
   const [show, setShow] = useState(false);
   const [notificationsIdNotRead, setNotificationsIdNotRead] = useState([]);
   const handleClose = () => setShow(false);
@@ -83,11 +83,12 @@ const Notificacion = ({ notifications, id }) => {
         }}
       >
         <ListaDeNotificaciones
+          usuarioId={id}
           notifications={notifications}
           refModalTitleNotification={refModalTitleNotification}
           refModalCloseNotification={refModalCloseNotification}
           refModalBodyNotification={refModalBodyNotification}
-          fetchNotifications={cargarNotifications}
+          fetchNotifications={fetchNotifications}
         />
       </Dropdown.Menu>
     </Dropdown>
