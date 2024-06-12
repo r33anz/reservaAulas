@@ -349,7 +349,7 @@ const ListaDeReservas = ({ titulo, tipoDeUsuario }) => {
           <p>{solicitud.razon}</p>
           {(solicitud.estado === "aprobado" ||
             solicitud.estado === "en espera") && (
-              <div className="mt-3">
+              <div className="d-flex flex-column align-items-center mt-3">
                 <h5>¿Está seguro de cancelar la solicitud?</h5>
                 <div className="d-flex justify-content-center mt-3">
                   <button
