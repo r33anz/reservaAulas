@@ -12,15 +12,25 @@ class Cancelada extends Notification
     use Queueable;
 
 
-    public function __construct()
+    protected $nombreAmbiente;
+    protected $fecha;
+    protected $ini;
+    protected $fin;
+    protected $nombre;
+    public function __construct( $nombreAmbiente,$fecha,$ini,$fin,$nombre) 
     {
         
+        $this->nombreAmbiente = $nombreAmbiente;
+        $this->fecha =$fecha;
+        $this->ini =$ini;
+        $this->fin =$fin;
+        $this->nombre=$nombre;
     }
 
     
     public function via($notifiable)
     {
-        return ['database','mail'];
+        return ['database'];
     }
 
     public function toArray($notifiable)
@@ -28,5 +38,20 @@ class Cancelada extends Notification
         return [
             
         ];
+    }
+
+    public function toDatabase($notifiable)
+    {   
+        return [
+            'message' => 'Reserva Cancelada.',
+            'data' => $this->formatearTextoNotificacion()
+        ];
+    }
+
+    private function formatearTextoNotificacion()
+    {
+        return "El docente " .$this->nombre." cancelo su reserva del ambiente ". $this->nombreAmbiente . "\n"
+             . " con fecha " . $this->fecha . " y periodos \n"
+             . $this->ini . "-" . $this->fin .".";
     }
 }
