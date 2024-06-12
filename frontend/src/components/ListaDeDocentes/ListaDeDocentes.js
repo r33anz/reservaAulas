@@ -16,6 +16,7 @@ import {
 } from "react-bootstrap-icons";
 import { AlertsContext } from "../Alert/AlertsContext";
 import { getDocentes } from "../../services/Docente.service";
+import { enviarNotificacionIndividual, enviarNotificacionGeneral } from "../../services//Notification.service";
 import "./style.css";  // Asegúrate de importar tu archivo de estilos
 
 const ListaDeSolicitudes = ({ titulo, tipoDeUsuario }) => {
@@ -24,6 +25,7 @@ const ListaDeSolicitudes = ({ titulo, tipoDeUsuario }) => {
   const [expandedIndex, setExpandedIndex] = useState(-1);
   const [showModal, setShowModal] = useState(false);
   const [selectedDocente, setSelectedDocente] = useState(null);
+  const [mensaje, setMensaje] = useState('');
 
   const reloadSolicitudes = async () => {
     await getDocentesData();
@@ -56,9 +58,64 @@ const ListaDeSolicitudes = ({ titulo, tipoDeUsuario }) => {
     setShowModal(true);
   };
 
+  const handleNotificacionGeneral = async () => {
+    if (mensaje.trim()) {
+      const response = await enviarNotificacionGeneral(mensaje);
+      if (response) {
+        agregarAlert({
+          icon: <CheckCircleFill />,
+          severidad: "success",
+          mensaje: "Notificación general enviada exitosamente",
+        });
+        setShowModal(false);
+        setMensaje('');
+      } else {
+        agregarAlert({
+          icon: <XSquareFill />,
+          severidad: "error",
+          mensaje: "Error al enviar la notificación general",
+        });
+      }
+    } else {
+      agregarAlert({
+        icon: <XSquareFill />,
+        severidad: "error",
+        mensaje: "Por favor, ingresa un mensaje válido",
+      });
+    }
+  };
+
   const handleCloseModal = () => {
     setShowModal(false);
     setSelectedDocente(null);
+    setMensaje('');
+  };
+
+  const handleEnviarNotificacion = async () => {
+    if (selectedDocente && mensaje.trim()) {
+      const response = await enviarNotificacionIndividual(selectedDocente.id, mensaje);
+      if (response) {
+        agregarAlert({
+          icon: <CheckCircleFill />,
+          severidad: "success",
+          mensaje: "Notificación enviada exitosamente",
+        });
+        setShowModal(false);
+        setMensaje('');
+      } else {
+        agregarAlert({
+          icon: <XSquareFill />,
+          severidad: "error",
+          mensaje: "Error al enviar la notificación",
+        });
+      }
+    } else {
+      agregarAlert({
+        icon: <XSquareFill />,
+        severidad: "error",
+        mensaje: "Por favor, ingresa un mensaje válido",
+      });
+    }
   };
 
   return (
@@ -152,6 +209,16 @@ const ListaDeSolicitudes = ({ titulo, tipoDeUsuario }) => {
               </Table>
             </div>
           </Row>
+          {tipoDeUsuario === "Admin" && (
+            <Row className="justify-content-center mt-3">
+              <Button
+                className="btn RegistrarAmbiente-button-register"
+                onClick={() => setShowModal(true)}
+              >
+                Notificación general
+              </Button>
+            </Row>
+          )}
         </Col>
       </Row>
       <Modal
@@ -166,7 +233,7 @@ const ListaDeSolicitudes = ({ titulo, tipoDeUsuario }) => {
             style={{ height: "100%" }}
           >
             <h4 style={{ fontWeight: "bold" }} className="">
-              Notificar a {selectedDocente?.nombre}
+              {selectedDocente ? `Notificar a ${selectedDocente.nombre}` : "Notificación general"}
             </h4>
           </Col>
           <Col
@@ -186,14 +253,19 @@ const ListaDeSolicitudes = ({ titulo, tipoDeUsuario }) => {
           <Form>
             <Form.Group controlId="formNotificacion">
               <Form.Label>Mensaje</Form.Label>
-              <Form.Control as="textarea" rows={3} />
+              <Form.Control
+                as="textarea"
+                rows={3}
+                value={mensaje}
+                onChange={(e) => setMensaje(e.target.value)}
+              />
             </Form.Group>
             <div className="d-flex justify-content-center mt-3">
               <Button
                 className="btn RegistrarAmbiente-button-register"
-                onClick={handleCloseModal}
+                onClick={selectedDocente ? handleEnviarNotificacion : handleNotificacionGeneral}
               >
-                Aceptar
+                Enviar
               </Button>
               <div style={{ width: "10px" }}></div> {/* Espacio entre botones */}
               <Button
