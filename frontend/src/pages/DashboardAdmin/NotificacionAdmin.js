@@ -26,7 +26,7 @@ const NotificacionAdmin = ({ adminId }) => {
     }
   }, [adminId]);
 
-  return <Notificacion notifications={notifications} id={adminId}/>;
+  return <Notificacion notifications={notifications} id={adminId} fetchNotifications={fetchNotifications}/>;
 };
 
 export default NotificacionAdmin;

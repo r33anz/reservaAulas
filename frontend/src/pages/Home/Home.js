@@ -7,10 +7,15 @@ import "../../components/Busquedanombre/Style.css";
 import { Outlet, useParams } from "react-router-dom";
 import NotificacionAdmin from "../DashboardAdmin/NotificacionAdmin";
 import NotificacionDocente from "../DashboardDocente/NotificacionDocente";
+import { getReporte } from "../../services/Reporte.service";
 
-const Home = ({ setShowCalendar, showCalendar, setShowReportes, showReportes }) => {
+const Home = ({ setShowCalendar, showCalendar }) => {
   const { id } = useParams("id");
   const [usuarioId, setUsuarioId] = useState(null);
+
+  const fetchReporte = async () => {
+    await getReporte();
+  };
 
   useEffect(() => {
     if (id === undefined) {
@@ -40,7 +45,13 @@ const Home = ({ setShowCalendar, showCalendar, setShowReportes, showReportes }) 
         </div>
         <div className="ico-header">
           <Stack direction="horizontal" gap={2}>
-            <FileEarmarkRuled color="white" size={30} onClick={() => setShowReportes(!showReportes)} />
+            {usuarioId !== null && usuarioId === 0 && (
+              <FileEarmarkRuled
+                color="white"
+                size={30}
+                onClick={() => fetchReporte()}
+              />
+            )}
             {usuarioId !== null && usuarioId === 0 ? (
               <NotificacionAdmin adminId={usuarioId} />
             ) : (

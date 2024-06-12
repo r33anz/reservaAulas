@@ -32,7 +32,7 @@ const ListaDeNotificaciones = ({
 
   const handleOnReadNotification = async (notificacion) => {
     await readNotification(usuarioId, notificacion.id);
-    fetchNotifications();
+    fetchNotifications(usuarioId);
   };
 
   const handleShowNotification = (notification) => {
