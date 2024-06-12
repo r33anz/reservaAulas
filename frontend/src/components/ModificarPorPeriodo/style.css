@@ -6,10 +6,18 @@
   color: #000000;
 }
 
-.consultar-button {
+.consultar1-button {
   margin-top: -40px;
+  
+    color: #ffffff;
+     background-color: #003F70; 
+    border-color: #003F70;
 }
-
+.justify-content-md-center {
+  margin-right: 10px !important; /* Ajusta según necesites */
+  padding-left: 10px !important; /* Ajusta según necesites */
+  padding-right: 10px !important; /* Ajusta según necesites */
+}
 .periodos-container {
   width: 130px;
   display: flex;
@@ -19,7 +27,7 @@
 .periodos-grid {
   display: grid;
   grid-template-columns: repeat(  3,  1fr); /* Divide los elementos en tres columnas */
-  gap: 20px; /* Espacio entre los elementos */
+  gap: 60px; /* Espacio entre los elementos */
 }
 .periodos-container div label {
   width: 100px; /* Ancho fijo para cada periodo */
@@ -50,7 +58,7 @@
 
 .text {
   font-size: 15px;
-  width: 200px;
+  width: 160px;
 }
 .periodos-reservado{
   background-color: red;
@@ -63,7 +71,7 @@
 }
 .modi {
   margin-top: -40px;
-  margin-left: 307px;
+  margin-left: 407px;
 }
 .ModificarPorPeriodo-button-periodo {
   color: #ffffff;

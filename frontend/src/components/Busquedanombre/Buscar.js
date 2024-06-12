@@ -13,10 +13,8 @@ const Buscar = () => {
   const [ambientes, setAmbientes] = useState([]);
   const [show, setShow] = useState("");
   const inputAmbienteRef = useRef();
-
+  const [showDropdown, setShowDropdown] = useState(false);
   const [ambienteDetails, setAmbienteDetails] = useState([]); // Cambiar a array para almacenar detalles de varios ambientes
-
-  const [enterPressed, setEnterPressed] = useState(false);
 
   const buscarAmbiente = async (event) => {
     if (
@@ -25,24 +23,27 @@ const Buscar = () => {
     ) {
       const originalValue = event.target.value;
       const trimmedValue = originalValue.trim(); // Eliminar espacios al inicio y al final
-
+  
       if (trimmedValue === "") {
         formik.setFieldValue("ambiente", {
           ...formik.values.ambiente,
           nombre: "",
         });
+        setShowDropdown(false);
       } else if (!trimmedValue.startsWith(" ")) {
         // Verificar si el primer carácter no es un espacio
         const value = originalValue.toUpperCase(); // Convertir a mayúsculas si pasa la validación del espacio inicial
-
+  
         if (/^[a-zA-Z0-9\s]*$/.test(value)) {
+          // Hacemos visible el dropdown solo si hay coincidencias
+          setShowDropdown(ambientes.some((ambiente) =>
+            ambiente.nombre.toLowerCase().includes(value.toLowerCase())
+          ));
+          
           formik.setFieldValue("ambiente", {
             ...formik.values.ambiente,
             nombre: value,
           });
-          //const { respuesta } = await buscarAmbientePorNombre(value);
-          //setAmbientes(respuesta);
-          setAmbienteDetails([]);
         }
       }
     }
@@ -55,6 +56,7 @@ const Buscar = () => {
       console.log(ambientes);
     }
   };
+  
 
   const formik = useFormik({
     initialValues: {
@@ -74,15 +76,17 @@ const Buscar = () => {
       }),
     }),
     onSubmit: (values) => {
-      setAmbienteDetails([]);
+      //setAmbienteDetails([]);
+      setShowDropdown(false);
       if (ambientes.length > 0) {
         console.log(formik.values.ambiente.nombre);
         recuperar(formik.values.ambiente.nombre);
         //console.log(ambientes);
       } else {
-        setAmbienteDetails([]); // Limpiar los detalles del ambiente en caso de no encontrar coincidencias
-        setEnterPressed(true);
+        //setAmbienteDetails([]); // Limpiar los detalles del ambiente en caso de no encontrar coincidencias
+        
       }
+      setShowDropdown(false);
       inputAmbienteRef.current.blur();
     },
   });
@@ -94,12 +98,12 @@ const Buscar = () => {
     });
     setAmbienteDetails([]);
     recuperar(ambiente.nombre);
-    setShow("");
+    setShowDropdown(false);
   };
 
   useEffect(() => {
     function handleClickOutside() {
-      setShow("");
+      setShowDropdown(false);
     }
     document.addEventListener("click", handleClickOutside);
     return () => {
@@ -148,6 +152,7 @@ const Buscar = () => {
                       value={formik.values.ambiente.nombre}
                       className="form-control"
                       bsPrefix="dropdown-toggle"
+                      
                     />
                     {ambientes.filter((ambiente) =>
                       ambiente.nombre
@@ -158,7 +163,9 @@ const Buscar = () => {
                     ).length > 0 &&
                       formik.values.ambiente.nombre !== "" && (
                         <Dropdown.Menu
-                          className={show}
+                        class={`dropdown-menu ${
+                          showDropdown ? "show" : ""
+                        }`}
                           style={{
                             width: "100%",
                             overflowY: "auto",
@@ -204,12 +211,10 @@ const Buscar = () => {
 
       {/* Mostrar los detalles de cada ambiente */}
       {ambienteDetails.length > 0 && (
-        <Row
-          className="ambientedetails"
-        >
+        <Row className="ambientedetails">
           {ambienteDetails.map((ambiente, index) => (
-            <Col>
-              <div key={index} className="datos1">
+            <Col key={index}>
+              <div className="datos2">
                 <h6>{ambiente.nombre}</h6>
                 <p>Capacidad: {ambiente.capacidad}</p>
                 <p>Tipo de Ambiente: {ambiente.tipo}</p>
