@@ -9,7 +9,6 @@ import DashboardDocente from "./pages/DashboardDocente";
 import DashboardAdmin from "./pages/DashboardAdmin";
 function App() {
   const [showCalendar, setShowCalendar] = useState(false);
-  const [showReportes, setShowReportes] = useState(false);
 
   return (
     <Routes>
@@ -21,8 +20,6 @@ function App() {
             <Home
               setShowCalendar={setShowCalendar}
               showCalendar={showCalendar}
-              setShowReportes={setShowReportes}
-              showReportes={showReportes}
             />
           </AlertsProvider>
         }
