@@ -27,6 +27,7 @@ function Calendario() {
   const [reservas, setReservas] = useState([]);
   const [show, setShow] = useState(false);
   const [nombre, setNombre] = useState("");
+  const [mensaje, setMensaje] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredReservas, setFilteredReservas] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
@@ -165,6 +166,7 @@ const totalPages = Math.ceil(filteredReservas.length / reservasPerPage);
         setFilteredReservas(prevReservas => [...prevReservas, data]);
       }
       setNombre("Detalle de Reservas");
+      setMensaje("No hay reservas");
     } else if (event.type === "solicitud") {
       for (const solicitudId of datosEncontrados.solicitudes) {
         const data = await recuperarInformacionSolicitud(solicitudId);
@@ -174,6 +176,7 @@ const totalPages = Math.ceil(filteredReservas.length / reservasPerPage);
       }
       console.log(filteredReservas);
       setNombre("Detalle de Solicitudes");
+      setMensaje("No hay solicitudes");
     }
     setShow(true);
   };
@@ -358,6 +361,7 @@ const totalPages = Math.ceil(filteredReservas.length / reservasPerPage);
 
   const handleKeyUp = ({ code }) => {
     if (code === "Enter" && ambientesEncontradas.length > 0) {
+      
       let ambiente = ambientesEncontradas[0];
       if (selected !== null) {
         ambiente = ambientesEncontradas.find(
@@ -387,7 +391,21 @@ const totalPages = Math.ceil(filteredReservas.length / reservasPerPage);
   useEffect(() => {
     fetchAmbientes();
   }, []);
-
+  const handleInputChange = (e) => {
+    const originalValue = e.target.value;
+    const trimmedValue = originalValue.trim(); // Eliminar espacios al inicio y al final
+  
+    if (trimmedValue === "") {
+      setSearchTerm("");
+    } else if (!trimmedValue.startsWith(" ")) {
+      const value = originalValue.toUpperCase(); // Convertir a mayúsculas si pasa la validación del espacio inicial
+  
+      if (/^[a-zA-Z0-9\s]*$/.test(value)) {
+        // Si pasa la validación de caracteres especiales, establecer el valor en searchTerm
+        setSearchTerm(value);
+      }
+    }
+  };
   useEffect(() => {
     const handleOutSideClick = (event) => {
       if (
@@ -406,7 +424,12 @@ const totalPages = Math.ceil(filteredReservas.length / reservasPerPage);
     };
   }, [refDropdownMenu, refDropdown, refDropdownToggle]);
 
-
+  const handleKeyDown = (event) => {
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      // Aquí va tu lógica para manejar la búsqueda
+    }
+  };
 
   
   return (
@@ -671,39 +694,48 @@ const totalPages = Math.ceil(filteredReservas.length / reservasPerPage);
               </Form>
             ) : (
               <>
-                <Form inline className="d-flex  mb-2">
-                  <Form.Group controlId="searchTerm" className="mr-2 d-flex align-items-center">
-                    <Form.Label className="mr-2">Buscar por Ambiente</Form.Label>
-                    <Form.Control
-                      type="text"
-                      value={searchTerm}
-                      onChange={(e) => setSearchTerm(e.target.value)}
-                      placeholder="Nombre del Ambiente"
-                      style={{ width: "100%" }}
-                    />
-                  </Form.Group>
-                </Form>
-                {filteredReservas.map((reserva, index) => (
-                  <div key={index} className="reserva">
-                    <div className="reserva-row">
-                      <h6>Docente:</h6>
-                      <p>{reserva.nombreDocente}</p>
-                    </div>
-                    <div className="reserva-row">
-                      <h6>Nombre del Ambiente:</h6>
-                      <p>{reserva.ambiente_nombre}</p>
-                    </div>
-                    <div className="reserva-row">
-                      <h6>Periodo:</h6>
-                      <p>{getPeriodo(reserva.periodo_ini_id, reserva.periodo_fin_id)}</p>
-                    </div>
-                    {index < filteredReservas.length - 1 && <hr />}
-                  </div>
-                ))}
-                <Pagination style={{ justifyContent: "center" }}>
-                  {renderPaginationItems()}
-                </Pagination>
-              </>
+  <Form inline className="d-flex  mb-2">
+    <Form.Group controlId="searchTerm" className="mr-2 d-flex align-items-center">
+      <Form.Label className="mr-2">Buscar por Ambiente</Form.Label>
+      <Form.Control
+        type="text"
+        value={searchTerm}
+        onKeyDown={handleKeyDown}
+        onChange={handleInputChange}
+        placeholder="Nombre del Ambiente"
+        style={{ width: "100%" }}
+      />
+    </Form.Group>
+  </Form>
+
+  {filteredReservas.length === 0 ? (
+    <p>{mensaje}</p>
+  ) : (
+    filteredReservas.map((reserva, index) => (
+      <div key={index} className="reserva">
+        <div className="reserva-row">
+          <h6>Docente:</h6>
+          <p>{reserva.nombreDocente}</p>
+        </div>
+        <div className="reserva-row">
+          <h6>Nombre del Ambiente:</h6>
+          <p>{reserva.ambiente_nombre}</p>
+        </div>
+        <div className="reserva-row">
+          <h6>Periodo:</h6>
+          <p>{getPeriodo(reserva.periodo_ini_id, reserva.periodo_fin_id)}</p>
+        </div>
+        {index < filteredReservas.length - 1 && <hr />}
+      </div>
+    ))
+  )}
+
+  {filteredReservas.length > 0 && (
+    <Pagination style={{ justifyContent: "center" }}>
+      {renderPaginationItems()}
+    </Pagination>
+  )}
+</>
             )}
           </Row>
           

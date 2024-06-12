@@ -347,7 +347,22 @@ function CalendarioDocente() {
     let { respuesta } = await getAmbientes();
     setAmbientes(respuesta);
   };
-
+  const handleInputChange = (e) => {
+    const originalValue = e.target.value;
+    const trimmedValue = originalValue.trim(); // Eliminar espacios al inicio y al final
+  
+    if (trimmedValue === "") {
+      setSearchTerm("");
+    } else {
+      const value = originalValue.toUpperCase(); // Convertir a mayúsculas
+  
+      if (/^\s*[a-zA-Z0-9][a-zA-Z0-9\s]*$/.test(value)) {
+        // Permitir espacio como primer carácter solo si hay caracteres alfanuméricos después
+        setSearchTerm(value);
+      }
+    }
+  };
+  
   const isReservado = (periodoId) => {
     return (
       periodosReservados.filter((periodoReservado) => {
@@ -377,7 +392,13 @@ function CalendarioDocente() {
       window.removeEventListener("mousedown", handleOutSideClick);
     };
   }, [refDropdownMenu, refDropdown, refDropdownToggle]);
-
+  const handleKeyDown = (event) => {
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      // Aquí va tu lógica para manejar la búsqueda
+    }
+  };
+  
   return (
     <>
       <div
@@ -646,29 +667,35 @@ function CalendarioDocente() {
                     <Form.Control
                       type="text"
                       value={searchTerm}
-                      onChange={(e) => setSearchTerm(e.target.value)}
+                      onKeyDown={handleKeyDown}
+                      onChange={handleInputChange}
                       placeholder="Nombre del Ambiente"
                       style={{ width: "100%" }}
                     />
                   </Form.Group>
                 </Form>
-                {filteredReservas.map((reserva, index) => (
-                  <div key={index} className="reserva">
-                    <div className="reserva-row">
-                      <h6>Docente:</h6>
-                      <p>{reserva.nombreDocente}</p>
-                    </div>
-                    <div className="reserva-row">
-                      <h6>Nombre del Ambiente:</h6>
-                      <p>{reserva.ambiente_nombre}</p>
-                    </div>
-                    <div className="reserva-row">
-                      <h6>Periodo:</h6>
-                      <p>{getPeriodo(reserva.periodo_ini_id, reserva.periodo_fin_id)}</p>
-                    </div>
-                    {index < filteredReservas.length - 1 && <hr />}
-                  </div>
-                ))}
+                {filteredReservas.length === 0 ? (
+    <p>No hay reservas</p>
+  ) : (
+    filteredReservas.map((reserva, index) => (
+      <div key={index} className="reserva">
+        <div className="reserva-row">
+          <h6>Docente:</h6>
+          <p>{reserva.nombreDocente}</p>
+        </div>
+        <div className="reserva-row">
+          <h6>Nombre del Ambiente:</h6>
+          <p>{reserva.ambiente_nombre}</p>
+        </div>
+        <div className="reserva-row">
+          <h6>Periodo:</h6>
+          <p>{getPeriodo(reserva.periodo_ini_id, reserva.periodo_fin_id)}</p>
+        </div>
+        {index < filteredReservas.length - 1 && <hr />}
+      </div>
+    ))
+  )}
+                
                 <Pagination style={{ justifyContent: "center" }}>
                   {renderPaginationItems()}
                 </Pagination>
