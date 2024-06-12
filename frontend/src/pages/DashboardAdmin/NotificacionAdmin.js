@@ -11,7 +11,7 @@ const NotificacionAdmin = ({ adminId }) => {
   };
 
   useEffect(() => {
-    if (adminId) {
+    if (Number.isInteger(adminId)) {
       console.log(`Subscribing to channel: usuario.${adminId}`);
       fetchNotifications(adminId);
       const userChannel = echo.channel(`usuario.${adminId}`);
