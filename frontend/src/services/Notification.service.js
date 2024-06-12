@@ -14,11 +14,11 @@ export const getNotifications = async (docenteId) => {
     });
 };
 
-export const readNotification = async (docenteId, notificacionesId) => {
+export const readNotification = async (docenteId, notificacionId) => {
   return axios
     .post(`${apiUrl}/marcarNotifiacionesLeidas`, {
       idUsuario: docenteId,
-      notificacionesID: notificacionesId,
+      notificacionId: notificacionId,
     })
     .then(function (response) {
       return response.data;
