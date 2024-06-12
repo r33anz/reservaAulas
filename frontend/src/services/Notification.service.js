@@ -16,7 +16,7 @@ export const getNotifications = async (docenteId) => {
 
 export const readNotification = async (docenteId, notificacionId) => {
   return axios
-    .post(`${apiUrl}/marcarNotifiacionLeida`, {
+    .post(`${apiUrl}/marcarNotificacionLeida`, {
       idUsuario: docenteId,
       notificacionId: notificacionId,
     })
