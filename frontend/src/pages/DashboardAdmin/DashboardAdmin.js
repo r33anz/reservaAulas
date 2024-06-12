@@ -23,8 +23,8 @@ const DashboardAdmin = ({ showCalendar }) => {
           </Col>
           {!showCalendar && (
             <>
-              <Col className="d-flex justify-content-end align-items-center">
-                MODIFICAR POR:
+              <Col className="d-flex justify-content-end align-items-end">
+                <h5>MODIFICAR POR:</h5>
               </Col>
               <Col
                 className="justify-content-end align-items-end"
@@ -35,7 +35,7 @@ const DashboardAdmin = ({ showCalendar }) => {
                     className="btn text-center align-middle ModificarPorPeriodo-button-periodo"
                     onClick={() => setShowModalPeriodo(true)}
                   >
-                    PERIODO
+                    <h5 style={{ fontWeight: "bold", margin: 0 }}>Periodo</h5>
                   </Button>
                   <Modal
                     size="xs"
@@ -52,7 +52,7 @@ const DashboardAdmin = ({ showCalendar }) => {
                     className="btn text-center align-middle ModificarEstadoDelAmbientePorFecha-button-fecha"
                     onClick={() => setShowModalFecha(true)}
                   >
-                    FECHA
+                    <h5 style={{ fontWeight: "bold", margin: 0 }}>Fecha</h5>
                   </Button>
                   <Modal
                     size="xs"
@@ -89,9 +89,7 @@ const DashboardAdmin = ({ showCalendar }) => {
                       <h5 style={{ fontWeight: "bold" }}>Registrar Ambiente</h5>
                     </Button>
                     <div>
-                      <h5>
-                        BUSQUEDA POR:{" "}
-                      </h5>
+                      <h5>BUSQUEDA POR: </h5>
                       <Tabs
                         defaultActiveKey="busqueda-por-nombre"
                         id="uncontrolled-tab-example"

@@ -1,25 +1,32 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Notificacion from "../../components/Notificacion";
 import echo from "../../Echo";
-const NotificacionAdmin = () => {
-  const userID = sessionStorage.getItem("admin_id");
+import { getNotifications } from "../../services/Notification.service";
+const NotificacionAdmin = ({ adminId }) => {
+  const [notifications, setNotifications] = useState([]);
+
+  const fetchNotifications = async (adminId) => {
+    const response = await getNotifications(adminId);
+    setNotifications(response);
+  };
 
   useEffect(() => {
-    if (userID) {
-      console.log(`Subscribing to channel: usuario.${userID}`);
-      const userChannel = echo.channel(`usuario.${userID}`);
-      userChannel.listen(".NotificacionUsuario", (e) => {
-        alert(`Event received: ${e.message}`);
+    if (adminId) {
+      console.log(`Subscribing to channel: usuario.${adminId}`);
+      fetchNotifications(adminId);
+      const userChannel = echo.channel(`usuario.${adminId}`);
+      userChannel.listen(".NotificacionUsuario", async (e) => {
+        fetchNotifications(adminId);
       });
 
       return () => {
         userChannel.stopListening(".NotificacionUsuario");
-        echo.leaveChannel(`usuario.${userID}`);
+        echo.leaveChannel(`usuario.${adminId}`);
       };
     }
-  }, [userID]);
+  }, [adminId]);
 
-  return <Notificacion />;
+  return <Notificacion notifications={notifications} id={adminId}/>;
 };
 
 export default NotificacionAdmin;

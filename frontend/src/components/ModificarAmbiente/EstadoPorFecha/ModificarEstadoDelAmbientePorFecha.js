@@ -12,6 +12,7 @@ import {
   FormControl,
   Row,
   Stack,
+  Spinner,
 } from "react-bootstrap";
 import {
   CheckCircleFill,
@@ -32,6 +33,7 @@ import {
   getPeriodosReservados,
 } from "../../../services/Ambiente.service";
 import { useRef } from "react";
+import { inhabilitarReserva } from "../../../services/Reserva.service";
 
 const ModificarEstadoDelAmbientePorFecha = ({ onclose }) => {
   const [ambientes, setAmbientes] = useState([]);
@@ -47,6 +49,7 @@ const ModificarEstadoDelAmbientePorFecha = ({ onclose }) => {
   const refDropdownToggle = useRef(null);
   const refDropdown = useRef(null);
   const [periodosReservados, setPeriodosReservados] = useState([]);
+  const [loading, setLoading] = useState(false);
   const periodos = [
     { id: 1, hora: "6:45 - 8:15" },
     { id: 2, hora: "8:15 - 9:45" },
@@ -173,6 +176,7 @@ const ModificarEstadoDelAmbientePorFecha = ({ onclose }) => {
       }
       return periodo.id;
     });
+    setLoading(true);
     const response =
       estado === "Inhabilitar"
         ? await estadoinhabilitado(
@@ -181,8 +185,16 @@ const ModificarEstadoDelAmbientePorFecha = ({ onclose }) => {
             ambiente.fecha
           )
         : await habilita(ambiente.id, periodosActualizados, ambiente.fecha);
+    if (estado === "Inhabilitar") {
+      let periodos = [];
+      periodosReservados.forEach((periodoReserva) => {
+        periodos = [...periodos, ...periodoReserva.periodos];
+      });
+      await inhabilitarReserva(periodos);
+    }
     if (response !== null) {
       setAmbiente({ ...ambiente, periodos: periodosActualizados });
+      setLoading(false);
       agregarAlert({
         icon: <CheckCircleFill />,
         severidad: "success",
@@ -574,6 +586,7 @@ const ModificarEstadoDelAmbientePorFecha = ({ onclose }) => {
                       size="sm"
                       variant="secondary"
                       onClick={() => setShowMensajeDeConfirmacion(false)}
+                      disabled={loading}
                     >
                       Cancelar
                     </Button>
@@ -583,8 +596,16 @@ const ModificarEstadoDelAmbientePorFecha = ({ onclose }) => {
                         modificarPeriodos(estado);
                       }}
                       size="sm"
+                      disabled={loading}
                     >
-                      Aceptar
+                      {loading ? (
+                        <>
+                          <Spinner animation="grow" size="sm" />
+                          Enviando...
+                        </>
+                      ) : (
+                        "Aceptar"
+                      )}
                     </Button>
                   </Stack>
                 </Row>

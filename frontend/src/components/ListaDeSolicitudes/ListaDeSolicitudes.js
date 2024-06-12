@@ -11,9 +11,7 @@ import {
   Tooltip,
 } from "react-bootstrap";
 import "./style.css";
-import {
-  recuperarSolicitudesDeReserva,
-} from "../../services/Reserva.service";
+import { recuperarSolicitudesDeReserva } from "../../services/Reserva.service";
 import {
   ArrowClockwise,
   CardHeading,
@@ -241,7 +239,13 @@ const ListaDeSolicitudes = ({ titulo, tipoDeUsuario }) => {
                 <th>Materia</th>
                 <th>Periodo</th>
                 <th>Fecha de Reserva</th>
-                <th>Fecha Creada</th>
+                {(estado === "" || estado === "canceladas") && (
+                  <th>Fecha de Actualizacion</th>
+                )}
+                {estado === "en espera" && <th>Fecha de Enviada</th>}
+                {(estado === "rechazadas" || estado === "aprobadas") && (
+                  <th>Fecha de Atencion</th>
+                )}
                 <th>Estado</th>
                 <th>Detalle</th>
               </tr>
@@ -256,7 +260,13 @@ const ListaDeSolicitudes = ({ titulo, tipoDeUsuario }) => {
                     {getPeriodo(item.periodo_ini_id, item.periodo_fin_id)}
                   </td>
                   <td>{item.fechaReserva}</td>
-                  <td>{item.fechaEnviada}</td>
+                  {(estado === "" || estado === "canceladas") && (
+                    <td>{item.updated_at}</td>
+                  )}
+                  {estado === "en espera" && <td>{item.fechaEnviada}</td>}
+                  {(estado === "rechazadas" || estado === "aprobadas") && (
+                    <td>{item.fechaAtendida}</td>
+                  )}
                   <td>{item.estado}</td>
                   <td>
                     {item.estado === "en espera" ? (
@@ -343,6 +353,26 @@ const ListaDeSolicitudes = ({ titulo, tipoDeUsuario }) => {
               <p>{solicitud.materia}</p>
               <h6>Fecha Reserva:</h6>
               <p>{solicitud.fechaReserva}</p>
+              {(solicitud.estado === "" ||
+                solicitud.estado === "canceladas") && (
+                <>
+                  <h6>Fecha de Actualizacion:</h6>
+                  <p>{solicitud.updated_at}</p>
+                </>
+              )}
+              {solicitud.estado === "en espera" && (
+                <>
+                  <h6>Fecha de Enviada:</h6>
+                  <p>{solicitud.fechaEnviada}</p>
+                </>
+              )}
+              {(solicitud.estado === "rechazadas" ||
+                solicitud.estado === "aprobadas") && (
+                <>
+                  <h6>Fecha Atendida:</h6>
+                  <p>{solicitud.fechaAtendida}</p>
+                </>
+              )}
               <h6>Cantidad: </h6>
               <p>{solicitud.cantidad}</p>
               <h6>Grupo: </h6>

@@ -4,7 +4,7 @@ const apiUrl = process.env.REACT_APP_URL;
 
 export const getNotifications = async (docenteId) => {
   return axios
-    .get(`${apiUrl}/todasNotificaciones/${docenteId}`)
+    .get(`${apiUrl}/notificaciones/${docenteId}`)
     .then(function (response) {
       return response.data;
     })
