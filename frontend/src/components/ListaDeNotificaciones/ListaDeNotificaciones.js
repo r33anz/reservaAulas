@@ -1,12 +1,11 @@
 import { useState } from "react";
-import { Button, Col, Container, Modal, Row, Stack } from "react-bootstrap";
+import { Col, Container, Modal, Row, Stack } from "react-bootstrap";
 import { EnvelopeFill, EnvelopeOpen, XSquareFill } from "react-bootstrap-icons";
 import "./style.css";
 import { readNotification } from "../../services/Notification.service";
 
 const ListaDeNotificaciones = ({
   notifications,
-  notificationsIdNotRead,
   refModalTitleNotification,
   refModalCloseNotification,
   refModalBodyNotification,
@@ -30,16 +29,9 @@ const ListaDeNotificaciones = ({
     setNotification({});
   };
 
-  const handleOnReadNotification = async (notification) => {
-    const notificacionesId = notification.id;
+  const handleOnReadNotification = async (notificacion) => {
     const docenteId = window.sessionStorage.getItem("docente_id");
-    await readNotification(docenteId, [notificacionesId]);
-    fetchNotifications();
-  };
-
-  const handleOnMarkAllAsRead = async () => {
-    const docenteId = window.sessionStorage.getItem("docente_id");
-    await readNotification(docenteId, notificationsIdNotRead);
+    await readNotification(docenteId, notificacion.id);
     fetchNotifications();
   };
 
@@ -51,19 +43,6 @@ const ListaDeNotificaciones = ({
   return (
     <div>
       <Container fluid className="ListaDeNotificaciones-container">
-        {notification.length > 0 && (
-          <Row className="align-items-center ListaDeNotificaciones-row-button-mark-all-as-read">
-            <Col>
-              <Button
-                size="sm"
-                className="Home-button-marcar-todas"
-                onClick={() => handleOnMarkAllAsRead()}
-              >
-                Marcar todo como leidas
-              </Button>
-            </Col>
-          </Row>
-        )}
         <div className="ListaDeNotificaciones-body">
           <Col>
             {notifications.length > 0 ? (
