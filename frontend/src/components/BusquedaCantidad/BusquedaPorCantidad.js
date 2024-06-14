@@ -63,9 +63,25 @@ const BuscarCantidad = () => {
     };
 
     return (
-        <div className="buscarcontainer" style={{ width: "100%", padding: "2rem" }}>
+        <div className="buscarcontainer" style={{ width: "60%"}}>
+            <Container className="ModificarEstadoDelAmbientePorFecha-header" fluid>
+        <Row xs="auto" className="justify-content-md-end">
+          <Col xs lg="10" style={{ alignContent: "center", padding: 0 }}>
+            <h5 style={{ color: "white", fontWeight: "bold" }}>
+              Buscar por cantidad
+            </h5>
+          </Col>
+          <Button
+            className="ModificarEstadoDelAmbientePorFecha-header-button-close"
+            style={{ width: "58px", height: "3rem" }}
+            //onClick={onClose}
+          >
+            <XSquareFill style={{ width: "24px", height: "24px" }} />
+          </Button>
+        </Row>
+      </Container>
             <Container fluid>
-                <Row className="justify-content-md-center" style={{marginTop: "1rem"}}>
+                <Row className="justify-content-md-center" style={{marginTop: "2rem"}}>
                     <Col xs lg="12">
                         <Form onSubmit={handleBuscarClick} onKeyDown={handleKeyDown}>
                             <Form.Group as={Row} className="mb-3" controlId="cantidad">

@@ -98,6 +98,7 @@ const RegistrarAmbiente = ({ onClose }) => {
 
   return (
     <>
+    <div style={{ width: "50%"}}>
       <Container fluid>
         <Row sm className="text-white RegistrarAmbiente-header">
           <Col
@@ -285,6 +286,7 @@ const RegistrarAmbiente = ({ onClose }) => {
           </Col>
         </Row>
       </Container>
+      </div>
     </>
   );
 };

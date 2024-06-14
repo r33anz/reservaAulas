@@ -21,6 +21,7 @@
   flex-direction: column;
   color: #000000;
   align-items: center; /* Center all content horizontally */
+  width: 60%;
 }
 
 .titulo {
