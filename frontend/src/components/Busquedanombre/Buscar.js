@@ -131,6 +131,22 @@ const Buscar = () => {
 
   return (
     <div className="buscarcontainer">
+      <Container className="ModificarEstadoDelAmbientePorFecha-header" fluid>
+        <Row xs="auto" className="justify-content-md-end">
+          <Col xs lg="10" style={{ alignContent: "center", padding: 0 }}>
+            <h5 style={{ color: "white", fontWeight: "bold" }}>
+              Buscar por nombre
+            </h5>
+          </Col>
+          <Button
+            className="ModificarEstadoDelAmbientePorFecha-header-button-close"
+            style={{ width: "58px", height: "3rem" }}
+            //onClick={onClose}
+          >
+            <XSquareFill style={{ width: "24px", height: "24px" }} />
+          </Button>
+        </Row>
+      </Container>
       <Container className="ModificarEstadoDelAmbientePorFecha-body" fluid>
         <Row className="justify-content-md-center">
           <Col xs lg="11">

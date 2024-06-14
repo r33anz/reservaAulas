@@ -345,7 +345,7 @@ const SolicitarReserva = ({ onClose }) => {
   }, []);
 
   const renderFirstStep = () => (
-    <div style={{ width: "100%" }}>
+    <div style={{ width: "50%" }}>
       <Container className="RegistrarAmbiente-header" fluid>
         <Row xs="auto" className="text-white justify-content-end">
           <Col
@@ -497,7 +497,7 @@ const SolicitarReserva = ({ onClose }) => {
   );
 
   const renderSecondStep = () => (
-    <div style={{ width: "100%" }}>
+    <div style={{ width: "50%" }}>
       <Container className="RegistrarAmbiente-header" fluid>
         <Row xs="auto" className="text-white justify-content-end">
           <Col
