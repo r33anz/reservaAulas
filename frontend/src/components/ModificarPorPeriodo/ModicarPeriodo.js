@@ -7,6 +7,7 @@ import {
   habilita,
   getPeriodosReservados,
   inhabilitarReserva,
+  cancelarReserva,
 } from "../../services/ModificarPeriodo.service";
 import "./style.css";
 import {
@@ -19,7 +20,7 @@ import {
   Row,
   Stack,
 } from "react-bootstrap";
-import { XSquareFill ,QuestionCircleFill} from "react-bootstrap-icons";
+import { XSquareFill, QuestionCircleFill } from "react-bootstrap-icons";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 
@@ -34,9 +35,9 @@ const Modificarperdiodo = ({ onClose }) => {
   const [periodosReservados, setPeriodosReservados] = useState([]);
   const [estado1, setEstado] = useState("");
   const [needsConfirmation, setNeedsConfirmation] = useState(false);
-
+  const [selectAll, setSelectAll] = useState(false);
   const [showMensajeDeConfirmacion, setShowMensajeDeConfirmacion] =
-  useState(false);
+    useState(false);
 
   const buscarAmbiente = async (event) => {
     setConsultarPresionado(false);
@@ -105,9 +106,9 @@ const Modificarperdiodo = ({ onClose }) => {
       id: ambiente.id,
       nombre: ambiente.nombre,
     });
-    
+
     let requiereConfirmacion = false;
-    
+
     checkboxes.forEach((checkbox) => {
       if (checkbox.checked) {
         seleccionados.push({ id: checkbox.id });
@@ -117,7 +118,7 @@ const Modificarperdiodo = ({ onClose }) => {
         const periodoReservado = periodosReservados.find((reservado) =>
           reservado.periodos.includes(checkboxIdAsNumber)
         );
-        
+
         if (periodoReservado) {
           // Marcar que se requiere confirmación
           requiereConfirmacion = true;
@@ -126,16 +127,16 @@ const Modificarperdiodo = ({ onClose }) => {
     });
 
     // Desmarcar todas las casillas de verificación
-    
+
 
     if (requiereConfirmacion) {
       setShowMensajeDeConfirmacion(true);
     } else {
       realizarCambios();
     }
-};
+  };
 
-const realizarCambios = () => {
+  const realizarCambios = () => {
     const checkboxes = document.querySelectorAll(
       '.periodos-container input[type="checkbox"]'
     );
@@ -152,6 +153,7 @@ const realizarCambios = () => {
           const idSolicitud = periodoReservado.idSolicitud;
           inhabilitarReser(idSolicitud);
           console.log(`Periodo ${checkboxIdAsNumber} está reservado con idSolicitud ${idSolicitud}`);
+          cancelarReserva(idSolicitud);
         } else if (periodosModificados.includes(checkboxIdAsNumber)) {
           otraHabilitar(checkbox.id);
         } else {
@@ -160,31 +162,32 @@ const realizarCambios = () => {
 
       }
     });
-checkboxes.forEach((checkbox) => {
+    setSelectAll(!selectAll);
+    checkboxes.forEach((checkbox) => {
       checkbox.checked = false;
     });
     buscarAmbientPorFecha(formik.values.ambiente, formik.values.fecha);
     setShowMensajeDeConfirmacion(false);
-};
+  };
 
-const handleAceptar = () => {
-  realizarCambios();
-};
+  const handleAceptar = () => {
+    realizarCambios();
+  };
 
-const inhabilitarReser = (id) => {
-  const ids = [id];
-  inhabilitarReserva(ids);
-};
+  const inhabilitarReser = (id) => {
+    const ids = [id];
+    inhabilitarReserva(ids);
+  };
 
-const otraHabilitar = (id) => {
-  const ids = [id];
-  habilita(formik.values.ambiente.id, ids, formik.values.fecha);
-};
+  const otraHabilitar = (id) => {
+    const ids = [id];
+    habilita(formik.values.ambiente.id, ids, formik.values.fecha);
+  };
 
-const otraFuncion = (id) => {
-  const ids = [id];
-  estadoinhabilitado(formik.values.ambiente.id, ids, formik.values.fecha);
-};
+  const otraFuncion = (id) => {
+    const ids = [id];
+    estadoinhabilitado(formik.values.ambiente.id, ids, formik.values.fecha);
+  };
 
   const cambiarColorLabels = useCallback(
     (periodoId) => {
@@ -199,6 +202,33 @@ const otraFuncion = (id) => {
 
       const periodoModificado = periodosModificados.includes(periodoId);
       return periodoModificado ? "periodos-inhabilitados" : "periodos-habilitados";
+    },
+    [periodosModificados, periodosReservados]
+  );
+  const cambiarTextoLabels = useCallback(
+    (periodoId) => {
+      // Verificar si el periodo está en periodosReservados
+      const esReservado = periodosReservados.some((periodoReservado) =>
+        periodoReservado.periodos.includes(periodoId)
+      );
+
+      // Verificar si el periodo está modificado
+      const periodoModificado = periodosModificados.includes(periodoId);
+
+      // Verificar si el periodo está inhabilitado
+
+
+      // Determinar el texto del estado
+      let textoEstado = "";
+      if (esReservado) {
+        textoEstado = "Reservado";
+      } else if (periodoModificado) {
+        textoEstado = "Inhabilitado";
+      } else {
+        textoEstado = "Habilitado";
+      }
+
+      return textoEstado;
     },
     [periodosModificados, periodosReservados]
   );
@@ -286,6 +316,14 @@ const otraFuncion = (id) => {
   useEffect(() => {
     buscar(" ");
   }, []);
+
+  const selectAllPeriods = () => {
+    const checkboxes = document.querySelectorAll('.periodos-container input[type="checkbox"]');
+    checkboxes.forEach((checkbox) => {
+      checkbox.checked = !selectAll;
+    });
+    setSelectAll(!selectAll);
+  };
 
   return (
     <div style={{ width: "574px" }}>
@@ -428,7 +466,7 @@ const otraFuncion = (id) => {
                       <span className="text">{"Periodos inhabilitados"}</span>
                       <div
                         className="circle"
-                        style={{ backgroundColor: "#ffcccb" }}
+                        style={{ backgroundColor: "#f56a79" }}
                       ></div>
                       <span className="text">{"Periodos reservados"}</span>
                     </div>
@@ -441,72 +479,79 @@ const otraFuncion = (id) => {
                           );
                           // Mostrar checkbox solo para el primer periodo reservado
                           const esPrimerPeriodoDeRango =
-                          esReservado &&
-                          // Verificar si el período actual es el primero en cualquiera de los rangos de periodos reservados
-                          periodosReservados.some((reservado) => periodo === reservado.periodos[0]);
+                            esReservado &&
+                            periodosReservados.some((reservado) => periodo === reservado.periodos[0]);
+
                           return (
                             <div key={periodo}>
-                              {(!esReservado || esPrimerPeriodoDeRango) && (
+                              {(!esReservado || esPrimerPeriodoDeRango) ? (
                                 <input
                                   type="checkbox"
                                   id={periodo.toString()}
                                   name={`periodo${periodo}`}
                                   value={`periodo${periodo}`}
                                 />
+                              ) : (
+                                // Contenido que deseas mostrar si la condición no se cumple
+                                <span style={{ display: 'inline-block', width: '20px' }}></span>
                               )}
                               <label
                                 htmlFor={periodo.toString()}
-                                className={cambiarColorLabels(periodo)}
+                                className={`periodo-label ${cambiarColorLabels(periodo)}`}
                               >
-                                {`${
-                                  periodo === 1
-                                    ? "6:45-8:15"
-                                    : periodo === 2
+                                {`${periodo === 1
+                                  ? "6:45-8:15"
+                                  : periodo === 2
                                     ? "8:15-9:45"
                                     : periodo === 3
-                                    ? "9:45-11:15"
-                                    : "11:15-12:45"
-                                }`}
+                                      ? "9:45-11:15"
+                                      : "11:15-12:45"
+                                  }`}
+                                <p>{cambiarTextoLabels(periodo)}</p>
                               </label>
                             </div>
                           );
                         })}
                       </div>
+
                       <div className="periodos">
                         <h6>Tarde</h6>
                         {[5, 6, 7, 8].map((periodo, index, array) => {
                           const esReservado = periodosReservados.some(
                             (reservado) => reservado.periodos.includes(periodo)
                           );
-                       
+
                           // Mostrar checkbox solo para el primer periodo reservado
                           const esPrimerPeriodoDeRango =
-    esReservado &&
-    // Verificar si el período actual es el primero en cualquiera de los rangos de periodos reservados
-    periodosReservados.some((reservado) => periodo === reservado.periodos[0]);
+                            esReservado &&
+                            // Verificar si el período actual es el primero en cualquiera de los rangos de periodos reservados
+                            periodosReservados.some((reservado) => periodo === reservado.periodos[0]);
                           return (
                             <div key={periodo}>
-                              {(!esReservado || esPrimerPeriodoDeRango) && (
+                              {(!esReservado || esPrimerPeriodoDeRango) ? (
                                 <input
                                   type="checkbox"
                                   id={periodo.toString()}
                                   name={`periodo${periodo}`}
                                   value={`periodo${periodo}`}
                                 />
+                              ) : (
+                                // Contenido que deseas mostrar si la condición no se cumple
+                                <span style={{ display: 'inline-block', width: '20px' }}></span>
                               )}
                               <label
                                 htmlFor={periodo.toString()}
                                 className={cambiarColorLabels(periodo)}
                               >
-                                {`${
-                                  periodo === 5
-                                    ? "12:45-14:15"
-                                    : periodo === 6
+                                {`${periodo === 5
+                                  ? "12:45-14:15"
+                                  : periodo === 6
                                     ? "14:15-15:45"
                                     : periodo === 7
-                                    ? "15:45-17:15"
-                                    : "17:15-18:45"
-                                }`}
+                                      ? "15:45-17:15"
+                                      : "17:15-18:45"
+                                  }`}
+                                <p>{cambiarTextoLabels(periodo)}</p>
                               </label>
                             </div>
                           );
@@ -517,40 +562,52 @@ const otraFuncion = (id) => {
                         {[9, 10].map((periodo, index, array) => {
                           const esReservado = periodosReservados.some(
                             (reservado) => reservado.periodos.includes(periodo)
-                            
+
                           );
-                          
+
                           // Mostrar checkbox solo para el primer periodo reservado
                           const esPrimerPeriodoDeRango =
-    esReservado &&
-    // Verificar si el período actual es el primero en cualquiera de los rangos de periodos reservados
-    periodosReservados.some((reservado) => periodo === reservado.periodos[0]);
+                            esReservado &&
+                            // Verificar si el período actual es el primero en cualquiera de los rangos de periodos reservados
+                            periodosReservados.some((reservado) => periodo === reservado.periodos[0]);
                           return (
                             <div key={periodo}>
-                              {(!esReservado || esPrimerPeriodoDeRango) && (
+                              {(!esReservado || esPrimerPeriodoDeRango) ? (
                                 <input
                                   type="checkbox"
                                   id={periodo.toString()}
                                   name={`periodo${periodo}`}
                                   value={`periodo${periodo}`}
                                 />
+                              ) : (
+                                // Contenido que deseas mostrar si la condición no se cumple
+                                <span style={{ display: 'inline-block', width: '20px' }}></span>
                               )}
+
                               <label
                                 htmlFor={periodo.toString()}
                                 className={cambiarColorLabels(periodo)}
                               >
-                                {`${
-                                  periodo === 9 ? "18:45-20:15" : "20:15-21:45"
-                                }`}
+                                {`${periodo === 9 ? "18:45-20:15" : "20:15-21:45"
+                                  }`}
+                                <p>{cambiarTextoLabels(periodo)}</p>
                               </label>
+
                             </div>
                           );
                         })}
+                        <input
+                          type="checkbox"
+                          id="selectAllPeriods"
+                          checked={selectAll}
+                          onChange={selectAllPeriods}
+                        />
+                        <label className="periodos-habilitados" htmlFor="selectAllPeriods">Seleccionar Todo</label>
                       </div>
                     </div>
                     <Row xs="auto" className="justify-content-md-end">
                       <Stack direction="horizontal" gap={2}>
-                        <Button className="modi" onClick={estado}>
+                        <Button className="ModificarPorPeriodo-button-periodo" onClick={estado}>
                           Modificar
                         </Button>
                       </Stack>
@@ -563,46 +620,47 @@ const otraFuncion = (id) => {
         </Row>
       </Container>
       {estado1 !== "" && (
-  <Modal
-    size="xs"
-    aria-labelledby="contained-modal-title-vcenter"
-    show={showMensajeDeConfirmacion}
-    onHide={() => setShowMensajeDeConfirmacion(false)}
-    centered
-  >
-    <Alert
-      variant="primary"
-      show={showMensajeDeConfirmacion}
-      style={{ margin: 0 }}
-    >
-      <Container>
-        <Row xs="auto">
-          <QuestionCircleFill size="2rem" />
-          ¿Está seguro de hacer esta modificación?
-        </Row>
-        <Row xs="auto" className="justify-content-md-end">
-          <Stack direction="horizontal" gap={2}>
-            <Button
-              className="btn ModificarEstadoDelAmbientePorFecha-cancel"
-              size="sm"
-              variant="secondary"
-              onClick={() => setShowMensajeDeConfirmacion(false)}
-            >
-              Cancelar
-            </Button>
-            <Button
-              className="btn ModificarEstadoDelAmbientePorFecha-aceptar"
-              onClick={handleAceptar}
-              size="sm"
-            >
-              Aceptar
-            </Button>
-          </Stack>
-        </Row>
-      </Container>
-    </Alert>
-  </Modal>
-)}
+        <Modal
+          size="xs"
+          aria-labelledby="contained-modal-title-vcenter"
+          show={showMensajeDeConfirmacion}
+          onHide={() => setShowMensajeDeConfirmacion(false)}
+          centered
+        >
+          <Alert
+            variant="primary"
+            show={showMensajeDeConfirmacion}
+            style={{ margin: 0 }}
+          >
+            <Container>
+              <Row xs="auto">
+                <QuestionCircleFill size="2rem" />
+                ¿Está seguro de hacer esta modificación?
+                Al hacerlo cancelará las reservas correspondientes
+              </Row>
+              <Row xs="auto" className="justify-content-md-end">
+                <Stack direction="horizontal" gap={2}>
+                  <Button
+                    className="btn ModificarEstadoDelAmbientePorFecha-cancel"
+                    size="sm"
+                    variant="secondary"
+                    onClick={() => setShowMensajeDeConfirmacion(false)}
+                  >
+                    Cancelar
+                  </Button>
+                  <Button
+                    className="btn ModificarEstadoDelAmbientePorFecha-aceptar"
+                    onClick={handleAceptar}
+                    size="sm"
+                  >
+                    Aceptar
+                  </Button>
+                </Stack>
+              </Row>
+            </Container>
+          </Alert>
+        </Modal>
+      )}
 
     </div>
   );
