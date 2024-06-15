@@ -56,7 +56,7 @@ const IniDocente = ({ showCalendar }) => {
       case 'busquedaPorCantidad':
         return <BuscarCantidad />;
       case 'modificarPorPeriodo':
-        
+        return "";
       case 'modificarPorFecha':
         case "Calendario":
         return <CalendarioDocente />;
