@@ -104,13 +104,13 @@ const AtenderSolicitud = ({ solicitudId, onClose }) => {
   const onClickRechazarSolicitud = async () => {
     setLoadingRechazo(true);
     let response = await rechazarSolicitud(solicitudId, razonRechazo);
+    setLoadingRechazo(false);
     if (response !== null) {
       agregarAlert({
         icon: <CheckCircleFill />,
         severidad: "success",
         mensaje: "Solicitud rechazada enviada.",
       });
-      setLoadingRechazo(false);
       setShow(false);
       onClose();
       setEsSolicitudAtentida(true);
@@ -126,8 +126,8 @@ const AtenderSolicitud = ({ solicitudId, onClose }) => {
   const onClickAceptarSolicitud = async () => {
     setLoadingAceptar(true);
     let response = await aceptarSolicitud(solicitudId);
+    setLoadingAceptar(false);
     if (response !== null) {
-      setLoadingAceptar(false);
       setShow(false);
       onClose();
       agregarAlert({

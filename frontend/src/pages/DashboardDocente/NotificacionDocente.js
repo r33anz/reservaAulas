@@ -1,15 +1,7 @@
-import { useEffect, useState } from "react";
-import Notificacion from "../../components/Notificacion";
+import { useEffect } from "react";
 import echo from "../../Echo";
-import { getNotifications } from "../../services/Notification.service";
 
-const NotificacionDocente = ({ docenteId }) => {
-  const [notifications, setNotifications] = useState([]);
-
-  const fetchNotifications = async (docenteId) => {
-    const response = await getNotifications(docenteId);
-    setNotifications(response);
-  };
+const NotificacionDocente = ({ docenteId, fetchNotifications }) => {
 
   useEffect(() => {
     if (docenteId) {
@@ -34,8 +26,7 @@ const NotificacionDocente = ({ docenteId }) => {
       };
     }
   }, [docenteId]);
-
-  return <Notificacion notifications={notifications} id={docenteId} fetchNotifications={fetchNotifications} />;
+  return (<></>);
 };
 
 export default NotificacionDocente;

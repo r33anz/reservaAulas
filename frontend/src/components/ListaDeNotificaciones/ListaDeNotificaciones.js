@@ -1,18 +1,11 @@
 import { useState } from "react";
-import { Col, Container, Modal, Row, Stack } from "react-bootstrap";
-import { EnvelopeFill, EnvelopeOpen, XSquareFill } from "react-bootstrap-icons";
+import { Col, Collapse, Container, Row, Table } from "react-bootstrap";
 import "./style.css";
 import { readNotification } from "../../services/Notification.service";
 
-const ListaDeNotificaciones = ({
-  usuarioId,
-  notifications,
-  refModalTitleNotification,
-  refModalCloseNotification,
-  refModalBodyNotification,
-  fetchNotifications,
-}) => {
-  const [notification, setNotification] = useState({});
+const ListaDeNotificaciones = ({ notifications, id, fetchNotifications }) => {
+  const [expandedIndex, setExpandedIndex] = useState(-1);
+
   const formatDistanceToNow = (timestamp) => {
     const messageDate = new Date(timestamp);
     const now = new Date();
@@ -26,106 +19,72 @@ const ListaDeNotificaciones = ({
     return `Hace: ${diffDays > 0 ? `${daysAgo} y ` : ""}${hoursAgo}`;
   };
 
-  const handleOnCloseNotification = () => {
-    setNotification({});
-  };
-
   const handleOnReadNotification = async (notificacion) => {
-    await readNotification(usuarioId, notificacion.id);
-    fetchNotifications(usuarioId);
-  };
-
-  const handleShowNotification = (notification) => {
-    setNotification(notification);
-    handleOnReadNotification(notification);
+    if (notificacion.read_at === null) {
+      await readNotification(id, notificacion.id);
+      fetchNotifications(id);
+    }
   };
 
   return (
-    <div>
-      <Container fluid className="ListaDeNotificaciones-container">
-        <div className="ListaDeNotificaciones-body">
-          <Col>
-            {notifications.length > 0 ? (
-              notifications.map((notification) => (
-                <Row
-                  className={`align-items-center ${
-                    notification.read_at !== null
-                      ? "ListaDeNotificaciones-notification-read"
-                      : "ListaDeNotificaciones-notification-unread"
-                  }`}
-                >
-                  <Stack
-                    key="{notification.id}"
-                    direction="horizontal"
-                    gap={2}
-                    onClick={() => handleShowNotification(notification)}
-                  >
-                    <Col xs={1}>
-                      {notification.read_at ? (
-                        <EnvelopeOpen size={20} />
-                      ) : (
-                        <EnvelopeFill size={20} />
-                      )}
-                    </Col>
-                    <Col
-                      className="ListaDeNotificaciones-notification-title"
-                      xs={7}
-                    >
-                      {notification.data.message}
-                    </Col>
-                    <Col>
-                      <small>
-                        {formatDistanceToNow(notification.created_at, {
-                          addSuffix: true,
-                        })}
-                      </small>
-                    </Col>
-                  </Stack>
-                </Row>
-              ))
-            ) : (
-              <Row className="align-items-center justify-content-center ListaDeNotificaciones-sin-notigicaciones">
-                Sin Notificaciones
-              </Row>
-            )}
-          </Col>
-        </div>
-      </Container>
-      {notification && notification.data && (
-        <Modal show={notification.id} centered>
-          <Row sm className="text-white ListaDeNotificaciones-header">
-            <Col
-              ref={refModalTitleNotification}
-              xs="10"
-              className="d-flex justify-content-start align-items-center ListaDeNotificationes-col-header-title"
-            >
-              <h4 className="ListaDeNotificationes-header-title">
-                Notification
-              </h4>
-            </Col>
-            <Col
-              ref={refModalCloseNotification}
-              xs="2"
-              className="d-flex justify-content-end align-items-end ListaDeNotificationes-header-close"
-            >
-              <div
-                onClick={() => handleOnCloseNotification()}
-                className="ListaDeNotificaciones-header-button-close d-flex justify-content-center align-items-center"
-              >
-                <XSquareFill size={24} />
-              </div>
-            </Col>
-          </Row>
-          <Row
-            ref={refModalBodyNotification}
-            className="ListaDeNotificaciones-notification-body justify-content-center"
+    <>
+      <Container fluid>
+        <Row sm className="text-white ListaDeSolicitudes-header">
+          <Col
+            xs="10"
+            className="d-flex justify-content-start align-items-center"
           >
-            <h6>Message:</h6>
-            <p>{notification.data.data}</p>
-          </Row>
-        </Modal>
-      )}
-    </div>
+            <h5 style={{ fontWeight: "bold" }}>Lista de notificaciones</h5>
+          </Col>
+        </Row>
+        <Row className="ListaDeSolicitudes-body justify-content-center">
+          <Table striped bordered hover responsive>
+            <thead>
+              <tr>
+                <th>Asunto</th>
+              </tr>
+            </thead>
+            <tbody>
+              {notifications.map((item) => (
+                <tr
+                  onClick={() =>
+                    setExpandedIndex(item.id === expandedIndex ? -1 : item.id)
+                  }
+                >
+                  <td
+                    style={{
+                      background: item.read_at !== null ? "#f2f6fc" : "white",
+                    }}
+                    onClick={() => handleOnReadNotification(item)}
+                  >
+                    <Row>
+                      <Col md="10">{item.data.message}</Col>{" "}
+                      <Col md="2" className="text-end">
+                        {
+                          <small>
+                            {formatDistanceToNow(item.created_at, {
+                              addSuffix: true,
+                            })}
+                          </small>
+                        }
+                      </Col>
+                    </Row>
+                    <Collapse in={expandedIndex === item.id}>
+                      <div
+                        id={`expandable-row-${item.id}`}
+                        style={{ padding: "10px" }}
+                      >
+                        <h6>Mensaje:</h6> {item.data.data}
+                      </div>
+                    </Collapse>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </Table>
+        </Row>
+      </Container>
+    </>
   );
 };
 
