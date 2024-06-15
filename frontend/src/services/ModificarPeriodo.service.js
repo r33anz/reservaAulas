@@ -78,3 +78,16 @@ export const getPeriodosReservados = (ambienteId, fecha) => {
         return null;
       });
   };
+
+  export const cancelarReserva = (id) => {
+    return axios
+      .put(`${apiUrl}/reservas/${id}`)
+      .then(function (response) {
+        return response.data;
+      })
+      .catch(function (error) {
+        // Manejar cualquier error que ocurra durante la solicitud
+        console.error("Error al cancelar la reserva:", error);
+        throw error; // Lanzar el error para que pueda ser manejado en otro lugar si es necesario
+      });
+  };
