@@ -55,6 +55,7 @@ Route::post('/realizarSolicitud', [SolicitudController::class, 'registroSolicitu
 Route::post('/realizarSolicitudP2', [SolicitudController::class, 'registroSolicitudP2']); //segundo
 Route::post('/informacionSolicitud', [SolicitudController::class, 'informacionSolicitud']);
 Route::get('/{idSolicitud}/recuperarInformacion', [SolicitudController::class, 'recuperarInformacion']);
+Route::get('/periodosSolicitados/{fecha}/{idAmbiente}', [SolicitudController::class, 'periodosSolicitados']);
 Route::put('/aceptarSolicitud', [SolicitudController::class, 'aceptarSolicitud']);
 Route::put('/rechazarSolicitud', [SolicitudController::class, 'rechazarSolicitud']);
 Route::post('/verListas', [SolicitudController::class, 'verListas']);

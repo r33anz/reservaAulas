@@ -308,7 +308,7 @@ const ListaDeReservas = ({ titulo, tipoDeUsuario }) => {
             style={{ height: "100%" }}
           >
             <h4 style={{ fontWeight: "bold" }} className="">
-              ¿Está seguro de cancelar la reserva?
+              Detalle de {solicitud.estado === "aprobado" || solicitud.estado === "en espera" ? "Reserva" : "Solicitud"}
             </h4>
           </Col>
           <Col
@@ -349,23 +349,25 @@ const ListaDeReservas = ({ titulo, tipoDeUsuario }) => {
           <p>{solicitud.razon}</p>
           {(solicitud.estado === "aprobado" ||
             solicitud.estado === "en espera") && (
-            <div className="d-flex justify-content-center mt-3">
-              <button
-                className="btn RegistrarAmbiente-button-register"
-                onClick={() => handleCancelarReserva(solicitud.id)}
-              >
-                Aceptar
-              </button>
-              <div style={{ width: "10px" }}></div>{" "}
-              {/* Espacio entre botones 
-              <button
-                className="btn RegistrarAmbiente-button-cancel"
-                onClick={() => setShow(false)}
-              >
-                Cancelar
-              </button>  */}
-            </div>
-          )}
+              <div className="mt-3">
+                <h5>¿Está seguro de cancelar la solicitud?</h5>
+                <div className="d-flex justify-content-center mt-3">
+                  <button
+                    className="btn RegistrarAmbiente-button-register"
+                    onClick={() => handleCancelarReserva(solicitud.id)}
+                  >
+                    Sí
+                  </button>
+                  <div style={{ width: "10px" }}></div>
+                  <button
+                    className="btn RegistrarAmbiente-button-cancel"
+                    onClick={() => setShow(false)}
+                  >
+                    No
+                  </button>
+                </div>
+              </div>
+            )}
         </Row>
       </Modal>
     </>

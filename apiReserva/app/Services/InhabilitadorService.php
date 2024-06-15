@@ -9,7 +9,7 @@ class InhabilitadorService
     {
         // Cambiar el estado de la solicitud a 'inhabilitada'
         $solicitud = Solicitud::find($idSolicitud);
-        $solicitud->estado = 'inhabilitada';
+        $solicitud->estado = 'cancelado';
         $solicitud->save();
 
         // Agregar a la tabla inhabilitados
