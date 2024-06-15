@@ -40,23 +40,23 @@ class Inhabilitar extends Notification
     public function toDatabase($notifiable)
     {   
             return [
-            'message' => 'Reserva Inhabilitada.',
+            'message' => 'Reserva Cancelada.',
             'data' => $this->formatearTextoNotificacion()
         ];
     }
     public function toArray($notifiable)
     {
         return [
-            'message' => 'Reserva Inhabilitada.',
+            'message' => 'Reserva Cancelada.',
             'data' => $this->formatearTextoNotificacion()
         ];
     }
 
     private function formatearTextoNotificacion()
     {
-        return "Reserva del ambiente ".$this->nombreAmbiente."\n"
+        return "Reserva/Solicitud del ambiente ".$this->nombreAmbiente."\n"
         ."con fecha ".$this->fecha." y periodos \n"
-        .$this->ini."-".$this->fin." fue inhabilitada\n"
+        .$this->ini."-".$this->fin." fue cancelada por\n la inhabilitación de los periodos del ambiente\n" 
         ."Realize otra reserva con las nueva disponibilidades de horarios.";
     }
 }

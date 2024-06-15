@@ -333,4 +333,29 @@ class SolicitudController extends Controller
         event(new NotificacionUsuario($solicitud->docente_id, 'Nueva notificacion.'));
         return response()->json(['mensaje' => 'Solicitud rechazada correctamente']);
     }
+
+    public function periodosSolicitados($fecha,$idAmbiente){
+        $coincidencias = DB::table('solicituds')
+            ->join('ambiente_solicitud', 'solicituds.id', '=', 'ambiente_solicitud.solicitud_id')
+            ->where('solicituds.fechaReserva', $fecha)
+            ->where('ambiente_solicitud.ambiente_id', $idAmbiente)
+            ->where('solicituds.estado', 'en espera')
+            ->select('solicituds.id', 'solicituds.periodo_ini_id', 'solicituds.periodo_fin_id')
+            ->get();
+        $periodosReservados = [];
+        // Procesar las solicitudes para determinar los periodos reservados
+        foreach ($coincidencias as $coincidencia) {
+            $periodoIni = $coincidencia->periodo_ini_id;
+            $periodoFin = $coincidencia->periodo_fin_id;
+
+            $periodos = range($periodoIni, $periodoFin);
+            $periodosReservados[] = [
+                'idSolicitud' => $coincidencia->id,
+                'periodos' => $periodos
+            ];
+        }
+        return response()->json([
+            "periodosReservados" => $periodosReservados
+        ]);
+    }
 }

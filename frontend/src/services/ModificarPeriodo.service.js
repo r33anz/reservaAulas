@@ -64,7 +64,17 @@ export const getPeriodosReservados = (ambienteId, fecha) => {
         return null;
       });
   };
-
+  export const getPeriodosSolicitados = (ambienteId, fecha) => {
+    return axios
+      .get(`${apiUrl}/periodosSolicitados/${fecha}/${ambienteId}`)
+      .then(function (response) {
+        return response.data;
+      })
+      .catch(function (error) {
+        console.log(error);
+        return null;
+      });
+  };
   export const inhabilitarReserva = (ids) => {
     return axios
       .put(`${apiUrl}/inhabilitarReserva/`,{idSolicitudes:ids})

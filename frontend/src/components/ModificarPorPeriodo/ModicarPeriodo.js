@@ -7,7 +7,7 @@ import {
   habilita,
   getPeriodosReservados,
   inhabilitarReserva,
-  cancelarReserva,
+  getPeriodosSolicitados
 } from "../../services/ModificarPeriodo.service";
 import "./style.css";
 import {
@@ -33,6 +33,7 @@ const Modificarperdiodo = ({ onClose }) => {
   const [ambientes, setAmbientes] = useState([]);
   const [ambiente, setAmbiente] = useState({});
   const [periodosReservados, setPeriodosReservados] = useState([]);
+  const [periodosSolicitados, setPeriodosSolicitados ] = useState([]);
   const [estado1, setEstado] = useState("");
   const [needsConfirmation, setNeedsConfirmation] = useState(false);
   const [selectAll, setSelectAll] = useState(false);
@@ -79,10 +80,17 @@ const Modificarperdiodo = ({ onClose }) => {
   const buscarAmbientPorFecha = async (ambiente, fecha) => {
     const data = await modificarPerio(ambiente.id, fecha);
     const response = await getPeriodosReservados(ambiente.id, fecha);
+    const response2 = await getPeriodosSolicitados(ambiente.id, fecha);
+
     if (response) {
       setPeriodosReservados(response.periodosReservados);
       console.log(response);
+    } 
+    if (response2) {
+      setPeriodosSolicitados(response2.periodosReservados);
+      console.log(response2);
     }
+    
     if (data != null) {
       setAmbiente({
         id: ambiente.id,
@@ -118,8 +126,14 @@ const Modificarperdiodo = ({ onClose }) => {
         const periodoReservado = periodosReservados.find((reservado) =>
           reservado.periodos.includes(checkboxIdAsNumber)
         );
-
+        const periodoSolicitado = periodosSolicitados.find((reservado) =>
+          reservado.periodos.includes(checkboxIdAsNumber)
+        );
         if (periodoReservado) {
+          // Marcar que se requiere confirmación
+          requiereConfirmacion = true;
+        }
+        if (periodoSolicitado) {
           // Marcar que se requiere confirmación
           requiereConfirmacion = true;
         }
@@ -148,12 +162,20 @@ const Modificarperdiodo = ({ onClose }) => {
         const periodoReservado = periodosReservados.find((reservado) =>
           reservado.periodos.includes(checkboxIdAsNumber)
         );
+        const periodoSolicitado = periodosSolicitados.find((reservado) =>
+          reservado.periodos.includes(checkboxIdAsNumber)
+        );
 
         if (periodoReservado) {
           const idSolicitud = periodoReservado.idSolicitud;
           inhabilitarReser(idSolicitud);
           console.log(`Periodo ${checkboxIdAsNumber} está reservado con idSolicitud ${idSolicitud}`);
-          cancelarReserva(idSolicitud);
+          
+        } else if (periodoSolicitado){
+          const idSolicitud = periodoSolicitado.idSolicitud;
+          inhabilitarReser(idSolicitud);
+          console.log(`Periodo ${checkboxIdAsNumber} está solicitado con idSolicitud ${idSolicitud}`);
+
         } else if (periodosModificados.includes(checkboxIdAsNumber)) {
           otraHabilitar(checkbox.id);
         } else {
@@ -162,7 +184,7 @@ const Modificarperdiodo = ({ onClose }) => {
 
       }
     });
-    setSelectAll(!selectAll);
+    setSelectAll(false);
     checkboxes.forEach((checkbox) => {
       checkbox.checked = false;
     });
@@ -195,10 +217,16 @@ const Modificarperdiodo = ({ onClose }) => {
       const esReservado = periodosReservados.some((periodoReservado) =>
         periodoReservado.periodos.includes(periodoId)
       );
-
+      const esSolictado = periodosSolicitados.some((periodoSolicitado) =>
+        periodoSolicitado.periodos.includes(periodoId)
+      );
+      
       if (esReservado) {
         return "periodos-reservado";
+      } else if (esSolictado){
+        return "periodos-solicitado";
       }
+
 
       const periodoModificado = periodosModificados.includes(periodoId);
       return periodoModificado ? "periodos-inhabilitados" : "periodos-habilitados";
@@ -216,7 +244,9 @@ const Modificarperdiodo = ({ onClose }) => {
       const periodoModificado = periodosModificados.includes(periodoId);
 
       // Verificar si el periodo está inhabilitado
-
+      const esSolicitado = periodosSolicitados.some((periodoReservado) =>
+        periodoReservado.periodos.includes(periodoId)
+      );
 
       // Determinar el texto del estado
       let textoEstado = "";
@@ -224,13 +254,15 @@ const Modificarperdiodo = ({ onClose }) => {
         textoEstado = "Reservado";
       } else if (periodoModificado) {
         textoEstado = "Inhabilitado";
+      } else if (esSolicitado){
+        textoEstado = "Solicitado";
       } else {
         textoEstado = "Habilitado";
       }
 
       return textoEstado;
     },
-    [periodosModificados, periodosReservados]
+    [periodosModificados, periodosReservados, periodosSolicitados]
   );
 
   const formik = useFormik({
@@ -469,6 +501,11 @@ const Modificarperdiodo = ({ onClose }) => {
                         style={{ backgroundColor: "#f56a79" }}
                       ></div>
                       <span className="text">{"Periodos reservados"}</span>
+                      <div
+                        className="circle"
+                        style={{ backgroundColor: "#6aa9f5" }}
+                      ></div>
+                      <span className="text">{"Periodos Solicitados"}</span>
                     </div>
                     <div className="periodos-grid">
                       <div className="periodos">
