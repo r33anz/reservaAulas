@@ -10,6 +10,7 @@ import RegistrarAmbiente from "../../components/RegistrarAmbiente";
 import BuscarCantidad from "../../components/BusquedaCantidad/BusquedaPorCantidad";
 import Calendario from "../../components/Calendario";
 import CalendarioB from "../../components/CalendarioBusqueda";
+import ListaDeDocentes from "../../components/ListaDeDocentes/ListaDeDocentes"
 import { AlertsProvider } from "../../components/Alert/AlertsContext";
 import "./style.css";
 
@@ -30,8 +31,8 @@ const Inicio = ({ showCalendar }) => {
         return <BuscarCantidad />;
       case "modificarPorPeriodo":
         return <Modificarperdiodo onClose={() => setShowModalPeriodo(false)} />;
-      case "modificarPorFecha":
-        return <ModificarEstadoDelAmbientePorFecha onclose={() => setShowModalFecha(false)} />;
+      case "ListaDeDocentes":
+        return <ListaDeDocentes tipoDeUsuario="Admin"/>;
       case "Calendario":
         return <Calendario />;
       case "CalendarioB":
@@ -70,9 +71,7 @@ const Inicio = ({ showCalendar }) => {
                   <Nav.Link onClick={() => { setActiveTab("modificarPorPeriodo"); setShowModalPeriodo(true); }}>
                     Modificar por Periodo
                   </Nav.Link>
-                  <Nav.Link onClick={() => { setActiveTab("modificarPorFecha"); setShowModalFecha(true); }}>
-                    Modificar por Fecha
-                  </Nav.Link>
+                  <Nav.Link onClick={() => setActiveTab("ListaDeDocentes")}>Lista de Docentes</Nav.Link>
                   <Nav.Link onClick={() => setActiveTab("Calendario")}>Calendario</Nav.Link>
                   <Nav.Link onClick={() => setActiveTab("CalendarioB")}>Busqueda calendario</Nav.Link>
                   <Nav.Link onClick={() => setActiveTab("notificaciones")}>Notificaciones</Nav.Link>
