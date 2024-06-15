@@ -1,6 +1,4 @@
-.nav-link {
-    color: #003F70;
-}
+
 
 button.nav-link.active {
     background-color: #003F70 !important;
@@ -21,8 +19,4 @@ button.nav-link {
     --bs-nav-tabs-border-width: none;
     --bs-nav-tabs-border-color: none;
     --bs-nav-tabs-border-radius: 0;
-}
-.nav-link {
-    color: #ffffff;
-    font-size: 25px;
 }

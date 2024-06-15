@@ -1,27 +1,70 @@
+.inicio-container {
+  height: 100vh; /* 100% del viewport height */
+}
+
+/* Estilos adicionales */
 .nav-link {
-    color: #ffffff;
-    font-size: 25px;
+  color: white;
+  font-size: 20px;
+  border-radius: 15px;
 }
 
-button.nav-link.active {
-    background-color: #003F70 !important;
-    color: white !important;
+.flex-column {
+  background-color: #003f70;
 }
 
-button.nav-link {
-    border: 1px groove #003F70 !important;
-    border-bottom: 3px solid #003F70 !important;
+.prueba {
+  height: 100%; /* Ajuste opcional si necesitas que el contenido ocupe toda la altura disponible en la columna */
 }
 
-.tabs-admin {
-    margin-bottom: 0 !important;
-    border: none;
-    border-radius: 0;
-    --bs-nav-tabs-border-width: none;
-    --bs-nav-tabs-border-color: none;
-    --bs-nav-tabs-border-radius: 0.3rem;
+.logo-container {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1rem;
 }
-.flex-column{
-    background-color: #003F70;
-    
+
+.titulo-header {
+  margin-left: 10px;
+}
+
+.usuario-header {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  color: #ffffff;
+  margin-left: 20px;
+}
+
+.separador {
+  border-bottom: 1px solid white;
+  margin: 1rem 0;
+}
+
+.nav-link:hover,
+.nav-link:focus {
+  background-color: #3e6b99 !important;
+  color: rgb(255, 255, 255) !important;
+  outline: none;
+}
+
+.sidebar {
+  height: 100vh; /* Altura completa de la pantalla */
+  overflow: hidden; /* Ocultar el desbordamiento para el contenedor completo */
+  background-color: #003f70;
+}
+
+.nav-container {
+  height: calc(100vh - 12rem); /* Ajustar la altura considerando el logo y usuario */
+  overflow-y: auto; /* Habilitar el desplazamiento vertical */
+}
+.nav-container::-webkit-scrollbar {
+  width: 8px; /* Ancho de la barra de desplazamiento */
+}
+
+.nav-container::-webkit-scrollbar-thumb {
+  background-color: #3e6b99; /* Color del thumb */
+  border-radius: 10px; /* Redondear el thumb */
+}
+
+.nav-container::-webkit-scrollbar-track {
+  background: transparent; /* Fondo del track */
 }

@@ -13,11 +13,11 @@ import {
   estadoinhabilitado,
   habilita,
   modificarPerio,
-} from "../../../src/services/ModificarPeriodo.service";
+} from "../../services/ModificarPeriodo.service";
 import {
   getAmbientes,
   getPeriodosReservados,
-} from "../../../src/services/Ambiente.service";
+} from "../../services/Ambiente.service";
 dayjs.locale("es");
 
 function Calendario() {
@@ -104,44 +104,6 @@ const totalPages = Math.ceil(filteredReservas.length / reservasPerPage);
     );
   };
 
-  const getFechas = async () => {
-    const data = await recuperarFechasSolicitud();
-    const fechas = data.listaFechas;
-    setDatos(fechas);
-    const events2 = [];
-
-    fechas.forEach(fecha => {
-      if (fecha.reservas.length > 0) {
-        const eventoReserva = {
-          start: dayjs(fecha.fecha).toDate(),
-          end: dayjs(fecha.fecha).toDate(),
-          title: `${fecha.reservas.length} ${fecha.reservas.length > 1 ? "reservas" : "reserva"}`,
-          type: "reserva",
-        };
-        events2.push(eventoReserva);
-      }
-
-      if (fecha.solicitudes.length > 0) {
-        const eventoSolicitud = {
-          start: dayjs(fecha.fecha).toDate(),
-          end: dayjs(fecha.fecha).toDate(),
-          title: `${fecha.solicitudes.length} ${fecha.solicitudes.length > 1 ? "solicitudes" : "solicitud"}`,
-          type: "solicitud",
-        };
-        events2.push(eventoSolicitud);
-      }
-    });
-
-    setEvent(events2);
-  };
-  const eventPropGetter = (event) => {
-    let backgroundColor = event.type === "reserva" ? "#f56a79" : "#6aa9f5";
-    return { style: { backgroundColor } };
-  };
-  useEffect(() => {
-    getFechas();
-  }, []);
-
   useEffect(() => {
     filtrarReservas();
   }, [searchTerm]);
@@ -156,33 +118,6 @@ const totalPages = Math.ceil(filteredReservas.length / reservasPerPage);
     setFilteredReservas(filtered);
   };
 
-  const onSelectEvent = async (event) => {
-    setFilteredReservas([]);
-    const formattedDate = dayjs(event.start).format("YYYY-MM-DD");
-
-    const datosEncontrados = datos.find(fechaObj => fechaObj.fecha === formattedDate);
-    
-    if (event.type === "reserva") {
-      for (const reservaId of datosEncontrados.reservas) {
-        const data = await recuperarInformacionSolicitud(reservaId);
-        setReservas(prevReservas => [...prevReservas, data]);
-        setFilteredReservas(prevReservas => [...prevReservas, data]);
-      }
-      setNombre("Detalle de Reservas");
-      setMensaje("No hay reservas");
-    } else if (event.type === "solicitud") {
-      for (const solicitudId of datosEncontrados.solicitudes) {
-        const data = await recuperarInformacionSolicitud(solicitudId);
-        setReservas(prevReservas => [...prevReservas, data]);
-        setFilteredReservas(prevReservas => [...prevReservas, data]);
-        console.log(data);
-      }
-      console.log(filteredReservas);
-      setNombre("Detalle de Solicitudes");
-      setMensaje("No hay solicitudes");
-    }
-    setShow(true);
-  };
 
   const onSelectSlot = (slotInfo) => {
     console.log("Slot selected: ", slotInfo);
@@ -441,7 +376,6 @@ const totalPages = Math.ceil(filteredReservas.length / reservasPerPage);
         style={{
           height: "505px",
           width: "1040px",
-          backgroundColor:"white",
         }}
       >
         <Calendar
@@ -451,9 +385,8 @@ const totalPages = Math.ceil(filteredReservas.length / reservasPerPage);
           defaultView="month"
           culture="es"
           selectable={true}
-          onSelectEvent={onSelectEvent}
+          
           onSelectSlot={onSelectSlot}
-          eventPropGetter={eventPropGetter}
           messages={{
             next: "Siguiente",
             previous: "Anterior",
