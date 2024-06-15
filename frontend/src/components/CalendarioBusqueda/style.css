@@ -1,0 +1,42 @@
+.rbc-header{
+  color: white;
+  font-size: 14px !important;
+  display: flex ;
+  align-items: center;
+  justify-content: center;
+  height: 36px !important;
+  background: cornflowerblue;
+
+}
+
+.rbc-event.rbc-selected, .rbc-day-slot .rbc-selected.rbc-background-event {
+  background-color: #3174ad;
+}
+.rbc-button-link {
+cursor: default !important;
+}
+
+
+.reserva-row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.reserva-row h6 {
+  margin: 0;
+  margin-right: 10px;
+}
+
+.reserva-row p {
+  margin: 0;
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #D9D9D9;
+  padding-left: 1rem;
+}
+

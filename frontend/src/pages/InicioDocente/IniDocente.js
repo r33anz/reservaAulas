@@ -1,5 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { Button, Col, Row, Stack, Tab, Tabs , Nav} from "react-bootstrap";
+import logo from "../../assets/images/image.png";
+import Home from "../Home";
+import { AlertsProvider } from "../../components/Alert/AlertsContext";
 import Buscar from "../../components/Busquedanombre/Buscar";
 import CancelarReservas from "../../components/CancelarReserva/CancelarReservas";
 import SolcitarReserva from "../../components/SolicitudReserva/SolicitarReserva";
@@ -8,6 +11,7 @@ import { getDocente } from "../../services/SolicitarReserva.service";
 import BuscarCantidad from "../../components/BusquedaCantidad/BusquedaPorCantidad";
 import "./style.css";
 import CalendarioDocente from "../../components/Calendariodocente/CalendarioDocente";
+import CalendarioB from "../../components/CalendarioBusqueda";
 
 const IniDocente = ({ showCalendar }) => {
   const [registrarAmbiente, setRegistrarAmbiente] = useState(false);
@@ -54,27 +58,35 @@ const IniDocente = ({ showCalendar }) => {
       case 'modificarPorPeriodo':
         
       case 'modificarPorFecha':
-        
+        case "Calendario":
+        return <CalendarioDocente />;
+      case "CalendarioB":
+        return <CalendarioB />;
+      case "notificaciones":
+        return <h1>not</h1>;
       default:
         return <h4>Bienvenidos</h4>;
     }
   };
 
   return (
-    <>
-      <Stack gap={2}>
-      <Row >
-      <h5>
-          Bienvenido
-          <br />
-          USUARIO: {docente.nombre}
-        </h5>
-      {!showCalendar ? (
-            <>
-        
-        
-        <Row>
-          <Col sm="3" lg="3" xxl="3" style={{ paddingBottom: "1rem" }}>
+    <div className="inicio-container">
+      <Row className="prueba">
+        {!showCalendar ? (
+          <>
+            <Col sm="2" className="sidebar">
+              <div className="logo-container">
+                <img src={logo} className="App-logo" alt="logo" />
+                <div className="titulo-header">
+                  <h4>Intelligence<br />Software</h4>
+                </div>
+              </div>
+              <div className="separador"></div>
+              <div className="usuario-header">
+                <h5>USUARIO: {docente.nombre}</h5>
+              </div>
+              <div className="separador"></div>
+              <div className="nav-container">
             <Nav className="flex-column">
               <Nav.Link onClick={() => setActiveTab('inicio')}>Inicio</Nav.Link>
               <Nav.Link onClick={() => {setActiveTab('registrarAmbiente');setSolicitarReserva(solicitarReserva);}}>Registrar Ambiente</Nav.Link>
@@ -84,19 +96,25 @@ const IniDocente = ({ showCalendar }) => {
               <Nav.Link onClick={() => { setActiveTab('modificarPorPeriodo'); setShowModalPeriodo(true); }}>Modificar por Periodo</Nav.Link>
 
               <Nav.Link onClick={() => {setActiveTab('modificarPorFecha');setShowModalFecha(true);}}>Modificar por Fecha</Nav.Link>
+              <Nav.Link onClick={() => setActiveTab("Calendario")}>Calendario</Nav.Link>
+                  <Nav.Link onClick={() => setActiveTab("CalendarioB")}>Busqueda calendario</Nav.Link>
+                  <Nav.Link onClick={() => setActiveTab("notificaciones")}>Notificaciones</Nav.Link>
             </Nav>
-          </Col>
-          <Col sm="9" lg="9" xxl="9">
-            {renderContent()}
-          </Col>
-        </Row>
-        </>
-          ) : (
-            <CalendarioDocente />
-          )}
-        </Row>
-      </Stack>
-    </>
+            </div>
+            </Col>
+            <Col style={{ paddingRight: "0px", paddingLeft: "0px" }}>
+              <AlertsProvider>
+                <Home showCalendar={showCalendar}>
+                  {renderContent()}
+                </Home>
+              </AlertsProvider>
+            </Col>
+          </>
+        ) : (
+          <CalendarioDocente />
+        )}
+      </Row>
+    </div>
   );
 };
 

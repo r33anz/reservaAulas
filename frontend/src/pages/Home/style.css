@@ -1,6 +1,6 @@
 .Home-body {
-    padding: 1rem;
-    height: calc(100% - 13.5rem);
+    background-color: #f2f0f0;
+    height: 83%;
     overflow-y: auto;
 }
 
@@ -11,7 +11,7 @@
     display: flex;
     align-items: center;
     font-size: calc(10px + 2vmin);
-
+    margin-right: 12px;
 }
 
 .App-footer {
@@ -23,7 +23,7 @@
     /* left: 0; */
     /* bottom: 0; */
     /* height: 6%; */
-    height: -webkit-fill-available;
+    
     width: 100%;
 }
 

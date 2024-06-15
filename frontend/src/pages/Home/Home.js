@@ -9,7 +9,7 @@ import NotificacionAdmin from "../DashboardAdmin/NotificacionAdmin";
 import NotificacionDocente from "../DashboardDocente/NotificacionDocente";
 import { getReporte } from "../../services/Reporte.service";
 
-const Home = ({ setShowCalendar, showCalendar }) => {
+const Home = ({ children,setShowCalendar, showCalendar }) => {
   const { id } = useParams("id");
   const [usuarioId, setUsuarioId] = useState(null);
 
@@ -30,12 +30,6 @@ const Home = ({ setShowCalendar, showCalendar }) => {
   return (
     <>
       <header className="App-header">
-        <img
-          src={logo}
-          className="App-logo"
-          alt="logo"
-          onClick={() => setShowCalendar(false)}
-        />
         <div className="titulo-header" onClick={() => setShowCalendar(false)}>
           <h3>
             Intelligence
@@ -67,6 +61,7 @@ const Home = ({ setShowCalendar, showCalendar }) => {
       </header>
       <Container fluid className="Home-body">
         <Outlet />
+        {children}
       </Container>
       <footer className="App-footer">
         <Container fluid="xs" style={{ padding: "5px" }}>

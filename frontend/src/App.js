@@ -14,11 +14,7 @@ function App() {
 
   return (
     <Routes>
-      <Route exact path="/" element={
-        <AlertsProvider>
-          <Home setShowCalendar={setShowCalendar} showCalendar={showCalendar} />
-        </AlertsProvider>
-      }>
+      <Route exact path="/" >
         <Route exact path="/docente/:id" element={<DashboardDocente showCalendar={showCalendar} />} />
         <Route exact path="/admin" element={<DashboardAdmin showCalendar={showCalendar} />} />
         <Route exact path="/admin2" element={<DashboardAdmin2 showCalendar={showCalendar} />} />
