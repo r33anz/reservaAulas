@@ -40,7 +40,7 @@ const Inicio = ({ showCalendar }) => {
       case "notificaciones":
         return <h1>not</h1>;
       case "atencionDeSolicitudes":
-          return <ListaDeAtencionDeSolicitudes />;
+        return <ListaDeAtencionDeSolicitudes />;
       default:
         return <h4>Bienvenidos</h4>;
     }
@@ -76,17 +76,15 @@ const Inicio = ({ showCalendar }) => {
                   <Nav.Link onClick={() => setActiveTab("ListaDeDocentes")}>Lista de Docentes</Nav.Link>
                   <Nav.Link onClick={() => setActiveTab("Calendario")}>Calendario</Nav.Link>
                   <Nav.Link onClick={() => setActiveTab("CalendarioB")}>Busqueda calendario</Nav.Link>
-                  <Nav.Link
-                      onClick={() => {
-                        setActiveTab("atencionDeSolicitudes");
-                      }}
-                    >
-                      Atencion de Solicitudes
-                    </Nav.Link>
+                  <Nav.Link onClick={() => {
+                      setActiveTab("atencionDeSolicitudes");
+                    }}>
+                    Atencion de Solicitudes
+                  </Nav.Link>
                 </Nav>
               </div>
             </Col>
-            <Col style={{ paddingRight: "0px", paddingLeft: "0px" }}>
+            <Col className="content-scroll" style={{ paddingRight: "0px", paddingLeft: "0px" }}>
               <AlertsProvider>
                 <Home showCalendar={showCalendar}>
                   {renderContent()}

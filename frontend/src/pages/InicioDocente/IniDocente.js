@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Col, Row, Nav} from "react-bootstrap";
+import { Col, Row, Nav } from "react-bootstrap";
 import logo from "../../assets/images/image.png";
 import Home from "../Home";
 import { AlertsProvider } from "../../components/Alert/AlertsContext";
@@ -28,6 +28,7 @@ const IniDocente = ({
   const [docente, setDocente] = useState({});
   const { id } = useParams("id");
   window.sessionStorage.setItem("docente_id", id);
+
   const fetchDocente = async () => {
     getDocente(id)
       .then((data) => {
@@ -42,6 +43,7 @@ const IniDocente = ({
   useEffect(() => {
     fetchDocente();
   }, [id]);
+
   const renderContent = () => {
     switch (activeTab) {
       case "registrarReserva":
@@ -61,9 +63,9 @@ const IniDocente = ({
         return <Buscar />;
       case "busquedaPorCantidad":
         return <BuscarCantidad />;
-      case 'modificarPorPeriodo':
+      case "modificarPorPeriodo":
         return "";
-      case 'modificarPorFecha':
+      case "modificarPorFecha":
       case "Calendario":
         return <CalendarioDocente />;
       case "CalendarioB":
@@ -99,41 +101,38 @@ const IniDocente = ({
               </div>
               <div className="separador"></div>
               <div className="nav-container">
-            <Nav className="flex-column">
-              <Nav.Link onClick={() => setActiveTab('inicio')}>Inicio</Nav.Link>
-              <Nav.Link onClick={() => {setActiveTab('registrarReserva');setSolicitarReserva(solicitarReserva);}}>Registrar reserva</Nav.Link>
-              <Nav.Link onClick={() => setActiveTab('listaDeSolicitudes')}>Lista de Solicitudes</Nav.Link>
-              <Nav.Link onClick={() => setActiveTab('busquedaPorNombre')}>Busqueda por Nombre</Nav.Link>
-              <Nav.Link onClick={() => setActiveTab('busquedaPorCantidad')}>Busqueda por Cantidad</Nav.Link>
-              <Nav.Link onClick={() => { setActiveTab('modificarPorPeriodo'); setShowModalPeriodo(true); }}>Modificar por Periodo</Nav.Link>
-
-              <Nav.Link onClick={() => {setActiveTab('modificarPorFecha');setShowModalFecha(true);}}>Modificar por Fecha</Nav.Link>
-              <Nav.Link onClick={() => setActiveTab("Calendario")}>Calendario</Nav.Link>
+                <Nav className="flex-column">
+                  <Nav.Link onClick={() => setActiveTab("inicio")}>Inicio</Nav.Link>
+                  <Nav.Link onClick={() => { setActiveTab("registrarReserva"); setSolicitarReserva(solicitarReserva); }}>Registrar reserva</Nav.Link>
+                  <Nav.Link onClick={() => setActiveTab("listaDeSolicitudes")}>Lista de Solicitudes</Nav.Link>
+                  <Nav.Link onClick={() => setActiveTab("busquedaPorNombre")}>Busqueda por Nombre</Nav.Link>
+                  <Nav.Link onClick={() => setActiveTab("busquedaPorCantidad")}>Busqueda por Cantidad</Nav.Link>
+                  <Nav.Link onClick={() => { setActiveTab("modificarPorPeriodo"); setShowModalPeriodo(true); }}>Modificar por Periodo</Nav.Link>
+                  <Nav.Link onClick={() => { setActiveTab("modificarPorFecha"); setShowModalFecha(true); }}>Modificar por Fecha</Nav.Link>
+                  <Nav.Link onClick={() => setActiveTab("Calendario")}>Calendario</Nav.Link>
                   <Nav.Link onClick={() => setActiveTab("CalendarioB")}>Busqueda calendario</Nav.Link>
                   <Nav.Link
-                      onClick={() => {
-                        setActiveTab("notificaciones");
-                      }}
-                    >
-                      <Row>
-                        <Col xxl="10">Lista de Notificaciones</Col>
-                        <Col xxl="2">
-                          {notificationsIdNotRead &&
-                            notificationsIdNotRead.length > 0 && (
-                              <span class="IniDocente-notification-count text-center">
-                                {notificationsIdNotRead.length < 100
-                                  ? notificationsIdNotRead.length
-                                  : "99+"}
-                              </span>
-                            )}
-                        </Col>
-                      </Row>
-                    </Nav.Link>
-                  
-            </Nav>
-            </div>
+                    onClick={() => {
+                      setActiveTab("notificaciones");
+                    }}
+                  >
+                    <Row>
+                      <Col xxl="10">Lista de Notificaciones</Col>
+                      <Col xxl="2">
+                        {notificationsIdNotRead && notificationsIdNotRead.length > 0 && (
+                          <span className="IniDocente-notification-count text-center">
+                            {notificationsIdNotRead.length < 100
+                              ? notificationsIdNotRead.length
+                              : "99+"}
+                          </span>
+                        )}
+                      </Col>
+                    </Row>
+                  </Nav.Link>
+                </Nav>
+              </div>
             </Col>
-            <Col style={{ paddingRight: "0px", paddingLeft: "0px" }}>
+            <Col className="content-scroll" style={{ paddingRight: "0px", paddingLeft: "0px" }}>
               <AlertsProvider>
                 <Home showCalendar={showCalendar} fetchNotifications={fetchNotifications}>
                   {renderContent()}
