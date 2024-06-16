@@ -6,8 +6,15 @@ import logo from "../../assets/images/image.png";
 import "../../components/Busquedanombre/Style.css";
 import { Outlet, useParams } from "react-router-dom";
 import { getReporte } from "../../services/Reporte.service";
+import NotificacionDocente from "../DashboardDocente/NotificacionDocente";
+import NotificacionAdmin from "../DashboardAdmin/NotificacionAdmin";
 
-const Home = ({ children,setShowCalendar, showCalendar }) => {
+const Home = ({
+  children,
+  setShowCalendar,
+  showCalendar,
+  fetchNotifications,
+}) => {
   const { id } = useParams("id");
   const [usuarioId, setUsuarioId] = useState(null);
 
@@ -24,6 +31,13 @@ const Home = ({ children,setShowCalendar, showCalendar }) => {
 
   return (
     <>
+      {usuarioId && (
+        <NotificacionDocente
+          docenteId={usuarioId}
+          fetchNotifications={fetchNotifications}
+        />
+      )}
+      <NotificacionAdmin fetchNotifications={fetchNotifications} />
       <header className="App-header">
         <div className="titulo-header" onClick={() => setShowCalendar(false)}>
           <h3>
@@ -32,22 +46,6 @@ const Home = ({ children,setShowCalendar, showCalendar }) => {
             Software
           </h3>
         </div>
-        {/* <div className="ico-header">
-          <Stack direction="horizontal" gap={2}>
-            {usuarioId === null && (
-              <FileEarmarkRuled
-                color="white"
-                size={30}
-                onClick={() => fetchReporte()}
-              />
-            )}
-            <Calendar3
-              color="white"
-              size={30}
-              onClick={() => setShowCalendar(!showCalendar)}
-            />
-          </Stack>
-        </div> */}
       </header>
       <Container fluid className="Home-body">
         <Outlet />

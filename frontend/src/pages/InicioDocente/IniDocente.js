@@ -44,7 +44,7 @@ const IniDocente = ({
   }, [id]);
   const renderContent = () => {
     switch (activeTab) {
-      case "registrarAmbiente":
+      case "registrarReserva":
         return (
           <SolcitarReserva
           //onClose={() => setSolicitarReserva(solicitarReserva)}
@@ -101,7 +101,7 @@ const IniDocente = ({
               <div className="nav-container">
             <Nav className="flex-column">
               <Nav.Link onClick={() => setActiveTab('inicio')}>Inicio</Nav.Link>
-              <Nav.Link onClick={() => {setActiveTab('registrarAmbiente');setSolicitarReserva(solicitarReserva);}}>Registrar Ambiente</Nav.Link>
+              <Nav.Link onClick={() => {setActiveTab('registrarReserva');setSolicitarReserva(solicitarReserva);}}>Registrar reserva</Nav.Link>
               <Nav.Link onClick={() => setActiveTab('listaDeSolicitudes')}>Lista de Solicitudes</Nav.Link>
               <Nav.Link onClick={() => setActiveTab('busquedaPorNombre')}>Busqueda por Nombre</Nav.Link>
               <Nav.Link onClick={() => setActiveTab('busquedaPorCantidad')}>Busqueda por Cantidad</Nav.Link>
@@ -135,7 +135,7 @@ const IniDocente = ({
             </Col>
             <Col style={{ paddingRight: "0px", paddingLeft: "0px" }}>
               <AlertsProvider>
-                <Home showCalendar={showCalendar}>
+                <Home showCalendar={showCalendar} fetchNotifications={fetchNotifications}>
                   {renderContent()}
                 </Home>
               </AlertsProvider>
