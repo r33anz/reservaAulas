@@ -1,8 +1,63 @@
-.inicio-container {
-  height: 100vh; /* 100% del viewport height */
+html, body {
+  height: 100%;
+  margin: 0;
 }
 
-/* Estilos adicionales */
+.inicio-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.App-header, .App-footer {
+  flex-shrink: 0;
+}
+
+.Home-body {
+  flex: 1;
+  background-color: #f2f0f0;
+  overflow-y: auto;
+  padding: 20px;
+}
+
+.App-header {
+  background-color: #002A4C;
+  display: flex;
+  align-items: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+  padding: 10px;
+}
+
+.App-footer {
+  background-color: #002A4C;
+  color: white;
+  padding: 9px;
+  border-top: 2px solid rgba(0, 0, 0, 0.24);
+}
+
+.ico-header {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+}
+
+.App-logo {
+  padding: 15px;
+  width: 5rem;
+  height: 5rem;
+}
+
+.titulo-header {
+  color: white;
+}
+
+.icon-base {
+  font-size: 24px;
+}
+
 .nav-link {
   color: white;
   font-size: 20px;
@@ -14,7 +69,7 @@
 }
 
 .prueba {
-  height: 100%; /* Ajuste opcional si necesitas que el contenido ocupe toda la altura disponible en la columna */
+  height: 100%;
 }
 
 .logo-container {
@@ -47,24 +102,32 @@
 }
 
 .sidebar {
-  height: 100vh; /* Altura completa de la pantalla */
-  overflow: hidden; /* Ocultar el desbordamiento para el contenedor completo */
+  height: 100vh;
+  overflow: hidden;
   background-color: #003f70;
 }
 
 .nav-container {
-  height: calc(100vh - 12rem); /* Ajustar la altura considerando el logo y usuario */
-  overflow-y: auto; /* Habilitar el desplazamiento vertical */
+  height: calc(100vh - 12rem);
+  overflow-y: auto;
 }
+
 .nav-container::-webkit-scrollbar {
-  width: 8px; /* Ancho de la barra de desplazamiento */
+  width: 8px;
 }
 
 .nav-container::-webkit-scrollbar-thumb {
-  background-color: #3e6b99; /* Color del thumb */
-  border-radius: 10px; /* Redondear el thumb */
+  background-color: #3e6b99;
+  border-radius: 10px;
 }
 
 .nav-container::-webkit-scrollbar-track {
-  background: transparent; /* Fondo del track */
+  background: transparent;
+}
+
+/* Añadir esta clase para habilitar el scroll vertical en el contenedor de contenido */
+.content-scroll {
+  height: 100%;
+  overflow-y: auto;
+
 }
