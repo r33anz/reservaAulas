@@ -9,8 +9,6 @@ import { useState, useEffect, useRef } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import {
-  estadoinhabilitado,
-  habilita,
   modificarPerio,
 } from "../../../src/services/ModificarPeriodo.service";
 import {
@@ -132,14 +130,7 @@ function CalendarioDocente() {
     setShow(true);
   };
   
-  const onSelectSlot = (slotInfo) => {
-    console.log("Slot selected: ", slotInfo);
-    setSelectedDate(dayjs(slotInfo.start).format("YYYY-MM-DD"));  // Set the selected date
-    setIsSlotSelected(true);
-    setReservas([]);  // Clear reservations when a slot is selected
-    setFilteredReservas([]);
-    setShow(true);
-  };
+  
   
   const filtrarReservas = () => {
     let filtered = reservas;
@@ -159,7 +150,6 @@ function CalendarioDocente() {
     setReservas([]);
     setFilteredReservas([]);
     setAmbiente({});
-    formik.resetForm();
   };
 
   useEffect(() => {
@@ -238,110 +228,17 @@ function CalendarioDocente() {
     return items;
   };
 
-  const formik = useFormik({
-    initialValues: {
-      ambiente: { nombre: "", id: "" },
-    },
-    validationSchema: Yup.object({
-      ambiente: Yup.object().shape({
-        nombre: Yup.string()
-          .required("Obligatorio")
-          .matches(
-            "^([a-zA-Z]+|\\d+|[a-zA-Z0-9]+)(?:\\s([a-zA-Z]+|\\d+))*$",
-            "Solo letras y numeros"
-          )
-          .trim("No se admiten valores vacios")
-          .strict(true),
-      }),
-    }),
-    onSubmit: (values) => {
-      if (ambiente.id) {
-        getAmbientPorFecha(values.ambiente, selectedDate);
-        console.log(values.ambiente);
-        console.log(selectedDate);
-      }
-      setShow1(false);
-    },
-  });
+  
 
-  const buscarAmbiente = async (event) => {
-    if (
-      event.hasOwnProperty("target") &&
-      event.target.hasOwnProperty("value")
-    ) {
-      const value = event.target.value;
-      if (value === "") {
-        setAmbientesEncontradas([]);
-        setShow1(false);
-      } else {
-        setShow1(true);
-        setSelected(null);
-        let ambientesEncontradas = ambientes.filter((ambiente) =>
-          ambiente.nombre.toLowerCase().includes(value.toLowerCase())
-        );
-        setAmbientesEncontradas(ambientesEncontradas);
-      }
-      formik.setFieldValue("ambiente", {
-        id: "",
-        nombre: value,
-      });
-      setAmbiente({});
-    }
-  };
+  
 
-  const setNombreDelAmbiente = (ambiente) => {
-    if (ambiente !== undefined) {
-      let data = {
-        id: ambiente.id,
-        nombre: ambiente.nombre,
-      };
-      formik.setFieldValue("ambiente", data);
-      setShow1(false);
-      setAmbiente(data);
-    }
-  };
+  
 
-  const getAmbientPorFecha = async (ambiente, fecha) => {
-    const data = await modificarPerio(ambiente.id, fecha);
-    const response = await getPeriodosReservados(ambiente.id, fecha);
-    if (response) {
-      setPeriodosReservados(response.periodosReservados);
-      console.log(periodosReservados);
-    }
-    if (data != null) {
-      setAmbiente({
-        id: ambiente.id,
-        nombre: ambiente.nombre,
-        fecha,
-        periodos: data.periodos,
-      });
-    }
-  };
+  
 
-  const handlerOnClickAmbiente = ({ target }) => {
-    let ambiente = ambientesEncontradas.find(
-      (item) => item.nombre === target.value
-    );
-    setNombreDelAmbiente(ambiente);
-    setSelected(target.value);
-    setShow1(false);
-    setAmbientesEncontradas([]);
-  };
+  
 
-  const handleKeyUp = ({ code }) => {
-    if (code === "Enter" && ambientesEncontradas.length > 0) {
-      let ambiente = ambientesEncontradas[0];
-      if (selected !== null) {
-        ambiente = ambientesEncontradas.find(
-          (item) => item.nombre === selected
-        );
-      } else {
-        setSelected(ambiente.nombre);
-      }
-      setNombreDelAmbiente(ambiente);
-      setAmbientesEncontradas([]);
-    }
-  };
+  
 
   const fetchAmbientes = async () => {
     let { respuesta } = await getAmbientes();
@@ -363,14 +260,7 @@ function CalendarioDocente() {
     }
   };
   
-  const isReservado = (periodoId) => {
-    return (
-      periodosReservados.filter((periodoReservado) => {
-        return periodoReservado.periodos.includes(periodoId);
-      }).length > 0
-    );
-  };
-
+ 
   useEffect(() => {
     fetchAmbientes();
   }, []);
@@ -415,7 +305,7 @@ function CalendarioDocente() {
           culture="es"
           selectable={true}
           onSelectEvent={onSelectEvent}
-          onSelectSlot={onSelectSlot}
+          
           messages={{
             next: "Siguiente",
             previous: "Anterior",
@@ -456,210 +346,8 @@ function CalendarioDocente() {
               </div>
             </Col>
           </Row>
-          <Row className="RegistrarAmbiente-body1 justify-content-center">
-            {isSlotSelected ? (
-              <Form onSubmit={formik.handleSubmit}>
-                <Form.Group as={Row} className="mb-3" controlId="ambiente">
-                  <Form.Label column sm="2">
-                    Nombre
-                  </Form.Label>
-                  <Col sm="10" onBlur={() => console.log("col")} id="ambientes">
-                    <Dropdown
-                      ref={refDropdown}
-                      id="ambientes"
-                      show1
-                      onBlur={() => console.log("dropdown")}
-                      onSelect={(e) => {
-                        setSelected(e);
-                        let ambiente = ambientesEncontradas.find(
-                          (item) => item.nombre === e
-                        );
-                        setNombreDelAmbiente(ambiente);
-                        setAmbientesEncontradas([]);
-                      }}
-                    >
-                      <Dropdown.Toggle
-                        ref={refDropdownToggle}
-                        as={"input"}
-                        id="ambientes"
-                        type="text"
-                        placeholder="Ingrese el nombre del ambiente"
-                        onChange={buscarAmbiente}
-                        onBlur={(e) => {
-                          console.log("input");
-                          formik.handleBlur(e);
-                        }}
-                        value={formik.values.ambiente.nombre}
-                        onFocus={() => setShow(true)}
-                        onKeyUp={(e) => handleKeyUp(e)}
-                        className="form-control"
-                        bsPrefix="dropdown-toggle"
-                      />
-                      {show && ambientesEncontradas.length > 0 && (
-                        <Dropdown.Menu
-                          ref={refDropdownMenu}
-                          id="ambientes"
-                          style={{
-                            width: "100%",
-                            overflowY: "auto",
-                            maxHeight: "5rem",
-                          }}
-                          onBlur={(e) => console.log("menu")}
-                        >
-                          {ambientesEncontradas.map((ambiente) => (
-                            <Dropdown.Item
-                              eventKey={ambiente.nombre}
-                              key={ambiente.nombre}
-                              onClick={(e) => handlerOnClickAmbiente(e)}
-                            >
-                              <option>{ambiente.nombre}</option>
-                            </Dropdown.Item>
-                          ))}
-                        </Dropdown.Menu>
-                      )}
-                    </Dropdown>
-                    <Form.Text className="text-danger">
-                      {formik.touched.ambiente && formik.errors.ambiente ? (
-                        <div className="text-danger">
-                          {formik.errors.ambiente.nombre}
-                        </div>
-                      ) : formik.values.ambiente.nombre !== "" &&
-                        selected === null &&
-                        ambientesEncontradas.length === 0 ? (
-                        "No exite el ambiente"
-                      ) : formik.values.ambiente.nombre !== "" &&
-                        selected === null &&
-                        ambientesEncontradas.length > 0 ? (
-                        "Seleccione un ambiente"
-                      ) : null}
-                    </Form.Text>
-                  </Col>
-                </Form.Group>
-                <Row xs="auto" className="justify-content-md-end">
-                  <Stack direction="horizontal" gap={2}>
-                    <Button
-                      className="btn ModificarEstadoDelAmbientePorFecha-button-consultar"
-                      type="submit"
-                    >
-                      Consultar
-                    </Button>
-                  </Stack>
-                </Row>
-                {ambiente &&
-                  Object.keys(ambiente).length > 0 &&
-                  ambiente.periodos &&
-                  ambiente.periodos && <h6>Periodos</h6>}
-                {ambiente &&
-                  Object.keys(ambiente).length > 0 &&
-                  ambiente.periodos &&
-                  ambiente.periodos && (
-                    <Row>
-                      <Col sm={4}>
-                        <h6>Mañana</h6>
-                        {ambiente.periodos &&
-                          periodos1.map((item) => (
-                            <>
-                              {item.id >= 1 && item.id <= 4 && (
-                                <div
-                                  key={item.id}
-                                  style={{
-                                    border: "1px solid black",
-                                    width: "100px",
-                                    padding: "2px",
-                                    textAlign: "center",
-                                    color: `${
-                                      ambiente.periodos.includes(item.id)
-                                        ? "white"
-                                        : "black"
-                                    }`,
-                                    background: `${
-                                      isReservado(item.id)
-                                        ? "red"
-                                        : ambiente.periodos.includes(item.id)
-                                        ? "gray"
-                                        : "white"
-                                    }`,
-                                    marginBottom: "5px",
-                                  }}
-                                >
-                                  {item.hora}
-                                </div>
-                              )}
-                            </>
-                          ))}
-                      </Col>
-                      <Col sm={4}>
-                        <h6>Tarde</h6>
-                        {ambiente.periodos &&
-                          periodos1.map((item) => (
-                            <>
-                              {item.id >= 5 && item.id <= 8 && (
-                                <div
-                                  key={item.id}
-                                  style={{
-                                    border: "1px solid black",
-                                    width: "105px",
-                                    padding: "2px",
-                                    textAlign: "center",
-                                    color: `${
-                                      ambiente.periodos.includes(item.id)
-                                        ? "white"
-                                        : "black"
-                                    }`,
-                                    background: `${
-                                      isReservado(item.id)
-                                        ? "red"
-                                        : ambiente.periodos.includes(item.id)
-                                        ? "gray"
-                                        : "white"
-                                    }`,
-                                    marginBottom: "5px",
-                                  }}
-                                >
-                                  {item.hora}
-                                </div>
-                              )}
-                            </>
-                          ))}
-                      </Col>
-                      <Col sm={4}>
-                        <h6>Noche</h6>
-                        {ambiente.periodos &&
-                          periodos1.map((item) => (
-                            <>
-                              {item.id >= 9 && item.id <= 10 && (
-                                <div
-                                  key={item.id}
-                                  style={{
-                                    border: "1px solid black",
-                                    width: "105px",
-                                    padding: "2px",
-                                    textAlign: "center",
-                                    color: `${
-                                      ambiente.periodos.includes(item.id)
-                                        ? "white"
-                                        : "black"
-                                    }`,
-                                    background: `${
-                                      isReservado(item.id)
-                                        ? "red"
-                                        : ambiente.periodos.includes(item.id)
-                                        ? "gray"
-                                        : "white"
-                                    }`,
-                                    marginBottom: "5px",
-                                  }}
-                                >
-                                  {item.hora}
-                                </div>
-                              )}
-                            </>
-                          ))}
-                      </Col>
-                    </Row>
-                  )}
-              </Form>
-            ) : (
+          <Row className="RegistrarAmbiente-body1 justify-content-center" style={{backgroundColor:"#D9D9D9"}}>
+            
               <>
                 <Form inline className="d-flex  mb-2">
                   <Form.Group controlId="searchTerm" className="mr-2 d-flex align-items-center">
@@ -700,7 +388,7 @@ function CalendarioDocente() {
                   {renderPaginationItems()}
                 </Pagination>
               </>
-            )}
+            
           </Row>
         </Modal>
       </div>
