@@ -11,8 +11,8 @@ import Calendario from "../../components/Calendario";
 import CalendarioB from "../../components/CalendarioBusqueda";
 import ListaDeDocentes from "../../components/ListaDeDocentes/ListaDeDocentes"
 import { AlertsProvider } from "../../components/Alert/AlertsContext";
-import "./style.css";
 import ListaDeAtencionDeSolicitudes from "../../components/AtenderSolicitud/ListaDeAtencionDeSolicitudes";
+import "./style.css";
 
 const Inicio = ({ showCalendar }) => {
   const [showModalPeriodo, setShowModalPeriodo] = useState(true);
@@ -39,7 +39,7 @@ const Inicio = ({ showCalendar }) => {
         return <CalendarioB />;
       case "notificaciones":
         return <h1>not</h1>;
-        case "atencionDeSolicitudes":
+      case "atencionDeSolicitudes":
           return <ListaDeAtencionDeSolicitudes />;
       default:
         return <h4>Bienvenidos</h4>;
@@ -76,7 +76,6 @@ const Inicio = ({ showCalendar }) => {
                   <Nav.Link onClick={() => setActiveTab("ListaDeDocentes")}>Lista de Docentes</Nav.Link>
                   <Nav.Link onClick={() => setActiveTab("Calendario")}>Calendario</Nav.Link>
                   <Nav.Link onClick={() => setActiveTab("CalendarioB")}>Busqueda calendario</Nav.Link>
-                  <Nav.Link onClick={() => setActiveTab("notificaciones")}>Notificaciones</Nav.Link>
                   <Nav.Link
                       onClick={() => {
                         setActiveTab("atencionDeSolicitudes");
