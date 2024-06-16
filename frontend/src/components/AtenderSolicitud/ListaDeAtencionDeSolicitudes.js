@@ -22,13 +22,12 @@ import {
 import { AlertsContext } from "../Alert/AlertsContext";
 import AtenderSolicitud from "../AtenderSolicitud/AtenderSolicitud";
 
-const ListaDeSolicitudes = ({ titulo, tipoDeUsuario }) => {
+const ListaDeAtencionDeSolicitudes = () => {
   const [solicitudes, setSolicitudes] = useState([]);
   const [solicitud, setSolicitud] = useState({});
   const [show, setShow] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
-  const [estado, setEstado] = useState("");
   const { agregarAlert } = useContext(AlertsContext);
   const periodos = [
     { id: 1, hora: "6:45 - 8:15", isHabilitado: true },
@@ -66,16 +65,15 @@ const ListaDeSolicitudes = ({ titulo, tipoDeUsuario }) => {
   };
 
   const getSolicitudes = useCallback(async () => {
-    const data = await recuperarSolicitudesDeReserva(currentPage, estado);
-    console.log(estado);
+    const data = await recuperarSolicitudesDeReserva(currentPage, "en espera");
     console.log(data);
     setSolicitudes(data.contenido);
     setTotalPages(data.numeroPaginasTotal);
-  }, [currentPage, estado]);
+  }, [currentPage]);
 
   useEffect(() => {
     setCurrentPage(1);
-  }, [estado]);
+  }, []);
 
   useEffect(() => {
     getSolicitudes();
@@ -157,7 +155,7 @@ const ListaDeSolicitudes = ({ titulo, tipoDeUsuario }) => {
             xs="10"
             className="d-flex justify-content-start align-items-center"
           >
-            <h5 style={{ fontWeight: "bold" }}>{titulo}</h5>
+            <h5 style={{ fontWeight: "bold" }}>Atencion de Solicitudes</h5>
           </Col>
           <Col
             xs="2"
@@ -179,97 +177,31 @@ const ListaDeSolicitudes = ({ titulo, tipoDeUsuario }) => {
           </Col>
         </Row>
         <Row className="ListaDeSolicitudes-body justify-content-center">
-          <Form>
-            {["radio"].map((type) => (
-              <div key={`inline-${type}`} className="mb-3">
-                <strong>Estado: </strong>
-                <Form.Check
-                  inline
-                  checked={estado === ""}
-                  onClick={() => setEstado("")}
-                  label="Todos"
-                  name="estado"
-                  type={type}
-                  id={`inline-${type}-1`}
-                />
-                <Form.Check
-                  inline
-                  checked={estado === "en espera"}
-                  onClick={() => setEstado("en espera")}
-                  label="en espera"
-                  name="estado"
-                  type={type}
-                  id={`inline-${type}-1`}
-                />
-                <Form.Check
-                  inline
-                  checked={estado === "canceladas"}
-                  onClick={() => setEstado("canceladas")}
-                  label="cancelados"
-                  name="estado"
-                  type={type}
-                  id={`inline-${type}-1`}
-                />
-                <Form.Check
-                  inline
-                  checked={estado === "aprobadas"}
-                  label="aprobadas"
-                  onClick={() => setEstado("aprobadas")}
-                  name="estado"
-                  type={type}
-                  id={`inline-${type}-2`}
-                />
-                <Form.Check
-                  inline
-                  checked={estado === "rechazadas"}
-                  label="rechazadas"
-                  onClick={() => setEstado("rechazadas")}
-                  name="estado"
-                  type={type}
-                  id={`inline-${type}-3`}
-                />
-              </div>
-            ))}
-          </Form>
           <Table striped bordered hover responsive>
             <thead>
               <tr>
                 <th>Ambiente</th>
-                {tipoDeUsuario === "Admin" && <th>Docente</th>}
+                <th>Docente</th>
                 <th>Materia</th>
                 <th>Periodo</th>
                 <th>Fecha de Reserva</th>
-                {(estado === "" || estado === "canceladas") && (
-                  <th>Fecha de Actualizacion</th>
-                )}
-                {estado === "en espera" && <th>Fecha de Enviada</th>}
-                {(estado === "rechazadas" || estado === "aprobadas") && (
-                  <th>Fecha de Atencion</th>
-                )}
                 <th>Estado</th>
-                <th>Detalle</th>
+                <th>Accion</th>
               </tr>
             </thead>
             <tbody>
               {solicitudes.map((item) => (
                 <tr>
                   <td>{item.ambiente_nombre}</td>
-                  {tipoDeUsuario === "Admin" && <td>{item.nombreDocente}</td>}
+                  <td>{item.nombreDocente}</td>
                   <td>{item.materia}</td>
                   <td>
                     {getPeriodo(item.periodo_ini_id, item.periodo_fin_id)}
                   </td>
                   <td>{item.fechaReserva}</td>
-                  {(estado === "" || estado === "canceladas") && (
-                    <td>{item.updated_at}</td>
-                  )}
-                  {estado === "en espera" && <td>{item.fechaEnviada}</td>}
-                  {(estado === "rechazadas" || estado === "aprobadas") && (
-                    <td>{item.fechaAtendida}</td>
-                  )}
                   <td>{item.estado}</td>
                   <td>
-                    <CardHeading
+                    <EnvelopeExclamation
                       size={30}
                       onClick={() => {
                         setSolicitud(item);
@@ -293,80 +225,16 @@ const ListaDeSolicitudes = ({ titulo, tipoDeUsuario }) => {
         onHide={() => setShow(false)}
         centered
       >
-        <Row sm className="text-white ListaDeSolicitudes-header">
-          <Col
-            xs="10"
-            className="d-flex justify-content-start align-items-center"
-            style={{ height: "100%" }}
-          >
-            <h4 style={{ fontWeight: "bold" }} className="">
-              Detalle de la Solicitud de Reserva
-            </h4>
-          </Col>
-          <Col
-            xs="2"
-            className="d-flex justify-content-end align-items-end"
-            style={{ padding: 0 }}
-          >
-            <div
-              onClick={() => setShow(false)}
-              className="RegistrarAmbiente-header-button-close d-flex justify-content-center align-items-center"
-            >
-              <XSquareFill size={24} />
-            </div>
-          </Col>
-        </Row>
-        <Row
-          className="RegistrarAmbiente-body justify-content-center"
-          
-        >
-          <div style={{ background: "white", padding: "1rem" }}>
-            <h6>Nombre del Ambiente:</h6>
-            <p>{solicitud.ambiente_nombre}</p>
-            {tipoDeUsuario === "Admin" && (
-              <>
-                <h6>Nombre del Docente: </h6>
-                <p>{solicitud.nombre_docente}</p>
-              </>
-            )}
-            <h6>Periodo: </h6>
-            <p>
-              {getPeriodo(solicitud.periodo_ini_id, solicitud.periodo_fin_id)}
-            </p>
-            <h6>Materia: </h6>
-            <p>{solicitud.materia}</p>
-            <h6>Fecha Reserva:</h6>
-            <p>{solicitud.fechaReserva}</p>
-            {(solicitud.estado === "" || solicitud.estado === "canceladas") && (
-              <>
-                <h6>Fecha de Actualizacion:</h6>
-                <p>{solicitud.updated_at}</p>
-              </>
-            )}
-            {solicitud.estado === "en espera" && (
-              <>
-                <h6>Fecha de Enviada:</h6>
-                <p>{solicitud.fechaEnviada}</p>
-              </>
-            )}
-            {(solicitud.estado === "rechazadas" ||
-              solicitud.estado === "aprobadas") && (
-              <>
-                <h6>Fecha Atendida:</h6>
-                <p>{solicitud.fechaAtendida}</p>
-              </>
-            )}
-            <h6>Cantidad: </h6>
-            <p>{solicitud.cantidad}</p>
-            <h6>Grupo: </h6>
-            <p>{solicitud.grupo}</p>
-            <h6>Razon: </h6>
-            <p>{solicitud.razon}</p>
-          </div>
-        </Row>
+        <AtenderSolicitud
+          solicitudId={solicitud.id}
+          onClose={() => {
+            setShow(false);
+            getSolicitudes();
+          }}
+        />
       </Modal>
     </>
   );
 };
 
-export default ListaDeSolicitudes;
+export default ListaDeAtencionDeSolicitudes;
