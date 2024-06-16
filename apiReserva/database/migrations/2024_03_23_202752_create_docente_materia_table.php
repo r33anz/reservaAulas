@@ -15,7 +15,7 @@ class CreateDocenteMateriaTable extends Migration
     {
         Schema::create('docente_materia', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('docente_id');
+            $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('materia_id');
             $table->integer('grupo');
             $table->timestamps();

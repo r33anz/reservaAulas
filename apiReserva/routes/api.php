@@ -17,20 +17,13 @@ use App\Http\Controllers\SolicitudController;
 use App\Http\Controllers\ValidadorController;
 use App\Http\Controllers\ReporteController;
 ///Docente
-Route::get('/docentes/{id}', [DocenteController::class, 'getMaterias']);
-Route::get('/listaDocentes', [DocenteController::class, 'getAllDocenteNames']);
+Route::get('/docentes/{id}', [DocenteController::class, 'getMaterias']);  //REDONE
+Route::get('/listaDocentes', [DocenteController::class, 'getAllDocenteNames']); //REDONE
 
-///Administrador
-/*Route::get('/pisos', function (Request $request) {
-    return new BloqueResource(Bloque::find(1)); 
-});
-Route::get('/ambientes/pisos', function (Request $request) {
-    return new PisoResource(Piso::find(1)); 
-});*/
-Route::get('/bloques', [BloqueController::class, 'index']);
+//Bloques
+Route::get('/bloques', [BloqueController::class, 'index']); 
 Route::get('/bloques/{id}', [BloqueController::class, 'show']);
 
-//Route::get('/periodos', [PeriodoController::class, 'index']);
 Route::get('/periodos/{id}', [PeriodoController::class, 'show']);
 Route::get('/periodos', [PeriodoController::class, 'getPeriodos']);
 
@@ -59,9 +52,10 @@ Route::get('/periodosSolicitados/{fecha}/{idAmbiente}', [SolicitudController::cl
 Route::put('/aceptarSolicitud', [SolicitudController::class, 'aceptarSolicitud']);
 Route::put('/rechazarSolicitud', [SolicitudController::class, 'rechazarSolicitud']);
 Route::post('/verListas', [SolicitudController::class, 'verListas']);
+Route::get('/periodosSolicitados/{fecha}/{idAmbiente}', [SolicitudController::class, 'periodosSolicitados']);
 
 //validador
-Route::post('/consultarFechaPeriodo', [ValidadorController::class, 'consultaFechaPeriodo']);  //devuelves los ambientes habiles
+Route::post('/consultarFechaPeriodo', [ValidadorController::class, 'consultaFechaPeriodo']);  //devuelves los ambientes habiles dado una fecha y un rango de periodos
 Route::post('/consultarFechaPeriodAmbiente', [ValidadorController::class, 'consultarFechaPeriodoAmbiente']);
 Route::get('/solicitudAtendida/{idSolicitud}', [ValidadorController::class, 'SolicitudAtendida']); //devuelve si una solicitud ya fue atendida o no
 
@@ -71,13 +65,11 @@ Route::put('/reservas/{id}', [ReservaController::class, 'cancelarReserva']);
 Route::get('/periodosReservados/{fecha}/{idAmbiente}', [ReservaController::class, 'periodosReservados']);
 Route::put('/inhabilitarReserva', [ReservaController::class, 'inhabilitarReserva']);
 
-
 //notificaciones
 Route::post('/marcarNotificacionLeida',[NotificationController::class,'marcarNotificacionLeida']);
 Route::get('/notificaciones/{idUsuario}',[NotificationController::class,'recuperarNotificaciones']);
 Route::post('/notificarIndividualmente',[NotificationController::class,'notificacionIndividual']);
 Route::post('/notificacionBroadcast',[NotificationController::class,'broadcast']);
-
 
 //reportes
 Route::get('/generarReporte', [ReporteController::class, 'generarReporte']);

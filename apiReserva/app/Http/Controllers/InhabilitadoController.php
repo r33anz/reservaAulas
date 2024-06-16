@@ -10,9 +10,7 @@ use App\Models\Ambiente;
 class InhabilitadoController extends Controller
 {
     //habilitar ambiente curso/fecha/periodo
-        //eliminar
-    
-    
+    //eliminar
     public function habilitarAmbiente(Request $request){
         $idAmbiente = $request->input('idAmbiente');
         $idPeriodos = $request->input('idPeriodos'); // lista []
@@ -33,11 +31,10 @@ class InhabilitadoController extends Controller
         }
         return response()
             ->json(['message' => 'Registros eliminados con éxito'],200);
-
     }
+
     //inhabilitar ambiemte
-        //agregar
-    
+    //agregar
     public function inhabilitarAmbiente(Request $request){
         $idAmbiente = $request->input('idAmbiente');
         $idPeriodos = $request->input('idPeriodos'); // lista []

@@ -32,7 +32,7 @@ class NotificadorService
         $ini = Periodo::find($periodoIdIni);
         $fin = Periodo::find($periodoIdFin);
 
-        $user = User::find($solicitud->docente_id);
+        $user = User::find($solicitud->user_id);
         //disparar evento
         event(new NotificacionUsuario($solicitud->docente_id,'Nueva notificacion.'));
         $user->notify(new Inhabilitar($nombreAmbiente, $solicitud->fechaReserva, $ini->horainicial, $fin->horafinal));
@@ -54,7 +54,7 @@ class NotificadorService
         $ini = Periodo::find($periodoIdIni);
         $fin = Periodo::find($periodoIdFin);
 
-        $user = User::find($solicitud->docente_id);
+        $user = User::find($solicitud->user_id);
         $user->notify(new Aceptar($nombreAmbiente, $solicitud->fechaReserva, $ini->horainicial, $fin->horafinal));
     }
 
@@ -72,7 +72,7 @@ class NotificadorService
         $ini = Periodo::find($periodoIdIni);
         $fin = Periodo::find($periodoIdFin);
 
-        $user = User::find($solicitud->docente_id);
+        $user = User::find($solicitud->user_id);
         $user->notify(new Rechazar($nombreAmbiente, $solicitud->fechaReserva, $ini->horainicial, $fin->horafinal,$solicitud->razonRechazo));
     }
 
@@ -89,14 +89,10 @@ class NotificadorService
 
         $ini = Periodo::find($periodoIdIni);
         $fin = Periodo::find($periodoIdFin);
-        $nombre = Docente::where('id',$solicitud->docente_id)->value('nombre');
-        $user = User::find($solicitud->docente_id);
+        $user = User::find($solicitud->user_id);
         $user->notify(new SolicitudR($nombreAmbiente,$solicitud->fechaReserva,$ini->horainicial,$fin->horafinal));
-
-        $admin = User::find(0);
-        $admin->notify(new SolicitudRAdmin($nombreAmbiente, $nombre,$solicitud->materia));
     }
-
+    /*
     public function cancelarReserva($idSolicitud){
         $solicitud = Solicitud::find($idSolicitud);
         $idAmbiente = DB::table('ambiente_solicitud')
@@ -110,9 +106,9 @@ class NotificadorService
 
         $ini = Periodo::find($periodoIdIni);
         $fin = Periodo::find($periodoIdFin);
-        $nombre = Docente::where('id',$solicitud->docente_id)->value('nombre');
-        $user = User::find(0);
+        $nombre = User::where('id',$solicitud->user_id)->value('nombre');
+        $user = // saber quienes son los q pueden recibir las notificaciones de parte de los usuarios administrativos
         $user->notify(new Cancelada($nombreAmbiente,$solicitud->fechaReserva,$ini->horainicial,$fin->horafinal,$nombre));
-    }
+    }*/
 
 }
