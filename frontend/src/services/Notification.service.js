@@ -1,9 +1,9 @@
-import axios from "axios";
+import api from "./Comun.service";
 
 const apiUrl = process.env.REACT_APP_URL;
 
 export const getNotifications = async (docenteId) => {
-  return axios
+  return api
     .get(`${apiUrl}/notificaciones/${docenteId}`)
     .then(function (response) {
       return response.data;
@@ -15,7 +15,7 @@ export const getNotifications = async (docenteId) => {
 };
 
 export const readNotification = async (docenteId, notificacionId) => {
-  return axios
+  return api
     .post(`${apiUrl}/marcarNotificacionLeida`, {
       idUsuario: docenteId,
       notificacionId: notificacionId,
@@ -30,7 +30,7 @@ export const readNotification = async (docenteId, notificacionId) => {
 };
 export const enviarNotificacionIndividual = async (id, mensaje) => {
   try {
-    const response = await axios.post(`${apiUrl}/notificarIndividualmente`, {
+    const response = await api.post(`${apiUrl}/notificarIndividualmente`, {
       id,
       mensaje,
     });
@@ -42,7 +42,7 @@ export const enviarNotificacionIndividual = async (id, mensaje) => {
 };
 export const enviarNotificacionGeneral = async (mensaje) => {
   try {
-    const response = await axios.post(`${apiUrl}/notificacionBroadcast`, {
+    const response = await api.post(`${apiUrl}/notificacionBroadcast`, {
       mensaje,
     });
     return response.data;

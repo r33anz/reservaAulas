@@ -1,35 +1,35 @@
-import axios from "axios";
+import api from "./Comun.service";
 
 const apiUrl = process.env.REACT_APP_URL;
 
 export const recuperarSolicitudesDeReserva = (pagina, estado) => {
-  return axios
+  return api
     .post(`${apiUrl}/verListas`, { pagina, estado })
     .then(function (response) {
       return response.data;
     });
 };
 export const recuperarSolicitudesDeReservaAceptadas = (id) => {
-  return axios.get(`${apiUrl}/solicitudesAceptadas`).then(function (response) {
+  return api.get(`${apiUrl}/solicitudesAceptadas`).then(function (response) {
     return response.data;
   });
 };
 export const recuperarSolicitudesDeReservaDocente = (pagina, estado, docente_id) => {
-  return axios
+  return api
     .post(`${apiUrl}/docentes/reservas`, { pagina, estado, docente_id})
     .then(function (response) {
       return response.data;
     });
 };
 export const recuperarReservas = (id) => {
-  return axios
+  return api
     .get(`${apiUrl}/docentes/reservas`)
     .then(function (response) {
       return response.data;
     });
 };
 export const cancelarReserva = (id) => {
-  return axios
+  return api
     .put(`${apiUrl}/reservas/${id}`)
     .then(function (response) {
       return response.data;
@@ -42,7 +42,7 @@ export const cancelarReserva = (id) => {
 };
 
 export const inhabilitarReserva = (ids) => {
-  return axios
+  return api
     .put(`${apiUrl}/inhabilitarReserva/`,{idSolicitudes:ids})
     .then(function (response) {
       console.log(response);

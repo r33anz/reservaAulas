@@ -1,16 +1,16 @@
-import axios from 'axios';
+import api from './Comun.service';
 
 const apiUrl = process.env.REACT_APP_URL;
 
 export const recuperarFechasSolicitud = () => {
-    return axios.get(`${apiUrl}/fechasSolicitud`)
+    return api.get(`${apiUrl}/fechasSolicitud`)
         .then(function (response) {
             return response.data;
         });
 }
 
 export const recuperarInformacionSolicitud = (identificador) => {
-    return axios.post(`${apiUrl}/informacionSolicitud`, { id: identificador })
+    return api.post(`${apiUrl}/informacionSolicitud`, { id: identificador })
       .then(function (response) {
         return response.data; // Devuelve los datos de la solicitud
       })

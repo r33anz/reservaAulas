@@ -1,4 +1,4 @@
-import axios from "axios";
+import api from "./Comun.service";
 
 const apiUrl = process.env.REACT_APP_URL;
 
@@ -17,7 +17,7 @@ export const getTiposDeAmbiente = () => {
 };
 
 export const registrarAmbiente = (ambiente) => {
-  return axios
+  return api
     .post(`${apiUrl}/registroAmbiente`, ambiente)
     .then((response) => {
       console.log(response.data);
@@ -42,7 +42,7 @@ export const registrarAmbiente = (ambiente) => {
 };
 
 export const getAmbientes = () => {
-  return axios
+  return api
     .get(`${apiUrl}/ambientes`)
     .then(function (response) {
       return response.data;
@@ -54,7 +54,7 @@ export const getAmbientes = () => {
 };
 
 export const getPeriodosReservados = (ambienteId, fecha) => {
-  return axios
+  return api
     .get(`${apiUrl}/periodosReservados/${fecha}/${ambienteId}`)
     .then(function (response) {
       return response.data;

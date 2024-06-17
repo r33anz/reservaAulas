@@ -1,9 +1,9 @@
-import axios from "axios";
+import api from "./Comun.service";
 
 const apiUrl = process.env.REACT_APP_URL;
 
 export const getReporte = async () => {
-    return axios
+    return api
       .get(`${apiUrl}/generarReporte`)
       .then(function (response) {
         return response.data;
