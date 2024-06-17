@@ -92,7 +92,7 @@ const Inicio = ({
           <div style={{ padding: "1rem" }}>
             <ListaDeSolicitudes
               tipoDeUsuario="Docente"
-              titulo="Lista de Solicitudes"
+              titulo="Mis Solicitudes"
             />
           </div>
         );

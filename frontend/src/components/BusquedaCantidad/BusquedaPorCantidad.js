@@ -68,18 +68,14 @@ const BuscarCantidad = () => {
   return (
     <div className="buscarcontainer">
       <Container className="BusquedaPorCantidad-header" fluid>
-        <Row xs="auto" className="justify-content-md-end">
-          <Col xs lg="10" style={{ alignContent: "center", padding: 0 }}>
-            <h5 style={{ color: "white", fontWeight: "bold" }}>
-              Buscar por cantidad
-            </h5>
-          </Col>
-          <Button
-            className="BusquedaPorCantidad-header-button-close"
-            style={{ width: "58px", height: "3rem" }}
+        <Row xs="auto" className="text-white justify-content-end">
+          <Col
+            xs="12"
+            className="d-flex justify-content-start align-items-center"
+            style={{ height: "3rem", padding: 0, paddingLeft: "0.5rem" }}
           >
-            <XSquareFill style={{ width: "24px", height: "24px" }} />
-          </Button>
+            <h5 style={{ fontWeight: "bold" }}>Buscar por Cantidad</h5>
+          </Col>
         </Row>
       </Container>
       <Container fluid>

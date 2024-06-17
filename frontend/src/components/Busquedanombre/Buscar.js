@@ -23,7 +23,7 @@ const Buscar = () => {
     ) {
       const originalValue = event.target.value;
       const trimmedValue = originalValue.trim(); // Eliminar espacios al inicio y al final
-  
+
       if (trimmedValue === "") {
         formik.setFieldValue("ambiente", {
           ...formik.values.ambiente,
@@ -33,13 +33,15 @@ const Buscar = () => {
       } else if (!trimmedValue.startsWith(" ")) {
         // Verificar si el primer carácter no es un espacio
         const value = originalValue.toUpperCase(); // Convertir a mayúsculas si pasa la validación del espacio inicial
-  
+
         if (/^[a-zA-Z0-9\s]*$/.test(value)) {
           // Hacemos visible el dropdown solo si hay coincidencias
-          setShowDropdown(ambientes.some((ambiente) =>
-            ambiente.nombre.toLowerCase().includes(value.toLowerCase())
-          ));
-          
+          setShowDropdown(
+            ambientes.some((ambiente) =>
+              ambiente.nombre.toLowerCase().includes(value.toLowerCase())
+            )
+          );
+
           formik.setFieldValue("ambiente", {
             ...formik.values.ambiente,
             nombre: value,
@@ -56,7 +58,6 @@ const Buscar = () => {
       console.log(ambientes);
     }
   };
-  
 
   const formik = useFormik({
     initialValues: {
@@ -84,7 +85,6 @@ const Buscar = () => {
         //console.log(ambientes);
       } else {
         //setAmbienteDetails([]); // Limpiar los detalles del ambiente en caso de no encontrar coincidencias
-        
       }
       setShowDropdown(false);
       inputAmbienteRef.current.blur();
@@ -132,19 +132,14 @@ const Buscar = () => {
   return (
     <div className="buscarcontainer">
       <Container className="BusquedaPorNombre-header" fluid>
-        <Row xs="auto" className="justify-content-md-end">
-          <Col xs lg="10" style={{ alignContent: "center", padding: 0 }}>
-            <h5 style={{ color: "white", fontWeight: "bold" }}>
-              Buscar por nombre
-            </h5>
-          </Col>
-          <Button
-            className="BusquedaPorNombre-header-button-close"
-            style={{ width: "58px", height: "3rem" }}
-            //onClick={onClose}
+        <Row xs="auto" className="text-white justify-content-end">
+          <Col
+            xs="12"
+            className="d-flex justify-content-start align-items-center"
+            style={{ height: "3rem", padding: 0, paddingLeft: "0.5rem" }}
           >
-            <XSquareFill style={{ width: "24px", height: "24px" }} />
-          </Button>
+            <h5 style={{ fontWeight: "bold" }}>Buscar por nombre</h5>
+          </Col>
         </Row>
       </Container>
       <Container className="BusquedaPorNombre-body" fluid>
@@ -168,7 +163,6 @@ const Buscar = () => {
                       value={formik.values.ambiente.nombre}
                       className="form-control"
                       bsPrefix="dropdown-toggle"
-                      
                     />
                     {ambientes.filter((ambiente) =>
                       ambiente.nombre
@@ -179,9 +173,7 @@ const Buscar = () => {
                     ).length > 0 &&
                       formik.values.ambiente.nombre !== "" && (
                         <Dropdown.Menu
-                        class={`dropdown-menu ${
-                          showDropdown ? "show" : ""
-                        }`}
+                          class={`dropdown-menu ${showDropdown ? "show" : ""}`}
                           style={{
                             width: "100%",
                             overflowY: "auto",
