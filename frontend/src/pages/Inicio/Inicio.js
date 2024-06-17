@@ -27,19 +27,22 @@ const Inicio = ({
   const [activeTab, setActiveTab] = useState("inicio");
   const [docente, setDocente] = useState({});
   const { id } = useParams("id");
-  const [usuarioId, setUsuarioId] = useState(null);
   const navigate = useNavigate();
 
-  const fetchDocente = async () => {
-    getDocente(id)
-      .then((data) => {
-        setDocente(data);
-      })
-      .catch((error) => {
-        console.log("Error al buscar los ambientes:", error);
-      });
-    setDocente(docente);
-  };
+  const fetchDocente = useCallback(
+    async (usuarioId) => {
+      getDocente(usuarioId)
+        .then((data) => {
+          setDocente(data);
+          window.sessionStorage.setItem("docente_id", usuarioId);
+        })
+        .catch((error) => {
+          console.log("Error al buscar los ambientes:", error);
+        });
+      setDocente(docente);
+    },
+    [docente, setDocente]
+  );
 
   const handleLogout = useCallback(async () => {
     const response = await logout();
@@ -49,19 +52,17 @@ const Inicio = ({
   }, [navigate]);
 
   useEffect(() => {
-    if (id !== undefined) {
-      window.sessionStorage.setItem("docente_id", id);
-      setUsuarioId(id);
+    if (id !== null) {
+      fetchDocente(id);
     }
-    fetchDocente();
-  }, [id]);
+  }, []);
 
   const isAuthenticated = () => {
     const auth = sessionStorage.getItem("auth");
-    if(auth !== null && auth === "false") {
+    if (auth !== null && auth === "false") {
       navigate("/login");
     }
-  }
+  };
 
   const renderContent = () => {
     isAuthenticated();
@@ -112,7 +113,7 @@ const Inicio = ({
         return (
           <div className="logo-background">
             <h1 style={{ fontWeight: "bold" }}>
-              Bienvenidos al sistema Gestor de ambientes
+              Bienvenidos al Sistema de Gestion de Ambientes
             </h1>
             <h4>
               Disfruta de una experiencia única en tu reserva de ambientes

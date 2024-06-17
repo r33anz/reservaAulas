@@ -148,4 +148,5 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Reportes
     Route::get('/generarReporte', [ReporteController::class, 'generarReporte']);
+    
 });
