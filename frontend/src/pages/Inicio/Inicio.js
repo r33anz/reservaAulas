@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Col, Nav, Row } from "react-bootstrap";
 import logo from "../../assets/images/image.png";
 import Home from "../Home";
@@ -10,13 +10,13 @@ import BuscarCantidad from "../../components/BusquedaCantidad/BusquedaPorCantida
 import Calendario from "../../components/Calendario";
 import CalendarioB from "../../components/CalendarioBusqueda";
 import ListaDeDocentes from "../../components/ListaDeDocentes/ListaDeDocentes";
-import { AlertsProvider } from "../../components/Alert/AlertsContext";
 import ListaDeAtencionDeSolicitudes from "../../components/AtenderSolicitud/ListaDeAtencionDeSolicitudes";
 import "./style.css";
 import SolicitarReserva from "../../components/SolicitudReserva/SolicitarReserva";
 import ListaDeNotificaciones from "../../components/ListaDeNotificaciones/ListaDeNotificaciones";
 import { getDocente } from "../../services/SolicitarReserva.service";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import { logout } from "../../services/Authenticacion.service";
 
 const Inicio = ({
   fetchNotifications,
@@ -27,6 +27,7 @@ const Inicio = ({
   const [docente, setDocente] = useState({});
   const { id } = useParams("id");
   const [usuarioId, setUsuarioId] = useState(null);
+  const navigate = useNavigate();
 
   const fetchDocente = async () => {
     getDocente(id)
@@ -38,6 +39,13 @@ const Inicio = ({
       });
     setDocente(docente);
   };
+
+  const handleLogout = useCallback(async () => {
+    const response = await logout();
+    if (response) {
+      navigate("/login");
+    }
+  }, [navigate]);
 
   useEffect(() => {
     if (id !== undefined) {
@@ -54,6 +62,13 @@ const Inicio = ({
       case "registrarReserva":
         return <SolicitarReserva />;
       case "listaDeSolicitudes":
+        return (
+          <ListaDeSolicitudes
+            tipoDeUsuario="Admin"
+            titulo="Lista de Solicitudes"
+          />
+        );
+      case "misSolicitudes":
         return (
           <ListaDeSolicitudes
             tipoDeUsuario="Docente"
@@ -85,7 +100,7 @@ const Inicio = ({
       default:
         return (
           <div className="logo-background">
-            <h1 style={{ fontWeight: 'bold' }}>
+            <h1 style={{ fontWeight: "bold" }}>
               Bienvenidos al sistema Gestor de ambientes
             </h1>
             <h4>
@@ -112,7 +127,7 @@ const Inicio = ({
           </div>
           <div className="separador"></div>
           <div className="usuario-header">
-            <h5>USUARIO: {docente.nombre}</h5>
+            <p>USUARIO: {docente.nombre}</p>
           </div>
           <div className="separador"></div>
           <div className="nav-container">
@@ -124,7 +139,7 @@ const Inicio = ({
                 }}
               >
                 <Row>
-                  <Col xxl="10">Lista de Notificaciones</Col>
+                  <Col xxl="10">Notificaciones</Col>
                   <Col xxl="2">
                     {notificationsIdNotRead &&
                       notificationsIdNotRead.length > 0 && (
@@ -144,7 +159,10 @@ const Inicio = ({
                 Registrar Reserva
               </Nav.Link>
               <Nav.Link onClick={() => setActiveTab("listaDeSolicitudes")}>
-                Lista de Solicitudes
+                Solicitudes
+              </Nav.Link>
+              <Nav.Link onClick={() => setActiveTab("misSolicitudes")}>
+                Mis Solicitudes
               </Nav.Link>
               <Nav.Link onClick={() => setActiveTab("busquedaPorNombre")}>
                 Busqueda por Nombre
@@ -175,11 +193,14 @@ const Inicio = ({
               >
                 Atencion de Solicitudes
               </Nav.Link>
+              <div className="separador"></div>
+              <Nav.Link onClick={handleLogout}>Cerrar Sesion</Nav.Link>
+              <div className="separador"></div>
             </Nav>
           </div>
         </Col>
         <Col style={{ paddingRight: "0px", paddingLeft: "0px" }}>
-            <Home fetchNotifications={fetchNotifications} >{renderContent()}</Home>
+          <Home fetchNotifications={fetchNotifications}>{renderContent()}</Home>
         </Col>
       </Row>
     </div>

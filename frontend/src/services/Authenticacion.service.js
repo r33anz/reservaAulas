@@ -16,3 +16,15 @@ export const login = async (email, password) => {
       return null;
     });
 };
+
+export const logout = async () => {
+  return api
+    .post(`${apiBasedUrl}/logout`)
+    .then(function (response) {
+      return response.data;
+    })
+    .catch(function (error) {
+      console.log(error);
+      return null;
+    });
+};
