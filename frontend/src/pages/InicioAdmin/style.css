@@ -18,8 +18,6 @@ html, body {
 .Home-body {
   flex: 1;
   background-color: #f2f0f0;
-  overflow-y: auto;
-  padding: 20px;
 }
 
 .App-header {
@@ -60,7 +58,6 @@ html, body {
 
 .nav-link {
   color: white;
-  font-size: 20px;
   border-radius: 15px;
 }
 
@@ -125,9 +122,33 @@ html, body {
   background: transparent;
 }
 
-/* Añadir esta clase para habilitar el scroll vertical en el contenedor de contenido */
-.content-scroll {
-  height: 100%;
-  overflow-y: auto;
+.logo-background {
+  margin-left: -12px;
+  margin-right: -12px;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 84vh; /* Ajusta la altura según sea necesario */
+  flex-direction: column;
+  overflow: hidden; /* Evita el scroll */
+  background-image: url('../../assets/images/fondo.jpg'); /* Ruta relativa al CSS */
+  background-size: cover; /* Asegura que la imagen cubra todo el contenedor */
+  background-repeat: no-repeat;
+  background-position: center;
+}
 
+.logo-background::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgb(116 95 95 / 70%);
+}
+
+.logo-background h1, .logo-background h4 {
+  z-index: 1; /* Asegura que el texto esté sobre el fondo */
+  color: #fff; /* Color del texto */
 }

@@ -20,10 +20,7 @@ button.nav-link {
     --bs-nav-tabs-border-color: none;
     --bs-nav-tabs-border-radius: 0;
 }
-.nav-link {
-    color: #ffffff;
-    font-size: 25px;
-}
+
 
 .IniDocente-notification-count {
     background-color: #FF0000;

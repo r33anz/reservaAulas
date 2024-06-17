@@ -9,7 +9,7 @@ import RegistrarAmbiente from "../../components/RegistrarAmbiente";
 import BuscarCantidad from "../../components/BusquedaCantidad/BusquedaPorCantidad";
 import Calendario from "../../components/Calendario";
 import CalendarioB from "../../components/CalendarioBusqueda";
-import ListaDeDocentes from "../../components/ListaDeDocentes/ListaDeDocentes"
+import ListaDeDocentes from "../../components/ListaDeDocentes/ListaDeDocentes";
 import { AlertsProvider } from "../../components/Alert/AlertsContext";
 import ListaDeAtencionDeSolicitudes from "../../components/AtenderSolicitud/ListaDeAtencionDeSolicitudes";
 import "./style.css";
@@ -42,7 +42,16 @@ const InicioAdmin = ({ showCalendar }) => {
       case "atencionDeSolicitudes":
         return <ListaDeAtencionDeSolicitudes />;
       default:
-        return <h4>Bienvenidos</h4>;
+        return (
+          <div className="logo-background">
+            <h1 style={{ fontWeight: 'bold' }}>
+              Bienvenidos al sistema Gestor de ambientes
+            </h1>
+            <h4>
+              Disfruta de una experiencia única en tu reserva de ambientes
+            </h4>
+          </div>
+        );
     }
   };
 
