@@ -33,7 +33,7 @@ const Login = () => {
   });
 
   return (
-    <Container fluid style={{ background: "#003f702e"}}>
+    <Container fluid style={{ background: "#003f702e", height: "100%" }}>
       <Row md="auto" lg="auto" xl="auto" style={{ height: "90vh" }}>
         <Col
           md="9"
