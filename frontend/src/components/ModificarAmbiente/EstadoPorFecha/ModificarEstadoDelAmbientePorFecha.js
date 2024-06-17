@@ -203,7 +203,7 @@ const ModificarEstadoDelAmbientePorFecha = ({ onclose }) => {
     } else {
       agregarAlert({
         icon: <ExclamationCircleFill />,
-        severidad: "danger",
+        severidad: "warning",
         mensaje: "Modificacion fallida",
       });
     }

@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { Container, Stack, Image } from "react-bootstrap";
-import { Calendar3, FileEarmarkRuled } from "react-bootstrap-icons";
 import "./style.css";
 import logo from "../../assets/images/image.png";
 import "../../components/Busquedanombre/Style.css";
 import { Outlet, useParams } from "react-router-dom";
-import NotificacionDocente from "../DashboardDocente/NotificacionDocente";
-import NotificacionAdmin from "../DashboardAdmin/NotificacionAdmin";
+import NotificacionDocente from "../NotificacionDocente/NotificacionDocente";
+import NotificacionAdmin from "../NotificacionAdmin/NotificacionAdmin";
 
 const Home = ({
   children,
