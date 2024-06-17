@@ -1,5 +1,6 @@
 .AtenderSolicitud-header, .AtenderSolicitud-modal-header {
     background-color: #003F70;
+    height: 3rem;
 }
 
 .AtenderSolicitud-body, .AtenderSolicitud-modal-body {

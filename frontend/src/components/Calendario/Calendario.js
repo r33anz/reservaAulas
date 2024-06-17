@@ -132,7 +132,7 @@ const totalPages = Math.ceil(filteredReservas.length / reservasPerPage);
     setEvent(events2);
   };
   const eventPropGetter = (event) => {
-    let backgroundColor = event.type === "reserva" ? "#f56a79" : "#6aa9f5";
+    let backgroundColor = event.type === "reserva" ? "#d81a0b" : "#0b3f6f";
     return { style: { backgroundColor } };
   };
   useEffect(() => {

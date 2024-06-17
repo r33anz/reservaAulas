@@ -5,12 +5,12 @@
   align-items: center;
   justify-content: center;
   height: 36px !important;
-  background: cornflowerblue;
+  background: rgb(11 63 111);
 
 }
 
 .rbc-event.rbc-selected, .rbc-day-slot .rbc-selected.rbc-background-event {
-  background-color: #3174ad;
+  background-color: rgb(11 63 111);
 }
 .rbc-button-link {
 cursor: default !important;

@@ -270,6 +270,7 @@ const ListaDeSolicitudes = ({ titulo, tipoDeUsuario }) => {
                   <td>{item.estado}</td>
                   <td>
                     <CardHeading
+                      className="ListaDeSolicitudes-button-detalle"
                       size={30}
                       onClick={() => {
                         setSolicitud(item);
@@ -299,9 +300,9 @@ const ListaDeSolicitudes = ({ titulo, tipoDeUsuario }) => {
             className="d-flex justify-content-start align-items-center"
             style={{ height: "100%" }}
           >
-            <h4 style={{ fontWeight: "bold" }} className="">
+            <h5 style={{ fontWeight: "bold" }} className="">
               Detalle de la Solicitud de Reserva
-            </h4>
+            </h5>
           </Col>
           <Col
             xs="2"
@@ -310,16 +311,13 @@ const ListaDeSolicitudes = ({ titulo, tipoDeUsuario }) => {
           >
             <div
               onClick={() => setShow(false)}
-              className="RegistrarAmbiente-header-button-close d-flex justify-content-center align-items-center"
+              className="ListaDeSolicitudes-header-button-close d-flex justify-content-center align-items-center"
             >
               <XSquareFill size={24} />
             </div>
           </Col>
         </Row>
-        <Row
-          className="RegistrarAmbiente-body justify-content-center"
-          
-        >
+        <Row className="ListaDeSolicitudes-body justify-content-center">
           <div style={{ background: "white", padding: "1rem" }}>
             <h6>Nombre del Ambiente:</h6>
             <p>{solicitud.ambiente_nombre}</p>
