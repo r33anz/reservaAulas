@@ -49,7 +49,6 @@ const IniDocente = ({
       case "registrarReserva":
         return (
           <SolcitarReserva
-          //onClose={() => setSolicitarReserva(solicitarReserva)}
           />
         );
       case "listaDeSolicitudes":

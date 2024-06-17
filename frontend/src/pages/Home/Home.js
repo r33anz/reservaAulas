@@ -5,22 +5,15 @@ import "./style.css";
 import logo from "../../assets/images/image.png";
 import "../../components/Busquedanombre/Style.css";
 import { Outlet, useParams } from "react-router-dom";
-import { getReporte } from "../../services/Reporte.service";
 import NotificacionDocente from "../DashboardDocente/NotificacionDocente";
 import NotificacionAdmin from "../DashboardAdmin/NotificacionAdmin";
 
 const Home = ({
   children,
-  setShowCalendar,
-  showCalendar,
   fetchNotifications,
 }) => {
   const { id } = useParams("id");
   const [usuarioId, setUsuarioId] = useState(null);
-
-  const fetchReporte = async () => {
-    await getReporte();
-  };
 
   useEffect(() => {
     if (id !== undefined) {
@@ -39,7 +32,7 @@ const Home = ({
       )}
       <NotificacionAdmin fetchNotifications={fetchNotifications} />
       <header className="App-header">
-        <div className="titulo-header" onClick={() => setShowCalendar(false)}>
+        <div className="titulo-header">
           <h3>
             Intelligence
             <br />

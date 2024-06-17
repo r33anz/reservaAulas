@@ -14,7 +14,7 @@ import { AlertsProvider } from "../../components/Alert/AlertsContext";
 import ListaDeAtencionDeSolicitudes from "../../components/AtenderSolicitud/ListaDeAtencionDeSolicitudes";
 import "./style.css";
 
-const Inicio = ({ showCalendar }) => {
+const InicioAdmin = ({ showCalendar }) => {
   const [showModalPeriodo, setShowModalPeriodo] = useState(true);
   const [showModalFecha, setShowModalFecha] = useState(false);
   const [activeTab, setActiveTab] = useState("inicio");
@@ -100,4 +100,4 @@ const Inicio = ({ showCalendar }) => {
   );
 };
 
-export default Inicio;
+export default InicioAdmin;
