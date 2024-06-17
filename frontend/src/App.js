@@ -10,7 +10,6 @@ import Inicio from "./pages/Inicio/Inicio";
 function App() {
   const [notifications, setNotifications] = useState([]);
   const [notificationsIdNotRead, setNotificationsIdNotRead] = useState([]);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   const fetchNotifications = async (docenteId) => {
     const response = await getNotifications(docenteId);
@@ -21,11 +20,6 @@ function App() {
     setNotificationsIdNotRead(notificationsIdNotRead);
   };
 
-  useEffect(() => {
-    const auth = localStorage.getItem("auth");
-    setIsAuthenticated(auth === "true");
-  }, []);
-
   return (
     <AlertsProvider>
       <Routes>
@@ -33,15 +27,12 @@ function App() {
         <Route
           exact
           path="/usuario/:id"
-          element={isAuthenticated ? (
-              <Inicio
-                fetchNotifications={fetchNotifications}
-                notifications={notifications}
-                notificationsIdNotRead={notificationsIdNotRead}
-              />
-            ) : (
-              <Navigate to="/login" replace />
-            )
+          element={
+            <Inicio
+              fetchNotifications={fetchNotifications}
+              notifications={notifications}
+              notificationsIdNotRead={notificationsIdNotRead}
+            />
           }
         />
         <Route path="/" element={<Navigate to="/login" replace />} />
