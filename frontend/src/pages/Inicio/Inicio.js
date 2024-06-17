@@ -172,9 +172,7 @@ const Inicio = ({
           </div>
         </Col>
         <Col style={{ paddingRight: "0px", paddingLeft: "0px" }}>
-          <AlertsProvider>
             <Home fetchNotifications={fetchNotifications} >{renderContent()}</Home>
-          </AlertsProvider>
         </Col>
       </Row>
     </div>

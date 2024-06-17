@@ -1,45 +1,39 @@
 import { Formik } from "formik";
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import * as Yup from "yup";
 import { Button, Col, Container, Form, Image, Row } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import logo from "../../assets/images/image.png";
 import "./style.css";
+import { login } from "../../services/Authenticacion.service";
+import { AlertsContext } from "../../components/Alert/AlertsContext";
+import { ExclamationCircleFill } from "react-bootstrap-icons";
 
 const Login = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const { agregarAlert } = useContext(AlertsContext);
   const navigate = useNavigate();
 
-  //   const handleSubmit = (e) => {
-  //     e.preventDefault();
-  //     // Aquí normalmente harías una llamada a la API para autenticar al usuario
-  //     if (email === "user@example.com" && password === "password") {
-  //       // Guarda el estado de autenticación (puede ser en localStorage o en un contexto global)
-  //       localStorage.setItem("auth", "true");
-  //       navigate("/admin2");
-  //     } else {
-  //       alert("Credenciales incorrectas");
-  //     }
-  //   };
-
-  const LoginSchema = Yup.object().shape({
-    email: Yup.string().email("Email inválido").required("Requerido"),
-    password: Yup.string().min(6, "Mínimo 6 caracteres").required("Requerido"),
-  });
-
-  const handleSubmit = (values) => {
+  const handleLogin = async(values) => {
     const { email, password } = values;
-    if (email === "user@example.com" && password === "password") {
-      localStorage.setItem("auth", "true");
-      window.location.href = "/dashboard";
+    const response = await login(email, password);
+    if (response !== null) {
+      navigate(`/usuario/${response.user.id}`);
     } else {
-      alert("Credenciales incorrectas");
+      agregarAlert({
+        icon: <ExclamationCircleFill />,
+        severidad: "warning",
+        mensaje: "Credenciales incorrectas",
+      });
     }
   };
 
+  const LoginSchema = Yup.object().shape({
+    email: Yup.string().email("Email inválido").required("Requerido"),
+    password: Yup.string().min(6, "Mínimo 6 caracteres").required("Requerido")
+  });
+
   return (
-    <Container fluid>
+    <Container fluid style={{ background: "#003f702e"}}>
       <Row md="auto" lg="auto" xl="auto" style={{ height: "90vh" }}>
         <Col
           md="9"
@@ -67,7 +61,7 @@ const Login = () => {
             initialValues={{ email: "", password: "" }}
             validationSchema={LoginSchema}
             onSubmit={(values, { setSubmitting }) => {
-              handleSubmit(values);
+              handleLogin(values);
               setSubmitting(false);
             }}
           >
