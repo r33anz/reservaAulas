@@ -30,7 +30,8 @@ const Home = ({
         />
       )}
       <NotificacionAdmin fetchNotifications={fetchNotifications} />
-      <header className="App-header">
+      
+      {/*<header className="App-header">
         <div className="titulo-header">
           <h3>
             Intelligence
@@ -38,11 +39,12 @@ const Home = ({
             Software
           </h3>
         </div>
-      </header>
+      </header>*/}
       <Container fluid className="Home-body">
         <Outlet />
         {children}
       </Container>
+      {/*
       <footer className="App-footer">
         <Container fluid="xs" style={{ padding: "5px" }}>
           <Stack direction="horizontal" gap={1}>
@@ -58,7 +60,7 @@ const Home = ({
             </small>
           </Stack>
         </Container>
-      </footer>
+      </footer>*/}
     </>
   );
 };

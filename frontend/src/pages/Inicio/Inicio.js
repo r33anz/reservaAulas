@@ -17,6 +17,7 @@ import ListaDeNotificaciones from "../../components/ListaDeNotificaciones/ListaD
 import { getDocente } from "../../services/SolicitarReserva.service";
 import { useNavigate, useParams } from "react-router-dom";
 import { logout } from "../../services/Authenticacion.service";
+import CancelarReservas from "../../components/CancelarReserva/CancelarReservas";
 
 const Inicio = ({
   fetchNotifications,
@@ -29,17 +30,16 @@ const Inicio = ({
   const [usuarioId, setUsuarioId] = useState(null);
   const navigate = useNavigate();
 
-  const fetchDocente = useCallback( async () => {
-    getDocente(usuarioId)
+  const fetchDocente = async () => {
+    getDocente(id)
       .then((data) => {
         setDocente(data);
-        window.sessionStorage.setItem("docente_id", usuarioId);
       })
       .catch((error) => {
         console.log("Error al buscar los ambientes:", error);
       });
     setDocente(docente);
-  }, [docente, setDocente, usuarioId]);
+  };
 
   const handleLogout = useCallback(async () => {
     const response = await logout();
@@ -50,10 +50,11 @@ const Inicio = ({
 
   useEffect(() => {
     if (id !== undefined) {
+      window.sessionStorage.setItem("docente_id", id);
       setUsuarioId(id);
-      fetchDocente();
     }
-  }, [fetchDocente, id]);
+    fetchDocente();
+  }, [id]);
 
   const isAuthenticated = () => {
     const auth = sessionStorage.getItem("auth");
@@ -87,6 +88,8 @@ const Inicio = ({
         return <Buscar />;
       case "busquedaPorCantidad":
         return <BuscarCantidad />;
+      case "cancelarReserva":
+        return <CancelarReservas/>;
       case "modificarPorPeriodo":
         return <Modificarperdiodo />;
       case "listaDeDocentes":
@@ -191,6 +194,9 @@ const Inicio = ({
               <Nav.Link onClick={() => setActiveTab("calendario")}>
                 Calendario
               </Nav.Link>
+              <Nav.Link onClick={() => setActiveTab("cancelarReserva")}>
+                Cancelar Reserva/Solicitud
+                </Nav.Link>
               <Nav.Link onClick={() => setActiveTab("busquedaPorCalendario")}>
                 Busqueda calendario
               </Nav.Link>
