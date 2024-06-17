@@ -7,7 +7,7 @@ import {
   recuperarFechasSolicitud,
   recuperarInformacionSolicitud,
 } from "../../services/Fechas.service";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef,useCallback } from "react";
 import {
   Col,
   Modal,
@@ -25,10 +25,12 @@ import {
   estadoinhabilitado,
   habilita,
   modificarPerio,
+  getPeriodosReservados,
+  getPeriodosSolicitados,
 } from "../../services/ModificarPeriodo.service";
 import {
   getAmbientes,
-  getPeriodosReservados,
+  
 } from "../../services/Ambiente.service";
 dayjs.locale("es");
 
@@ -152,73 +154,8 @@ function Calendario() {
     formik.resetForm();
   };
 
-  const renderPaginationItems = () => {
-    const items = [];
-
-    items.push(
-      <Pagination.First
-        key="first"
-        onClick={() => setCurrentPage(1)}
-        disabled={currentPage === 1}
-        className="color-blue"
-      />
-    );
-    items.push(
-      <Pagination.Prev
-        key="prev"
-        onClick={() => setCurrentPage(currentPage - 1)}
-        disabled={currentPage === 1}
-        className="color-blue"
-      />
-    );
-
-    if (currentPage > 3) {
-      items.push(
-        <Pagination.Ellipsis key="ellipsis-left" className="color-blue" />
-      );
-    }
-
-    for (
-      let i = Math.max(1, currentPage - 2);
-      i <= Math.min(currentPage + 2, totalPages);
-      i++
-    ) {
-      items.push(
-        <Pagination.Item
-          key={i}
-          active={i === currentPage}
-          onClick={() => setCurrentPage(i)}
-          className="color-blue"
-        >
-          {i}
-        </Pagination.Item>
-      );
-    }
-
-    if (currentPage < totalPages - 2) {
-      items.push(<Pagination.Ellipsis key="ellipsis-right" />);
-    }
-
-    items.push(
-      <Pagination.Next
-        key="next"
-        onClick={() => setCurrentPage(currentPage + 1)}
-        disabled={currentPage === totalPages}
-        className="color-blue"
-      />
-    );
-
-    items.push(
-      <Pagination.Last
-        key="last"
-        onClick={() => setCurrentPage(totalPages)}
-        disabled={currentPage === totalPages}
-        className="color-blue"
-      />
-    );
-
-    return items;
-  };
+  const [periodosSolicitados, setPeriodosSolicitados] = useState([]);
+  const [periodosModificados, setPeriodosModificados] = useState([]);
 
   const formik = useFormik({
     initialValues: {
@@ -286,10 +223,17 @@ function Calendario() {
   const getAmbientPorFecha = async (ambiente, fecha) => {
     const data = await modificarPerio(ambiente.id, fecha);
     const response = await getPeriodosReservados(ambiente.id, fecha);
+    const response2 = await getPeriodosSolicitados(ambiente.id, fecha);
+
     if (response) {
       setPeriodosReservados(response.periodosReservados);
-      console.log(periodosReservados);
+      console.log(response);
     }
+    if (response2) {
+      setPeriodosSolicitados(response2.periodosReservados);
+      console.log(response2);
+    }
+
     if (data != null) {
       setAmbiente({
         id: ambiente.id,
@@ -297,6 +241,9 @@ function Calendario() {
         fecha,
         periodos: data.periodos,
       });
+      setPeriodosModificados(data.periodos);
+      cambiarColorLabels();
+      //setConsultarPresionado(true);
     }
   };
 
@@ -330,13 +277,29 @@ function Calendario() {
     setAmbientes(respuesta);
   };
 
-  const isReservado = (periodoId) => {
-    return (
-      periodosReservados.filter((periodoReservado) => {
-        return periodoReservado.periodos.includes(periodoId);
-      }).length > 0
-    );
-  };
+  const cambiarColorLabels = useCallback(
+    (periodoId) => {
+      // Verificar si el periodo está en periodosReservados
+      const esReservado = periodosReservados.some((periodoReservado) =>
+        periodoReservado.periodos.includes(periodoId)
+      );
+      const esSolictado = periodosSolicitados.some((periodoSolicitado) =>
+        periodoSolicitado.periodos.includes(periodoId)
+      );
+
+      if (esReservado) {
+        return "periodos-reservado";
+      } else if (esSolictado) {
+        return "periodos-solicitado";
+      }
+
+      const periodoModificado = periodosModificados.includes(periodoId);
+      return periodoModificado
+        ? "periodos-inhabilitados"
+        : "periodos-habilitados";
+    },
+    [periodosModificados, periodosReservados]
+  );
 
   useEffect(() => {
     fetchAmbientes();
@@ -374,12 +337,37 @@ function Calendario() {
     };
   }, [refDropdownMenu, refDropdown, refDropdownToggle]);
 
-  const handleKeyDown = (event) => {
-    if (event.key === "Enter") {
-      event.preventDefault();
-      // Aquí va tu lógica para manejar la búsqueda
-    }
-  };
+  const cambiarTextoLabels = useCallback(
+    (periodoId) => {
+      // Verificar si el periodo está en periodosReservados
+      const esReservado = periodosReservados.some((periodoReservado) =>
+        periodoReservado.periodos.includes(periodoId)
+      );
+
+      // Verificar si el periodo está modificado
+      const periodoModificado = periodosModificados.includes(periodoId);
+
+      // Verificar si el periodo está inhabilitado
+      const esSolicitado = periodosSolicitados.some((periodoReservado) =>
+        periodoReservado.periodos.includes(periodoId)
+      );
+
+      // Determinar el texto del estado
+      let textoEstado = "";
+      if (esReservado) {
+        textoEstado = "Reservado";
+      } else if (periodoModificado) {
+        textoEstado = "Inhabilitado";
+      } else if (esSolicitado) {
+        textoEstado = "Solicitado";
+      } else {
+        textoEstado = "Habilitado";
+      }
+
+      return textoEstado;
+    },
+    [periodosModificados, periodosReservados, periodosSolicitados]
+  );
 
   return (
     <>
@@ -387,6 +375,7 @@ function Calendario() {
         style={{
           height: "505px",
           width: "1040px",
+          backgroundColor:"white",
         }}
       >
         <Calendar
@@ -438,9 +427,9 @@ function Calendario() {
             </Col>
           </Row>
           <Row className="RegistrarAmbiente-body1 justify-content-center">
-            {isSlotSelected ? (
-              <Form onSubmit={formik.handleSubmit}>
-                <Form.Group as={Row} className="mb-3" controlId="ambiente">
+            
+              <Form  onSubmit={formik.handleSubmit}style={{backgroundColor:"#D9D9D9"}}>
+                <Form.Group as={Row} className="mb-3" controlId="ambiente" style={{marginTop:"0.5rem"}} >
                   <Form.Label column sm="2">
                     Nombre
                   </Form.Label>
@@ -534,167 +523,104 @@ function Calendario() {
                   Object.keys(ambiente).length > 0 &&
                   ambiente.periodos &&
                   ambiente.periodos && (
-                    <Row>
-                      <Col sm={4}>
+                    <div className="periodos-container1">
+                    <div className="periodos-grid">
+                      <div className="periodos">
                         <h6>Mañana</h6>
-                        {ambiente.periodos &&
-                          periodos1.map((item) => (
-                            <>
-                              {item.id >= 1 && item.id <= 4 && (
-                                <div
-                                  key={item.id}
-                                  style={{
-                                    border: "1px solid black",
-                                    width: "100px",
-                                    padding: "2px",
-                                    textAlign: "center",
-                                    color: `${
-                                      ambiente.periodos.includes(item.id)
-                                        ? "white"
-                                        : "black"
-                                    }`,
-                                    background: `${
-                                      isReservado(item.id)
-                                        ? "red"
-                                        : ambiente.periodos.includes(item.id)
-                                        ? "gray"
-                                        : "white"
-                                    }`,
-                                    marginBottom: "5px",
-                                  }}
-                                >
-                                  {item.hora}
-                                </div>
-                              )}
-                            </>
-                          ))}
-                      </Col>
-                      <Col sm={4}>
+                        {[1, 2, 3, 4].map((periodo, index, array) => {
+                          const esReservado = periodosReservados.some(
+                            (reservado) => reservado.periodos.includes(periodo)
+                          );
+                          // Mostrar checkbox solo para el primer periodo reservado
+                          
+                          return (
+                            <div key={periodo}>
+                              <label
+                                htmlFor={periodo.toString()}
+                                className={`periodo-label1 ${cambiarColorLabels(
+                                  periodo
+                                )}`}
+                              >
+                                {`${
+                                  periodo === 1
+                                    ? "6:45-8:15"
+                                    : periodo === 2
+                                    ? "8:15-9:45"
+                                    : periodo === 3
+                                    ? "9:45-11:15"
+                                    : "11:15-12:45"
+                                }`}
+                                <p>{cambiarTextoLabels(periodo)}</p>
+                              </label>
+                            </div>
+                          );
+                        })}
+                      </div>
+
+                      <div className="periodos">
                         <h6>Tarde</h6>
-                        {ambiente.periodos &&
-                          periodos1.map((item) => (
-                            <>
-                              {item.id >= 5 && item.id <= 8 && (
-                                <div
-                                  key={item.id}
-                                  style={{
-                                    border: "1px solid black",
-                                    width: "105px",
-                                    padding: "2px",
-                                    textAlign: "center",
-                                    color: `${
-                                      ambiente.periodos.includes(item.id)
-                                        ? "white"
-                                        : "black"
-                                    }`,
-                                    background: `${
-                                      isReservado(item.id)
-                                        ? "red"
-                                        : ambiente.periodos.includes(item.id)
-                                        ? "gray"
-                                        : "white"
-                                    }`,
-                                    marginBottom: "5px",
-                                  }}
-                                >
-                                  {item.hora}
-                                </div>
-                              )}
-                            </>
-                          ))}
-                      </Col>
-                      <Col sm={4}>
+                        {[5, 6, 7, 8].map((periodo, index, array) => {
+                          const esReservado = periodosReservados.some(
+                            (reservado) => reservado.periodos.includes(periodo)
+                          );
+
+                          // Mostrar checkbox solo para el primer periodo reservado
+                          
+                          return (
+                            <div key={periodo}>
+                              
+                              <label
+                                htmlFor={periodo.toString()}
+                                className={cambiarColorLabels(periodo)}
+                              >
+                                {`${
+                                  periodo === 5
+                                    ? "12:45-14:15"
+                                    : periodo === 6
+                                    ? "14:15-15:45"
+                                    : periodo === 7
+                                    ? "15:45-17:15"
+                                    : "17:15-18:45"
+                                }`}
+                                <p>{cambiarTextoLabels(periodo)}</p>
+                              </label>
+                            </div>
+                          );
+                        })}
+                      </div>
+                      <div className="periodos">
                         <h6>Noche</h6>
-                        {ambiente.periodos &&
-                          periodos1.map((item) => (
-                            <>
-                              {item.id >= 9 && item.id <= 10 && (
-                                <div
-                                  key={item.id}
-                                  style={{
-                                    border: "1px solid black",
-                                    width: "105px",
-                                    padding: "2px",
-                                    textAlign: "center",
-                                    color: `${
-                                      ambiente.periodos.includes(item.id)
-                                        ? "white"
-                                        : "black"
-                                    }`,
-                                    background: `${
-                                      isReservado(item.id)
-                                        ? "red"
-                                        : ambiente.periodos.includes(item.id)
-                                        ? "gray"
-                                        : "white"
-                                    }`,
-                                    marginBottom: "5px",
-                                  }}
-                                >
-                                  {item.hora}
-                                </div>
-                              )}
-                            </>
-                          ))}
-                      </Col>
-                    </Row>
+                        {[9, 10].map((periodo, index, array) => {
+                          const esReservado = periodosReservados.some(
+                            (reservado) => reservado.periodos.includes(periodo)
+                          );
+
+                          // Mostrar checkbox solo para el primer periodo reservado
+                          
+                          return (
+                            <div key={periodo}>
+                              
+
+                              <label
+                                htmlFor={periodo.toString()}
+                                className={cambiarColorLabels(periodo)}
+                              >
+                                {`${
+                                  periodo === 9 ? "18:45-20:15" : "20:15-21:45"
+                                }`}
+                                <p>{cambiarTextoLabels(periodo)}</p>
+                              </label>
+                            </div>
+                          );
+                        })}
+                        
+                        
+                      </div>
+                    </div>
+                    </div>
                   )}
               </Form>
-            ) : (
-              <>
-                <Form inline className="d-flex  mb-2">
-                  <Form.Group
-                    controlId="searchTerm"
-                    className="mr-2 d-flex align-items-center"
-                  >
-                    <Form.Label className="mr-2">
-                      Buscar por Ambiente
-                    </Form.Label>
-                    <Form.Control
-                      type="text"
-                      value={searchTerm}
-                      onKeyDown={handleKeyDown}
-                      onChange={handleInputChange}
-                      placeholder="Nombre del Ambiente"
-                      style={{ width: "100%" }}
-                    />
-                  </Form.Group>
-                </Form>
-
-                {filteredReservas.length === 0 ? (
-                  <p>{mensaje}</p>
-                ) : (
-                  filteredReservas.map((reserva, index) => (
-                    <div key={index} className="reserva">
-                      <div className="reserva-row">
-                        <h6>Docente:</h6>
-                        <p>{reserva.nombreDocente}</p>
-                      </div>
-                      <div className="reserva-row">
-                        <h6>Nombre del Ambiente:</h6>
-                        <p>{reserva.ambiente_nombre}</p>
-                      </div>
-                      <div className="reserva-row">
-                        <h6>Periodo:</h6>
-                        <p>
-                          {getPeriodo(
-                            reserva.periodo_ini_id,
-                            reserva.periodo_fin_id
-                          )}
-                        </p>
-                      </div>
-                      {index < filteredReservas.length - 1 && <hr />}
-                    </div>
-                  ))
-                )}
-
-                {filteredReservas.length > 0 && (
-                  <Pagination style={{ justifyContent: "center" }}>
-                    {renderPaginationItems()}
-                  </Pagination>
-                )}
-              </>
-            )}
+           
           </Row>
         </Modal>
       </div>

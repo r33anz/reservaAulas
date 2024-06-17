@@ -43,7 +43,7 @@
 .periodos-grid {
   display: grid;
   grid-template-columns: repeat(  3,  1fr); /* Divide los elementos en tres columnas */
-  gap: 150px; /* Espacio entre los elementos */
+  gap: 130px; /* Espacio entre los elementos */
 }
 .periodos-container div label {
   width: 150px; /* Ancho fijo para cada periodo */
@@ -79,11 +79,12 @@
   width: 160px;
 }
 .periodos-reservado{
-  background-color: #f56a79;
+  background-color: #d81a0b;
   color: #ffffff;
 }
 .periodos-solicitado{
-  background-color: #6aa9f5;
+  background-color: #0b3f6f;
+  color: #ffffff;
 
 }
 .periodos-inhabilitados {
@@ -99,11 +100,11 @@
 }
 .ModificarPorPeriodo-button-periodo {
   margin-top: -30px;
-  margin-left: 650px;
+  margin-left: 630px;
   color: #ffffff;
   background-color: #003F70;
   border-color: #003F70;
-  width: 12rem;
+  width: 10rem;
   font-weight: bold;
   
 }
