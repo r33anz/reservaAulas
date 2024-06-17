@@ -131,7 +131,7 @@ const Buscar = () => {
 
   return (
     <div className="buscarcontainer">
-      <Container className="ModificarEstadoDelAmbientePorFecha-header" fluid>
+      <Container className="BusquedaPorNombre-header" fluid>
         <Row xs="auto" className="justify-content-md-end">
           <Col xs lg="10" style={{ alignContent: "center", padding: 0 }}>
             <h5 style={{ color: "white", fontWeight: "bold" }}>
@@ -139,7 +139,7 @@ const Buscar = () => {
             </h5>
           </Col>
           <Button
-            className="ModificarEstadoDelAmbientePorFecha-header-button-close"
+            className="BusquedaPorNombre-header-button-close"
             style={{ width: "58px", height: "3rem" }}
             //onClick={onClose}
           >
@@ -147,7 +147,7 @@ const Buscar = () => {
           </Button>
         </Row>
       </Container>
-      <Container className="ModificarEstadoDelAmbientePorFecha-body" fluid>
+      <Container className="BusquedaPorNombre-body" fluid>
         <Row className="justify-content-md-center">
           <Col xs lg="11">
             <Form onSubmit={formik.handleSubmit}>
