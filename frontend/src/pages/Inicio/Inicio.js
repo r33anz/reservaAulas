@@ -55,15 +55,7 @@ const Inicio = ({
     fetchDocente();
   }, [id]);
 
-  const isAuthenticated = () => {
-    const auth = localStorage.getItem("auth");
-    if(auth !== null && auth === "false") {
-      navigate("/login");
-    }
-  }
-
   const renderContent = () => {
-    isAuthenticated();
     switch (activeTab) {
       case "registrarAmbiente":
         return <RegistrarAmbiente />;

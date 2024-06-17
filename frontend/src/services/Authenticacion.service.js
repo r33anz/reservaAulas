@@ -19,7 +19,7 @@ export const login = async (email, password) => {
 
 export const logout = async () => {
   return api
-    .post(`${apiUrl}/logout`)
+    .post(`${apiBasedUrl}/logout`)
     .then(function (response) {
       return response.data;
     })
