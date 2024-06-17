@@ -1,15 +1,15 @@
-.ModificarEstadoDelAmbientePorFecha-header {
+.BusquedaPorCantidad-header {
   background-color: #003F70;
 }
 
-.ModificarEstadoDelAmbientePorFecha-header-button-close {
+.BusquedaPorCantidad-header-button-close {
   color: #ffffff;
   background-color: #D51809;
   border-radius: 0%;
   border-color: #D51809;
 }
 
-.ModificarEstadoDelAmbientePorFecha-body {
+.BusquedaPorCantidad-body {
   background-color: #D9D9D9;
   padding: 1rem;
 }
@@ -60,7 +60,7 @@
   flex-direction: column;
   color: #000000;
 }
-.ModificarEstadoDelAmbientePorFecha-body{
+.BusquedaPorCantidad-body{
   padding: 2rem;
 }
 

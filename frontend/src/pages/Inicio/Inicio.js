@@ -67,45 +67,83 @@ const Inicio = ({
     isAuthenticated();
     switch (activeTab) {
       case "registrarAmbiente":
-        return <RegistrarAmbiente />;
+        return (
+          <div style={{ padding: "1rem" }}>
+            <RegistrarAmbiente />
+          </div>
+        );
       case "registrarReserva":
-        return <SolicitarReserva />;
+        return (
+          <div style={{ padding: "1rem" }}>
+            <SolicitarReserva />
+          </div>
+        );
       case "listaDeSolicitudes":
         return (
-          <ListaDeSolicitudes
-            tipoDeUsuario="Admin"
-            titulo="Lista de Solicitudes"
-          />
+          <div style={{ padding: "1rem" }}>
+            <ListaDeSolicitudes
+              tipoDeUsuario="Admin"
+              titulo="Lista de Solicitudes"
+            />
+          </div>
         );
       case "misSolicitudes":
         return (
-          <ListaDeSolicitudes
-            tipoDeUsuario="Docente"
-            titulo="Lista de Solicitudes"
-          />
+          <div style={{ padding: "1rem" }}>
+            <ListaDeSolicitudes
+              tipoDeUsuario="Docente"
+              titulo="Lista de Solicitudes"
+            />
+          </div>
         );
       case "busquedaPorNombre":
-        return <Buscar />;
+        return (
+          <div style={{ padding: "1rem" }}>
+            <Buscar />
+          </div>
+        );
       case "busquedaPorCantidad":
-        return <BuscarCantidad />;
+        return (
+          <div style={{ padding: "1rem" }}>
+            <BuscarCantidad />
+          </div>
+        );
       case "modificarPorPeriodo":
-        return <Modificarperdiodo />;
+        return (
+          <div style={{ padding: "1rem" }}>
+            <Modificarperdiodo />
+          </div>
+        );
       case "listaDeDocentes":
-        return <ListaDeDocentes tipoDeUsuario="Admin" />;
+        return (
+          <div style={{ padding: "1rem" }}>
+            <ListaDeDocentes tipoDeUsuario="Admin" />
+          </div>
+        );
       case "calendario":
         return <Calendario />;
       case "busquedaPorCalendario":
-        return <CalendarioB />;
+        return (
+          <div style={{ padding: "1rem" }}>
+            <CalendarioB />
+          </div>
+        );
       case "notificaciones":
         return (
-          <ListaDeNotificaciones
-            id={id}
-            fetchNotifications={fetchNotifications}
-            notifications={notifications}
-          />
+          <div style={{ padding: "1rem" }}>
+            <ListaDeNotificaciones
+              id={id}
+              fetchNotifications={fetchNotifications}
+              notifications={notifications}
+            />
+          </div>
         );
       case "atencionDeSolicitudes":
-        return <ListaDeAtencionDeSolicitudes />;
+        return (
+          <div style={{ padding: "1rem" }}>
+            <ListaDeAtencionDeSolicitudes />
+          </div>
+        );
       default:
         return (
           <div className="logo-background">
@@ -208,7 +246,7 @@ const Inicio = ({
             </Nav>
           </div>
         </Col>
-        <Col style={{ paddingRight: "0px", paddingLeft: "0px" }}>
+        <Col className="Inicio-components">
           <Home fetchNotifications={fetchNotifications}>{renderContent()}</Home>
         </Col>
       </Row>
