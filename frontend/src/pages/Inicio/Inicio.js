@@ -26,20 +26,22 @@ const Inicio = ({
   const [activeTab, setActiveTab] = useState("inicio");
   const [docente, setDocente] = useState({});
   const { id } = useParams("id");
-  const [usuarioId, setUsuarioId] = useState(null);
   const navigate = useNavigate();
 
-  const fetchDocente = useCallback( async () => {
-    getDocente(usuarioId)
-      .then((data) => {
-        setDocente(data);
-        window.sessionStorage.setItem("docente_id", usuarioId);
-      })
-      .catch((error) => {
-        console.log("Error al buscar los ambientes:", error);
-      });
-    setDocente(docente);
-  }, [docente, setDocente, usuarioId]);
+  const fetchDocente = useCallback(
+    async (usuarioId) => {
+      getDocente(usuarioId)
+        .then((data) => {
+          setDocente(data);
+          window.sessionStorage.setItem("docente_id", usuarioId);
+        })
+        .catch((error) => {
+          console.log("Error al buscar los ambientes:", error);
+        });
+      setDocente(docente);
+    },
+    [docente, setDocente]
+  );
 
   const handleLogout = useCallback(async () => {
     const response = await logout();
@@ -50,17 +52,16 @@ const Inicio = ({
 
   useEffect(() => {
     if (id !== null) {
-      setUsuarioId(id);
-      fetchDocente();
+      fetchDocente(id);
     }
-  }, [fetchDocente, id]);
+  }, []);
 
   const isAuthenticated = () => {
     const auth = sessionStorage.getItem("auth");
-    if(auth !== null && auth === "false") {
+    if (auth !== null && auth === "false") {
       navigate("/login");
     }
-  }
+  };
 
   const renderContent = () => {
     isAuthenticated();

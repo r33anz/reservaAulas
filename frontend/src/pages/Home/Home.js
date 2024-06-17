@@ -36,7 +36,7 @@ const Home = ({ children, fetchNotifications }) => {
           </h3>
         </div>
       </header>
-      <Container fluid>
+      <Container fluid style={{ height: "85%" }}>
         <Outlet />
         {children}
       </Container>
