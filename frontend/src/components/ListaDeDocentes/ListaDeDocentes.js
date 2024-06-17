@@ -121,7 +121,6 @@ const ListaDeSolicitudes = ({ titulo, tipoDeUsuario }) => {
   return (
     <Container fluid>
       <Row>
-        <Col sm="3"></Col>
         <Col>
           <Row sm className="text-white ListaDeSolicitudes-header">
             <Col

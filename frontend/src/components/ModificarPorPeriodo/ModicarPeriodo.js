@@ -358,8 +358,8 @@ const Modificarperdiodo = ({ onClose }) => {
   };
 
   return (
-    <div style={{ width: "574px" }}>
-      <Container className="ModificarEstadoDelAmbientePorFecha-header" fluid>
+    <div>
+      <Container className="ModificarEstadoDelAmbientePorPeriodo-header" >
         <Row xs="auto" className="justify-content-md-end">
           <Col xs lg="10" style={{ alignContent: "center", padding: 0 }}>
             <h5 style={{ color: "white", fontWeight: "bold" }}>
@@ -367,7 +367,7 @@ const Modificarperdiodo = ({ onClose }) => {
             </h5>
           </Col>
           <Button
-            className="ModificarEstadoDelAmbientePorFecha-header-button-close"
+            className="ModificarEstadoDelAmbientePorPeriodo-header-button-close"
             style={{ width: "58px", height: "3rem" }}
             onClick={onClose}
           >
@@ -375,7 +375,7 @@ const Modificarperdiodo = ({ onClose }) => {
           </Button>
         </Row>
       </Container>
-      <Container className="ModificarEstadoDelAmbientePorFecha-body" fluid>
+      <Container className="ModificarEstadoDelAmbientePorPeriodo-body">
         <Row className="justify-content-md-center">
           <Col xs lg="15">
             <Form onSubmit={formik.handleSubmit} onKeyPress={handleKeyPress}>
@@ -678,7 +678,7 @@ const Modificarperdiodo = ({ onClose }) => {
               <Row xs="auto" className="justify-content-md-end">
                 <Stack direction="horizontal" gap={2}>
                   <Button
-                    className="btn ModificarEstadoDelAmbientePorFecha-cancel"
+                    className="btn ModificarEstadoDelAmbientePorPeriodo-cancel"
                     size="sm"
                     variant="secondary"
                     onClick={() => setShowMensajeDeConfirmacion(false)}
@@ -686,7 +686,7 @@ const Modificarperdiodo = ({ onClose }) => {
                     Cancelar
                   </Button>
                   <Button
-                    className="btn ModificarEstadoDelAmbientePorFecha-aceptar"
+                    className="btn ModificarEstadoDelAmbientePorPeriodo-aceptar"
                     onClick={handleAceptar}
                     size="sm"
                   >

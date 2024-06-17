@@ -5,17 +5,26 @@
   flex-direction: column;
   color: #000000;
 }
-.ModificarEstadoDelAmbientePorFecha-body {
+.ModificarEstadoDelAmbientePorPeriodo-body {
   background-color: #D9D9D9;
   padding: 1rem;
-  width: 60rem;
+  margin: 0;
+  width: 70%;;
 }
-.ModificarEstadoDelAmbientePorFecha-header{
-  width: 60rem;
+
+.ModificarEstadoDelAmbientePorPeriodo-header-button-close {
+  color: #ffffff;
+  background-color: #D51809;
+  border-radius: 0%;
+  border-color: #D51809;
+}
+
+.ModificarEstadoDelAmbientePorPeriodo-header{
+  margin: 0;
+  width: 70%;
+  background-color: #003F70;
 }
 .consultar1-button {
-  margin-top: -40px;
-  margin-left: -100px;
     color: #ffffff;
      background-color: #003F70; 
     border-color: #003F70;

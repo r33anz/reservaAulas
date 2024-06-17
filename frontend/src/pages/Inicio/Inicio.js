@@ -121,7 +121,12 @@ const Inicio = ({
           </div>
         );
       case "calendario":
-        return <Calendario />;
+        return (
+          <div style={{ padding: "1rem" }}>
+            {" "}
+            <Calendario />{" "}
+          </div>
+        );
       case "busquedaPorCalendario":
         return (
           <div style={{ padding: "1rem" }}>
