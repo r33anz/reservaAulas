@@ -39,8 +39,6 @@ const Inicio = ({
     setDocente(docente);
   };
 
-  useEffect(() => {}, [id]);
-
   useEffect(() => {
     if (id !== undefined) {
       window.sessionStorage.setItem("docente_id", id);

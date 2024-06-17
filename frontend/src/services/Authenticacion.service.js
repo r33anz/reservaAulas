@@ -1,9 +1,10 @@
-import axios from "axios";
+import api from "./Comun.service";
 
 const apiUrl = process.env.REACT_APP_URL;
 
 export const login = async (email, password) => {
-  return axios
+  await api.get("/sanctum/csrf-cookie");
+  return api
     .post(`${apiUrl}/login`, { email, password })
     .then(function (response) {
       return response.data;
