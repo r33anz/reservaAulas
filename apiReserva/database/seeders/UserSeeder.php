@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use App\Models\User;
+use Illuminate\Support\Facades\Hash;
 class UserSeeder extends Seeder
 {
     /**
@@ -13,46 +14,41 @@ class UserSeeder extends Seeder
      */
     public function run()
     {
+    
         User::create([
-            'id' => 0,
-            'name' => 'Administrador',
-            'email' => 'gestoradeambientesumss@gmail.com',
-            'password' =>'123'
-        ]);
-
-        User::create([
-            'id' => 1,
-            'name' => 'LETICIA BLANCO',
+            'name' => 'Leticia Blanco',
             'email' => 'rodrigo33newton@gmail.com',
-            'password' =>'123'
+            'password' =>Hash::make('123456')
         ]);
 
         User::create([
-            'id' => 2,
-            'name' => 'TATIANA APARICIO',
+            'name' => 'Tatiana Aparicio',
             'email' => '202000717@est.umss.edu',
-            'password' => '123'
+            'password' => Hash::make('123456')
         ]);
 
         User::create([
-            'id' => 3,
-            'name' => 'BORIS CALANCHA',
+            'name' => 'Boris Calancha',
             'email' => '202000671@est.umss.edu',
-            'password' =>'123'
+            'password' =>Hash::make('123456')
         ]);
 
         User::create([
-            'id' => 4,
-            'name' => 'INDIRA CAMACHO',
+            'name' => 'Indira Camacho',
             'email' => '201400072@est.umss.edu',
-            'password' => '123'
+            'password' => Hash::make('123456')
         ]);
 
         User::create([
-            'id' => 5,
-            'name' => 'MARCELO FLORES',
+            'name' => 'Marcelo Flores',
             'email' => '202000321@est.umss.edu',
-            'password' =>'123'
+            'password' =>Hash::make('123456')
+        ]);
+
+        User::create([
+            'name' => 'Administrador 1',
+            'email' => 'gestoradeambientesumss1@gmail.com',
+            'password' =>Hash::make('123456')
         ]);
 
     }

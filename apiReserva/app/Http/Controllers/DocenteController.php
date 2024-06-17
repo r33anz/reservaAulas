@@ -2,12 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Docente;
-use App\Http\Resources\DocenteResource;
+use App\Models\User;
 class DocenteController extends Controller
 {
-    public function getMaterias($id){
-        $docente = Docente::findOrFail($id);
+    public function getMaterias($id){ //REDONE
+        $docente = User::findOrFail($id);
 
         $materiasConGrupos = $docente->materias()->get()->groupBy('nombreMateria')->map(function ($materias) {
             $grupos = $materias->pluck('pivot.grupo');
@@ -17,31 +16,32 @@ class DocenteController extends Controller
         });
 
         return response()->json([
-            'nombre'=>  $docente->nombre,
+            'nombre'=>  $docente->name,
             'materias' => $materiasConGrupos
         ]);
     }
     public function getAllDocenteNames()
     {
-        $docentes = Docente::with('materias')->get();
-        $docentes = $docentes->sortBy('nombre')->values();
+        $docentes = User::whereHas('materias')->with('materias')->get();
+    
+    // Ordenar los docentes por nombre
+    $docentes = $docentes->sortBy('name')->values();
 
-        // Estructurar los datos
-        $docentesConMaterias = $docentes->map(function ($docente) {
-            $materiasConGrupos = $docente->materias->groupBy('nombreMateria')->map(function ($materias) {
-                $grupos = $materias->pluck('pivot.grupo');
-                return [
-                    'grupos' => $grupos
-                ];
-            });
-
+    // Estructurar los datos
+    $docentesConMaterias = $docentes->map(function ($docente) {
+        $materiasConGrupos = $docente->materias->groupBy('nombreMateria')->map(function ($materias) {
+            $grupos = $materias->pluck('pivot.grupo');
             return [
-                'id'=>  $docente->id,
-                'nombre' => $docente->nombre,
-                'materias' => $materiasConGrupos
+                'grupos' => $grupos
             ];
         });
 
-        return response()->json($docentesConMaterias);
+        return [
+            'nombre' => $docente->name,
+            'materias' => $materiasConGrupos
+        ];
+    });
+
+    return response()->json($docentesConMaterias);
     }
 }

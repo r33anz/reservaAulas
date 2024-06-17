@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Ambiente;
-use App\Models\Docente;
+use App\Models\User;
 use App\Models\Reserva;
 use App\Models\Solicitud;
 use Illuminate\Http\Request;
@@ -26,20 +26,20 @@ class ReservaController extends Controller
     }
 
     public function reservasPorDocente(Request $request){
-        $docenteId = $request->input('docente_id');
+        $userId = $request->input('docente_id');
         $estado = $request->input('estado');
         $pagina = $request->input('pagina', 1);
 
         if ($estado === 'aprobadas') {
-            $solicitudes = Solicitud::where('estado', 'aprobado')->where('docente_id', $docenteId)->paginate(3, ['*'], 'pagina', $pagina);
+            $solicitudes = Solicitud::where('estado', 'aprobado')->where('user_id', $userId)->paginate(5, ['*'], 'pagina', $pagina);
         } elseif ($estado === 'rechazadas') {
-            $solicitudes = Solicitud::where('estado', 'rechazado')->where('docente_id', $docenteId)->paginate(3, ['*'], 'pagina', $pagina);
+            $solicitudes = Solicitud::where('estado', 'rechazado')->where('user_id', $userId)->paginate(5, ['*'], 'pagina', $pagina);
         } elseif ($estado === 'en espera') {
-            $solicitudes = Solicitud::where('estado', 'en espera')->where('docente_id', $docenteId)->paginate(3, ['*'], 'pagina', $pagina);
+            $solicitudes = Solicitud::where('estado', 'en espera')->where('user_id', $userId)->paginate(5, ['*'], 'pagina', $pagina);
         } elseif ($estado === 'canceladas') {
-            $solicitudes = Solicitud::where('estado', 'cancelado')->where('docente_id', $docenteId)->paginate(3, ['*'], 'pagina', $pagina);
+            $solicitudes = Solicitud::where('estado', 'cancelado')->where('user_id', $userId)->paginate(5, ['*'], 'pagina', $pagina);
         } else {
-            $solicitudes = Solicitud::where('docente_id', $docenteId)->paginate(3, ['*'], 'pagina', $pagina);
+            $solicitudes = Solicitud::where('user_id', $userId)->paginate(5, ['*'], 'pagina', $pagina);
         }
 
         $datosSolicitudes = [];
@@ -47,11 +47,11 @@ class ReservaController extends Controller
         foreach ($solicitudes as $solicitud) {
             $idAmbiente = DB::table('ambiente_solicitud')->where('solicitud_id', $solicitud->id)->value('ambiente_id');
             $ambiente = Ambiente::find($idAmbiente);
-            $docente = Docente::find($solicitud->docente_id);
+            $docente = User::find($solicitud->user_id);
 
             $datosSolicitud = [
                 'id'=> $solicitud->id,
-                'nombreDocente' => $docente->nombre,
+                'nombreDocente' => $docente->name,
                 'materia' => $solicitud->materia,
                 'grupo' => $solicitud->grupo,
                 'cantidad' => $solicitud->cantidad,
@@ -92,9 +92,7 @@ class ReservaController extends Controller
         $solicitud->estado = 'cancelado';
         $solicitud->save();
         //notificar admin cancelacion 
-        $this->notificadorService->cancelarReserva($id);
-        //
-        event(new NotificacionUsuario(0,'Reserva cancelada.'));
+        //$this->notificadorService->cancelarReserva($id);
         return response()->json(['message' => 'Reserva cancelada correctamente'], 200);
     }
 
@@ -103,12 +101,10 @@ class ReservaController extends Controller
             ->join('ambiente_solicitud', 'solicituds.id', '=', 'ambiente_solicitud.solicitud_id')
             ->where('solicituds.fechaReserva', $fecha)
             ->where('ambiente_solicitud.ambiente_id', $idAmbiente)
-            ->whereIn('solicituds.estado', ['espera', 'aprobado'])
+            ->where('solicituds.estado', 'aprobado')
             ->select('solicituds.id', 'solicituds.periodo_ini_id', 'solicituds.periodo_fin_id')
             ->get();
-
         $periodosReservados = [];
-
         // Procesar las solicitudes para determinar los periodos reservados
         foreach ($coincidencias as $coincidencia) {
             $periodoIni = $coincidencia->periodo_ini_id;
@@ -120,7 +116,6 @@ class ReservaController extends Controller
                 'periodos' => $periodos
             ];
         }
-        
         return response()->json([
             "periodosReservados" => $periodosReservados
         ]);

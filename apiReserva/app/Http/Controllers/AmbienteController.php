@@ -96,7 +96,7 @@ class AmbienteController extends Controller
         ->get();
 
         $listaCoincidencias = [];
-        foreach ($resultados as $resultado) {
+        foreach ($resultados as $resultado){
             $piso = $resultado->piso;
             $bloque = $piso->bloque;
 
@@ -108,33 +108,30 @@ class AmbienteController extends Controller
                 'nombreBloque' => $bloque->nombreBloque,
                 'nroPiso' => $piso->nroPiso,
             ];
-
-            $listaCoincidencias[] = $detalleAula;
+        }
+        $listaCoincidencias[] = $detalleAula;
+        return response()->json([
+            'coincidencias' => $listaCoincidencias
+        ]);
     }
 
-    return response()->json([
-        'coincidencias' => $listaCoincidencias
-    ]);
-    }
-    public function ambientesMismoBloque($id)
-        {
+    public function ambientesMismoBloque($id){
             $ambiente = Ambiente::findOrFail($id);
             $ambientesEnMismoBloque = Ambiente::whereHas('piso', function ($query) use ($ambiente) {
                 $query->where('bloque_id', $ambiente->piso->bloque_id);
             })->get();
 
             return response()->json(['ambientes' => $ambientesEnMismoBloque]);
-        }
+    }
 
-    public function ambientesMismoPiso($id)
-    {
+    public function ambientesMismoPiso($id){
         $ambiente = Ambiente::findOrFail($id);
         $ambientesEnMismoPiso = $ambiente->piso->ambientes;
 
         return response()->json(['ambientes' => $ambientesEnMismoPiso]);
     }
-    public function buscarPorCapacidad(Request $request)
-    {
+
+    public function buscarPorCapacidad(Request $request){
         $minCapacidad = $request->input('minCapacidad', 0);
         $maxCapacidad = $request->input('maxCapacidad', 100);
 
@@ -156,10 +153,9 @@ class AmbienteController extends Controller
             ];
 
             $ambientes[] = $detalleAula;
-    }
-
-    return response()->json([
-        'respuesta' => $ambientes
-    ]);
+        }
+        return response()->json([
+            'respuesta' => $ambientes
+        ]);
     }
 }

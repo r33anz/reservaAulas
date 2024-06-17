@@ -8,12 +8,12 @@ use Illuminate\Database\Eloquent\Model;
 class Solicitud extends Model
 {
     use HasFactory;
-    protected $fillable = ['docente_id', 'materia', 'cantidad', 'razon', 'fechaReserva', 'periodo_ini_id', 'periodo_fin_id', 'estado', 'grupo'];
+    protected $fillable = ['user_id', 'materia', 'cantidad', 'razon', 'fechaReserva', 'periodo_ini_id', 'periodo_fin_id', 'estado', 'grupo'];
 
 
     public function docente()
     {
-        return $this->belongsTo(Docente::class);
+        return $this->belongsTo(User::class);
     }
 
     public function ambientes()

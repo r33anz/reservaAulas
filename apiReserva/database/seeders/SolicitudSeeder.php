@@ -15,7 +15,7 @@ class SolicitudSeeder extends Seeder
     public function run()
     {
         Solicitud::create([
-            'docente_id'=>1,
+            'user_id'=>1,
             'materia'=>'Introduccion a la programacion',
             'grupo'=>1,
             'cantidad'=>148,
@@ -32,7 +32,7 @@ class SolicitudSeeder extends Seeder
         ]);
 
         Solicitud::create([
-            'docente_id'=>1,
+            'user_id'=>1,
             'materia'=>'Introduccion a la programacion',
             'cantidad'=>120,
             'grupo'=>2,
@@ -49,7 +49,7 @@ class SolicitudSeeder extends Seeder
         ]);
 
         Solicitud::create([
-            'docente_id'=>1,
+            'user_id'=>1,
             'materia'=>'Algoritmos Avanzados', 
             'cantidad'=>20,
             'grupo'=>1,
@@ -66,7 +66,7 @@ class SolicitudSeeder extends Seeder
         ]);
 
         Solicitud::create([
-            'docente_id'=>2,
+            'user_id'=>2,
             'materia'=>'Base de datos I',
             'cantidad'=>45,
             'grupo'=>3,
@@ -84,7 +84,7 @@ class SolicitudSeeder extends Seeder
         ]);
 
         Solicitud::create([
-            'docente_id'=>2,
+            'user_id'=>2,
             'materia'=>'Base de datos I',
             'cantidad'=>33,
             'grupo'=>5,
@@ -103,7 +103,7 @@ class SolicitudSeeder extends Seeder
 
         //aceptadas
         Solicitud::create([
-            'docente_id' => 4,
+            'user_id' => 4,
             'materia' => 'XYZ',
             'cantidad' => 10,
             'grupo' => 1,
@@ -121,7 +121,7 @@ class SolicitudSeeder extends Seeder
         ]);
 
         Solicitud::create([
-            'docente_id' => 2,
+            'user_id' => 2,
             'materia' => 'XYZ',
             'cantidad' => 10,
             'grupo' => 1,
@@ -139,7 +139,7 @@ class SolicitudSeeder extends Seeder
         ]);
 
         Solicitud::create([
-            'docente_id' => 4,
+            'user_id' => 4,
             'materia' => 'XYZ',
             'cantidad' => 10,
             'grupo' => 1,
@@ -159,7 +159,7 @@ class SolicitudSeeder extends Seeder
         //rechazadas
 
         Solicitud::create([
-            'docente_id' => 2,
+            'user_id' => 2,
             'materia' => 'XYZ',
             'cantidad' => 10,
             'grupo' => 1,
@@ -178,7 +178,7 @@ class SolicitudSeeder extends Seeder
         ]);
 
         Solicitud::create([
-            'docente_id' => 2,
+            'user_id' => 2,
             'materia' => 'XYZ',
             'cantidad' => 10,
             'grupo' => 1,
@@ -197,7 +197,7 @@ class SolicitudSeeder extends Seeder
         ]);
 
         Solicitud::create([
-            'docente_id' => 4,
+            'user_id' => 4,
             'materia' => 'XYZ',
             'cantidad' => 10,
             'grupo' => 1,
@@ -216,7 +216,7 @@ class SolicitudSeeder extends Seeder
         ]);
 
         Solicitud::create([
-            'docente_id' => 3,
+            'user_id' => 3,
             'materia' => 'XYZ',
             'cantidad' => 10,
             'grupo' => 1,
@@ -236,7 +236,7 @@ class SolicitudSeeder extends Seeder
 
         //espera
         Solicitud::create([
-            'docente_id'=>3,
+            'user_id'=>3,
             'materia'=>'XYZ',
             'grupo'=>1,
             'cantidad'=>14,
@@ -253,7 +253,7 @@ class SolicitudSeeder extends Seeder
         ]);
 
         Solicitud::create([
-            'docente_id'=>4,
+            'user_id'=>4,
             'materia'=>'XYZ',
             'grupo'=>1,
             'cantidad'=>14,
@@ -271,7 +271,7 @@ class SolicitudSeeder extends Seeder
         ]);
 
         Solicitud::create([
-            'docente_id'=>5,
+            'user_id'=>5,
             'materia'=>'XYZ',
             'grupo'=>1,
             'cantidad'=>14,

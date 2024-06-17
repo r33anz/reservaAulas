@@ -20,23 +20,20 @@ class ValidadorController extends Controller
         $this->ambientesTodos = $ambientes;
         $this->ambienteValido = $ambienteValido;
     }
-
-    
+   
     public function consultaFechaPeriodo(Request $request){
         $fecha = $request->input('fecha');
         $periodos = $request->input('periodos');
 
-        // Si hay solo un periodo, asigna ese periodo tanto como inicial como final
         if (count($periodos) === 1) {
             $periodoInicial = $periodos[0];
             $periodoFinal = $periodos[0];
-        } else { // Si hay más de un periodo, determina el periodo inicial y final
+        } else { 
             $periodoInicial = $periodos[0];
             $periodoFinal = $periodos[count($periodos) - 1];
         }
 
         $ambientes = $this->ambientesTodos->todosAmbientes();
-
         $ambientesInhabilitados = Inhabilitado::where('fecha', $fecha)
             ->whereBetween('periodo_id', [$periodoInicial, $periodoFinal])
             ->pluck('ambiente_id');
@@ -68,7 +65,6 @@ class ValidadorController extends Controller
                 'nombre' => $ambiente['nombre']
             ];
         });
-
         return response()->json(['ambientes_disponibles' => $ambientesDisponibles]);
     }
 

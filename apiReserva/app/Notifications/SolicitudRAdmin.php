@@ -32,7 +32,7 @@ class SolicitudRAdmin extends Notification
     public function toDatabase($notifiable)
     {   
         return [
-            'message' => 'Solicitud aceptada.',
+            'message' => 'Solicitud realizada.',
             'data' => $this->formatearTextoNotificacion()
         ];
     }
@@ -40,7 +40,7 @@ class SolicitudRAdmin extends Notification
     public function toArray($notifiable)
     {
         return [
-            'message' => 'Solicitud aceptada.',
+            'message' => 'Solicitud realizada.',
             'data' => $this->formatearTextoNotificacion()
         ];
     }
