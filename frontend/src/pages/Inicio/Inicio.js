@@ -29,16 +29,17 @@ const Inicio = ({
   const [usuarioId, setUsuarioId] = useState(null);
   const navigate = useNavigate();
 
-  const fetchDocente = async () => {
-    getDocente(id)
+  const fetchDocente = useCallback( async () => {
+    getDocente(usuarioId)
       .then((data) => {
         setDocente(data);
+        window.sessionStorage.setItem("docente_id", usuarioId);
       })
       .catch((error) => {
         console.log("Error al buscar los ambientes:", error);
       });
     setDocente(docente);
-  };
+  }, [docente, setDocente, usuarioId]);
 
   const handleLogout = useCallback(async () => {
     const response = await logout();
@@ -49,11 +50,10 @@ const Inicio = ({
 
   useEffect(() => {
     if (id !== undefined) {
-      window.sessionStorage.setItem("docente_id", id);
       setUsuarioId(id);
+      fetchDocente();
     }
-    fetchDocente();
-  }, [id]);
+  }, [fetchDocente, id]);
 
   const isAuthenticated = () => {
     const auth = sessionStorage.getItem("auth");
