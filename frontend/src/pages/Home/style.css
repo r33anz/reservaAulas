@@ -1,12 +1,12 @@
 .Home-body {
     background-color: #f2f0f0;
     height: 82%;
-    
+
 }
 
 .App-header {
-    /* position: relative; */
-    /* height: 118px; */
+    position: relative;
+    height: 118px;
     background-color: #002A4C;
     display: flex;
     align-items: center;
@@ -15,16 +15,16 @@
 }
 
 .App-footer {
-    background-color: #002A4C;
-    color: white;
-    padding-bottom: 5px;
-    border-top: 2px solid rgba(0, 0, 0, 0.24);
-    /* position: relative; */
-    /* left: 0; */
-    /* bottom: 0; */
-    /* height: 6%; */
-    
-    width: 100%;
+    background-color: #fff;
+    border-top: 1px solid #dee2e6;
+    color: #869099;
+    padding-right: 1rem;
+}
+
+.App-footer-grupo {
+    color: #003f70;
+    text-decoration: none;
+    background-color: transparent;
 }
 
 .ico-header {

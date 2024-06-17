@@ -1,155 +1,131 @@
-html, body {
-    height: 100%;
-    margin: 0;
-  }
-  
-  .inicio-container {
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
-    height: 100vh;
-    overflow: hidden;
-  }
-  
-  .App-header, .App-footer {
-    flex-shrink: 0;
-  }
-  
-  .Home-body {
-    flex: 1;
-    background-color: #f2f0f0;
-  }
-  
-  .App-header {
-    background-color: #002A4C;
-    display: flex;
-    align-items: center;
-    font-size: calc(10px + 2vmin);
-    color: white;
-    padding: 10px;
-  }
-  
-  .App-footer {
-    background-color: #002A4C;
-    color: white;
-    padding: 9px;
-    border-top: 2px solid rgba(0, 0, 0, 0.24);
-  }
-  
-  .ico-header {
-    margin-left: auto;
-    display: flex;
-    align-items: center;
-  }
-  
-  .App-logo {
-    padding: 15px;
-    width: 5rem;
-    height: 5rem;
-  }
-  
-  .titulo-header {
-    color: white;
-  }
-  
-  .icon-base {
-    font-size: 24px;
-  }
-  
-  .nav-link {
-    color: white;
-    border-radius: 15px;
-  }
-  
-  .flex-column {
-    background-color: #003f70;
-  }
-  
-  .prueba {
-    height: 100%;
-  }
-  
-  .logo-container {
-    display: flex;
-    align-items: center;
-    margin-bottom: 1rem;
-  }
-  
-  .titulo-header {
-    margin-left: 10px;
-  }
-  
-  .usuario-header {
-    margin-top: 1rem;
-    margin-bottom: 1rem;
-    color: #ffffff;
-    margin-left: 20px;
-  }
-  
-  .separador {
-    border-bottom: 1px solid white;
-    margin: 1rem 0;
-  }
-  
-  .nav-link:hover,
-  .nav-link:focus {
-    background-color: #3e6b99 !important;
-    color: rgb(255, 255, 255) !important;
-    outline: none;
-  }
-  
-  .sidebar {
-    height: 100vh;
-    overflow: hidden;
-    background-color: #003f70;
-  }
-  
-  .nav-container {
-    height: calc(100vh - 12rem);
-    overflow-y: auto;
-  }
-  
-  .nav-container::-webkit-scrollbar {
-    width: 8px;
-  }
-  
-  .nav-container::-webkit-scrollbar-thumb {
-    background-color: #3e6b99;
-    border-radius: 10px;
-  }
-  
-  .nav-container::-webkit-scrollbar-track {
-    background: transparent;
-  }
-  
-  .logo-background {
-    margin-left: -12px;
-    margin-right: -12px;
-    position: relative;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 84vh; /* Ajusta la altura según sea necesario */
-    flex-direction: column;
-    overflow: hidden; /* Evita el scroll */
-    background-image: url('../../assets/images/fondo.jpg'); /* Ruta relativa al CSS */
-    background-size: cover; /* Asegura que la imagen cubra todo el contenedor */
-    background-repeat: no-repeat;
-    background-position: center;
-  }
-  
-  .logo-background::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgb(116 95 95 / 70%);
-  }
-  
-  .logo-background h1, .logo-background h4 {
-    z-index: 1; /* Asegura que el texto esté sobre el fondo */
-    color: #fff; /* Color del texto */
-  }
-  
+.inicio-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.ico-header {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+}
+
+.App-logo {
+  padding: 15px;
+  width: 5rem;
+  height: 5rem;
+}
+
+.titulo-header {
+  color: white;
+}
+
+.icon-base {
+  font-size: 24px;
+}
+
+.nav-link {
+  color: white;
+  border-radius: 15px;
+}
+
+.flex-column {
+  background-color: #003f70;
+}
+
+.prueba {
+  height: 100%;
+}
+
+.logo-container {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.titulo-header {
+  margin-left: 10px;
+}
+
+.usuario-header {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  color: #ffffff;
+  margin-left: 20px;
+}
+
+.separador {
+  border-bottom: 1px solid white;
+  margin: 1rem 0;
+}
+
+.nav-link:hover,
+.nav-link:focus {
+  background-color: #3e6b99 !important;
+  color: rgb(255, 255, 255) !important;
+  outline: none;
+}
+
+.sidebar {
+  height: 100vh;
+  overflow: hidden;
+  background-color: #003f70;
+}
+
+.nav-container {
+  height: calc(100vh - 12rem);
+  overflow-y: auto;
+}
+
+.nav-container::-webkit-scrollbar {
+  width: 8px;
+}
+
+.nav-container::-webkit-scrollbar-thumb {
+  background-color: #3e6b99;
+  border-radius: 10px;
+}
+
+.nav-container::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.logo-background {
+  margin-left: -12px;
+  margin-right: -12px;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 84vh;
+  /* Ajusta la altura según sea necesario */
+  flex-direction: column;
+  overflow: hidden;
+  /* Evita el scroll */
+  background-image: url('../../assets/images/fondo.jpg');
+  /* Ruta relativa al CSS */
+  background-size: cover;
+  /* Asegura que la imagen cubra todo el contenedor */
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.logo-background::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgb(116 95 95 / 70%);
+}
+
+.logo-background h1,
+.logo-background h4 {
+  z-index: 1;
+  /* Asegura que el texto esté sobre el fondo */
+  color: #fff;
+  /* Color del texto */
+}

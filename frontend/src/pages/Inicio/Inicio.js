@@ -49,7 +49,7 @@ const Inicio = ({
   }, [navigate]);
 
   useEffect(() => {
-    if (id !== undefined) {
+    if (id !== null) {
       setUsuarioId(id);
       fetchDocente();
     }
@@ -109,7 +109,7 @@ const Inicio = ({
         return (
           <div className="logo-background">
             <h1 style={{ fontWeight: "bold" }}>
-              Bienvenidos al sistema Gestor de ambientes
+              Bienvenidos al Sistema de Gestion de Ambientes
             </h1>
             <h4>
               Disfruta de una experiencia única en tu reserva de ambientes
