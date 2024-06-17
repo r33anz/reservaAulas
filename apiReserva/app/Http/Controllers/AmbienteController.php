@@ -91,10 +91,9 @@ class AmbienteController extends Controller
         if (empty($patronSinEspacios)) {
             return response()->json(["coincidencias"  =>  []]);
         }
-        $resultados = Ambiente::where('nombre', 'like', '%' . $patron . '%')
-        ->with(['piso.bloque'])
+        $resultados = Ambiente::where('nombre', 'like', '%'.$patron.'%')
         ->get();
-
+       
         $listaCoincidencias = [];
         foreach ($resultados as $resultado){
             $piso = $resultado->piso;
@@ -108,8 +107,9 @@ class AmbienteController extends Controller
                 'nombreBloque' => $bloque->nombreBloque,
                 'nroPiso' => $piso->nroPiso,
             ];
+            $listaCoincidencias[] = $detalleAula;
         }
-        $listaCoincidencias[] = $detalleAula;
+        
         return response()->json([
             'coincidencias' => $listaCoincidencias
         ]);
