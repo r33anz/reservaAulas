@@ -31,13 +31,13 @@ class ReservaController extends Controller
         $pagina = $request->input('pagina', 1);
 
         if ($estado === 'aprobadas') {
-            $solicitudes = Solicitud::where('estado', 'aprobado')->where('user_id', $userId)->paginate(5, ['*'], 'pagina', $pagina);
+            $solicitudes = Solicitud::where('estado', 'aprobado')->where('user_id', $userId)->paginate(7, ['*'], 'pagina', $pagina);
         } elseif ($estado === 'rechazadas') {
-            $solicitudes = Solicitud::where('estado', 'rechazado')->where('user_id', $userId)->paginate(5, ['*'], 'pagina', $pagina);
+            $solicitudes = Solicitud::where('estado', 'rechazado')->where('user_id', $userId)->paginate(7, ['*'], 'pagina', $pagina);
         } elseif ($estado === 'en espera') {
-            $solicitudes = Solicitud::where('estado', 'en espera')->where('user_id', $userId)->paginate(5, ['*'], 'pagina', $pagina);
+            $solicitudes = Solicitud::where('estado', 'en espera')->where('user_id', $userId)->paginate(7, ['*'], 'pagina', $pagina);
         } elseif ($estado === 'canceladas') {
-            $solicitudes = Solicitud::where('estado', 'cancelado')->where('user_id', $userId)->paginate(5, ['*'], 'pagina', $pagina);
+            $solicitudes = Solicitud::where('estado', 'cancelado')->where('user_id', $userId)->paginate(7, ['*'], 'pagina', $pagina);
         } else {
             $solicitudes = Solicitud::where('user_id', $userId)->paginate(5, ['*'], 'pagina', $pagina);
         }

@@ -257,7 +257,7 @@ class SolicitudController extends Controller
         } else {
             $query = Solicitud::orderBy('updated_at', 'desc');
         }
-        $solicitudes = $query->paginate(3, ['*'], 'pagina', $pagina);
+        $solicitudes = $query->paginate(7, ['*'], 'pagina', $pagina);
         $datosSolicitudes = [];
 
         foreach ($solicitudes as $solicitud) {

@@ -92,7 +92,7 @@ class MateriaSeeder extends Seeder
         DB::table('docente_materia')->insert([
             'user_id' =>2,
             'materia_id' =>4,
-            'grupo'=>5
+            'grupo'=>7
         ]);
         DB::table('docente_materia')->insert([
             'user_id' =>3,
