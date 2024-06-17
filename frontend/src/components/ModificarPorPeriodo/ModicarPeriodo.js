@@ -497,12 +497,12 @@ const Modificarperdiodo = ({ onClose }) => {
                       <span className="text">{"Periodos inhabilitados"}</span>
                       <div
                         className="circle"
-                        style={{ backgroundColor: "#f56a79" }}
+                        style={{ backgroundColor: "#d81a0b" }}
                       ></div>
                       <span className="text">{"Periodos reservados"}</span>
                       <div
                         className="circle"
-                        style={{ backgroundColor: "#6aa9f5" }}
+                        style={{ backgroundColor: "#0b3f6f" }}
                       ></div>
                       <span className="text">{"Periodos Solicitados"}</span>
                     </div>

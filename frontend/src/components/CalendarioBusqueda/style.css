@@ -15,7 +15,15 @@
 .rbc-button-link {
 cursor: default !important;
 }
-
+.periodos-container1 div label {
+  width: 150px; /* Ancho fijo para cada periodo */
+  height: 50px;
+  text-align: center;
+  border: 1.5px solid black;  /* Borde de 1px sólido negro */
+  margin: 5px; /* Espacio entre los elementos */
+  padding: 2px; /* Espacio interno del borde */
+  border-radius: 10px;
+}
 
 .reserva-row {
   display: flex;

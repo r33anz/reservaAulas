@@ -259,18 +259,6 @@ const totalPages = Math.ceil(filteredReservas.length / reservasPerPage);
   };
 
 
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
   const fetchAmbientes = async () => {
     let { respuesta } = await getAmbientes();
     setAmbientes(respuesta);
