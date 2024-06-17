@@ -349,26 +349,13 @@ const SolicitarReserva = ({ onClose }) => {
       <Container className="RegistrarAmbiente-header" fluid>
         <Row xs="auto" className="text-white justify-content-end">
           <Col
-            xs="10"
+            xs="12"
             className="d-flex justify-content-start align-items-center"
             style={{ height: "3rem", padding: 0, paddingLeft: "0.5rem" }}
           >
             <h5 style={{ fontWeight: "bold" }}>
               Registrar reserva de Ambiente
             </h5>
-          </Col>
-          <Col
-            xs="2"
-            className="d-flex justify-content-end align-items-end"
-            style={{ padding: 0 }}
-          >
-            <Button
-              className="btn SolicitarReserva-header-button-close"
-              style={{ width: "58px", height: "48px" }}
-              onClick={onClose}
-            >
-              <XSquareFill style={{ width: "24px", height: "24px" }} />
-            </Button>
           </Col>
         </Row>
       </Container>
