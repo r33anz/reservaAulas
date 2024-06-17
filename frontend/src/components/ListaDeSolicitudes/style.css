@@ -8,7 +8,8 @@
     padding: 1rem;
 }
 
-.page-item.active.color-blue, .page-item.color-blue {
+.page-item.active.color-blue,
+.page-item.color-blue {
     --bs-pagination-color: #003F70;
     --bs-pagination-hover-color: #003F70;
     --bs-pagination-focus-color: #003F70;
@@ -16,23 +17,38 @@
     --bs-pagination-active-border-color: #003F70
 }
 
-.ListaDeSolicitudes-header-button-cargar {
+.ListaDeSolicitudes-header-button-cargar,
+.ListaDeSolicitudes-header-button-close {
     color: #ffffff;
     background-color: #D51809;
     border-radius: 0%;
     border-color: #D51809;
     width: 58px;
     height: 100%;
-  }
-  
-  .ListaDeSolicitudes-header-button-cargar:hover,
-  .ListaDeSolicitudes-header-button-cargar:active,
-  .ListaDeSolicitudes-header-button-cargar:focus,
-  .ListaDeSolicitudes-header-button-cargar:disabled,
-  .ListaDeSolicitudes-header-button-cargar.active {
+    cursor: pointer;
+}
+
+.ListaDeSolicitudes-header-button-cargar:hover,
+.ListaDeSolicitudes-header-button-cargar:active,
+.ListaDeSolicitudes-header-button-cargar:focus,
+.ListaDeSolicitudes-header-button-cargar:disabled,
+.ListaDeSolicitudes-header-button-cargar.active,
+.ListaDeSolicitudes-header-button-close:hover,
+.ListaDeSolicitudes-header-button-close:active,
+.ListaDeSolicitudes-header-button-close:focus,
+.ListaDeSolicitudes-header-button-close:disabled,
+.ListaDeSolicitudes-header-button-close.active {
     color: #ffffff;
     background: #D51809;
     border-color: #D51809;
     --bs-btn-active-bg: #D51809;
     --bs-btn-active-border-color: #D51809;
-  }
+}
+
+.ListaDeSolicitudes-button-detalle {
+    cursor: pointer;
+}
+
+.form-check-input[type=radio] {
+    cursor: pointer;
+}

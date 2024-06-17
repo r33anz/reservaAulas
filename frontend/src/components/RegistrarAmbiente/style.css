@@ -2,28 +2,6 @@
   background-color: #003F70;
 }
 
-.RegistrarAmbiente-header-button-close {
-  color: #ffffff;
-  background-color: #D51809;
-  border-radius: 0%;
-  border-color: #D51809;
-  width: 58px;
-  height: 100%;
-}
-
-.RegistrarAmbiente-header-button-close:hover,
-.RegistrarAmbiente-header-button-close:active,
-.RegistrarAmbiente-header-button-close:focus,
-.RegistrarAmbiente-header-button-close:disabled,
-.RegistrarAmbiente-header-button-close.active {
-  color: #ffffff;
-  background: #D51809;
-  border-color: #D51809;
-  --bs-btn-active-bg: #D51809;
-  --bs-btn-active-border-color: #D51809;
-  cursor: pointer;
-}
-
 .RegistrarAmbiente-body {
   background-color: #D9D9D9;
   padding: 1rem;

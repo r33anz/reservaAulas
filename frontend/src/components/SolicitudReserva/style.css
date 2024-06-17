@@ -45,28 +45,6 @@
   padding: 1rem;
 }
 
-.SolicitarReserva-header-button-close {
-  color: #ffffff;
-  background-color: #D51809;
-  border-radius: 0%;
-  border-color: #D51809;
-  width: 58px;
-  height: 100%;
-}
-
-.SolicitarReserva-header-button-close:hover,
-.SolicitarReserva-header-button-close:active,
-.SolicitarReserva-header-button-close:focus,
-.SolicitarReserva-header-button-close:disabled,
-.SolicitarReserva-header-button-close.active {
-  color: #ffffff;
-  background: #D51809;
-  border-color: #D51809;
-  --bs-btn-active-bg: #D51809;
-  --bs-btn-active-border-color: #D51809;
-  cursor: pointer;
-}
-
 .SolicitarReserva-header {
   background-color: #003F70;
 }

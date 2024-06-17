@@ -102,25 +102,13 @@ const RegistrarAmbiente = ({ onClose }) => {
       <Container fluid>
         <Row sm className="text-white RegistrarAmbiente-header">
           <Col
-            xs="10"
+            xs="12"
             className="d-flex justify-content-start align-items-center"
             style={{ height: "3rem" }}
           >
             <h5 style={{ fontWeight: "bold" }} className="">
               Registrar nuevo ambiente
             </h5>
-          </Col>
-          <Col
-            xs="2"
-            className="d-flex justify-content-end align-items-end"
-            style={{ padding: 0 }}
-          >
-            <div
-              className="RegistrarAmbiente-header-button-close d-flex justify-content-center align-items-center"
-              onClick={onClose}
-            >
-              <XSquareFill size={24} />
-            </div>
           </Col>
         </Row>
         <Row className="RegistrarAmbiente-body justify-content-center">

@@ -1,13 +1,10 @@
-.App {
-  text-align: s;
+.BusquedaPorNombre-header {
+  background-color: #003F70;
 }
 
-.ico {
-  margin-left: 1000px;
-}
-
-.Calendar3 {
-  margin: 20px;
+.BusquedaPorNombre-body {
+  background-color: #D9D9D9;
+  padding: 1rem;
 }
 
 .selected {
