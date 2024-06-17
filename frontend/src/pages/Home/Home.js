@@ -27,23 +27,14 @@ const Home = ({ children, fetchNotifications }) => {
         />
       )}
       <NotificacionAdmin fetchNotifications={fetchNotifications} />
-      <header className="App-header">
-        <div className="titulo-header">
-          <h3>
-            Intelligence
-            <br />
-            Software
-          </h3>
-        </div>
-      </header>
-      <Container fluid style={{ height: "85%" }}>
+      <Container fluid className="Home-body">
         <Outlet />
         {children}
       </Container>
-      <footer className="App-footer text-end">
+      <footer className="Home-footer text-end">
         <strong>
           Copyright © 2014{" "}
-          <span className="App-footer-grupo">IntelligSoft</span>.
+          <span className="Home-footer-grupo">IntelligSoft</span>.
         </strong>
         Todos los derechos reservados.
       </footer>
