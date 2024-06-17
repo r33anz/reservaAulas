@@ -183,9 +183,15 @@ const Inicio = ({
           </div>
           <div className="separador"></div>
           <div className="nav-container">
-            <Nav className="flex-column">
-              <Nav.Link onClick={() => setActiveTab("inicio")}>Inicio</Nav.Link>
+            <Nav className="flex-column" activeKey={activeTab}>
               <Nav.Link
+                eventKey={"inicio"}
+                onClick={() => setActiveTab("inicio")}
+              >
+                Inicio
+              </Nav.Link>
+              <Nav.Link
+                eventKey={"notificaciones"}
                 onClick={() => {
                   setActiveTab("notificaciones");
                 }}
@@ -195,7 +201,7 @@ const Inicio = ({
                   <Col xxl="2">
                     {notificationsIdNotRead &&
                       notificationsIdNotRead.length > 0 && (
-                        <span class="IniDocente-notification-count text-center">
+                        <span class="Inicio-notification-count text-center">
                           {notificationsIdNotRead.length < 100
                             ? notificationsIdNotRead.length
                             : "99+"}
@@ -204,41 +210,70 @@ const Inicio = ({
                   </Col>
                 </Row>
               </Nav.Link>
-              <Nav.Link onClick={() => setActiveTab("registrarAmbiente")}>
+              <Nav.Link
+                eventKey={"registrarAmbiente"}
+                onClick={() => setActiveTab("registrarAmbiente")}
+              >
                 Registrar Ambiente
               </Nav.Link>
-              <Nav.Link onClick={() => setActiveTab("registrarReserva")}>
+              <Nav.Link
+                eventKey={"registrarReserva"}
+                onClick={() => setActiveTab("registrarReserva")}
+              >
                 Registrar Reserva
               </Nav.Link>
-              <Nav.Link onClick={() => setActiveTab("listaDeSolicitudes")}>
+              <Nav.Link
+                eventKey={"listaDeSolicitudes"}
+                onClick={() => setActiveTab("listaDeSolicitudes")}
+              >
                 Solicitudes
               </Nav.Link>
-              <Nav.Link onClick={() => setActiveTab("misSolicitudes")}>
+              <Nav.Link
+                eventKey={"misSolicitudes"}
+                onClick={() => setActiveTab("misSolicitudes")}
+              >
                 Mis Solicitudes
               </Nav.Link>
-              <Nav.Link onClick={() => setActiveTab("busquedaPorNombre")}>
+              <Nav.Link
+                eventKey={"busquedaPorNombre"}
+                onClick={() => setActiveTab("busquedaPorNombre")}
+              >
                 Busqueda por Nombre
               </Nav.Link>
-              <Nav.Link onClick={() => setActiveTab("busquedaPorCantidad")}>
+              <Nav.Link
+                eventKey={"busquedaPorCorreo"}
+                onClick={() => setActiveTab("busquedaPorCantidad")}
+              >
                 Busqueda por Cantidad
               </Nav.Link>
               <Nav.Link
+                eventKey={"modificarPorPeriodo"}
                 onClick={() => {
                   setActiveTab("modificarPorPeriodo");
                 }}
               >
                 Modificar por Periodo
               </Nav.Link>
-              <Nav.Link onClick={() => setActiveTab("listaDeDocentes")}>
+              <Nav.Link
+                eventKey={"listaDeDocentes"}
+                onClick={() => setActiveTab("listaDeDocentes")}
+              >
                 Lista de Docentes
               </Nav.Link>
-              <Nav.Link onClick={() => setActiveTab("calendario")}>
+              <Nav.Link
+                eventKey={"calendario"}
+                onClick={() => setActiveTab("calendario")}
+              >
                 Calendario
               </Nav.Link>
-              <Nav.Link onClick={() => setActiveTab("busquedaPorCalendario")}>
+              <Nav.Link
+                eventKey={"busquedaPorCalendario"}
+                onClick={() => setActiveTab("busquedaPorCalendario")}
+              >
                 Busqueda calendario
               </Nav.Link>
               <Nav.Link
+                eventKey={"atencionDeSolicitudes"}
                 onClick={() => {
                   setActiveTab("atencionDeSolicitudes");
                 }}
@@ -246,7 +281,9 @@ const Inicio = ({
                 Atencion de Solicitudes
               </Nav.Link>
               <div className="separador"></div>
-              <Nav.Link onClick={handleLogout}>Cerrar Sesion</Nav.Link>
+              <Nav.Link eventKey={"cerrarSesion"} onClick={handleLogout}>
+                Cerrar Sesion
+              </Nav.Link>
               <div className="separador"></div>
             </Nav>
           </div>
