@@ -1,4 +1,4 @@
-import axios from 'axios';
+import api from './Comun.service';
 
 const apiUrl = process.env.REACT_APP_URL;
 
@@ -16,7 +16,7 @@ export const razon = () => {
 
 
 export const getDocente = (id) => {
-    return axios.get(`${apiUrl}/docentes/${id}`)
+    return api.get(`${apiUrl}/docentes/${id}`)
     .then(function (response) {
       console.log(response.data);
       return response.data; // Devuelve los datos del ambiente encontrado
@@ -25,7 +25,7 @@ export const getDocente = (id) => {
 
   export const postReserva = (reserva) => {
     console.log(reserva);
-    return axios.post(`${apiUrl}/realizarSolicitud`, reserva)
+    return api.post(`${apiUrl}/realizarSolicitud`, reserva)
       .then(function(response) {
         console.log(response.data);
         return response.data;
@@ -47,7 +47,7 @@ export const getDocente = (id) => {
   
   export const postReserva2 = (reserva) => {
     console.log(reserva);
-    return axios.post(`${apiUrl}/realizarSolicitudP2`, reserva)
+    return api.post(`${apiUrl}/realizarSolicitudP2`, reserva)
       .then(function(response) {
         console.log(response.data);
         return response.data;
@@ -68,7 +68,7 @@ export const getDocente = (id) => {
   };
 
 export const recuperarAmbientePorID = (id) => {
-    return axios.get(`${apiUrl}/ambiente/${id}`).then(function (response) {
+    return api.get(`${apiUrl}/ambiente/${id}`).then(function (response) {
       
       return response.data; // Devuelve los datos del ambiente encontrado
     });

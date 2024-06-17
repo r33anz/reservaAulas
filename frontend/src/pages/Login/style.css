@@ -2,6 +2,7 @@
     color: #ffffff;
     background-color: #003F70;
     border-color: #003F70;
+    cursor: pointer;
 }
 
 .Login-button-login:hover,

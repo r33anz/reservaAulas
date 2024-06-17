@@ -1,9 +1,9 @@
-import axios from "axios";
+import api from "./Comun.service";
 
 const apiUrl = process.env.REACT_APP_URL;
 
 export const getDocentes = () => {
-    return axios.get(`${apiUrl}/listaDocentes`)
+    return api.get(`${apiUrl}/listaDocentes`)
       .then(function (response) {
         return response.data; // Devuelve los datos de los docentes encontrados
       })

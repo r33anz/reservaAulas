@@ -32,7 +32,7 @@ const Message = ({ alert, setAlert }) => {
           show={show}
         >
           <Row xs="auto" lg="auto" className="justify-content-md-start">
-            <Col>{message.hora}</Col>
+            {message.mensaje && <Col>{message.hora}</Col>}
           </Row>
           <Row xs="auto" lg="auto" className="justify-content-md-end">
             <Col>

@@ -27,48 +27,50 @@ function App() {
   };
 
   return (
-    <Routes>
-      <Route
-        exact
-        path="/docente/:id"
-        element={<DashboardDocente showCalendar={showCalendar} />}
-      />
-      <Route
-        exact
-        path="/admin"
-        element={<DashboardAdmin showCalendar={showCalendar} />}
-      />
-      <Route
-        exact
-        path="/admin2"
-        element={<DashboardAdmin2 showCalendar={showCalendar} />}
-      />
-      <Route
-        exact
-        path="/docente2/:id"
-        element={
-          <DashboardDocente2
-            showCalendar={showCalendar}
-            fetchNotifications={fetchNotifications}
-            notifications={notifications}
-            notificationsIdNotRead={notificationsIdNotRead}
-          />
-        }
-      />
-      <Route
-        exact
-        path="/usuario/:id"
-        element={
-          <Inicio
-            fetchNotifications={fetchNotifications}
-            notifications={notifications}
-            notificationsIdNotRead={notificationsIdNotRead}
-          />
-        }
-      />
-      <Route exact path="/login" element={<Login />} />
-      <Route path="*" element={<NotFound />} />
-    </Routes>
+    <AlertsProvider>
+      <Routes>
+        <Route
+          exact
+          path="/docente/:id"
+          element={<DashboardDocente showCalendar={showCalendar} />}
+        />
+        <Route
+          exact
+          path="/admin"
+          element={<DashboardAdmin showCalendar={showCalendar} />}
+        />
+        <Route
+          exact
+          path="/admin2"
+          element={<DashboardAdmin2 showCalendar={showCalendar} />}
+        />
+        <Route
+          exact
+          path="/docente2/:id"
+          element={
+            <DashboardDocente2
+              showCalendar={showCalendar}
+              fetchNotifications={fetchNotifications}
+              notifications={notifications}
+              notificationsIdNotRead={notificationsIdNotRead}
+            />
+          }
+        />
+        <Route
+          exact
+          path="/usuario/:id"
+          element={
+            <Inicio
+              fetchNotifications={fetchNotifications}
+              notifications={notifications}
+              notificationsIdNotRead={notificationsIdNotRead}
+            />
+          }
+        />
+        <Route exact path="/login" element={<Login />} />
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+    </AlertsProvider>
   );
 }
 

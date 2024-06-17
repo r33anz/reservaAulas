@@ -71,7 +71,7 @@ const RegistrarAmbiente = ({ onClose }) => {
         .catch((error) => {
           agregarAlert({
             icon: <ExclamationCircleFill />,
-            severidad: "danger",
+            severidad: "warning",
             mensaje: error,
           });
         });

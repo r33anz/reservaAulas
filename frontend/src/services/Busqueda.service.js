@@ -1,9 +1,9 @@
-import axios from "axios";
+import api from "./Comun.service";
 
 const apiUrl = process.env.REACT_APP_URL;
 
 export const buscarAmbientePorNombre = () => {
-  return axios.get(`${apiUrl}/ambientes`)
+  return api.get(`${apiUrl}/ambientes`)
     .then(function (response) {
       return response.data; // Devuelve los datos del ambiente encontrado
     })
@@ -14,7 +14,7 @@ export const buscarAmbientePorNombre = () => {
 };
 
 export const recuperarAmbientePorID = (nombre) => {
-  return axios.post(`${apiUrl}/busquedaAulaNew`, { patron: nombre })
+  return api.post(`${apiUrl}/busquedaAulaNew`, { patron: nombre })
     .then(function (response) {
       return response.data; // Devuelve los datos del ambiente encontrado
     })
@@ -33,7 +33,7 @@ export const recuperarAmbientePorID = (nombre) => {
 };*/
 
 export const buscarAmbientePorCantidad = (minCapacidad, maxCapacidad) => {
-  return axios.post(`${apiUrl}/buscarPorCapacidad`, { minCapacidad, maxCapacidad })
+  return api.post(`${apiUrl}/buscarPorCapacidad`, { minCapacidad, maxCapacidad })
     .then(function (response) {
       return response.data; // Devuelve los datos de los ambientes encontrados
     })
