@@ -129,6 +129,7 @@
   /* Asegura que el texto esté sobre el fondo */
   color: #fff;
   /* Color del texto */
+  text-shadow: 0px 0px 2px black;
 }
 
 .Inicio-components {
