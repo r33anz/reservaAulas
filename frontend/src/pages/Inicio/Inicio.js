@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { Col, Nav, Row } from "react-bootstrap";
+import { Col, Nav, NavLink, Row } from "react-bootstrap";
 import logo from "../../assets/images/image.png";
 import Home from "../Home";
 import Buscar from "../../components/Busquedanombre/Buscar";
@@ -17,6 +17,7 @@ import ListaDeNotificaciones from "../../components/ListaDeNotificaciones/ListaD
 import { getDocente } from "../../services/SolicitarReserva.service";
 import { useNavigate, useParams } from "react-router-dom";
 import { logout } from "../../services/Authenticacion.service";
+import CancelarReservas from "../../components/CancelarReserva/CancelarReservas";
 
 const Inicio = ({
   fetchNotifications,
@@ -131,6 +132,12 @@ const Inicio = ({
         return (
           <div style={{ padding: "1rem" }}>
             <CalendarioB />
+          </div>
+        );
+      case "cancelarReserva":
+        return (
+          <div style={{ padding: "1rem" }}>
+            < CancelarReservas/>;
           </div>
         );
       case "notificaciones":
@@ -272,6 +279,9 @@ const Inicio = ({
               >
                 Busqueda calendario
               </Nav.Link>
+              <NavLink onClick={() => setActiveTab("cancelarReserva")}>
+                Cancelar Reserva/Solicitud
+              </NavLink>
               <Nav.Link
                 eventKey={"atencionDeSolicitudes"}
                 onClick={() => {
