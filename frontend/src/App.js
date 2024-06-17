@@ -10,7 +10,7 @@ import DashboardAdmin from "./pages/DashboardAdmin";
 import DashboardAdmin2 from "./pages/InicioAdmin/InicioAdmin";
 import DashboardDocente2 from "./pages/InicioDocente/IniDocente";
 import { getNotifications } from "./services/Notification.service";
-import Login from "./pages/Login ";
+import Login from "./pages/Login";
 import Inicio from "./pages/Inicio/Inicio";
 function App() {
   const [showCalendar, setShowCalendar] = useState(false);
