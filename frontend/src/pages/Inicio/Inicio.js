@@ -259,7 +259,7 @@ const Inicio = ({
                   setActiveTab("modificarPorPeriodo");
                 }}
               >
-                Modificar por Periodo
+                Modificar Periodos
               </Nav.Link>
               <Nav.Link
                 eventKey={"listaDeDocentes"}
