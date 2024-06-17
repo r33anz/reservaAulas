@@ -82,10 +82,10 @@ Route::get('/generarReporte', [ReporteController::class, 'generarReporte']);
 //autentificacion
 // Rutas públicas
 Route::post('/login', [AuthController::class, 'login']);
-
+Route::post('/logout', [AuthController::class, 'logout']);
 // Rutas protegidas
 Route::middleware('auth:sanctum')->group(function () {
-    Route::post('/logout', [AuthController::class, 'logout']);
+    
 
     Route::get('/user', function (Request $request) {
         return $request->user();
