@@ -1,5 +1,5 @@
 import { Formik } from "formik";
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import * as Yup from "yup";
 import { Button, Col, Container, Form, Image, Row } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
@@ -18,6 +18,7 @@ const Login = () => {
     const response = await login(email, password);
     if (response !== null) {
       navigate(`/usuario/${response.user.id}`);
+      sessionStorage.setItem('auth', 'true');
     } else {
       agregarAlert({
         icon: <ExclamationCircleFill />,
@@ -31,6 +32,10 @@ const Login = () => {
     email: Yup.string().email("Email inválido").required("Requerido"),
     password: Yup.string().min(6, "Mínimo 6 caracteres").required("Requerido")
   });
+
+  useEffect(() => {
+    sessionStorage.setItem('auth', 'false');
+  }, [])
 
   return (
     <Container fluid style={{ background: "#003f702e", height: "100%" }}>
