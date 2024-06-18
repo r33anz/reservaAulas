@@ -19,6 +19,7 @@ import {
   Dropdown,
   FormControl,
   Alert,
+  Spinner,
 } from "react-bootstrap";
 import {
   CheckCircleFill,
@@ -44,7 +45,7 @@ const SolicitarReserva = ({ onClose }) => {
   const [docentes, setDocente] = useState([]);
   const [grupos, setGrupos] = useState([]);
   const { agregarAlert } = useContext(AlertsContext);
-  const [nombreAmbiente, setNombreAmbiente] = useState(""); // Estado para almacenar el nombre del ambiente
+  const [loadingAceptar, setLoadingAceptar] = useState(false);
   const [ambienteOptions, setAmbienteOptions] = useState([]); // Estado para almacenar las opciones de ambiente
   const [periodos, setPeriodos] = useState([
     { id: 1, hora: "6:45" },
@@ -205,6 +206,7 @@ const SolicitarReserva = ({ onClose }) => {
         .required("Obligatorio"),
     }),
     onSubmit: (values) => {
+      setLoadingAceptar(true);
       const id = window.sessionStorage.getItem("docente_id");
       const periodoInicioID = parseInt(values.periodoInicio, 10);
       const periodoFinID = parseInt(values.periodoFin, 10);
@@ -219,7 +221,7 @@ const SolicitarReserva = ({ onClose }) => {
       console.log(periodoIDs);
       postReserva(values)
   .then((response) => {
-
+    setLoadingAceptar(false);
     if (response.mensaje === "Resgistro existoso") {
       console.log("Registro exitoso");
       agregarAlert({
@@ -733,9 +735,17 @@ const SolicitarReserva = ({ onClose }) => {
                       size="sm"
                       type="submit"
 
-                      //disabled={!formik.isValid || !formik.dirty}
+                      disabled={loadingAceptar}
                     >
-                      Registrar
+                      {loadingAceptar ? (
+                        <>
+                          <Spinner animation="grow" size="sm" />
+                          Enviando...
+                        </>
+                      ) : (
+                        "Registrar"
+                      )}
+                      
                     </Button>
                   </Stack>
                 </Row>
