@@ -72,8 +72,9 @@ class ValidadorController extends Controller
         $fecha = $request->input('fechaReserva');
         $periodos = $request->input('periodos');
         $ambiente = $request->input('ambiente');
-        $docente = $request->input('idDocente');
-        $ambienteDisponible = $this->ambienteValido->antenderAmbiente($ambiente, $fecha, $periodos,$docente);
+        $id = $request->input("idSolicitud");
+        $solicitud = Solicitud::find($id);
+        $ambienteDisponible = $this->ambienteValido->antenderAmbiente($ambiente, $fecha, $periodos,$solicitud->user_id);
         return response()->json([
             $ambienteDisponible
         ]);
