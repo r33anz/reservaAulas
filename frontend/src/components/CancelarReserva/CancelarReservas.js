@@ -179,7 +179,7 @@ const CancelarReservas = ({ titulo, tipoDeUsuario }) => {
             className="d-flex justify-content-start align-items-center"
           >
             <h5 style={{ fontWeight: "bold" }} className="">
-              {titulo}
+              Cancelar Reservas o Solicitudes
             </h5>
           </Col>
           <Col
@@ -193,7 +193,7 @@ const CancelarReservas = ({ titulo, tipoDeUsuario }) => {
             >
               <div
                 onClick={reloadSolicitudes}
-                className="RegistrarAmbiente-header-button-close d-flex 
+                className="CacelarReservas-header-button-close d-flex 
                                                justify-content-center align-items-center"
               >
                 <ArrowClockwise size={24} />
@@ -318,7 +318,7 @@ const CancelarReservas = ({ titulo, tipoDeUsuario }) => {
           >
             <div
               onClick={() => setShow(false)}
-              className="RegistrarAmbiente-header-button-close d-flex justify-content-center align-items-center"
+              className="CacelarReservas-header-button-close d-flex justify-content-center align-items-center"
             >
               <XSquareFill size={24} />
             </div>

@@ -137,7 +137,7 @@ const Inicio = ({
       case "cancelarReserva":
         return (
           <div style={{ padding: "1rem" }}>
-            < CancelarReservas/>;
+            < CancelarReservas/>
           </div>
         );
       case "notificaciones":
@@ -280,7 +280,7 @@ const Inicio = ({
                 Busqueda calendario
               </Nav.Link>
               <NavLink onClick={() => setActiveTab("cancelarReserva")}>
-                Cancelar Reserva/Solicitud
+                Cancelar Reservas/Solicitudes
               </NavLink>
               <Nav.Link
                 eventKey={"atencionDeSolicitudes"}

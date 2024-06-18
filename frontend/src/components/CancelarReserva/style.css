@@ -7,7 +7,16 @@
     background-color: #D9D9D9;
     padding: 1rem;
 }
-
+.CacelarReservas-header-button-cargar,
+.CacelarReservas-header-button-close {
+    color: #ffffff;
+    background-color: #D51809;
+    border-radius: 0%;
+    border-color: #D51809;
+    width: 58px;
+    height: 100%;
+    cursor: pointer;
+}
 
 .RegistrarAmbiente-button-cancel {
   color: #003F70;
