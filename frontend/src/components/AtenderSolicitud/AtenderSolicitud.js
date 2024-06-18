@@ -247,35 +247,25 @@ const AtenderSolicitud = ({ solicitudId, onClose }) => {
               </Row>
             </Row>
           </Stack>
-          <Row
-            xs="auto"
-            sm="auto"
-            style={{ padding: 0, paddingTop: "0.5rem" }}
-            className="justify-content-end"
-          >
-            <div
-              style={{ width: "60%" }}
-              className="justify-content-start text-left"
-            >
+          <Row xs="auto" sm="auto" style={{ padding: 0, paddingTop: "0.5rem" }}>
+            <div className="justify-content-start text-left">
               {Object.getOwnPropertyNames(solicitud).length > 0 &&
               mostrarMensajeDeVerificacion !== null
                 ? mostrarMensajeDeVerificacion.alerta === "exito"
-                  ? "Ambiente disponible"
-                  : mostrarMensajeDeVerificacion.alerta === "advertencia"
                   ? mostrarMensajeDeVerificacion.mensaje
-                  : "Ambiente no disponible"
+                  : mostrarMensajeDeVerificacion.mensaje
                 : ""}
             </div>
-            <Button
-              size="sm"
-              className="btn AtenderSolicitud-button-disponibilidad"
-              onClick={onClickParaVerificarDisponibilidad}
-            >
-              Verificar Disponibilidad
-            </Button>
           </Row>
-          <Row xs="auto" style={{ paddingTop: "1rem" }}>
+          <Row xs="auto" sm="auto" style={{ padding: 0, paddingTop: "0.5rem" }}>
             <Stack direction="horizontal" gap={2}>
+              <Button
+                size="sm"
+                className="btn AtenderSolicitud-button-disponibilidad"
+                onClick={onClickParaVerificarDisponibilidad}
+              >
+                Verificar Disponibilidad
+              </Button>
               {mostrarMensajeDeVerificacion !== null && (
                 <>
                   <Button
