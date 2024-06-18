@@ -212,15 +212,13 @@ const BuscarCantidad = () => {
       {busquedaRealizada && !sliderModificado && ambienteDetails.length > 0 && (
         <div
           className="ambientedetails"
-          style={{ height: "30rem", overflowY: "auto", maxHeight: "30rem" }}
         >
           {ambienteDetails.map((ambiente, index) => (
             <div
               key={index}
               className="datos1"
-              style={{ marginBottom: "20px" }}
             >
-              <h4>{ambiente.nombre}</h4>
+              <h6>{ambiente.nombre}</h6>
               <p>Capacidad: {ambiente.capacidad}</p>
               <p>Tipo de Ambiente: {ambiente.tipo}</p>
               <p>Bloque: {ambiente.nombreBloque}</p>
