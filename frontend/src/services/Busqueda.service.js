@@ -42,3 +42,12 @@ export const buscarAmbientePorCantidad = (minCapacidad, maxCapacidad) => {
       return null; // Manejo del error: retorna null si hay un error en la búsqueda
     });
 };
+export const getMaxMinCapacidad = async () => {
+  try {
+      const response = await api.get(`${apiUrl}/maxMin`);
+      return response.data;
+  } catch (error) {
+      console.error("Error fetching max and min capacidad:", error);
+      throw error;
+  }
+};

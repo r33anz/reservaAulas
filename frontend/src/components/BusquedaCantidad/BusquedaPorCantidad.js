@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { buscarAmbientePorCantidad } from "../../services/Busqueda.service";
+import React, { useState, useEffect } from "react";
+import { buscarAmbientePorCantidad, getMaxMinCapacidad } from "../../services/Busqueda.service";
 import { Button, Col, Container, Row, Form } from "react-bootstrap";
 import { XSquareFill } from "react-bootstrap-icons";
 import Slider from "rc-slider";
@@ -14,13 +14,25 @@ const BuscarCantidad = () => {
   const [sliderModificado, setSliderModificado] = useState(false);
   const [editingMin, setEditingMin] = useState(false);
   const [editingMax, setEditingMax] = useState(false);
+  const [maxCapacidad, setMaxCapacidad] = useState(300);
+
+  useEffect(() => {
+    const fetchMaxMinCapacidad = async () => {
+      try {
+        const data = await getMaxMinCapacidad();
+        setMaxCapacidad(data.maxCapacidad);
+        setCantidadRange([0, data.maxCapacidad]);
+      } catch (error) {
+        console.error("Error fetching max and min capacidad:", error);
+      }
+    };
+
+    fetchMaxMinCapacidad();
+  }, []);
 
   const buscarAmbientesPorCantidad = async () => {
     const [minCantidad, maxCantidad] = cantidadRange;
-    const { respuesta } = await buscarAmbientePorCantidad(
-      minCantidad,
-      maxCantidad
-    );
+    const { respuesta } = await buscarAmbientePorCantidad(minCantidad, maxCantidad);
     setAmbientes(respuesta);
     setAmbienteDetails(respuesta || []); // Asegurarse de que siempre sea un array
     setBusquedaRealizada(true);
@@ -45,7 +57,7 @@ const BuscarCantidad = () => {
   };
 
   const handleInputChange = (event, index) => {
-    const value = Math.min(Math.max(Number(event.target.value), 0), 300); // Asegurar que el valor esté dentro de los límites
+    const value = Math.min(Math.max(Number(event.target.value), 0), maxCapacidad); // Asegurar que el valor esté dentro de los límites
     const newRange = [...cantidadRange];
     newRange[index] = value;
     setCantidadRange(newRange);
@@ -93,7 +105,7 @@ const BuscarCantidad = () => {
                   <Slider
                     range
                     min={0}
-                    max={300}
+                    max={maxCapacidad}
                     value={cantidadRange}
                     onChange={handleSliderChange}
                     trackStyle={[{ backgroundColor: "#337ab7", height: 10 }]}
@@ -128,7 +140,7 @@ const BuscarCantidad = () => {
                         style={{
                           position: "absolute",
                           left: `calc(${
-                            (cantidadRange[0] / 300) * 100
+                            (cantidadRange[0] / maxCapacidad) * 100
                           }% - 20px)`,
                           marginTop: "10px",
                           width: "70px",
@@ -140,7 +152,7 @@ const BuscarCantidad = () => {
                         style={{
                           position: "absolute",
                           left: `calc(${
-                            (cantidadRange[0] / 300) * 100
+                            (cantidadRange[0] / maxCapacidad) * 100
                           }% - 20px)`,
                           marginTop: "10px",
                           width: "70px",
@@ -162,7 +174,7 @@ const BuscarCantidad = () => {
                         style={{
                           position: "absolute",
                           left: `calc(${
-                            (cantidadRange[1] / 300) * 100
+                            (cantidadRange[1] / maxCapacidad) * 100
                           }% - 20px)`,
                           top: "-30px",
                           width: "70px",
@@ -174,7 +186,7 @@ const BuscarCantidad = () => {
                         style={{
                           position: "absolute",
                           left: `calc(${
-                            (cantidadRange[1] / 300) * 100
+                            (cantidadRange[1] / maxCapacidad) * 100
                           }% - 20px)`,
                           top: "-30px",
                           width: "70px",

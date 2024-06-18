@@ -513,16 +513,32 @@ const Modificarperdiodo = ({ onClose }) => {
                           const esReservado = periodosReservados.some(
                             (reservado) => reservado.periodos.includes(periodo)
                           );
+                          const esSolicitado = periodosSolicitados.some(
+                            (solicitado) => solicitado.periodos.includes(periodo)
+                          );
+
                           // Mostrar checkbox solo para el primer periodo reservado
-                          const esPrimerPeriodoDeRango =
+                          const esPrimerPeriodoDeRangoReservado =
                             esReservado &&
                             periodosReservados.some(
                               (reservado) => periodo === reservado.periodos[0]
                             );
 
+                          // Mostrar checkbox solo para el primer periodo solicitado
+                          const esPrimerPeriodoDeRangoSolicitado =
+                            esSolicitado &&
+                            periodosSolicitados.some(
+                              (solicitado) => periodo === solicitado.periodos[0]
+                            );
+
+                          // Mostrar checkbox solo si no es reservado o es el primer periodo reservado, y si no es solicitado o es el primer periodo solicitado
+                          const mostrarCheckbox =
+                            (!esReservado || esPrimerPeriodoDeRangoReservado) &&
+                            (!esSolicitado || esPrimerPeriodoDeRangoSolicitado);
+
                           return (
                             <div key={periodo}>
-                              {!esReservado || esPrimerPeriodoDeRango ? (
+                              {mostrarCheckbox ? (
                                 <input
                                   type="checkbox"
                                   id={periodo.toString()}
@@ -540,24 +556,22 @@ const Modificarperdiodo = ({ onClose }) => {
                               )}
                               <label
                                 htmlFor={periodo.toString()}
-                                className={`periodo-label ${cambiarColorLabels(
-                                  periodo
-                                )}`}
+                                className={`periodo-label ${cambiarColorLabels(periodo)}`}
                               >
-                                {`${
-                                  periodo === 1
-                                    ? "6:45-8:15"
-                                    : periodo === 2
+                                {`${periodo === 1
+                                  ? "6:45-8:15"
+                                  : periodo === 2
                                     ? "8:15-9:45"
                                     : periodo === 3
-                                    ? "9:45-11:15"
-                                    : "11:15-12:45"
-                                }`}
+                                      ? "9:45-11:15"
+                                      : "11:15-12:45"
+                                  }`}
                                 <p>{cambiarTextoLabels(periodo)}</p>
                               </label>
                             </div>
                           );
                         })}
+
                       </div>
 
                       <div className="periodos">
@@ -566,17 +580,32 @@ const Modificarperdiodo = ({ onClose }) => {
                           const esReservado = periodosReservados.some(
                             (reservado) => reservado.periodos.includes(periodo)
                           );
+                          const esSolicitado = periodosSolicitados.some(
+                            (solicitado) => solicitado.periodos.includes(periodo)
+                          );
 
                           // Mostrar checkbox solo para el primer periodo reservado
-                          const esPrimerPeriodoDeRango =
+                          const esPrimerPeriodoDeRangoReservado =
                             esReservado &&
-                            // Verificar si el período actual es el primero en cualquiera de los rangos de periodos reservados
                             periodosReservados.some(
                               (reservado) => periodo === reservado.periodos[0]
                             );
+
+                          // Mostrar checkbox solo para el primer periodo solicitado
+                          const esPrimerPeriodoDeRangoSolicitado =
+                            esSolicitado &&
+                            periodosSolicitados.some(
+                              (solicitado) => periodo === solicitado.periodos[0]
+                            );
+
+                          // Mostrar checkbox solo si no es reservado o es el primer periodo reservado, y si no es solicitado o es el primer periodo solicitado
+                          const mostrarCheckbox =
+                            (!esReservado || esPrimerPeriodoDeRangoReservado) &&
+                            (!esSolicitado || esPrimerPeriodoDeRangoSolicitado);
+
                           return (
                             <div key={periodo}>
-                              {!esReservado || esPrimerPeriodoDeRango ? (
+                              {mostrarCheckbox ? (
                                 <input
                                   type="checkbox"
                                   id={periodo.toString()}
@@ -596,20 +625,20 @@ const Modificarperdiodo = ({ onClose }) => {
                                 htmlFor={periodo.toString()}
                                 className={cambiarColorLabels(periodo)}
                               >
-                                {`${
-                                  periodo === 5
-                                    ? "12:45-14:15"
-                                    : periodo === 6
+                                {`${periodo === 5
+                                  ? "12:45-14:15"
+                                  : periodo === 6
                                     ? "14:15-15:45"
                                     : periodo === 7
-                                    ? "15:45-17:15"
-                                    : "17:15-18:45"
-                                }`}
+                                      ? "15:45-17:15"
+                                      : "17:15-18:45"
+                                  }`}
                                 <p>{cambiarTextoLabels(periodo)}</p>
                               </label>
                             </div>
                           );
                         })}
+
                       </div>
                       <div className="periodos">
                         <h6>Noche</h6>
@@ -617,17 +646,32 @@ const Modificarperdiodo = ({ onClose }) => {
                           const esReservado = periodosReservados.some(
                             (reservado) => reservado.periodos.includes(periodo)
                           );
+                          const esSolicitado = periodosSolicitados.some(
+                            (solicitado) => solicitado.periodos.includes(periodo)
+                          );
 
                           // Mostrar checkbox solo para el primer periodo reservado
-                          const esPrimerPeriodoDeRango =
+                          const esPrimerPeriodoDeRangoReservado =
                             esReservado &&
-                            // Verificar si el período actual es el primero en cualquiera de los rangos de periodos reservados
                             periodosReservados.some(
                               (reservado) => periodo === reservado.periodos[0]
                             );
+
+                          // Mostrar checkbox solo para el primer periodo solicitado
+                          const esPrimerPeriodoDeRangoSolicitado =
+                            esSolicitado &&
+                            periodosSolicitados.some(
+                              (solicitado) => periodo === solicitado.periodos[0]
+                            );
+
+                          // Mostrar checkbox solo si no es reservado o es el primer periodo reservado, y si no es solicitado o es el primer periodo solicitado
+                          const mostrarCheckbox =
+                            (!esReservado || esPrimerPeriodoDeRangoReservado) &&
+                            (!esSolicitado || esPrimerPeriodoDeRangoSolicitado);
+
                           return (
                             <div key={periodo}>
-                              {!esReservado || esPrimerPeriodoDeRango ? (
+                              {mostrarCheckbox ? (
                                 <input
                                   type="checkbox"
                                   id={periodo.toString()}
@@ -643,19 +687,18 @@ const Modificarperdiodo = ({ onClose }) => {
                                   }}
                                 ></span>
                               )}
-
                               <label
                                 htmlFor={periodo.toString()}
                                 className={cambiarColorLabels(periodo)}
                               >
-                                {`${
-                                  periodo === 9 ? "18:45-20:15" : "20:15-21:45"
-                                }`}
+                                {`${periodo === 9 ? "18:45-20:15" : "20:15-21:45"
+                                  }`}
                                 <p>{cambiarTextoLabels(periodo)}</p>
                               </label>
                             </div>
                           );
                         })}
+
                         <input
                           type="checkbox"
                           id="selectAllPeriods"
@@ -704,7 +747,7 @@ const Modificarperdiodo = ({ onClose }) => {
               <Row xs="auto">
                 <QuestionCircleFill size="2rem" />
                 ¿Está seguro de hacer esta modificación? Al hacerlo cancelará
-                las reservas correspondientes
+                las reservas o solicitudes correspondientes
               </Row>
               <Row xs="auto" className="justify-content-md-end">
                 <Stack direction="horizontal" gap={2}>
