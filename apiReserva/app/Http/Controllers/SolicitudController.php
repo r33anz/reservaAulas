@@ -238,7 +238,7 @@ class SolicitudController extends Controller
             $query = Solicitud::orderBy('updated_at', 'asc');
             $query->where('estado', 'rechazado');
         } elseif ($estado === 'en espera') {
-            $query = Solicitud::orderBy('updated_at', 'desc');
+            $query = Solicitud::orderBy('updated_at', 'asc');
             $query->where('estado', 'en espera');
         } elseif ($estado === 'canceladas') {
             $query = Solicitud::orderBy('updated_at', 'asc');
@@ -265,6 +265,8 @@ class SolicitudController extends Controller
             $ambiente = Ambiente::find($idAmbiente);
             $docente = User::find($solicitud->user_id);
 
+            $ini = Periodo::find($solicitud->periodo_ini_id);
+            $fin = Periodo::find($solicitud->periodo_fin_id);
             $datosSolicitud = [
                 'id' => $solicitud->id,
                 'nombreDocente' => $docente->name,
@@ -272,8 +274,8 @@ class SolicitudController extends Controller
                 'grupo' => $solicitud->grupo,
                 'cantidad' => $solicitud->cantidad,
                 'razon' => $solicitud->razon,
-                'periodo_ini_id' => $solicitud->periodo_ini_id,
-                'periodo_fin_id' => $solicitud->periodo_fin_id,
+                'periodo_ini_id' => $ini->horainicial,
+                'periodo_fin_id' => $fin->horaifinal,
                 'fechaReserva' => $solicitud->fechaReserva,
                 'ambiente_nombre' => $ambiente->nombre,
                 'ambienteCantidadMax' => $ambiente->capacidad,

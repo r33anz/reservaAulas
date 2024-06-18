@@ -39,6 +39,7 @@ Route::post('/registroAmbiente', [AmbienteController::class, 'store']);
 Route::get('/{id}/ambientesMismoPiso', [AmbienteController::class, 'ambientesMismoPiso']);
 Route::get('/{id}/ambientesMismoBloque', [AmbienteController::class, 'ambientesMismoBloque']);
 Route::post('/buscarPorCapacidad', [AmbienteController::class, 'buscarPorCapacidad']);
+Route::get('/maxMin',[AmbienteController::class,'maximoMinimo']);
 
 //Habilitado/DeshabilitadoAula
 Route::post('/inhabilitarAmbiente', [InhabilitadoController::class, 'inhabilitarAmbiente']);
@@ -112,7 +113,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/{id}/ambientesMismoPiso', [AmbienteController::class, 'ambientesMismoPiso']);
     Route::get('/{id}/ambientesMismoBloque', [AmbienteController::class, 'ambientesMismoBloque']);
     Route::post('/buscarPorCapacidad', [AmbienteController::class, 'buscarPorCapacidad']);
-
+    Route::get('/maxMin',[AmbienteController::class,'maximoMinimo']);
     // Habilitado/DeshabilitadoAula
     Route::post('/inhabilitarAmbiente', [InhabilitadoController::class, 'inhabilitarAmbiente']);
     Route::delete('/habilitarAmbiente', [InhabilitadoController::class, 'habilitarAmbiente']);
