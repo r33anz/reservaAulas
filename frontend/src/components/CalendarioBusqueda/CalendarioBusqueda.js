@@ -7,7 +7,7 @@ import {
   recuperarFechasSolicitud,
   recuperarInformacionSolicitud,
 } from "../../services/Fechas.service";
-import { useState, useEffect, useRef,useCallback } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import {
   Col,
   Modal,
@@ -28,10 +28,7 @@ import {
   getPeriodosReservados,
   getPeriodosSolicitados,
 } from "../../services/ModificarPeriodo.service";
-import {
-  getAmbientes,
-  
-} from "../../services/Ambiente.service";
+import { getAmbientes } from "../../services/Ambiente.service";
 dayjs.locale("es");
 
 function Calendario() {
@@ -375,7 +372,7 @@ function Calendario() {
         style={{
           height: "505px",
           width: "1040px",
-          backgroundColor:"white",
+          backgroundColor: "white",
         }}
       >
         <Calendar
@@ -420,110 +417,117 @@ function Calendario() {
             >
               <div
                 onClick={handleClose}
-                className="RegistrarAmbiente-header-button-close d-flex justify-content-center align-items-center"
+                className="CalendarioBusqueda-header-button-close d-flex justify-content-center align-items-center"
               >
                 <XSquareFill size={24} />
               </div>
             </Col>
           </Row>
-          <Row className="RegistrarAmbiente-body1 justify-content-center">
-            
-              <Form  onSubmit={formik.handleSubmit}style={{backgroundColor:"#D9D9D9"}}>
-                <Form.Group as={Row} className="mb-3" controlId="ambiente" style={{marginTop:"0.5rem"}} >
-                  <Form.Label column sm="2">
-                    Nombre
-                  </Form.Label>
-                  <Col sm="10" onBlur={() => console.log("col")} id="ambientes">
-                    <Dropdown
-                      ref={refDropdown}
+          <Row className="CalendarioBusqueda-body justify-content-center">
+            <Form
+              onSubmit={formik.handleSubmit}
+              style={{ backgroundColor: "#D9D9D9" }}
+            >
+              <Form.Group
+                as={Row}
+                className="mb-3"
+                controlId="ambiente"
+                style={{ marginTop: "0.5rem" }}
+              >
+                <Form.Label column sm="2">
+                  Nombre
+                </Form.Label>
+                <Col sm="10" onBlur={() => console.log("col")} id="ambientes">
+                  <Dropdown
+                    ref={refDropdown}
+                    id="ambientes"
+                    show1
+                    onBlur={() => console.log("dropdown")}
+                    onSelect={(e) => {
+                      setSelected(e);
+                      let ambiente = ambientesEncontradas.find(
+                        (item) => item.nombre === e
+                      );
+                      setNombreDelAmbiente(ambiente);
+                      setAmbientesEncontradas([]);
+                    }}
+                  >
+                    <Dropdown.Toggle
+                      ref={refDropdownToggle}
+                      as={"input"}
                       id="ambientes"
-                      show1
-                      onBlur={() => console.log("dropdown")}
-                      onSelect={(e) => {
-                        setSelected(e);
-                        let ambiente = ambientesEncontradas.find(
-                          (item) => item.nombre === e
-                        );
-                        setNombreDelAmbiente(ambiente);
-                        setAmbientesEncontradas([]);
+                      type="text"
+                      placeholder="Ingrese el nombre del ambiente"
+                      onChange={buscarAmbiente}
+                      onBlur={(e) => {
+                        console.log("input");
+                        formik.handleBlur(e);
                       }}
-                    >
-                      <Dropdown.Toggle
-                        ref={refDropdownToggle}
-                        as={"input"}
+                      value={formik.values.ambiente.nombre}
+                      onFocus={() => setShow(true)}
+                      onKeyUp={(e) => handleKeyUp(e)}
+                      className="form-control"
+                      bsPrefix="dropdown-toggle"
+                    />
+                    {show && ambientesEncontradas.length > 0 && (
+                      <Dropdown.Menu
+                        ref={refDropdownMenu}
                         id="ambientes"
-                        type="text"
-                        placeholder="Ingrese el nombre del ambiente"
-                        onChange={buscarAmbiente}
-                        onBlur={(e) => {
-                          console.log("input");
-                          formik.handleBlur(e);
+                        style={{
+                          width: "100%",
+                          overflowY: "auto",
+                          maxHeight: "5rem",
                         }}
-                        value={formik.values.ambiente.nombre}
-                        onFocus={() => setShow(true)}
-                        onKeyUp={(e) => handleKeyUp(e)}
-                        className="form-control"
-                        bsPrefix="dropdown-toggle"
-                      />
-                      {show && ambientesEncontradas.length > 0 && (
-                        <Dropdown.Menu
-                          ref={refDropdownMenu}
-                          id="ambientes"
-                          style={{
-                            width: "100%",
-                            overflowY: "auto",
-                            maxHeight: "5rem",
-                          }}
-                          onBlur={(e) => console.log("menu")}
-                        >
-                          {ambientesEncontradas.map((ambiente) => (
-                            <Dropdown.Item
-                              eventKey={ambiente.nombre}
-                              key={ambiente.nombre}
-                              onClick={(e) => handlerOnClickAmbiente(e)}
-                            >
-                              <option>{ambiente.nombre}</option>
-                            </Dropdown.Item>
-                          ))}
-                        </Dropdown.Menu>
-                      )}
-                    </Dropdown>
-                    <Form.Text className="text-danger">
-                      {formik.touched.ambiente && formik.errors.ambiente ? (
-                        <div className="text-danger">
-                          {formik.errors.ambiente.nombre}
-                        </div>
-                      ) : formik.values.ambiente.nombre !== "" &&
-                        selected === null &&
-                        ambientesEncontradas.length === 0 ? (
-                        "No exite el ambiente"
-                      ) : formik.values.ambiente.nombre !== "" &&
-                        selected === null &&
-                        ambientesEncontradas.length > 0 ? (
-                        "Seleccione un ambiente"
-                      ) : null}
-                    </Form.Text>
-                  </Col>
-                </Form.Group>
-                <Row xs="auto" className="justify-content-md-end">
-                  <Stack direction="horizontal" gap={2}>
-                    <Button
-                      className="btn ModificarEstadoDelAmbientePorFecha-button-consultar"
-                      type="submit"
-                    >
-                      Consultar
-                    </Button>
-                  </Stack>
-                </Row>
-                {ambiente &&
-                  Object.keys(ambiente).length > 0 &&
-                  ambiente.periodos &&
-                  ambiente.periodos && <h6>Periodos</h6>}
-                {ambiente &&
-                  Object.keys(ambiente).length > 0 &&
-                  ambiente.periodos &&
-                  ambiente.periodos && (
-                    <div className="periodos-container1">
+                        onBlur={(e) => console.log("menu")}
+                      >
+                        {ambientesEncontradas.map((ambiente) => (
+                          <Dropdown.Item
+                            eventKey={ambiente.nombre}
+                            key={ambiente.nombre}
+                            onClick={(e) => handlerOnClickAmbiente(e)}
+                          >
+                            <option>{ambiente.nombre}</option>
+                          </Dropdown.Item>
+                        ))}
+                      </Dropdown.Menu>
+                    )}
+                  </Dropdown>
+                  <Form.Text className="text-danger">
+                    {formik.touched.ambiente && formik.errors.ambiente ? (
+                      <div className="text-danger">
+                        {formik.errors.ambiente.nombre}
+                      </div>
+                    ) : formik.values.ambiente.nombre !== "" &&
+                      selected === null &&
+                      ambientesEncontradas.length === 0 ? (
+                      "No exite el ambiente"
+                    ) : formik.values.ambiente.nombre !== "" &&
+                      selected === null &&
+                      ambientesEncontradas.length > 0 ? (
+                      "Seleccione un ambiente"
+                    ) : null}
+                  </Form.Text>
+                </Col>
+              </Form.Group>
+              <Row xs="auto" className="justify-content-md-end">
+                <Stack direction="horizontal" gap={2}>
+                  <Button
+                    className="btn CalendarioBusqueda-button-consultar"
+                    type="submit"
+                  >
+                    Consultar
+                  </Button>
+                </Stack>
+              </Row>
+              {ambiente &&
+                Object.keys(ambiente).length > 0 &&
+                ambiente.periodos &&
+                ambiente.periodos && <h6>Periodos</h6>}
+              {ambiente &&
+                Object.keys(ambiente).length > 0 &&
+                ambiente.periodos &&
+                ambiente.periodos && (
+                  <div className="periodos-container1">
                     <div className="periodos-grid">
                       <div className="periodos">
                         <h6>Mañana</h6>
@@ -532,7 +536,7 @@ function Calendario() {
                             (reservado) => reservado.periodos.includes(periodo)
                           );
                           // Mostrar checkbox solo para el primer periodo reservado
-                          
+
                           return (
                             <div key={periodo}>
                               <label
@@ -565,10 +569,9 @@ function Calendario() {
                           );
 
                           // Mostrar checkbox solo para el primer periodo reservado
-                          
+
                           return (
                             <div key={periodo}>
-                              
                               <label
                                 htmlFor={periodo.toString()}
                                 className={cambiarColorLabels(periodo)}
@@ -596,11 +599,9 @@ function Calendario() {
                           );
 
                           // Mostrar checkbox solo para el primer periodo reservado
-                          
+
                           return (
                             <div key={periodo}>
-                              
-
                               <label
                                 htmlFor={periodo.toString()}
                                 className={cambiarColorLabels(periodo)}
@@ -613,14 +614,11 @@ function Calendario() {
                             </div>
                           );
                         })}
-                        
-                        
                       </div>
                     </div>
-                    </div>
-                  )}
-              </Form>
-           
+                  </div>
+                )}
+            </Form>
           </Row>
         </Modal>
       </div>

@@ -1,7 +1,7 @@
-.rbc-header{
+.rbc-header {
   color: white;
   font-size: 14px !important;
-  display: flex ;
+  display: flex;
   align-items: center;
   justify-content: center;
   height: 36px !important;
@@ -9,19 +9,31 @@
 
 }
 
-.rbc-event.rbc-selected, .rbc-day-slot .rbc-selected.rbc-background-event {
+.CalendarioBusqueda-body {
+  padding: 1rem;
+  background-color: #D9D9D9;
+}
+
+.rbc-event.rbc-selected,
+.rbc-day-slot .rbc-selected.rbc-background-event {
   background-color: rgb(11 63 111);
 }
+
 .rbc-button-link {
-cursor: default !important;
+  cursor: default !important;
 }
+
 .periodos-container1 div label {
-  width: 150px; /* Ancho fijo para cada periodo */
+  width: 150px;
+  /* Ancho fijo para cada periodo */
   height: 50px;
   text-align: center;
-  border: 1.5px solid black;  /* Borde de 1px sólido negro */
-  margin: 5px; /* Espacio entre los elementos */
-  padding: 2px; /* Espacio interno del borde */
+  border: 1.5px solid black;
+  /* Borde de 1px sólido negro */
+  margin: 5px;
+  /* Espacio entre los elementos */
+  padding: 2px;
+  /* Espacio interno del borde */
   border-radius: 10px;
 }
 
@@ -48,3 +60,50 @@ cursor: default !important;
   padding-left: 1rem;
 }
 
+.CalendarioBusqueda-header-button-close {
+  color: #ffffff;
+  background-color: #D51809;
+  border-radius: 0%;
+  border-color: #D51809;
+  width: 58px;
+  height: 100%;
+}
+
+.CalendarioBusqueda-header-button-close:hover,
+.CalendarioBusqueda-header-button-close:active,
+.CalendarioBusqueda-header-button-close:focus,
+.CalendarioBusqueda-header-button-close:disabled,
+.CalendarioBusqueda-header-button-close.active {
+  /* let's darken #004E64 a bit for hover effect */
+  color: #ffffff;
+  background: #D51809;
+  border-color: #D51809;
+}
+
+.CalendarioBusqueda-button-consultar {
+  color: #003F70;
+  background: #ffffff;
+  border-color: #003F70;
+  --bs-btn-active-color: #003F70;
+  --bs-btn-active-bg: #ffffff;
+  --bs-btn-active-border-color: #003F70;
+}
+
+.CalendarioBusqueda-button-consultar {
+  color: #ffffff;
+  background-color: #003F70;
+  border-color: #003F70;
+}
+
+.CalendarioBusqueda-button-consultar:hover,
+.CalendarioBusqueda-button-consultar:active,
+.CalendarioBusqueda-button-consultar:focus,
+.CalendarioBusqueda-button-consultar:disabled,
+.CalendarioBusqueda-button-consultar.active {
+  /* let's darken #004E64 a bit for hover effect */
+  color: #ffffff;
+  background: #003F70;
+  border-color: #003F70;
+  --bs-btn-active-bg: #003F70;
+  --bs-btn-active-border-color: #003F70;
+}
