@@ -19,6 +19,7 @@ import {
   Dropdown,
   FormControl,
   Alert,
+  Spinner,
 } from "react-bootstrap";
 import {
   CheckCircleFill,
@@ -46,6 +47,7 @@ const SolicitarReserva = ({ onClose }) => {
   const { agregarAlert } = useContext(AlertsContext);
   const [nombreAmbiente, setNombreAmbiente] = useState(""); // Estado para almacenar el nombre del ambiente
   const [ambienteOptions, setAmbienteOptions] = useState([]); // Estado para almacenar las opciones de ambiente
+  const [loading, setLoading] = useState(false);
   const [periodos, setPeriodos] = useState([
     { id: 1, hora: "6:45" },
     { id: 2, hora: "8:15" },
@@ -217,53 +219,60 @@ const SolicitarReserva = ({ onClose }) => {
       values.ambiente = ida;
       values.idDocente = id;
       console.log(periodoIDs);
+      setLoading(true);
       postReserva(values)
-  .then((response) => {
+        .then((response) => {
+          if (response.mensaje === "Resgistro existoso") {
+            console.log("Registro exitoso");
+            agregarAlert({
+              icon: <CheckCircleFill />,
+              severidad: "success",
+              mensaje: "Se realizo la solicitud correctamente",
+            });
+            formik.resetForm();
+            setCapacidadDelAmbienteSeleccionado(null);
+            setStep(1);
+            setLoading(false);
+          } else if (response[0].alerta === "advertencia") {
+            agregarAlert({
+              icon: <ExclamationCircleFill />,
+              severidad: "danger",
+              mensaje: response[0].mensaje,
+            });
+            setLoading(false);
+          } else if (response[0].alerta === "alerta") {
+            setEstado("estado");
 
-    if (response.mensaje === "Resgistro existoso") {
-      console.log("Registro exitoso");
-      agregarAlert({
-        icon: <CheckCircleFill />,
-        severidad: "success",
-        mensaje: "Se realizo la solicitud correctamente",
-      });
-      formik.resetForm();
-      setCapacidadDelAmbienteSeleccionado(null);
-      setStep(1);
-    } else if (response[0].alerta === "advertencia") {
-      agregarAlert({
-        icon: <ExclamationCircleFill />,
-        severidad: "danger",
-        mensaje: response[0].mensaje,
-      });
-    } else if (response[0].alerta === "alerta") {
-      setEstado("estado");
-      
-    setShowMensajeDeConfirmacion(true);
-      agregarAlert({
-        icon: <ExclamationCircleFill />,
-        severidad: "warning",
-        mensaje: response[0].mensaje,
-      });
-    } else {
-      // Manejar otros casos no esperados
-      throw new Error("Estado no esperado en la respuesta");
-    }
-  })
-  .catch((error) => {
-    console.log("Error capturado:", error);
-    agregarAlert({
-      icon: <ExclamationCircleFill />,
-      severidad: "danger",
-      mensaje: error.message || "Ha ocurrido un error",
-    });
-  });
-
+            setShowMensajeDeConfirmacion(true);
+            agregarAlert({
+              icon: <ExclamationCircleFill />,
+              severidad: "warning",
+              mensaje: response[0].mensaje,
+            });
+            setLoading(false);
+          } else {
+            setLoading(false);
+            // Manejar otros casos no esperados
+            throw new Error("Estado no esperado en la respuesta");
+          }
+        })
+        .catch((error) => {
+          console.log("Error capturado:", error);
+          agregarAlert({
+            icon: <ExclamationCircleFill />,
+            severidad: "danger",
+            mensaje: error.message || "Ha ocurrido un error",
+          });
+        });
     },
   });
- 
+
   const handleKeyPress = (event) => {
-    if (event.code === "Enter" && formik.values.nombreAmbiente !== "" && document.activeElement === inputAmbienteRef.current) {
+    if (
+      event.code === "Enter" &&
+      formik.values.nombreAmbiente !== "" &&
+      document.activeElement === inputAmbienteRef.current
+    ) {
       const ambienteEncontrado = ambienteOptions.find((ambiente) =>
         ambiente.nombre
           .toLowerCase()
@@ -305,32 +314,31 @@ const SolicitarReserva = ({ onClose }) => {
       });
     //inputAmbienteRef.current.blur();
   };
-  const reserva=async(val)=>{
-    setShowMensajeDeConfirmacion(false)
+  const reserva = async (val) => {
+    setShowMensajeDeConfirmacion(false);
     postReserva2(val)
-  .then((response) => {
-
-    if (response.mensaje === "Resgistro existoso") {
-      console.log("Registro exitoso");
-      agregarAlert({
-        icon: <CheckCircleFill />,
-        severidad: "success",
-        mensaje: "Se realizo la solicitud correctamente",
+      .then((response) => {
+        if (response.mensaje === "Resgistro existoso") {
+          console.log("Registro exitoso");
+          agregarAlert({
+            icon: <CheckCircleFill />,
+            severidad: "success",
+            mensaje: "Se realizo la solicitud correctamente",
+          });
+          formik.resetForm();
+          setCapacidadDelAmbienteSeleccionado(null);
+          setStep(1);
+        }
+      })
+      .catch((error) => {
+        console.log("Error capturado:", error);
+        agregarAlert({
+          icon: <ExclamationCircleFill />,
+          severidad: "danger",
+          mensaje: error.message || "Ha ocurrido un error",
+        });
       });
-      formik.resetForm();
-      setCapacidadDelAmbienteSeleccionado(null);
-      setStep(1);
-    }  
-  })
-  .catch((error) => {
-    console.log("Error capturado:", error);
-    agregarAlert({
-      icon: <ExclamationCircleFill />,
-      severidad: "danger",
-      mensaje: error.message || "Ha ocurrido un error",
-    });
-  });
-  }
+  };
   useEffect(() => {
     console.log("showDropdown", showDropdown);
   }, [showDropdown]);
@@ -338,8 +346,8 @@ const SolicitarReserva = ({ onClose }) => {
   useEffect(() => {
     console.log(razon);
     const id = window.sessionStorage.getItem("docente_id");
-    
     docente(id);
+    setLoading(false);
     //setBloques(bloquesData);
     buscar(" ");
   }, []);
@@ -414,10 +422,10 @@ const SolicitarReserva = ({ onClose }) => {
                         Ingrese una materia
                       </option>
                       {bloques.map((bloque, index) => (
-                      <option key={index} value={bloque}>
-                        {bloque}
-                      </option>
-                    ))}
+                        <option key={index} value={bloque}>
+                          {bloque}
+                        </option>
+                      ))}
                     </Form.Select>
                     <Form.Text className="text-danger">
                       {formik.touched.materia && formik.errors.materia ? (
@@ -455,7 +463,11 @@ const SolicitarReserva = ({ onClose }) => {
                 </Col>
               </Stack>
             </Form>
-            <Stack gap={2} direction="horizontal" className="justify-content-end">
+            <Stack
+              gap={2}
+              direction="horizontal"
+              className="justify-content-end"
+            >
               <Button
                 className="btn RegistrarAmbiente-button-cancel"
                 size="sm"
@@ -714,6 +726,7 @@ const SolicitarReserva = ({ onClose }) => {
                       className="btn RegistrarAmbiente-button-cancel"
                       size="sm"
                       onClick={() => setStep(1)}
+                      disabled={loading}
                     >
                       Anterior
                     </Button>
@@ -725,6 +738,7 @@ const SolicitarReserva = ({ onClose }) => {
                         formik.resetForm();
                         setStep(1);
                       }}
+                      disabled={loading}
                     >
                       Limpiar
                     </Button>
@@ -732,10 +746,17 @@ const SolicitarReserva = ({ onClose }) => {
                       className="btn RegistrarAmbiente-button-register"
                       size="sm"
                       type="submit"
-
+                      disabled={loading}
                       //disabled={!formik.isValid || !formik.dirty}
                     >
-                      Registrar
+                      {loading ? (
+                        <>
+                          <Spinner animation="grow" size="sm" />
+                          Registrando...
+                        </>
+                      ) : (
+                        "Registrar"
+                      )}
                     </Button>
                   </Stack>
                 </Row>
@@ -745,48 +766,48 @@ const SolicitarReserva = ({ onClose }) => {
         </Row>
       </Container>
       {estado !== "" && (
-          <Modal
-            size="xs"
-            aria-labelledby="contained-modal-title-vcenter"
+        <Modal
+          size="xs"
+          aria-labelledby="contained-modal-title-vcenter"
+          show={showMensajeDeConfirmacion}
+          onHide={() => setShowMensajeDeConfirmacion(false)}
+          centered
+        >
+          <Alert
+            variant="primary"
             show={showMensajeDeConfirmacion}
-            onHide={() => setShowMensajeDeConfirmacion(false)}
-            centered
+            style={{ margin: 0 }}
           >
-            <Alert
-              variant="primary"
-              show={showMensajeDeConfirmacion}
-              style={{ margin: 0 }}
-            >
-              <Container>
-                <Row xs="auto">
-                  <QuestionCircleFill size="2rem" />
-                  ¿Quiere continuar reservando?
-                </Row>
-                <Row xs="auto" className="justify-content-md-end">
-                  <Stack direction="horizontal" gap={2}>
-                    <Button
-                      className="btn ModificarEstadoDelAmbientePorFecha-cancel"
-                      size="sm"
-                      variant="secondary"
-                      onClick={() => setShowMensajeDeConfirmacion(false)}
-                    >
-                      Cancelar
-                    </Button>
-                    <Button
-                      className="btn ModificarEstadoDelAmbientePorFecha-aceptar"
-                      onClick={() => {
-                        reserva(formik.values);
-                      }}
-                      size="sm"
-                    >
-                      Aceptar
-                    </Button>
-                  </Stack>
-                </Row>
-              </Container>
-            </Alert>
-          </Modal>
-        )}
+            <Container>
+              <Row xs="auto">
+                <QuestionCircleFill size="2rem" />
+                ¿Quiere continuar reservando?
+              </Row>
+              <Row xs="auto" className="justify-content-md-end">
+                <Stack direction="horizontal" gap={2}>
+                  <Button
+                    className="btn ModificarEstadoDelAmbientePorFecha-cancel"
+                    size="sm"
+                    variant="secondary"
+                    onClick={() => setShowMensajeDeConfirmacion(false)}
+                  >
+                    Cancelar
+                  </Button>
+                  <Button
+                    className="btn ModificarEstadoDelAmbientePorFecha-aceptar"
+                    onClick={() => {
+                      reserva(formik.values);
+                    }}
+                    size="sm"
+                  >
+                    Aceptar
+                  </Button>
+                </Stack>
+              </Row>
+            </Container>
+          </Alert>
+        </Modal>
+      )}
     </div>
   );
 
