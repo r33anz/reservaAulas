@@ -158,4 +158,14 @@ class AmbienteController extends Controller
             'respuesta' => $ambientes
         ]);
     }
+
+    public function maximoMinimo(){
+        $maxCapacidad = Ambiente::max('capacidad');
+        $minCapacidad = Ambiente::min('capacidad');
+
+        return response()->json([
+            'maxCapacidad' => $maxCapacidad,
+            'minCapacidad' => $minCapacidad
+        ]);
+    }
 }
