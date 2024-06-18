@@ -34,7 +34,7 @@ class NotificadorService
 
         $user = User::find($solicitud->user_id);
         //disparar evento
-        event(new NotificacionUsuario($solicitud->docente_id,'Nueva notificacion.'));
+        event(new NotificacionUsuario($solicitud->user_id,'Nueva notificacion.'));
         $user->notify(new Inhabilitar($nombreAmbiente, $solicitud->fechaReserva, $ini->horainicial, $fin->horafinal));
 
     }
