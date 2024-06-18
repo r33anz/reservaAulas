@@ -171,7 +171,7 @@ const ListaDeAtencionDeSolicitudes = () => {
                   <td>{item.nombreDocente}</td>
                   <td>{item.materia}</td>
                   <td>
-                    {`${solicitud.periodo_ini_id} hasta ${solicitud.periodo_fin_id}`}
+                    {`${item.periodo_ini_id} hasta ${item.periodo_fin_id}`}
                   </td>
                   <td>{item.fechaReserva}</td>
                   <td>{item.estado}</td>
