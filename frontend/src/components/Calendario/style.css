@@ -40,3 +40,22 @@ cursor: default !important;
   padding-left: 1rem;
 }
 
+.Calendario-header-button-close {
+  color: #ffffff;
+  background-color: #D51809;
+  border-radius: 0%;
+  border-color: #D51809;
+  width: 58px;
+  height: 100%;
+}
+
+.Calendario-header-button-close:hover,
+.Calendario-header-button-close:active,
+.Calendario-header-button-close:focus,
+.Calendario-header-button-close:disabled,
+.Calendario-header-button-close.active {
+  /* let's darken #004E64 a bit for hover effect */
+  color: #ffffff;
+  background: #D51809;
+  border-color: #D51809;
+}

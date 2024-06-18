@@ -30,31 +30,6 @@ const ListaDeSolicitudes = ({ titulo, tipoDeUsuario }) => {
   const [totalPages, setTotalPages] = useState(0);
   const [estado, setEstado] = useState("");
   const { agregarAlert } = useContext(AlertsContext);
-  const periodos = [
-    { id: 1, hora: "6:45 ", isHabilitado: true },
-    { id: 2, hora: "8:15 ", isHabilitado: true },
-    { id: 3, hora: "9:45 ", isHabilitado: true },
-    { id: 4, hora: "11:15 ", isHabilitado: true },
-    { id: 5, hora: "12:45 ", isHabilitado: true },
-    { id: 6, hora: "14:15 ", isHabilitado: true },
-    { id: 7, hora: "15:45 ", isHabilitado: false },
-    { id: 8, hora: "17:15 ", isHabilitado: false },
-    { id: 9, hora: "18:45 ", isHabilitado: false },
-    { id: 10, hora: "20:15 ", isHabilitado: false },
-  ];
-
-  const getPeriodo = (periodoInicioId, periodoFinId) => {
-    const periodoReserva = periodos
-      .filter((periodo) => {
-        return periodo.id === periodoInicioId || periodo.id === periodoFinId;
-      })
-      .map((periodo) => periodo.hora);
-    return (
-      <>
-        {periodoReserva[0]} <br /> {periodoReserva[1]}
-      </>
-    );
-  };
 
   const reloadSolicitudes = async () => {
     await getSolicitudes();
@@ -257,7 +232,7 @@ const ListaDeSolicitudes = ({ titulo, tipoDeUsuario }) => {
                   {tipoDeUsuario === "Admin" && <td>{item.nombreDocente}</td>}
                   <td>{item.materia}</td>
                   <td>
-                    {getPeriodo(item.periodo_ini_id, item.periodo_fin_id)}
+                    {`${item.periodo_ini_id} hasta ${item.periodo_fin_id}`}
                   </td>
                   <td>{item.fechaReserva}</td>
                   {(estado === "" || estado === "canceladas") && (
@@ -329,7 +304,7 @@ const ListaDeSolicitudes = ({ titulo, tipoDeUsuario }) => {
             )}
             <h6>Periodo: </h6>
             <p>
-              {getPeriodo(solicitud.periodo_ini_id, solicitud.periodo_fin_id)}
+              {`${solicitud.periodo_ini_id} hasta ${solicitud.periodo_fin_id}`}
             </p>
             <h6>Materia: </h6>
             <p>{solicitud.materia}</p>

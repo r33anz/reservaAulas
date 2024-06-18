@@ -29,31 +29,6 @@ const ListaDeAtencionDeSolicitudes = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
   const { agregarAlert } = useContext(AlertsContext);
-  const periodos = [
-    { id: 1, hora: "6:45 - 8:15", isHabilitado: true },
-    { id: 2, hora: "8:15 - 9:45", isHabilitado: true },
-    { id: 3, hora: "9:45 - 11:15", isHabilitado: true },
-    { id: 4, hora: "11:15 - 12:45", isHabilitado: true },
-    { id: 5, hora: "12:45 - 14:15", isHabilitado: true },
-    { id: 6, hora: "14:15 - 15:45", isHabilitado: true },
-    { id: 7, hora: "15:45 - 17:15", isHabilitado: false },
-    { id: 8, hora: "17:15 - 18:45", isHabilitado: false },
-    { id: 9, hora: "18:45 - 20:15", isHabilitado: false },
-    { id: 10, hora: "20:15 - 21:45", isHabilitado: false },
-  ];
-
-  const getPeriodo = (periodoInicioId, periodoFinId) => {
-    const periodoReserva = periodos
-      .filter((periodo) => {
-        return periodo.id === periodoInicioId || periodo.id === periodoFinId;
-      })
-      .map((periodo) => periodo.hora);
-    return (
-      <>
-        {periodoReserva[0]} <br /> {periodoReserva[1]}
-      </>
-    );
-  };
 
   const reloadSolicitudes = async () => {
     await getSolicitudes();
@@ -196,7 +171,7 @@ const ListaDeAtencionDeSolicitudes = () => {
                   <td>{item.nombreDocente}</td>
                   <td>{item.materia}</td>
                   <td>
-                    {getPeriodo(item.periodo_ini_id, item.periodo_fin_id)}
+                    {`${item.periodo_ini_id} hasta ${item.periodo_fin_id}`}
                   </td>
                   <td>{item.fechaReserva}</td>
                   <td>{item.estado}</td>
