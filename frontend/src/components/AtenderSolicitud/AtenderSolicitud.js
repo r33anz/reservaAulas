@@ -71,6 +71,7 @@ const AtenderSolicitud = ({ solicitudId, onClose }) => {
   const onClickParaVerificarDisponibilidad = async () => {
     if (Object.getOwnPropertyNames(solicitud).length > 0) {
       const response = await vertificarDisponibilidad(
+        solicitudId,
         solicitud.fecha,
         solicitud.id_ambiente,
         [solicitud.periodo_ini_id, solicitud.periodo_fin_id]
