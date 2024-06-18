@@ -257,7 +257,7 @@ const ListaDeSolicitudes = ({ titulo, tipoDeUsuario }) => {
                   {tipoDeUsuario === "Admin" && <td>{item.nombreDocente}</td>}
                   <td>{item.materia}</td>
                   <td>
-                    {getPeriodo(item.periodo_ini_id, item.periodo_fin_id)}
+                    {`${item.periodo_ini_id} hasta ${item.periodo_fin_id}`}
                   </td>
                   <td>{item.fechaReserva}</td>
                   {(estado === "" || estado === "canceladas") && (

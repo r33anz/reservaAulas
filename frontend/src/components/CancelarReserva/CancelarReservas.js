@@ -265,7 +265,7 @@ const CancelarReservas = ({ titulo, tipoDeUsuario }) => {
                   {tipoDeUsuario === "Admin" && <td>{item.nombreDocente}</td>}
                   <td>{item.materia}</td>
                   <td>
-                    {getPeriodo(item.periodo_ini_id, item.periodo_fin_id)}
+                    {`${item.periodo_ini_id} hasta ${item.periodo_fin_id}`}
                   </td>
                   <td>{item.fechaReserva}</td>
                   <td>{item.fechaEnviada}</td>
@@ -308,7 +308,11 @@ const CancelarReservas = ({ titulo, tipoDeUsuario }) => {
             style={{ height: "100%" }}
           >
             <h4 style={{ fontWeight: "bold" }} className="">
-              Detalle de {solicitud.estado === "aprobado" || solicitud.estado === "en espera" ? "Reserva" : "Solicitud"}
+              Detalle de{" "}
+              {solicitud.estado === "aprobado" ||
+              solicitud.estado === "en espera"
+                ? "Reserva"
+                : "Solicitud"}
             </h4>
           </Col>
           <Col
@@ -349,25 +353,25 @@ const CancelarReservas = ({ titulo, tipoDeUsuario }) => {
           <p>{solicitud.razon}</p>
           {(solicitud.estado === "aprobado" ||
             solicitud.estado === "en espera") && (
-              <div className="mt-3">
-                <h5>¿Está seguro de cancelar la solicitud?</h5>
-                <div className="d-flex justify-content-center mt-3">
-                  <button
-                    className="btn RegistrarAmbiente-button-register"
-                    onClick={() => handleCancelarReserva(solicitud.id)}
-                  >
-                    Sí
-                  </button>
-                  <div style={{ width: "10px" }}></div>
-                  <button
-                    className="btn RegistrarAmbiente-button-cancel"
-                    onClick={() => setShow(false)}
-                  >
-                    No
-                  </button>
-                </div>
+            <div className="mt-3">
+              <h5>¿Está seguro de cancelar la solicitud?</h5>
+              <div className="d-flex justify-content-center mt-3">
+                <button
+                  className="btn RegistrarAmbiente-button-register"
+                  onClick={() => handleCancelarReserva(solicitud.id)}
+                >
+                  Sí
+                </button>
+                <div style={{ width: "10px" }}></div>
+                <button
+                  className="btn RegistrarAmbiente-button-cancel"
+                  onClick={() => setShow(false)}
+                >
+                  No
+                </button>
               </div>
-            )}
+            </div>
+          )}
         </Row>
       </Modal>
     </>
