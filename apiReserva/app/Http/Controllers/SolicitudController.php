@@ -207,15 +207,16 @@ class SolicitudController extends Controller
         $ambiente = Ambiente::where('id', $idAmbiente)->first();
 
         $docente = User::find($solicitud->user_id);
-
+        $ini = Periodo::find($solicitud->periodo_ini_id);
+        $fin = Periodo::find($solicitud->periodo_fin_id);
         return response()->json([
             'nombreDocente' => $docente->name,
             'materia' => $solicitud->materia,
             'grupo' => $solicitud->grupo,
             'cantidad' => $solicitud->cantidad,
             'razon' => $solicitud->razon,
-            'periodo_ini_id' => $solicitud->periodo_ini_id,
-            'periodo_fin_id' => $solicitud->periodo_fin_id,
+            'periodo_ini_id' => $ini->horainicial,
+            'periodo_fin_id' => $fin->horafinal,
             'fecha' => $solicitud->fechaReserva,
 
             'ambiente_nombre' => $ambiente->nombre,

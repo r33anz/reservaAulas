@@ -227,7 +227,7 @@ const Inicio = ({
                 eventKey={"registrarReserva"}
                 onClick={() => setActiveTab("registrarReserva")}
               >
-                Registrar Reserva
+                Registrar Solicitud de Reserva
               </Nav.Link>
               <Nav.Link
                 eventKey={"listaDeSolicitudes"}
@@ -259,7 +259,7 @@ const Inicio = ({
                   setActiveTab("modificarPorPeriodo");
                 }}
               >
-                Modificar Periodos
+                Modificacion de Periodos
               </Nav.Link>
               <Nav.Link
                 eventKey={"listaDeDocentes"}
@@ -280,7 +280,7 @@ const Inicio = ({
                 Busqueda calendario
               </Nav.Link>
               <NavLink onClick={() => setActiveTab("cancelarReserva")}>
-                Cancelar Reservas/Solicitudes
+                Cancelacion de Reservas/Solicitudes
               </NavLink>
               <Nav.Link
                 eventKey={"atencionDeSolicitudes"}
