@@ -79,7 +79,6 @@ Route::post('/notificacionBroadcast',[NotificationController::class,'broadcast']
 Route::get('/generarReporte', [ReporteController::class, 'generarReporte']);
 */
 
-
 //autentificacion
 // Rutas públicas
 Route::post('/login', [AuthController::class, 'login']);

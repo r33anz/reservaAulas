@@ -275,7 +275,7 @@ class SolicitudController extends Controller
                 'cantidad' => $solicitud->cantidad,
                 'razon' => $solicitud->razon,
                 'periodo_ini_id' => $ini->horainicial,
-                'periodo_fin_id' => $fin->horaifinal,
+                'periodo_fin_id' => $fin->horafinal,
                 'fechaReserva' => $solicitud->fechaReserva,
                 'ambiente_nombre' => $ambiente->nombre,
                 'ambienteCantidadMax' => $ambiente->capacidad,
