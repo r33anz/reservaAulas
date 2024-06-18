@@ -6,17 +6,11 @@ import "./style.css";
 import { recuperarFechasSolicitud, recuperarInformacionSolicitud } from "../../services/Fechas.service";
 import { useState, useEffect, useRef } from "react";
 import { Col, Modal, Row, Form, Pagination, Dropdown, Stack, Button } from "react-bootstrap";
-import { XSquareFill } from "react-bootstrap-icons";
+import { XSquareFill, ArrowClockwise } from "react-bootstrap-icons";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import {
-  
-  modificarPerio,
-} from "../../../src/services/ModificarPeriodo.service";
-import {
-  getAmbientes,
-  getPeriodosReservados,
-} from "../../../src/services/Ambiente.service";
+import { modificarPerio } from "../../../src/services/ModificarPeriodo.service";
+import { getAmbientes, getPeriodosReservados } from "../../../src/services/Ambiente.service";
 dayjs.locale("es");
 
 function Calendario() {
@@ -30,13 +24,12 @@ function Calendario() {
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredReservas, setFilteredReservas] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-const reservasPerPage = 4; // Número de reservas por página
-const indexOfLastReserva = currentPage * reservasPerPage;
-const indexOfFirstReserva = indexOfLastReserva - reservasPerPage;
-const currentReservas = filteredReservas.slice(indexOfFirstReserva, indexOfLastReserva);
-const paginate = (pageNumber) => setCurrentPage(pageNumber);
-const totalPages = Math.ceil(filteredReservas.length / reservasPerPage);
-
+  const reservasPerPage = 4; // Número de reservas por página
+  const indexOfLastReserva = currentPage * reservasPerPage;
+  const indexOfFirstReserva = indexOfLastReserva - reservasPerPage;
+  const currentReservas = filteredReservas.slice(indexOfFirstReserva, indexOfLastReserva);
+  const paginate = (pageNumber) => setCurrentPage(pageNumber);
+  const totalPages = Math.ceil(filteredReservas.length / reservasPerPage);
 
   const periodos = [
     { id: 1, hora: "6:45" },
@@ -50,7 +43,7 @@ const totalPages = Math.ceil(filteredReservas.length / reservasPerPage);
     { id: 9, hora: "18:45" },
     { id: 10, hora: "20:15" },
   ];
-  
+
   const periodosF = [
     { id: 1, hora: "8:15" },
     { id: 2, hora: "9:45" },
@@ -67,29 +60,12 @@ const totalPages = Math.ceil(filteredReservas.length / reservasPerPage);
   const [selectedDate, setSelectedDate] = useState(null);
   const [isSlotSelected, setIsSlotSelected] = useState(false);
   const [ambientes, setAmbientes] = useState([]);
-  const [ambientesEncontradas, setAmbientesEncontradas] = useState([]);
   const [ambiente, setAmbiente] = useState({});
   const [show1, setShow1] = useState(false);
-  const [selected, setSelected] = useState(null);
-  const [periodosReservados, setPeriodosReservados] = useState([]);
+
   const refDropdownMenu = useRef(null);
   const refDropdownToggle = useRef(null);
   const refDropdown = useRef(null);
-  const periodos1 = [
-    { id: 1, hora: "6:45 - 8:15" },
-    { id: 2, hora: "8:15 - 9:45" },
-    { id: 3, hora: "9:45 - 11:15" },
-    { id: 4, hora: "11:15 - 12:45" },
-    { id: 5, hora: "12:45 - 14:15" },
-    { id: 6, hora: "14:15 - 15:45" },
-    { id: 7, hora: "15:45 - 17:15" },
-    { id: 8, hora: "17:15 - 18:45" },
-    { id: 9, hora: "18:45 - 20:15" },
-    { id: 10, hora: "20:15 - 21:45" },
-  ];
-
-
-
 
   const getPeriodo = (periodoInicioId, periodoFinId) => {
     const periodoInicio = periodos.find((periodo) => periodo.id === periodoInicioId);
@@ -131,10 +107,12 @@ const totalPages = Math.ceil(filteredReservas.length / reservasPerPage);
 
     setEvent(events2);
   };
+
   const eventPropGetter = (event) => {
     let backgroundColor = event.type === "reserva" ? "#d81a0b" : "#0b3f6f";
     return { style: { backgroundColor } };
   };
+
   useEffect(() => {
     getFechas();
   }, []);
@@ -158,7 +136,7 @@ const totalPages = Math.ceil(filteredReservas.length / reservasPerPage);
     const formattedDate = dayjs(event.start).format("YYYY-MM-DD");
 
     const datosEncontrados = datos.find(fechaObj => fechaObj.fecha === formattedDate);
-    
+
     if (event.type === "reserva") {
       for (const reservaId of datosEncontrados.reservas) {
         const data = await recuperarInformacionSolicitud(reservaId);
@@ -180,6 +158,7 @@ const totalPages = Math.ceil(filteredReservas.length / reservasPerPage);
     }
     setShow(true);
   };
+
   const handleClose = () => {
     setShow(false);
     setSearchTerm("");
@@ -189,7 +168,7 @@ const totalPages = Math.ceil(filteredReservas.length / reservasPerPage);
     setIsSlotSelected(false);
     setAmbiente({});
   };
-  
+
   const renderPaginationItems = () => {
     const items = [];
 
@@ -258,31 +237,31 @@ const totalPages = Math.ceil(filteredReservas.length / reservasPerPage);
     return items;
   };
 
-
   const fetchAmbientes = async () => {
     let { respuesta } = await getAmbientes();
     setAmbientes(respuesta);
   };
 
-  
   useEffect(() => {
     fetchAmbientes();
   }, []);
+
   const handleInputChange = (e) => {
     const originalValue = e.target.value;
     const trimmedValue = originalValue.trim(); // Eliminar espacios al inicio y al final
-  
+
     if (trimmedValue === "") {
       setSearchTerm("");
     } else if (!trimmedValue.startsWith(" ")) {
       const value = originalValue.toUpperCase(); // Convertir a mayúsculas si pasa la validación del espacio inicial
-  
+
       if (/^[a-zA-Z0-9\s]*$/.test(value)) {
         // Si pasa la validación de caracteres especiales, establecer el valor en searchTerm
         setSearchTerm(value);
       }
     }
   };
+
   useEffect(() => {
     const handleOutSideClick = (event) => {
       if (
@@ -308,16 +287,24 @@ const totalPages = Math.ceil(filteredReservas.length / reservasPerPage);
     }
   };
 
-  
+  const handleReload = () => {
+    getFechas(); // Llamar a la función de recarga
+  };
+
   return (
     <>
+    <div style={{ display: 'flex', justifyContent: "space-around", alignItems: 'center', marginBottom: '10px' }}>
+          <h4>Calendario </h4>
+          <ArrowClockwise size={24} onClick={handleReload} style={{ cursor: 'pointer' }} />
+        </div>
       <div
         style={{
           height: "505px",
           width: "1040px",
-          backgroundColor:"white",
+          backgroundColor: "white",
         }}
       >
+        
         <Calendar
           localizer={localizer}
           events={event}
@@ -367,59 +354,57 @@ const totalPages = Math.ceil(filteredReservas.length / reservasPerPage);
               </div>
             </Col>
           </Row>
-          <Row className="RegistrarAmbiente-body1 justify-content-center" style={{backgroundColor:"#D9D9D9"}}>
-          
-              <>
-  <Form inline className="d-flex  mb-2">
-    <Form.Group controlId="searchTerm" className="mr-2 d-flex align-items-center">
-      <Form.Label className="mr-2">Buscar por Ambiente</Form.Label>
-      <Form.Control
-        type="text"
-        value={searchTerm}
-        onKeyDown={handleKeyDown}
-        onChange={handleInputChange}
-        placeholder="Nombre del Ambiente"
-        style={{ width: "100%" }}
-      />
-    </Form.Group>
-  </Form>
+          <Row className="RegistrarAmbiente-body1 justify-content-center" style={{ backgroundColor: "#D9D9D9" }}>
 
-  {filteredReservas.length === 0 ? (
-    <p>{mensaje}</p>
-  ) : (
-    filteredReservas.map((reserva, index) => (
-      <div key={index} className="reserva">
-        <div className="reserva-row">
-          <h6>Docente:</h6>
-          <p>{reserva.nombreDocente}</p>
-        </div>
-        <div className="reserva-row">
-          <h6>Nombre del Ambiente:</h6>
-          <p>{reserva.ambiente_nombre}</p>
-        </div>
-        <div className="reserva-row">
-          <h6>Periodo:</h6>
-          <p>{getPeriodo(reserva.periodo_ini_id, reserva.periodo_fin_id)}</p>
-        </div>
-        {index < filteredReservas.length - 1 && <hr />}
-      </div>
-    ))
-  )}
+            <>
+              <Form inline className="d-flex  mb-2">
+                <Form.Group controlId="searchTerm" className="mr-2 d-flex align-items-center">
+                  <Form.Label className="mr-2">Buscar por Ambiente</Form.Label>
+                  <Form.Control
+                    type="text"
+                    value={searchTerm}
+                    onKeyDown={handleKeyDown}
+                    onChange={handleInputChange}
+                    placeholder="Nombre del Ambiente"
+                    style={{ width: "100%" }}
+                  />
+                </Form.Group>
+              </Form>
 
-  {filteredReservas.length > 0 && (
-    <Pagination style={{ justifyContent: "center" }}>
-      {renderPaginationItems()}
-    </Pagination>
-  )}
-</>
-           
+              {filteredReservas.length === 0 ? (
+                <p>{mensaje}</p>
+              ) : (
+                filteredReservas.map((reserva, index) => (
+                  <div key={index} className="reserva">
+                    <div className="reserva-row">
+                      <h6>Docente:</h6>
+                      <p>{reserva.nombreDocente}</p>
+                    </div>
+                    <div className="reserva-row">
+                      <h6>Nombre del Ambiente:</h6>
+                      <p>{reserva.ambiente_nombre}</p>
+                    </div>
+                    <div className="reserva-row">
+                      <h6>Periodo:</h6>
+                      <p>{getPeriodo(reserva.periodo_ini_id, reserva.periodo_fin_id)}</p>
+                    </div>
+                    {index < filteredReservas.length - 1 && <hr />}
+                  </div>
+                ))
+              )}
+              {filteredReservas.length > 0 && (
+                <Pagination style={{ justifyContent: "center" }}>
+                  {renderPaginationItems()}
+                </Pagination>
+              )}
+            </>
           </Row>
-          
+
         </Modal>
       </div>
     </>
   );
-  
+
 }
 
 export default Calendario;

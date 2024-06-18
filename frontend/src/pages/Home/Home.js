@@ -33,7 +33,7 @@ const Home = ({ children, fetchNotifications }) => {
       </Container>
       <footer className="Home-footer text-end">
         <strong>
-          Copyright © 2014{" "}
+          Copyright © 2024{" "}
           <span className="Home-footer-grupo">IntelligSoft</span>.
         </strong>
         Todos los derechos reservados.

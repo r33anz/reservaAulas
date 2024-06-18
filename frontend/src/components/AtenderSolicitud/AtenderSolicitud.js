@@ -281,6 +281,7 @@ const AtenderSolicitud = ({ solicitudId, onClose }) => {
                     size="sm"
                     className="btn AtenderSolicitud-button-rechazar"
                     onClick={() => setShow(!show)}
+                    disabled={loadingAceptar}
                   >
                     Rechazar
                   </Button>

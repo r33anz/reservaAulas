@@ -29,6 +29,74 @@ class ValidadorService{
         $idSolicitudesAmbiente = DB::table('ambiente_solicitud')
                                 ->where('ambiente_id', $idAmbiente)
                                 ->pluck('solicitud_id');
+        //verificacion de si un usuario hizo las misma reserva
+        $solicitudesUsuario = Solicitud::where('estado',  'aprobado')
+                                        ->where('user_id', $idUsuario)
+                                        ->where('fechaReserva', $fecha)
+                                        ->whereHas('ambientes', function($query) use ($idAmbiente) {
+                                            $query->where('ambiente_id', $idAmbiente);
+                                        })
+                                        ->pluck('id');
+
+        foreach ($solicitudesUsuario as $id) {
+            $solicitud = Solicitud::find($id);
+            foreach ($idPeriodos as $periodo) {
+                if ($solicitud->periodo_ini_id <= $periodo && $solicitud->periodo_fin_id >= $periodo) {
+                    $ini = Periodo::find($solicitud->periodo_ini_id);
+                    $fin = Periodo::find($solicitud->periodo_fin_id);
+                    return $this->crearRespuesta("Usted ya ha realizado una reserva con estos periodos " 
+                                                . $ini->horainicial . "-" . $fin->horafinal, 'alerta');//amarilla
+                }
+            }
+        }
+        //
+        //verificacion de si un usuario hizo las misma solicitudes
+        $solicitudesUsuario = Solicitud::where('estado',  'en espera')
+                                        ->where('user_id', $idUsuario)
+                                        ->where('fechaReserva', $fecha)
+                                        ->whereHas('ambientes', function($query) use ($idAmbiente) {
+                                            $query->where('ambiente_id', $idAmbiente);
+                                        })
+                                        ->pluck('id');
+
+        foreach ($solicitudesUsuario as $id) {
+            $solicitud = Solicitud::find($id);
+            foreach ($idPeriodos as $periodo) {
+                if ($solicitud->periodo_ini_id <= $periodo && $solicitud->periodo_fin_id >= $periodo) {
+                    $ini = Periodo::find($solicitud->periodo_ini_id);
+                    $fin = Periodo::find($solicitud->periodo_fin_id);
+                    return $this->crearRespuesta("Usted ya ha realizado una solicitud con estos periodos " 
+                                                . $ini->horainicial . "-" . $fin->horafinal, 'alerta');//amarilla
+                }
+            }
+        }
+        //
+        //verificacion si se esta solicitando  las mismas materias y/o grupos 
+        $solicitudExistente = Solicitud::where('estado', 'en espera')
+                                    ->where('user_id', $idUsuario)
+                                    ->where('materia', $materia)
+                                    ->where('grupo', $grupo)
+                                    ->where('razon',$razon)
+                                    ->exists();
+
+        if($solicitudExistente) {
+            return $this->crearRespuesta("Usted ya tiene una solicitud 
+                                        para la misma materia,grupo y razon.", 'alerta');//amarillo
+        }
+        //
+        //verificacion si se estan reservando las mismas materias y/o grupos 
+        $solicitudExistente = Solicitud::where('estado',  'aprobado')
+                    ->where('user_id', $idUsuario)
+                    ->where('materia', $materia)
+                    ->where('grupo', $grupo)
+                    ->where('razon',$razon)
+                    ->exists();
+
+            if($solicitudExistente) {
+            return $this->crearRespuesta("Usted ya tiene reserva para la misma 
+                        materia,grupo y razon.", 'advertencia');//rojo
+            }
+            //
         //Verificacion si hay reserva con choques de ambientes
         $solicitudesCoincidencia = Solicitud::where('estado', 'aprobado')
                                                 ->whereDate('fechaReserva', $fecha)
@@ -68,57 +136,11 @@ class ValidadorService{
             }
         }
         //
-        //verificacion si se esta solicitando  las mismas materias y/o grupos 
-        $solicitudExistente = Solicitud::where('estado', 'en espera')
-                                    ->where('user_id', $idUsuario)
-                                    ->where('materia', $materia)
-                                    ->where('grupo', $grupo)
-                                    ->where('razon',$razon)
-                                    ->exists();
-
-        if($solicitudExistente) {
-            return $this->crearRespuesta("Usted ya tiene una solicitud 
-                                        para la misma materia,grupo y razon.", 'alerta');//amarillo
-        }
-        //
-        //verificacion si se estan reservando las mismas materias y/o grupos 
-        $solicitudExistente = Solicitud::where('estado',  'aprobado')
-                                    ->where('user_id', $idUsuario)
-                                    ->where('materia', $materia)
-                                    ->where('grupo', $grupo)
-                                    ->where('razon',$razon)
-                                    ->exists();
-
-        if($solicitudExistente) {
-            return $this->crearRespuesta("Usted ya tiene reserva para la misma 
-                                        materia,grupo y razon.", 'advertencia');//rojo
-        }
-        //
-        //verificacion de si un usuario hizo las misma solicitudes
-        $solicitudesUsuario = Solicitud::where('estado',  'aprobado')
-                                        ->where('user_id', $idUsuario)
-                                        ->where('fechaReserva', $fecha)
-                                        ->whereHas('ambientes', function($query) use ($idAmbiente) {
-                                            $query->where('ambiente_id', $idAmbiente);
-                                        })
-                                        ->pluck('id');
-
-        foreach ($solicitudesUsuario as $id) {
-            $solicitud = Solicitud::find($id);
-            foreach ($idPeriodos as $periodo) {
-                if ($solicitud->periodo_ini_id <= $periodo && $solicitud->periodo_fin_id >= $periodo) {
-                    $ini = Periodo::find($solicitud->periodo_ini_id);
-                    $fin = Periodo::find($solicitud->periodo_fin_id);
-                    return $this->crearRespuesta("Usted ya ha realizado una solicitud con estos periodos " 
-                                                . $ini->horainicial . "-" . $fin->horafinal, 'alerta');//amarilla
-                }
-            }
-        }
         
         return $this->crearRespuesta("Ambiente disponible",'exito'); //verde
     }
 
-    public function antenderAmbiente($idAmbiente, $fecha, $idPeriodosT){ //verifica si un ambiente/fecha/periodo para atender solicitud
+    public function antenderAmbiente($idAmbiente, $fecha, $idPeriodosT,$idUsuario){ //verifica si un ambiente/fecha/periodo para atender solicitud
         // sigue siendo valido, ya que alguine podira haberle ganado
         if(count($idPeriodosT) == 1){
             $idPeriodos[] = $idPeriodosT[0];
@@ -153,7 +175,13 @@ class ValidadorService{
                     if ($solicitud->periodo_ini_id <= $periodo && $solicitud->periodo_fin_id >= $periodo) {
                         $ini = Periodo::find($solicitud->periodo_ini_id);
                         $fin = Periodo::find($solicitud->periodo_fin_id);
-                        return $this->crearRespuesta("Ya hay una reserva con estos periodos " .  $ini->horainicial . "-" .  $fin->horafinal,'advertencia'); //rojo                    
+                        echo $solicitud->user_id ;
+                        echo $idUsuario;
+                        if ($solicitud->user_id === $idUsuario) {
+                            return $this->crearRespuesta("Choque de reserva del mismo usuario para los periodos " . $ini->horainicial . "-" . $fin->horafinal, 'exito');
+                        } else {
+                            return $this->crearRespuesta("Ya hay una reserva con estos periodos " . $ini->horainicial . "-" . $fin->horafinal, 'advertencia');
+                        }               
                     }
                 }
             }   
