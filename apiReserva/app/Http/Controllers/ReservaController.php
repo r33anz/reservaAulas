@@ -49,6 +49,9 @@ class ReservaController extends Controller
             $ambiente = Ambiente::find($idAmbiente);
             $docente = User::find($solicitud->user_id);
 
+            $ini = Periodo::find($solicitud->periodo_ini_id);
+            $fin = Periodo::find($solicitud->periodo_fin_id);
+
             $datosSolicitud = [
                 'id'=> $solicitud->id,
                 'nombreDocente' => $docente->name,
@@ -56,8 +59,8 @@ class ReservaController extends Controller
                 'grupo' => $solicitud->grupo,
                 'cantidad' => $solicitud->cantidad,
                 'razon' => $solicitud->razon,
-                'periodo_ini_id' => $solicitud->periodo_ini_id,
-                'periodo_fin_id' => $solicitud->periodo_fin_id,
+                'periodo_ini_id' => $ini->horainicial,
+                'periodo_fin_id' => $fin->horafinal,
                 'fechaReserva' => $solicitud->fechaReserva,
                 'ambiente_nombre' => $ambiente->nombre,
                 'ambienteCantidadMax' => $ambiente->capacidad,
