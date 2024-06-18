@@ -26,9 +26,10 @@ export const validarSolicitudAtentida = (solicitudId) => {
     });
 };
 
-export const vertificarDisponibilidad = (fechaReserva, id, periodos) => {
+export const vertificarDisponibilidad = (idSolicitud,fechaReserva, id, periodos) => {
   return api
     .post(`${apiUrl}/consultarFechaPeriodAmbiente`, {
+      idSolicitud,
       fechaReserva,
       ambiente: id,
       periodos,

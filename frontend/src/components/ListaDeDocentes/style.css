@@ -40,7 +40,8 @@
   border-color: #003F70;
 }
 
-.ListaDeDocentes-header-button-cargar {
+.ListaDeDocentes-header-button-cargar,
+.ListaDeDocentes-header-button-close {
   color: #ffffff;
   background-color: #D51809;
   border-radius: 0%;
@@ -53,10 +54,34 @@
 .ListaDeDocentes-header-button-cargar:active,
 .ListaDeDocentes-header-button-cargar:focus,
 .ListaDeDocentes-header-button-cargar:disabled,
-.ListaDeDocentes-header-button-cargar.active {
+.ListaDeDocentes-header-button-cargar.active,
+.ListaDeDocentes-header-button-close:hover,
+.ListaDeDocentes-header-button-close:active,
+.ListaDeDocentes-header-button-close:focus,
+.ListaDeDocentes-header-button-close:disabled,
+.ListaDeDocentes-header-button-close.active {
   color: #ffffff;
   background: #D51809;
   border-color: #D51809;
   --bs-btn-active-bg: #D51809;
   --bs-btn-active-border-color: #D51809;
+}
+
+.ListaDeDocentes-button-cancel {
+  color: #003F70;
+  background-color: #ffffff;
+  border-color: #003F70;
+}
+
+.ListaDeDocentes-button-cancel:hover,
+.ListaDeDocentes-button-cancel:active,
+.ListaDeDocentes-button-cancel:focus,
+.ListaDeDocentes-button-cancel.active {
+  /* let's darken #004E64 a bit for hover effect */
+  color: #003F70;
+  background: #ffffff;
+  border-color: #003F70;
+  --bs-btn-active-color: #003F70;
+  --bs-btn-active-bg: #ffffff;
+  --bs-btn-active-border-color: #003F70;
 }
