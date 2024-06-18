@@ -1,5 +1,5 @@
 import React, { useCallback, useState, useRef, useEffect } from "react";
-import { Button, Modal } from "react-bootstrap";
+import { Button, Modal, Spinner } from "react-bootstrap";
 import {
   buscarAmbientePorNombre,
   modificarPerio,
@@ -20,7 +20,7 @@ import {
   Row,
   Stack,
 } from "react-bootstrap";
-import { XSquareFill, QuestionCircleFill } from "react-bootstrap-icons";
+import { QuestionCircleFill } from "react-bootstrap-icons";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 
@@ -39,6 +39,7 @@ const Modificarperdiodo = ({ onClose }) => {
   const [selectAll, setSelectAll] = useState(false);
   const [showMensajeDeConfirmacion, setShowMensajeDeConfirmacion] =
     useState(false);
+  const [loading, setLoading] = useState(false);
 
   const buscarAmbiente = async (event) => {
     setConsultarPresionado(false);
@@ -164,7 +165,6 @@ const Modificarperdiodo = ({ onClose }) => {
         const periodoSolicitado = periodosSolicitados.find((reservado) =>
           reservado.periodos.includes(checkboxIdAsNumber)
         );
-
         if (periodoReservado) {
           const idSolicitud = periodoReservado.idSolicitud;
           inhabilitarReser(idSolicitud);
@@ -196,14 +196,18 @@ const Modificarperdiodo = ({ onClose }) => {
     realizarCambios();
   };
 
-  const inhabilitarReser = (id) => {
+  const inhabilitarReser = async (id) => {
     const ids = [id];
-    inhabilitarReserva(ids);
+    setLoading(true);
+    await inhabilitarReserva(ids);
+    setLoading(false);
   };
 
-  const otraHabilitar = (id) => {
+  const otraHabilitar = async (id) => {
     const ids = [id];
-    habilita(formik.values.ambiente.id, ids, formik.values.fecha);
+    setLoading(true);
+    await habilita(formik.values.ambiente.id, ids, formik.values.fecha);
+    setLoading(false);
   };
 
   const otraFuncion = (id) => {
@@ -347,6 +351,7 @@ const Modificarperdiodo = ({ onClose }) => {
 
   useEffect(() => {
     buscar(" ");
+    setLoading(false);
   }, []);
 
   const selectAllPeriods = () => {
@@ -514,7 +519,8 @@ const Modificarperdiodo = ({ onClose }) => {
                             (reservado) => reservado.periodos.includes(periodo)
                           );
                           const esSolicitado = periodosSolicitados.some(
-                            (solicitado) => solicitado.periodos.includes(periodo)
+                            (solicitado) =>
+                              solicitado.periodos.includes(periodo)
                           );
 
                           // Mostrar checkbox solo para el primer periodo reservado
@@ -556,22 +562,24 @@ const Modificarperdiodo = ({ onClose }) => {
                               )}
                               <label
                                 htmlFor={periodo.toString()}
-                                className={`periodo-label ${cambiarColorLabels(periodo)}`}
+                                className={`periodo-label ${cambiarColorLabels(
+                                  periodo
+                                )}`}
                               >
-                                {`${periodo === 1
-                                  ? "6:45-8:15"
-                                  : periodo === 2
+                                {`${
+                                  periodo === 1
+                                    ? "6:45-8:15"
+                                    : periodo === 2
                                     ? "8:15-9:45"
                                     : periodo === 3
-                                      ? "9:45-11:15"
-                                      : "11:15-12:45"
-                                  }`}
+                                    ? "9:45-11:15"
+                                    : "11:15-12:45"
+                                }`}
                                 <p>{cambiarTextoLabels(periodo)}</p>
                               </label>
                             </div>
                           );
                         })}
-
                       </div>
 
                       <div className="periodos">
@@ -581,7 +589,8 @@ const Modificarperdiodo = ({ onClose }) => {
                             (reservado) => reservado.periodos.includes(periodo)
                           );
                           const esSolicitado = periodosSolicitados.some(
-                            (solicitado) => solicitado.periodos.includes(periodo)
+                            (solicitado) =>
+                              solicitado.periodos.includes(periodo)
                           );
 
                           // Mostrar checkbox solo para el primer periodo reservado
@@ -625,20 +634,20 @@ const Modificarperdiodo = ({ onClose }) => {
                                 htmlFor={periodo.toString()}
                                 className={cambiarColorLabels(periodo)}
                               >
-                                {`${periodo === 5
-                                  ? "12:45-14:15"
-                                  : periodo === 6
+                                {`${
+                                  periodo === 5
+                                    ? "12:45-14:15"
+                                    : periodo === 6
                                     ? "14:15-15:45"
                                     : periodo === 7
-                                      ? "15:45-17:15"
-                                      : "17:15-18:45"
-                                  }`}
+                                    ? "15:45-17:15"
+                                    : "17:15-18:45"
+                                }`}
                                 <p>{cambiarTextoLabels(periodo)}</p>
                               </label>
                             </div>
                           );
                         })}
-
                       </div>
                       <div className="periodos">
                         <h6>Noche</h6>
@@ -647,7 +656,8 @@ const Modificarperdiodo = ({ onClose }) => {
                             (reservado) => reservado.periodos.includes(periodo)
                           );
                           const esSolicitado = periodosSolicitados.some(
-                            (solicitado) => solicitado.periodos.includes(periodo)
+                            (solicitado) =>
+                              solicitado.periodos.includes(periodo)
                           );
 
                           // Mostrar checkbox solo para el primer periodo reservado
@@ -691,8 +701,9 @@ const Modificarperdiodo = ({ onClose }) => {
                                 htmlFor={periodo.toString()}
                                 className={cambiarColorLabels(periodo)}
                               >
-                                {`${periodo === 9 ? "18:45-20:15" : "20:15-21:45"
-                                  }`}
+                                {`${
+                                  periodo === 9 ? "18:45-20:15" : "20:15-21:45"
+                                }`}
                                 <p>{cambiarTextoLabels(periodo)}</p>
                               </label>
                             </div>
@@ -718,8 +729,16 @@ const Modificarperdiodo = ({ onClose }) => {
                         <Button
                           className="ModificarPorPeriodo-button-periodo"
                           onClick={estado}
+                          disabled={loading}
                         >
-                          Modificar
+                          {loading ? (
+                            <>
+                              <Spinner animation="grow" size="sm" />
+                              Modificando...
+                            </>
+                          ) : (
+                            "Modificar"
+                          )}
                         </Button>
                       </Stack>
                     </Row>
