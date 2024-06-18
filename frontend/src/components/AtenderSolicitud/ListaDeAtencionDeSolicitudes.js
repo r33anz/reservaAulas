@@ -168,7 +168,7 @@ const ListaDeAtencionDeSolicitudes = () => {
             >
               <div
                 onClick={reloadSolicitudes}
-                className="RegistrarAmbiente-header-button-close d-flex 
+                className="AtenderSolicitud-header-button-close d-flex 
                                                justify-content-center align-items-center"
               >
                 <ArrowClockwise size={24} />

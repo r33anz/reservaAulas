@@ -3,9 +3,21 @@ import "react-big-calendar/lib/css/react-big-calendar.css";
 import dayjs from "dayjs";
 import "dayjs/locale/es";
 import "./style.css";
-import { recuperarFechasSolicitud, recuperarInformacionSolicitud } from "../../services/Fechas.service";
-import { useState, useEffect, useRef } from "react";
-import { Col, Modal, Row, Form, Pagination, Dropdown, Stack, Button } from "react-bootstrap";
+import {
+  recuperarFechasSolicitud,
+  recuperarInformacionSolicitud,
+} from "../../services/Fechas.service";
+import { useState, useEffect, useRef,useCallback } from "react";
+import {
+  Col,
+  Modal,
+  Row,
+  Form,
+  Pagination,
+  Dropdown,
+  Stack,
+  Button,
+} from "react-bootstrap";
 import { XSquareFill } from "react-bootstrap-icons";
 import { useFormik } from "formik";
 import * as Yup from "yup";
@@ -13,10 +25,12 @@ import {
   estadoinhabilitado,
   habilita,
   modificarPerio,
+  getPeriodosReservados,
+  getPeriodosSolicitados,
 } from "../../services/ModificarPeriodo.service";
 import {
   getAmbientes,
-  getPeriodosReservados,
+  
 } from "../../services/Ambiente.service";
 dayjs.locale("es");
 
@@ -31,13 +45,15 @@ function Calendario() {
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredReservas, setFilteredReservas] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-const reservasPerPage = 4; // Número de reservas por página
-const indexOfLastReserva = currentPage * reservasPerPage;
-const indexOfFirstReserva = indexOfLastReserva - reservasPerPage;
-const currentReservas = filteredReservas.slice(indexOfFirstReserva, indexOfLastReserva);
-const paginate = (pageNumber) => setCurrentPage(pageNumber);
-const totalPages = Math.ceil(filteredReservas.length / reservasPerPage);
-
+  const reservasPerPage = 4; // Número de reservas por página
+  const indexOfLastReserva = currentPage * reservasPerPage;
+  const indexOfFirstReserva = indexOfLastReserva - reservasPerPage;
+  const currentReservas = filteredReservas.slice(
+    indexOfFirstReserva,
+    indexOfLastReserva
+  );
+  const paginate = (pageNumber) => setCurrentPage(pageNumber);
+  const totalPages = Math.ceil(filteredReservas.length / reservasPerPage);
 
   const periodos = [
     { id: 1, hora: "6:45" },
@@ -51,7 +67,7 @@ const totalPages = Math.ceil(filteredReservas.length / reservasPerPage);
     { id: 9, hora: "18:45" },
     { id: 10, hora: "20:15" },
   ];
-  
+
   const periodosF = [
     { id: 1, hora: "8:15" },
     { id: 2, hora: "9:45" },
@@ -72,7 +88,8 @@ const totalPages = Math.ceil(filteredReservas.length / reservasPerPage);
   const [ambiente, setAmbiente] = useState({});
   const [show1, setShow1] = useState(false);
   const [estado, setEstado] = useState("");
-  const [showMensajeDeConfirmacion, setShowMensajeDeConfirmacion] = useState(false);
+  const [showMensajeDeConfirmacion, setShowMensajeDeConfirmacion] =
+    useState(false);
   const [selected, setSelected] = useState(null);
   const [periodosReservados, setPeriodosReservados] = useState([]);
   const refDropdownMenu = useRef(null);
@@ -91,15 +108,15 @@ const totalPages = Math.ceil(filteredReservas.length / reservasPerPage);
     { id: 10, hora: "20:15 - 21:45" },
   ];
 
-
-
-
   const getPeriodo = (periodoInicioId, periodoFinId) => {
-    const periodoInicio = periodos.find((periodo) => periodo.id === periodoInicioId);
+    const periodoInicio = periodos.find(
+      (periodo) => periodo.id === periodoInicioId
+    );
     const periodoFin = periodosF.find((periodo) => periodo.id === periodoFinId);
     return (
       <>
-        {periodoInicio ? periodoInicio.hora : "N/A"}-{periodoFin ? periodoFin.hora : "N/A"}
+        {periodoInicio ? periodoInicio.hora : "N/A"}-
+        {periodoFin ? periodoFin.hora : "N/A"}
       </>
     );
   };
@@ -111,19 +128,18 @@ const totalPages = Math.ceil(filteredReservas.length / reservasPerPage);
   const filtrarReservas = () => {
     let filtered = reservas;
     if (searchTerm) {
-      filtered = filtered.filter(reserva =>
+      filtered = filtered.filter((reserva) =>
         reserva.ambiente_nombre.toLowerCase().includes(searchTerm.toLowerCase())
       );
     }
     setFilteredReservas(filtered);
   };
 
-
   const onSelectSlot = (slotInfo) => {
     console.log("Slot selected: ", slotInfo);
-    setSelectedDate(dayjs(slotInfo.start).format("YYYY-MM-DD"));  // Set the selected date
+    setSelectedDate(dayjs(slotInfo.start).format("YYYY-MM-DD")); // Set the selected date
     setIsSlotSelected(true);
-    setReservas([]);  // Clear reservations when a slot is selected
+    setReservas([]); // Clear reservations when a slot is selected
     setFilteredReservas([]);
     setShow(true);
   };
@@ -137,75 +153,9 @@ const totalPages = Math.ceil(filteredReservas.length / reservasPerPage);
     setAmbiente({});
     formik.resetForm();
   };
-  
-  const renderPaginationItems = () => {
-    const items = [];
 
-    items.push(
-      <Pagination.First
-        key="first"
-        onClick={() => setCurrentPage(1)}
-        disabled={currentPage === 1}
-        className="color-blue"
-      />
-    );
-    items.push(
-      <Pagination.Prev
-        key="prev"
-        onClick={() => setCurrentPage(currentPage - 1)}
-        disabled={currentPage === 1}
-        className="color-blue"
-      />
-    );
-
-    if (currentPage > 3) {
-      items.push(
-        <Pagination.Ellipsis key="ellipsis-left" className="color-blue" />
-      );
-    }
-
-    for (
-      let i = Math.max(1, currentPage - 2);
-      i <= Math.min(currentPage + 2, totalPages);
-      i++
-    ) {
-      items.push(
-        <Pagination.Item
-          key={i}
-          active={i === currentPage}
-          onClick={() => setCurrentPage(i)}
-          className="color-blue"
-        >
-          {i}
-        </Pagination.Item>
-      );
-    }
-
-    if (currentPage < totalPages - 2) {
-      items.push(<Pagination.Ellipsis key="ellipsis-right" />);
-    }
-
-    items.push(
-      <Pagination.Next
-        key="next"
-        onClick={() => setCurrentPage(currentPage + 1)}
-        disabled={currentPage === totalPages}
-        className="color-blue"
-      />
-    );
-
-    items.push(
-      <Pagination.Last
-        key="last"
-        onClick={() => setCurrentPage(totalPages)}
-        disabled={currentPage === totalPages}
-        className="color-blue"
-      />
-    );
-
-    return items;
-  };
-
+  const [periodosSolicitados, setPeriodosSolicitados] = useState([]);
+  const [periodosModificados, setPeriodosModificados] = useState([]);
 
   const formik = useFormik({
     initialValues: {
@@ -273,10 +223,17 @@ const totalPages = Math.ceil(filteredReservas.length / reservasPerPage);
   const getAmbientPorFecha = async (ambiente, fecha) => {
     const data = await modificarPerio(ambiente.id, fecha);
     const response = await getPeriodosReservados(ambiente.id, fecha);
+    const response2 = await getPeriodosSolicitados(ambiente.id, fecha);
+
     if (response) {
       setPeriodosReservados(response.periodosReservados);
-      console.log(periodosReservados);
+      console.log(response);
     }
+    if (response2) {
+      setPeriodosSolicitados(response2.periodosReservados);
+      console.log(response2);
+    }
+
     if (data != null) {
       setAmbiente({
         id: ambiente.id,
@@ -284,6 +241,9 @@ const totalPages = Math.ceil(filteredReservas.length / reservasPerPage);
         fecha,
         periodos: data.periodos,
       });
+      setPeriodosModificados(data.periodos);
+      cambiarColorLabels();
+      //setConsultarPresionado(true);
     }
   };
 
@@ -299,7 +259,6 @@ const totalPages = Math.ceil(filteredReservas.length / reservasPerPage);
 
   const handleKeyUp = ({ code }) => {
     if (code === "Enter" && ambientesEncontradas.length > 0) {
-      
       let ambiente = ambientesEncontradas[0];
       if (selected !== null) {
         ambiente = ambientesEncontradas.find(
@@ -318,13 +277,29 @@ const totalPages = Math.ceil(filteredReservas.length / reservasPerPage);
     setAmbientes(respuesta);
   };
 
-  const isReservado = (periodoId) => {
-    return (
-      periodosReservados.filter((periodoReservado) => {
-        return periodoReservado.periodos.includes(periodoId);
-      }).length > 0
-    );
-  };
+  const cambiarColorLabels = useCallback(
+    (periodoId) => {
+      // Verificar si el periodo está en periodosReservados
+      const esReservado = periodosReservados.some((periodoReservado) =>
+        periodoReservado.periodos.includes(periodoId)
+      );
+      const esSolictado = periodosSolicitados.some((periodoSolicitado) =>
+        periodoSolicitado.periodos.includes(periodoId)
+      );
+
+      if (esReservado) {
+        return "periodos-reservado";
+      } else if (esSolictado) {
+        return "periodos-solicitado";
+      }
+
+      const periodoModificado = periodosModificados.includes(periodoId);
+      return periodoModificado
+        ? "periodos-inhabilitados"
+        : "periodos-habilitados";
+    },
+    [periodosModificados, periodosReservados]
+  );
 
   useEffect(() => {
     fetchAmbientes();
@@ -332,12 +307,12 @@ const totalPages = Math.ceil(filteredReservas.length / reservasPerPage);
   const handleInputChange = (e) => {
     const originalValue = e.target.value;
     const trimmedValue = originalValue.trim(); // Eliminar espacios al inicio y al final
-  
+
     if (trimmedValue === "") {
       setSearchTerm("");
     } else if (!trimmedValue.startsWith(" ")) {
       const value = originalValue.toUpperCase(); // Convertir a mayúsculas si pasa la validación del espacio inicial
-  
+
       if (/^[a-zA-Z0-9\s]*$/.test(value)) {
         // Si pasa la validación de caracteres especiales, establecer el valor en searchTerm
         setSearchTerm(value);
@@ -362,20 +337,45 @@ const totalPages = Math.ceil(filteredReservas.length / reservasPerPage);
     };
   }, [refDropdownMenu, refDropdown, refDropdownToggle]);
 
-  const handleKeyDown = (event) => {
-    if (event.key === 'Enter') {
-      event.preventDefault();
-      // Aquí va tu lógica para manejar la búsqueda
-    }
-  };
+  const cambiarTextoLabels = useCallback(
+    (periodoId) => {
+      // Verificar si el periodo está en periodosReservados
+      const esReservado = periodosReservados.some((periodoReservado) =>
+        periodoReservado.periodos.includes(periodoId)
+      );
 
-  
+      // Verificar si el periodo está modificado
+      const periodoModificado = periodosModificados.includes(periodoId);
+
+      // Verificar si el periodo está inhabilitado
+      const esSolicitado = periodosSolicitados.some((periodoReservado) =>
+        periodoReservado.periodos.includes(periodoId)
+      );
+
+      // Determinar el texto del estado
+      let textoEstado = "";
+      if (esReservado) {
+        textoEstado = "Reservado";
+      } else if (periodoModificado) {
+        textoEstado = "Inhabilitado";
+      } else if (esSolicitado) {
+        textoEstado = "Solicitado";
+      } else {
+        textoEstado = "Habilitado";
+      }
+
+      return textoEstado;
+    },
+    [periodosModificados, periodosReservados, periodosSolicitados]
+  );
+
   return (
     <>
       <div
         style={{
           height: "505px",
           width: "1040px",
+          backgroundColor:"white",
         }}
       >
         <Calendar
@@ -385,7 +385,6 @@ const totalPages = Math.ceil(filteredReservas.length / reservasPerPage);
           defaultView="month"
           culture="es"
           selectable={true}
-          
           onSelectSlot={onSelectSlot}
           messages={{
             next: "Siguiente",
@@ -428,9 +427,9 @@ const totalPages = Math.ceil(filteredReservas.length / reservasPerPage);
             </Col>
           </Row>
           <Row className="RegistrarAmbiente-body1 justify-content-center">
-          {isSlotSelected ? (
-              <Form onSubmit={formik.handleSubmit}>
-                <Form.Group as={Row} className="mb-3" controlId="ambiente">
+            
+              <Form  onSubmit={formik.handleSubmit}style={{backgroundColor:"#D9D9D9"}}>
+                <Form.Group as={Row} className="mb-3" controlId="ambiente" style={{marginTop:"0.5rem"}} >
                   <Form.Label column sm="2">
                     Nombre
                   </Form.Label>
@@ -524,164 +523,109 @@ const totalPages = Math.ceil(filteredReservas.length / reservasPerPage);
                   Object.keys(ambiente).length > 0 &&
                   ambiente.periodos &&
                   ambiente.periodos && (
-                    <Row>
-                      <Col sm={4}>
+                    <div className="periodos-container1">
+                    <div className="periodos-grid">
+                      <div className="periodos">
                         <h6>Mañana</h6>
-                        {ambiente.periodos &&
-                          periodos1.map((item) => (
-                            <>
-                              {item.id >= 1 && item.id <= 4 && (
-                                <div
-                                  key={item.id}
-                                  style={{
-                                    border: "1px solid black",
-                                    width: "100px",
-                                    padding: "2px",
-                                    textAlign: "center",
-                                    color: `${
-                                      ambiente.periodos.includes(item.id)
-                                        ? "white"
-                                        : "black"
-                                    }`,
-                                    background: `${
-                                      isReservado(item.id)
-                                        ? "red"
-                                        : ambiente.periodos.includes(item.id)
-                                        ? "gray"
-                                        : "white"
-                                    }`,
-                                    marginBottom: "5px",
-                                  }}
-                                >
-                                  {item.hora}
-                                </div>
-                              )}
-                            </>
-                          ))}
-                      </Col>
-                      <Col sm={4}>
+                        {[1, 2, 3, 4].map((periodo, index, array) => {
+                          const esReservado = periodosReservados.some(
+                            (reservado) => reservado.periodos.includes(periodo)
+                          );
+                          // Mostrar checkbox solo para el primer periodo reservado
+                          
+                          return (
+                            <div key={periodo}>
+                              <label
+                                htmlFor={periodo.toString()}
+                                className={`periodo-label1 ${cambiarColorLabels(
+                                  periodo
+                                )}`}
+                              >
+                                {`${
+                                  periodo === 1
+                                    ? "6:45-8:15"
+                                    : periodo === 2
+                                    ? "8:15-9:45"
+                                    : periodo === 3
+                                    ? "9:45-11:15"
+                                    : "11:15-12:45"
+                                }`}
+                                <p>{cambiarTextoLabels(periodo)}</p>
+                              </label>
+                            </div>
+                          );
+                        })}
+                      </div>
+
+                      <div className="periodos">
                         <h6>Tarde</h6>
-                        {ambiente.periodos &&
-                          periodos1.map((item) => (
-                            <>
-                              {item.id >= 5 && item.id <= 8 && (
-                                <div
-                                  key={item.id}
-                                  style={{
-                                    border: "1px solid black",
-                                    width: "105px",
-                                    padding: "2px",
-                                    textAlign: "center",
-                                    color: `${
-                                      ambiente.periodos.includes(item.id)
-                                        ? "white"
-                                        : "black"
-                                    }`,
-                                    background: `${
-                                      isReservado(item.id)
-                                        ? "red"
-                                        : ambiente.periodos.includes(item.id)
-                                        ? "gray"
-                                        : "white"
-                                    }`,
-                                    marginBottom: "5px",
-                                  }}
-                                >
-                                  {item.hora}
-                                </div>
-                              )}
-                            </>
-                          ))}
-                      </Col>
-                      <Col sm={4}>
+                        {[5, 6, 7, 8].map((periodo, index, array) => {
+                          const esReservado = periodosReservados.some(
+                            (reservado) => reservado.periodos.includes(periodo)
+                          );
+
+                          // Mostrar checkbox solo para el primer periodo reservado
+                          
+                          return (
+                            <div key={periodo}>
+                              
+                              <label
+                                htmlFor={periodo.toString()}
+                                className={cambiarColorLabels(periodo)}
+                              >
+                                {`${
+                                  periodo === 5
+                                    ? "12:45-14:15"
+                                    : periodo === 6
+                                    ? "14:15-15:45"
+                                    : periodo === 7
+                                    ? "15:45-17:15"
+                                    : "17:15-18:45"
+                                }`}
+                                <p>{cambiarTextoLabels(periodo)}</p>
+                              </label>
+                            </div>
+                          );
+                        })}
+                      </div>
+                      <div className="periodos">
                         <h6>Noche</h6>
-                        {ambiente.periodos &&
-                          periodos1.map((item) => (
-                            <>
-                              {item.id >= 9 && item.id <= 10 && (
-                                <div
-                                  key={item.id}
-                                  style={{
-                                    border: "1px solid black",
-                                    width: "105px",
-                                    padding: "2px",
-                                    textAlign: "center",
-                                    color: `${
-                                      ambiente.periodos.includes(item.id)
-                                        ? "white"
-                                        : "black"
-                                    }`,
-                                    background: `${
-                                      isReservado(item.id)
-                                        ? "red"
-                                        : ambiente.periodos.includes(item.id)
-                                        ? "gray"
-                                        : "white"
-                                    }`,
-                                    marginBottom: "5px",
-                                  }}
-                                >
-                                  {item.hora}
-                                </div>
-                              )}
-                            </>
-                          ))}
-                      </Col>
-                    </Row>
+                        {[9, 10].map((periodo, index, array) => {
+                          const esReservado = periodosReservados.some(
+                            (reservado) => reservado.periodos.includes(periodo)
+                          );
+
+                          // Mostrar checkbox solo para el primer periodo reservado
+                          
+                          return (
+                            <div key={periodo}>
+                              
+
+                              <label
+                                htmlFor={periodo.toString()}
+                                className={cambiarColorLabels(periodo)}
+                              >
+                                {`${
+                                  periodo === 9 ? "18:45-20:15" : "20:15-21:45"
+                                }`}
+                                <p>{cambiarTextoLabels(periodo)}</p>
+                              </label>
+                            </div>
+                          );
+                        })}
+                        
+                        
+                      </div>
+                    </div>
+                    </div>
                   )}
               </Form>
-            ) : (
-              <>
-  <Form inline className="d-flex  mb-2">
-    <Form.Group controlId="searchTerm" className="mr-2 d-flex align-items-center">
-      <Form.Label className="mr-2">Buscar por Ambiente</Form.Label>
-      <Form.Control
-        type="text"
-        value={searchTerm}
-        onKeyDown={handleKeyDown}
-        onChange={handleInputChange}
-        placeholder="Nombre del Ambiente"
-        style={{ width: "100%" }}
-      />
-    </Form.Group>
-  </Form>
-
-  {filteredReservas.length === 0 ? (
-    <p>{mensaje}</p>
-  ) : (
-    filteredReservas.map((reserva, index) => (
-      <div key={index} className="reserva">
-        <div className="reserva-row">
-          <h6>Docente:</h6>
-          <p>{reserva.nombreDocente}</p>
-        </div>
-        <div className="reserva-row">
-          <h6>Nombre del Ambiente:</h6>
-          <p>{reserva.ambiente_nombre}</p>
-        </div>
-        <div className="reserva-row">
-          <h6>Periodo:</h6>
-          <p>{getPeriodo(reserva.periodo_ini_id, reserva.periodo_fin_id)}</p>
-        </div>
-        {index < filteredReservas.length - 1 && <hr />}
-      </div>
-    ))
-  )}
-
-  {filteredReservas.length > 0 && (
-    <Pagination style={{ justifyContent: "center" }}>
-      {renderPaginationItems()}
-    </Pagination>
-  )}
-</>
-            )}
+           
           </Row>
-          
         </Modal>
       </div>
     </>
   );
-  
 }
 
 export default Calendario;

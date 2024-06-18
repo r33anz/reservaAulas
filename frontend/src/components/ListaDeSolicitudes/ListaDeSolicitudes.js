@@ -31,16 +31,16 @@ const ListaDeSolicitudes = ({ titulo, tipoDeUsuario }) => {
   const [estado, setEstado] = useState("");
   const { agregarAlert } = useContext(AlertsContext);
   const periodos = [
-    { id: 1, hora: "6:45 - 8:15", isHabilitado: true },
-    { id: 2, hora: "8:15 - 9:45", isHabilitado: true },
-    { id: 3, hora: "9:45 - 11:15", isHabilitado: true },
-    { id: 4, hora: "11:15 - 12:45", isHabilitado: true },
-    { id: 5, hora: "12:45 - 14:15", isHabilitado: true },
-    { id: 6, hora: "14:15 - 15:45", isHabilitado: true },
-    { id: 7, hora: "15:45 - 17:15", isHabilitado: false },
-    { id: 8, hora: "17:15 - 18:45", isHabilitado: false },
-    { id: 9, hora: "18:45 - 20:15", isHabilitado: false },
-    { id: 10, hora: "20:15 - 21:45", isHabilitado: false },
+    { id: 1, hora: "6:45 ", isHabilitado: true },
+    { id: 2, hora: "8:15 ", isHabilitado: true },
+    { id: 3, hora: "9:45 ", isHabilitado: true },
+    { id: 4, hora: "11:15 ", isHabilitado: true },
+    { id: 5, hora: "12:45 ", isHabilitado: true },
+    { id: 6, hora: "14:15 ", isHabilitado: true },
+    { id: 7, hora: "15:45 ", isHabilitado: false },
+    { id: 8, hora: "17:15 ", isHabilitado: false },
+    { id: 9, hora: "18:45 ", isHabilitado: false },
+    { id: 10, hora: "20:15 ", isHabilitado: false },
   ];
 
   const getPeriodo = (periodoInicioId, periodoFinId) => {
@@ -170,7 +170,7 @@ const ListaDeSolicitudes = ({ titulo, tipoDeUsuario }) => {
             >
               <div
                 onClick={reloadSolicitudes}
-                className="RegistrarAmbiente-header-button-close d-flex 
+                className="ListaDeSolicitudes-header-button-cargar d-flex 
                                                justify-content-center align-items-center"
               >
                 <ArrowClockwise size={24} />
@@ -270,6 +270,7 @@ const ListaDeSolicitudes = ({ titulo, tipoDeUsuario }) => {
                   <td>{item.estado}</td>
                   <td>
                     <CardHeading
+                      className="ListaDeSolicitudes-button-detalle"
                       size={30}
                       onClick={() => {
                         setSolicitud(item);
@@ -299,9 +300,9 @@ const ListaDeSolicitudes = ({ titulo, tipoDeUsuario }) => {
             className="d-flex justify-content-start align-items-center"
             style={{ height: "100%" }}
           >
-            <h4 style={{ fontWeight: "bold" }} className="">
+            <h5 style={{ fontWeight: "bold" }} className="">
               Detalle de la Solicitud de Reserva
-            </h4>
+            </h5>
           </Col>
           <Col
             xs="2"
@@ -310,16 +311,13 @@ const ListaDeSolicitudes = ({ titulo, tipoDeUsuario }) => {
           >
             <div
               onClick={() => setShow(false)}
-              className="RegistrarAmbiente-header-button-close d-flex justify-content-center align-items-center"
+              className="ListaDeSolicitudes-header-button-close d-flex justify-content-center align-items-center"
             >
               <XSquareFill size={24} />
             </div>
           </Col>
         </Row>
-        <Row
-          className="RegistrarAmbiente-body justify-content-center"
-          
-        >
+        <Row className="ListaDeSolicitudes-body justify-content-center">
           <div style={{ background: "white", padding: "1rem" }}>
             <h6>Nombre del Ambiente:</h6>
             <p>{solicitud.ambiente_nombre}</p>

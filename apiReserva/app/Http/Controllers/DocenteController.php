@@ -37,6 +37,7 @@ class DocenteController extends Controller
         });
 
         return [
+            'id' => $docente->id,
             'nombre' => $docente->name,
             'materias' => $materiasConGrupos
         ];
