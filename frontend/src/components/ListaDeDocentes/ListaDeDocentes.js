@@ -8,6 +8,7 @@ import {
   Collapse,
   Modal,
   Form,
+  Spinner,
 } from "react-bootstrap";
 import {
   ArrowClockwise,
@@ -29,6 +30,7 @@ const ListaDeSolicitudes = ({ tipoDeUsuario }) => {
   const [showModal, setShowModal] = useState(false);
   const [selectedDocente, setSelectedDocente] = useState(null);
   const [mensaje, setMensaje] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const reloadSolicitudes = async () => {
     await getDocentesData();
@@ -63,8 +65,10 @@ const ListaDeSolicitudes = ({ tipoDeUsuario }) => {
 
   const handleNotificacionGeneral = async () => {
     if (mensaje.trim()) {
+      setLoading(true);
       const response = await enviarNotificacionGeneral(mensaje);
       if (response) {
+        setLoading(false);
         agregarAlert({
           icon: <CheckCircleFill />,
           severidad: "success",
@@ -73,6 +77,7 @@ const ListaDeSolicitudes = ({ tipoDeUsuario }) => {
         setShowModal(false);
         setMensaje("");
       } else {
+        setLoading(false);
         agregarAlert({
           icon: <XSquareFill />,
           severidad: "error",
@@ -96,11 +101,13 @@ const ListaDeSolicitudes = ({ tipoDeUsuario }) => {
 
   const handleEnviarNotificacion = async () => {
     if (selectedDocente && mensaje.trim()) {
+      setLoading(true);
       const response = await enviarNotificacionIndividual(
         selectedDocente.id,
         mensaje
       );
       if (response) {
+        setLoading(false);
         agregarAlert({
           icon: <CheckCircleFill />,
           severidad: "success",
@@ -109,6 +116,7 @@ const ListaDeSolicitudes = ({ tipoDeUsuario }) => {
         setShowModal(false);
         setMensaje("");
       } else {
+        setLoading(false);
         agregarAlert({
           icon: <XSquareFill />,
           severidad: "error",
@@ -164,7 +172,7 @@ const ListaDeSolicitudes = ({ tipoDeUsuario }) => {
                     <td>
                       <Button
                         onClick={() => toggleExpand(index)}
-                        className="btn RegistrarAmbiente-button-register"
+                        className="btn ListaDeDocentes-register"
                         aria-controls={`expandable-row-${index}`}
                         aria-expanded={expandedIndex === index}
                       >
@@ -174,7 +182,7 @@ const ListaDeSolicitudes = ({ tipoDeUsuario }) => {
                       {tipoDeUsuario === "Admin" && (
                         <Button
                           variant="info"
-                          className="btn RegistrarAmbiente-button-cancel"
+                          className="btn ListaDeDocentes-button-cancel"
                           style={{ marginLeft: "5px" }}
                           onClick={() => handleNotificar(docente)}
                         >
@@ -223,7 +231,7 @@ const ListaDeSolicitudes = ({ tipoDeUsuario }) => {
         <Row className="justify-content-center mt-3">
           <Button
             style={{ width: "300px" }}
-            className="btn RegistrarAmbiente-button-register"
+            className="btn ListaDeDocentes-register"
             onClick={() => setShowModal(true)}
           >
             Notificación general
@@ -231,7 +239,7 @@ const ListaDeSolicitudes = ({ tipoDeUsuario }) => {
         </Row>
       )}
       <Modal show={showModal} onHide={handleCloseModal} centered>
-        <Row sm className="text-white RegistrarAmbiente-header">
+        <Row sm className="text-white ListaDeDocentes-header">
           <Col
             xs="10"
             className="d-flex justify-content-start align-items-center"
@@ -250,13 +258,13 @@ const ListaDeSolicitudes = ({ tipoDeUsuario }) => {
           >
             <div
               onClick={handleCloseModal}
-              className="RegistrarAmbiente-header-button-close d-flex justify-content-center align-items-center"
+              className="ListaDeDocentes-header-button-close d-flex justify-content-center align-items-center"
             >
               <XSquareFill size={24} />
             </div>
           </Col>
         </Row>
-        <Row className="RegistrarAmbiente-body justify-content-center">
+        <Row className="ListaDeDocentes-body justify-content-center">
           <Form>
             <Form.Group controlId="formNotificacion">
               <Form.Label>Mensaje</Form.Label>
@@ -269,19 +277,26 @@ const ListaDeSolicitudes = ({ tipoDeUsuario }) => {
             </Form.Group>
             <div className="d-flex justify-content-center mt-3">
               <Button
-                className="btn RegistrarAmbiente-button-register"
+                className="btn ListaDeDocentes-register"
                 onClick={
                   selectedDocente
                     ? handleEnviarNotificacion
                     : handleNotificacionGeneral
                 }
+                disabled={loading}
               >
-                Enviar
+                {loading ? (
+                  <>
+                    <Spinner animation="grow" size="sm" />
+                    Enviando...
+                  </>
+                ) : (
+                  "Enviar"
+                )}
               </Button>
               <div style={{ width: "10px" }}></div>{" "}
-              {/* Espacio entre botones */}
               <Button
-                className="btn RegistrarAmbiente-button-cancel"
+                className="btn ListaDeDocentes-button-cancel"
                 onClick={handleCloseModal}
               >
                 Cancelar
