@@ -175,8 +175,6 @@ class ValidadorService{
                     if ($solicitud->periodo_ini_id <= $periodo && $solicitud->periodo_fin_id >= $periodo) {
                         $ini = Periodo::find($solicitud->periodo_ini_id);
                         $fin = Periodo::find($solicitud->periodo_fin_id);
-                        echo $solicitud->user_id ;
-                        echo $idUsuario;
                         if ($solicitud->user_id === $idUsuario) {
                             return $this->crearRespuesta("Choque de reserva del mismo usuario para los periodos " . $ini->horainicial . "-" . $fin->horafinal, 'exito');
                         } else {
