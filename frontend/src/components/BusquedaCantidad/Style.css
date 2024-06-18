@@ -15,10 +15,11 @@
 }
 .consultar-button {
   margin-left: 86%;
-  margin-top: 15px;
+  margin-top: 10px;
   color: #ffffff;
   background-color: #003F70;
   border-color: #003F70;
+  margin-bottom: 15px;
 }
 .consultar-button:hover,
 .consultar-button:active,
