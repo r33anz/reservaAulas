@@ -1,0 +1,21 @@
+.ListaDeNotificaciones-header-button-cargar {
+    color: #ffffff;
+    background-color: #D51809;
+    border-radius: 0%;
+    border-color: #D51809;
+    width: 58px;
+    height: 100%;
+    cursor: pointer;
+}
+
+.ListaDeNotificaciones-header-button-cargar:hover,
+.ListaDeNotificaciones-header-button-cargar:active,
+.ListaDeNotificaciones-header-button-cargar:focus,
+.ListaDeNotificaciones-header-button-cargar:disabled,
+.ListaDeNotificaciones-header-button-cargar.active {
+    color: #ffffff;
+    background: #D51809;
+    border-color: #D51809;
+    --bs-btn-active-bg: #D51809;
+    --bs-btn-active-border-color: #D51809;
+}

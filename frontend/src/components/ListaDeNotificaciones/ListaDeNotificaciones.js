@@ -1,8 +1,16 @@
 import { useState } from "react";
-import { Col, Collapse, Container, Row, Table } from "react-bootstrap";
+import {
+  Col,
+  Collapse,
+  Container,
+  OverlayTrigger,
+  Row,
+  Table,
+  Tooltip,
+} from "react-bootstrap";
 import "./style.css";
 import { readNotification } from "../../services/Notification.service";
-import { Envelope, EnvelopeOpen } from "react-bootstrap-icons";
+import { ArrowClockwise, Envelope, EnvelopeOpen } from "react-bootstrap-icons";
 
 const ListaDeNotificaciones = ({ notifications, id, fetchNotifications }) => {
   const [expandedIndex, setExpandedIndex] = useState(-1);
@@ -36,6 +44,24 @@ const ListaDeNotificaciones = ({ notifications, id, fetchNotifications }) => {
             className="d-flex justify-content-start align-items-center"
           >
             <h5 style={{ fontWeight: "bold" }}>Lista de notificaciones</h5>
+          </Col>
+          <Col
+            xs="2"
+            className="justify-content-end align-items-end"
+            style={{ padding: 0, display: "flex" }}
+          >
+            <OverlayTrigger
+              overlay={<Tooltip id="hi">Actualizar lista</Tooltip>}
+              placement="left"
+            >
+              <div
+                onClick={() => fetchNotifications(id)}
+                className="ListaDeNotificaciones-header-button-cargar d-flex 
+                                               justify-content-center align-items-center"
+              >
+                <ArrowClockwise size={24} />
+              </div>
+            </OverlayTrigger>
           </Col>
         </Row>
         <Row className="ListaDeSolicitudes-body justify-content-center">
