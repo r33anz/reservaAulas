@@ -45,7 +45,7 @@ const SolicitarReserva = ({ onClose }) => {
   const [docentes, setDocente] = useState([]);
   const [grupos, setGrupos] = useState([]);
   const { agregarAlert } = useContext(AlertsContext);
-  const [nombreAmbiente, setNombreAmbiente] = useState(""); // Estado para almacenar el nombre del ambiente
+  const [loadingAceptar, setLoadingAceptar] = useState(false);
   const [ambienteOptions, setAmbienteOptions] = useState([]); // Estado para almacenar las opciones de ambiente
   const [loading, setLoading] = useState(false);
   const [periodos, setPeriodos] = useState([
@@ -207,6 +207,7 @@ const SolicitarReserva = ({ onClose }) => {
         .required("Obligatorio"),
     }),
     onSubmit: (values) => {
+      setLoadingAceptar(true);
       const id = window.sessionStorage.getItem("docente_id");
       const periodoInicioID = parseInt(values.periodoInicio, 10);
       const periodoFinID = parseInt(values.periodoFin, 10);
