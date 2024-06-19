@@ -1,8 +1,6 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import echo from "../../Echo";
-import { getNotifications } from "../../services/Notification.service";
 const NotificacionAdmin = ({ adminId, fetchNotifications }) => {
-  const [notifications, setNotifications] = useState([]);
 
   useEffect(() => {
     if (adminId) {

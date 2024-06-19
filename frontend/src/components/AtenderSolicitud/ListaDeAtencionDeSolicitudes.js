@@ -40,7 +40,7 @@ const ListaDeAtencionDeSolicitudes = () => {
   };
 
   const getSolicitudes = useCallback(async () => {
-    const data = await recuperarSolicitudesDeReserva(currentPage, "en espera");
+    const data = await recuperarSolicitudesDeReserva(currentPage, "prioridad");
     console.log(data);
     setSolicitudes(data.contenido);
     setTotalPages(data.numeroPaginasTotal);
