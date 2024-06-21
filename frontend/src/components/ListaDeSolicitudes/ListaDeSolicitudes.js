@@ -67,8 +67,6 @@ const ListaDeSolicitudes = ({ titulo, tipoDeUsuario }) => {
 
   const getSolicitudes = useCallback(async () => {
     const data = await recuperarSolicitudesDeReserva(currentPage, estado);
-    console.log(estado);
-    console.log(data);
     setSolicitudes(data.contenido);
     setTotalPages(data.numeroPaginasTotal);
   }, [currentPage, estado]);
@@ -231,57 +229,63 @@ const ListaDeSolicitudes = ({ titulo, tipoDeUsuario }) => {
               </div>
             ))}
           </Form>
-          <Table striped bordered hover responsive>
-            <thead>
-              <tr>
-                <th>Ambiente</th>
-                {tipoDeUsuario === "Admin" && <th>Docente</th>}
-                <th>Materia</th>
-                <th>Periodo</th>
-                <th>Fecha de Reserva</th>
-                {(estado === "" || estado === "canceladas") && (
-                  <th>Fecha de Actualizacion</th>
-                )}
-                {estado === "en espera" && <th>Fecha de Enviada</th>}
-                {(estado === "rechazadas" || estado === "aprobadas") && (
-                  <th>Fecha de Atencion</th>
-                )}
-                <th>Estado</th>
-                <th>Detalle</th>
-              </tr>
-            </thead>
-            <tbody>
-              {solicitudes.map((item) => (
+          {solicitudes.length > 0 ? (
+            <Table striped bordered hover responsive>
+              <thead>
                 <tr>
-                  <td>{item.ambiente_nombre}</td>
-                  {tipoDeUsuario === "Admin" && <td>{item.nombreDocente}</td>}
-                  <td>{item.materia}</td>
-                  <td>
-                    {getPeriodo(item.periodo_ini_id, item.periodo_fin_id)}
-                  </td>
-                  <td>{item.fechaReserva}</td>
+                  <th>Ambiente</th>
+                  {tipoDeUsuario === "Admin" && <th>Docente</th>}
+                  <th>Materia</th>
+                  <th>Periodo</th>
+                  <th>Fecha de Reserva</th>
                   {(estado === "" || estado === "canceladas") && (
-                    <td>{item.updated_at}</td>
+                    <th>Fecha de Actualizacion</th>
                   )}
-                  {estado === "en espera" && <td>{item.fechaEnviada}</td>}
+                  {estado === "en espera" && <th>Fecha de Enviada</th>}
                   {(estado === "rechazadas" || estado === "aprobadas") && (
-                    <td>{item.fechaAtendida}</td>
+                    <th>Fecha de Atencion</th>
                   )}
-                  <td>{item.estado}</td>
-                  <td>
-                    <CardHeading
-                      className="ListaDeSolicitudes-button-detalle"
-                      size={30}
-                      onClick={() => {
-                        setSolicitud(item);
-                        setShow(true);
-                      }}
-                    />
-                  </td>
+                  <th>Estado</th>
+                  <th>Detalle</th>
                 </tr>
-              ))}
-            </tbody>
-          </Table>
+              </thead>
+              <tbody>
+                {solicitudes.map((item, index) => (
+                  <tr key={index}>
+                    <td>{item.ambiente_nombre}</td>
+                    {tipoDeUsuario === "Admin" && <td>{item.nombreDocente}</td>}
+                    <td>{item.materia}</td>
+                    <td>
+                      {getPeriodo(item.periodo_ini_id, item.periodo_fin_id)}
+                    </td>
+                    <td>{item.fechaReserva}</td>
+                    {(estado === "" || estado === "canceladas") && (
+                      <td>{item.updated_at}</td>
+                    )}
+                    {estado === "en espera" && <td>{item.fechaEnviada}</td>}
+                    {(estado === "rechazadas" || estado === "aprobadas") && (
+                      <td>{item.fechaAtendida}</td>
+                    )}
+                    <td>{item.estado}</td>
+                    <td>
+                      <CardHeading
+                        className="ListaDeSolicitudes-button-detalle"
+                        size={30}
+                        onClick={() => {
+                          setSolicitud(item);
+                          setShow(true);
+                        }}
+                      />
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </Table>
+          ) : (
+            <div className="text-center" style={{ marginTop: "20px" }}>
+              <p>No hay solicitudes para mostrar.</p>
+            </div>
+          )}
           <Pagination style={{ justifyContent: "center" }}>
             {renderPaginationItems()}
           </Pagination>

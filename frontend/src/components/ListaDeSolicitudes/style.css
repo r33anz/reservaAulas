@@ -6,6 +6,7 @@
 .ListaDeSolicitudes-body {
     background-color: #D9D9D9;
     padding: 1rem;
+    min-height: calc(100vh - 9rem); /* Mantener el tamaño del componente */
 }
 
 .page-item.active.color-blue,
@@ -14,7 +15,7 @@
     --bs-pagination-hover-color: #003F70;
     --bs-pagination-focus-color: #003F70;
     --bs-pagination-active-bg: #003F70;
-    --bs-pagination-active-border-color: #003F70
+    --bs-pagination-active-border-color: #003F70;
 }
 
 .ListaDeSolicitudes-header-button-cargar,
@@ -51,4 +52,10 @@
 
 .form-check-input[type=radio] {
     cursor: pointer;
+}
+
+/* Estilo para el mensaje de lista vacía */
+.ListaDeSolicitudes-empty {
+    text-align: center;
+    margin-top: 20px;
 }

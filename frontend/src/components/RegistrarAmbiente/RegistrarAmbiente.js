@@ -111,12 +111,12 @@ const RegistrarAmbiente = ({ onClose }) => {
 
   return (
     <>
-      <div style={{ width: "50%" }}>
+      <div className="RegistrarAmbiente-container" >
         <Container fluid>
           <Row sm className="text-white RegistrarAmbiente-header">
             <Col
               xs="12"
-              className="d-flex justify-content-start align-items-center"
+              className="d-flex justify-content-center align-items-center"
               style={{ height: "3rem" }}
             >
               <h5 style={{ fontWeight: "bold" }} className="">
@@ -124,66 +124,67 @@ const RegistrarAmbiente = ({ onClose }) => {
               </h5>
             </Col>
           </Row>
-          <Row className="RegistrarAmbiente-body justify-content-center">
+          <Row className="RegistrarAmbiente-body ">
             <Col xs>
               <Form onSubmit={formik.handleSubmit}>
                 <Stack gap={2} direction="vertical">
-                  <Form.Group className="mb-3" controlId="nombre">
+                  <Form.Group className="form-group mb-3" controlId="nombre">
                     <Form.Label className="RegistrarAmbiente-required">
                       Nombre del ambiente
                     </Form.Label>
-                    <Form.Control
-                      type="text"
-                      placeholder="Ingrese el nuevo nombre del ambiente"
-                      onChange={formik.handleChange}
-                      onBlur={formik.handleBlur}
-                      value={formik.values.nombre}
-                    />
-                    <Form.Text className="text-danger">
-                      {formik.touched.nombre && formik.errors.nombre ? (
-                        <div className="text-danger">
-                          {formik.errors.nombre}
-                        </div>
-                      ) : null}
-                    </Form.Text>
+                    <div style={{ flex: 2 }}>
+                      <Form.Control
+                        type="text"
+                        placeholder="Ingrese el nuevo nombre del ambiente"
+                        onChange={formik.handleChange}
+                        onBlur={formik.handleBlur}
+                        value={formik.values.nombre}
+                      />
+                      <Form.Text className="text-danger">
+                        {formik.touched.nombre && formik.errors.nombre ? (
+                          <div className="text-danger">
+                            {formik.errors.nombre}
+                          </div>
+                        ) : null}
+                      </Form.Text>
+                    </div>
                   </Form.Group>
-                  <Form.Group
-                    className="mb-3 RegistrarAmbiente-entrada-numero"
-                    controlId="capacidad"
-                  >
+
+                  <Form.Group className="form-group mb-3 RegistrarAmbiente-entrada-numero" controlId="capacidad">
                     <Form.Label className="RegistrarAmbiente-required">
                       Capacidad
                     </Form.Label>
-                    <Form.Control
-                      type="number"
-                      onKeyDown={(e) => {
-                        console.log(e.key);
-                        if (!validosKey.includes(e.key)) {
-                          e.preventDefault();
-                        }
-                      }}
-                      placeholder="Ingrese un valor"
-                      onChange={formik.handleChange}
-                      onBlur={formik.handleBlur}
-                      value={formik.values.capacidad}
-                    />
-                    <Form.Text className="text-danger">
-                      {formik.touched.capacidad && formik.errors.capacidad ? (
-                        <div className="text-danger">
-                          {formik.errors.capacidad}
-                        </div>
-                      ) : null}
-                    </Form.Text>
+                    <div style={{ flex: 2 }}>
+                      <Form.Control
+                        type="number"
+                        onKeyDown={(e) => {
+                          console.log(e.key);
+                          if (!validosKey.includes(e.key)) {
+                            e.preventDefault();
+                          }
+                        }}
+                        placeholder="Ingrese un valor"
+                        onChange={formik.handleChange}
+                        onBlur={formik.handleBlur}
+                        value={formik.values.capacidad}
+                      />
+                      <Form.Text className="text-danger">
+                        {formik.touched.capacidad && formik.errors.capacidad ? (
+                          <div className="text-danger">
+                            {formik.errors.capacidad}
+                          </div>
+                        ) : null}
+                      </Form.Text>
+                    </div>
                   </Form.Group>
-                  <Col lg="9">
-                    <Form.Group className="mb-3" controlId="idBloque">
-                      <Form.Label className="RegistrarAmbiente-required">
-                        Bloque
-                      </Form.Label>
+
+                  <Form.Group className="form-group mb-3" controlId="idBloque">
+                    <Form.Label className="RegistrarAmbiente-required">
+                      Bloque
+                    </Form.Label>
+                    <div style={{ flex: 2 }}>
                       <Form.Select
-                        onChange={(e) =>
-                          setPisosPorBloqueSeleccionado(e, formik.handleChange)
-                        }
+                        onChange={(e) => setPisosPorBloqueSeleccionado(e, formik.handleChange)}
                         onBlur={formik.handleBlur}
                         value={formik.values.idBloque}
                       >
@@ -191,7 +192,7 @@ const RegistrarAmbiente = ({ onClose }) => {
                           Ingrese un bloque
                         </option>
                         {bloques.map((bloque) => (
-                          <option value={bloque.id}>{bloque.name}</option>
+                          <option key={bloque.id} value={bloque.id}>{bloque.name}</option>
                         ))}
                       </Form.Select>
                       <Form.Text className="text-danger">
@@ -201,11 +202,14 @@ const RegistrarAmbiente = ({ onClose }) => {
                           </div>
                         ) : null}
                       </Form.Text>
-                    </Form.Group>
-                    <Form.Group className="mb-3" controlId="tipo">
-                      <Form.Label className="RegistrarAmbiente-required">
-                        Tipo de ambiente
-                      </Form.Label>
+                    </div>
+                  </Form.Group>
+
+                  <Form.Group className="form-group mb-3" controlId="tipo">
+                    <Form.Label className="RegistrarAmbiente-required">
+                      Tipo de ambiente
+                    </Form.Label>
+                    <div style={{ flex: 2 }}>
                       <Form.Select
                         onChange={formik.handleChange}
                         onBlur={formik.handleBlur}
@@ -215,7 +219,7 @@ const RegistrarAmbiente = ({ onClose }) => {
                           Ingrese tipo de ambiente
                         </option>
                         {tiposDeAmbiente.map((item) => (
-                          <option value={item.name}>{item.name}</option>
+                          <option key={item.name} value={item.name}>{item.name}</option>
                         ))}
                       </Form.Select>
                       <Form.Text className="text-danger">
@@ -225,11 +229,14 @@ const RegistrarAmbiente = ({ onClose }) => {
                           </div>
                         ) : null}
                       </Form.Text>
-                    </Form.Group>
-                    <Form.Group className="mb-3" controlId="piso">
-                      <Form.Label className="RegistrarAmbiente-required">
-                        Piso
-                      </Form.Label>
+                    </div>
+                  </Form.Group>
+
+                  <Form.Group className="form-group mb-3" controlId="piso">
+                    <Form.Label className="RegistrarAmbiente-required">
+                      Piso
+                    </Form.Label>
+                    <div style={{ flex: 2 }}>
                       <Form.Select
                         onChange={formik.handleChange}
                         onBlur={formik.handleBlur}
@@ -244,19 +251,11 @@ const RegistrarAmbiente = ({ onClose }) => {
                             Seleccione un bloque
                           </option>
                         )}
-                        {pisos.map((piso) => {
-                          if (piso.value === 0) {
-                            return (
-                              <option value={piso.value}>Planta Baja</option>
-                            );
-                          } else {
-                            return (
-                              <option value={piso.value}>
-                                Piso {piso.value}
-                              </option>
-                            );
-                          }
-                        })}
+                        {pisos.map((piso, index) => (
+                          <option key={index} value={piso.value}>
+                            {piso.value === 0 ? "Sotano" : `Piso ${piso.value}`}
+                          </option>
+                        ))}
                       </Form.Select>
                       <Form.Text className="text-danger">
                         {formik.touched.piso && formik.errors.piso ? (
@@ -265,10 +264,11 @@ const RegistrarAmbiente = ({ onClose }) => {
                           </div>
                         ) : null}
                       </Form.Text>
-                    </Form.Group>
-                  </Col>
-                  <Row xs="auto" className="justify-content-md-end">
-                    <Stack direction="horizontal" gap={2}>
+                    </div>
+                  </Form.Group>
+
+                  <Row className="justify-content-md-center">
+                    <Stack gap={2} direction="horizontal">
                       <Button
                         className="btn RegistrarAmbiente-button-cancel"
                         size="sm"
