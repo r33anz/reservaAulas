@@ -10,12 +10,11 @@ use App\Models\Inhabilitado;
 use App\Models\Solicitud;
 use App\Services\AmbienteService;
 use Illuminate\Support\Facades\DB;
-
+use Illuminate\Support\Facades\Log;
 class AmbienteController extends Controller
 {
 
     protected $ambientesTodos;
-    protected $ambienteValido;
 
     public function __construct(AmbienteService $ambientes)
     {
@@ -202,7 +201,6 @@ class AmbienteController extends Controller
                             ->groupBy('piso_id'); // Agrupar por piso_id
 
         $result = [];
-
         foreach ($ambientes as $piso_id => $ambientesPiso) {
             $combinations = $this->combinaciones($ambientesPiso->all(), $min, $max);
             foreach ($combinations as $combination) {
@@ -217,17 +215,24 @@ class AmbienteController extends Controller
         $maxCapacidad = Ambiente::max('capacidad');
         $minCapacidad = Ambiente::min('capacidad');
 
-        if($cantidad === $minCapacidad){
-            $min = $minCapacidad;
-            $max = $cantidad +20;
-        }else if($cantidad === $maxCapacidad){
-            $min = $cantidad -20;
-            $max = $maxCapacidad;
-        }else{
-            $min = max(10, $cantidad - 10);
-            $max = min(200, $cantidad + 10);
+        // Si la cantidad solicitada es mayor que la capacidad máxima disponible
+        if ($cantidad > $maxCapacidad) {
+            $min = $cantidad - 20;
+            $max = $cantidad; // Ajustar el rango máximo a la cantidad solicitada
+        } else {
+            if ($cantidad <= $minCapacidad) {
+                $min = $minCapacidad;
+                $max = $cantidad + 20;
+            } else if ($cantidad >= $maxCapacidad) {
+                $min = $cantidad - 20;
+                $max = $maxCapacidad;
+            } else {
+                $min = max(10, $cantidad - 10);
+                $max = min(200, $cantidad + 10);
+            }
         }
-        return [$min,$max];
+
+        return [$min, $max];
     }
     
     public function combinaciones($ambientes, $min, $max){
@@ -257,101 +262,111 @@ class AmbienteController extends Controller
         if (count($periodos) === 1) {
             $periodoInicial = $periodos[0];
             $periodoFinal = $periodos[0];
-        } else { 
+        } else {
             $periodoInicial = $periodos[0];
             $periodoFinal = $periodos[count($periodos) - 1];
         }
-
-        $ambientes = $this->ambientesTodos->todosAmbientes();
+    
+        $ambientes = Ambiente::all();
         $ambientesInhabilitados = Inhabilitado::where('fecha', $fecha)
             ->whereBetween('periodo_id', [$periodoInicial, $periodoFinal])
             ->pluck('ambiente_id');
-
+    
         $reservas = Solicitud::whereDate('fechaReserva', $fecha)
-            ->where('estado', 'aprobado') 
+            ->where('estado', 'aprobado')
             ->where('periodo_ini_id', '>=', $periodoInicial)
             ->where('periodo_fin_id', '<=', $periodoFinal)
             ->pluck('id');
-
+    
         $ambientesReservados = DB::table('ambiente_solicitud')
             ->whereIn('solicitud_id', $reservas)
             ->pluck('ambiente_id')
             ->unique()
             ->values();
-        
+    
         $solicitudes = Solicitud::whereDate('fechaReserva', $fecha)
-            ->where('estado', 'en espera') 
+            ->where('estado', 'en espera')
             ->where('periodo_ini_id', '>=', $periodoInicial)
             ->where('periodo_fin_id', '<=', $periodoFinal)
             ->pluck('id');
-
+    
         $ambientesSolicitados = DB::table('ambiente_solicitud')
             ->whereIn('solicitud_id', $solicitudes)
             ->pluck('ambiente_id')
             ->unique()
             ->values();
-
+    
         $ambientesInhabilitadosArray = $ambientesInhabilitados->toArray();
         $ambientesReservadosArray = $ambientesReservados->toArray();
-        $ambientesSolicitadossArray = $ambientesSolicitados->toArray();
-
-
+        $ambientesSolicitadosArray = $ambientesSolicitados->toArray();
+    
+        // Depuración: Verificar IDs inhabilitados, reservados y solicitados
+        Log::info('Inhabilitados IDs: ', $ambientesInhabilitadosArray);
+        Log::info('Reservados IDs: ', $ambientesReservadosArray);
+        Log::info('Solicitados IDs: ', $ambientesSolicitadosArray);
+    
         // Eliminar los ambientes inhabilitados y reservados de la lista general de ambientes
-        $ambientesDisponibles = $ambientes->reject(function ($ambiente) use ($ambientesInhabilitadosArray,
-                                $ambientesReservadosArray,$ambientesSolicitadossArray) {
-
-            return in_array($ambiente['id'], $ambientesInhabilitadosArray) 
-            || in_array($ambiente['id'], $ambientesReservadosArray)
-            || in_array($ambiente['id'], $ambientesSolicitadossArray);
-        });
-
-        // Obtener solo los IDs y nombres de los ambientes disponibles
-        $ambientesDisponibles = $ambientes->reject(function ($ambiente) use ($ambientesInhabilitadosArray, $ambientesReservadosArray, $ambientesSolicitadossArray) {
-            return in_array($ambiente['id'], $ambientesInhabilitadosArray) 
-                || in_array($ambiente['id'], $ambientesReservadosArray)
-                || in_array($ambiente['id'], $ambientesSolicitadossArray);
+        $ambientesDisponibles = $ambientes->reject(function ($ambiente) use ($ambientesInhabilitadosArray, $ambientesReservadosArray, $ambientesSolicitadosArray) {
+            return in_array($ambiente->id, $ambientesInhabilitadosArray) 
+                || in_array($ambiente->id, $ambientesReservadosArray)
+                || in_array($ambiente->id, $ambientesSolicitadosArray);
         });
     
-        return $ambientesDisponibles->pluck('id');;
+        // Obtener solo los IDs de los ambientes disponibles
+        $ambientesDisponibles = $ambientesDisponibles->pluck('id');
+    
+        // Depuración: Verificar ambientes disponibles
+        Log::info('Available Ambientes IDs: ', $ambientesDisponibles->toArray());
+    
+        return $ambientesDisponibles;
     }
 
     //
     public function busquedaAmbientesporCantidadFechaPeriodo(Request $request){
         $cantidad = $request->input('cantidad');
-        $fecha  = $request->input('fecha');
+        $fecha = $request->input('fecha');
         $periodos = $request->input('periodos');
-
-        $busquedaFechaPeriodos = $this->fechaPeriodo($fecha,$periodos);
-        $busquedaCantidadMono = $this->busquedaMonoAmbiente($cantidad);
-        $busquedaCantidadMulti = $this->busquedaMultiAmbientes($cantidad);
-        //join 
+        $busquedaFechaPeriodos = $this->fechaPeriodo($fecha, $periodos);
         $availableIds = $busquedaFechaPeriodos->toArray();
-        // Filter mono ambientes
-        $filteredMono = $busquedaCantidadMono->filter(function ($ambiente) use ($availableIds) {
-            return in_array($ambiente->id, $availableIds);
-        });
 
-        // Filter multi ambientes combinations
-        $filteredMulti = [];
-        foreach ($busquedaCantidadMulti as $combination) {
-            $allAvailable = true;
-            foreach ($combination as $ambiente) {
-                if (!in_array($ambiente->id, $availableIds)) {
-                    $allAvailable = false;
-                    break;
+        Log::info('Available IDs: ', $availableIds);
+        $busquedaCantidadMono = $this->busquedaMonoAmbiente($cantidad);
+        Log::info('Single Ambiente Result: ', $busquedaCantidadMono ? $busquedaCantidadMono->toArray() : []);
+
+        $result = [];
+
+        // Filtrar ambientes mono por disponibilidad
+        if ($busquedaCantidadMono->isNotEmpty()) {
+            foreach ($busquedaCantidadMono as $ambiente) {
+                if (in_array($ambiente->id, $availableIds)) {
+                    $result[] = [$ambiente]; // Envolver en un array para mantener consistencia en el formato
                 }
             }
-            if ($allAvailable) {
-                $filteredMulti[] = $combination;
+        }
+
+        if (empty($result)) {
+            $busquedaCantidadMulti = $this->busquedaMultiAmbientes($cantidad);
+
+            // Depuración: Verificar combinaciones múltiples
+            Log::info('Multi Ambiente Combinations: ', $busquedaCantidadMulti);
+
+            // Filtrar combinaciones de ambientes por disponibilidad
+            foreach ($busquedaCantidadMulti as $combination) {
+                $allAvailable = true;
+                foreach ($combination as $ambiente) {
+                    if (!in_array($ambiente->id, $availableIds)) {
+                        $allAvailable = false;
+                        break;
+                    }
+                }
+                if ($allAvailable) {
+                    $result[] = $combination;
+                }
             }
         }
 
-        // Combine mono and multi results
-        $result = [];
-        foreach ($filteredMono as $ambiente) {
-            $result[] = [$ambiente]; // Each mono ambiente is a single-element array
-        }
-        $result = array_merge($result, $filteredMulti);
+        // Depuración: Verificar resultado final
+        Log::info('Final Result: ', $result);
 
         return response()->json($result);
     }
