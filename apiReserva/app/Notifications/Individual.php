@@ -32,14 +32,14 @@ class Individual extends Notification
 
     public function toDatabase($notifiable){
         return [
-            'message' => 'Notificacion',
+            'message' => 'Notificacion.',
             'data' => $this->mensaje
         ];
     }
     public function toArray($notifiable)
     {
         return [
-            'message' => 'Notificacion',
+            'message' => 'Notificacion.',
             'data' => $this->mensaje
         ];
     }
