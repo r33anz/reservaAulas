@@ -302,7 +302,7 @@ class SolicitudController extends Controller
     }
 
     //FINISH v2
-    public function aceptarSolicitud(Request $request)//REDONE TEST
+    public function aceptarSolicitud(Request $request)
     {
         $id = $request->input('idSolicitud');
         $fechaAtendido = $request->input('fechaAtendida');
@@ -321,7 +321,7 @@ class SolicitudController extends Controller
     }
 
     //FINISH v2
-    public function rechazarSolicitud(Request $request)//REDONE TEST
+    public function rechazarSolicitud(Request $request)
     {
         $id = $request->input('id');
         $fechaAtendido = $request->input('fechaAtendida');

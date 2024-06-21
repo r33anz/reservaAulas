@@ -14,7 +14,7 @@ class AmbienteSeeder extends Seeder
      */
     public function run()
     {
-        // bloque central
+        // Bloque central
         Ambiente::create([
             'piso_id' => 1,
             'nombre' => '652',
@@ -34,8 +34,7 @@ class AmbienteSeeder extends Seeder
             'capacidad' => 30,
             'tipo' => 'Aula',
         ]);
-        // bloque academico
-
+        // Bloque académico
         Ambiente::create([
             'piso_id' => 4,
             'nombre' => '622',
@@ -73,7 +72,7 @@ class AmbienteSeeder extends Seeder
             'tipo' => 'Auditorio',
         ]);
         // Edificio nuevo
-        // PLANTA BAJA
+        // Planta baja
         Ambiente::create([
             'piso_id' => 8,
             'nombre' => '690A',
@@ -243,7 +242,7 @@ class AmbienteSeeder extends Seeder
             'capacidad' => 50,
             'tipo' => 'Laboratorio',
         ]);
-        // bloque informatica
+        // Bloque informatica
         Ambiente::create([
             'piso_id' => 18,
             'nombre' => 'LABORATORIO REDES',
@@ -262,7 +261,7 @@ class AmbienteSeeder extends Seeder
             'capacidad' => 20,
             'tipo' => 'Auditorio',
         ]);
-        // bloque quimica
+        // Bloque quimica
         Ambiente::create([
             'piso_id' => 21,
             'nombre' => 'LABORATORIO QUIMICA 1',
@@ -281,5 +280,6 @@ class AmbienteSeeder extends Seeder
             'capacidad' => 40,
             'tipo' => 'Auditorio',
         ]);
+
     }
 }

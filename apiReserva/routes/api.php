@@ -113,6 +113,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/{id}/ambientesMismoBloque', [AmbienteController::class, 'ambientesMismoBloque']);
     Route::post('/buscarPorCapacidad', [AmbienteController::class, 'buscarPorCapacidad']);
     Route::get('/maxMin',[AmbienteController::class,'maximoMinimo']);
+    Route::post('/buscarCantidadFechaPeriodo',[AmbienteController::class,'busquedaAmbientesporCantidadFechaPeriodo']);
+    
     // Habilitado/DeshabilitadoAula
     Route::post('/inhabilitarAmbiente', [InhabilitadoController::class, 'inhabilitarAmbiente']);
     Route::delete('/habilitarAmbiente', [InhabilitadoController::class, 'habilitarAmbiente']);

@@ -45,7 +45,7 @@ class ValidadorService{
                     $ini = Periodo::find($solicitud->periodo_ini_id);
                     $fin = Periodo::find($solicitud->periodo_fin_id);
                     return $this->crearRespuesta("Usted ya ha realizado una reserva con estos periodos " 
-                                                . $ini->horainicial . "-" . $fin->horafinal, 'alerta');//amarilla
+                                                . $ini->horainicial . "-" . $fin->horafinal, 'alerta');//amarillo
                 }
             }
         }
@@ -140,7 +140,8 @@ class ValidadorService{
         return $this->crearRespuesta("Ambiente disponible",'exito'); //verde
     }
 
-    public function antenderAmbiente($idAmbiente, $fecha, $idPeriodosT,$idUsuario){ //verifica si un ambiente/fecha/periodo para atender solicitud
+    public function antenderAmbiente($idAmbiente, $fecha, $idPeriodosT,$idUsuario){ 
+        //verifica si un ambiente/fecha/periodo para atender solicitud
         // sigue siendo valido, ya que alguine podira haberle ganado
         if(count($idPeriodosT) == 1){
             $idPeriodos[] = $idPeriodosT[0];

@@ -37,7 +37,7 @@ class SolicitudSeeder extends Seeder
             'cantidad'=>120,
             'grupo'=>2,
             'razon'=>'Examen segundo parcial', //AUDITORIO EDIFICIO NUEVO
-            'fechaReserva'=>'2024-06-25',
+            'fechaReserva'=>'2024-06-24',
             'periodo_ini_id'=>5,
             'periodo_fin_id'=>8,
             'estado'=>'en espera'
@@ -54,7 +54,7 @@ class SolicitudSeeder extends Seeder
             'cantidad'=>20,
             'grupo'=>1,
             'razon'=>'Examen Primer parcial', //LABORATORIO COMPUTADORAS 2
-            'fechaReserva'=>'2024-06-26',
+            'fechaReserva'=>'2024-06-20',
             'periodo_ini_id'=>1,
             'periodo_fin_id'=>2,
             'estado'=>'en espera'
@@ -71,7 +71,7 @@ class SolicitudSeeder extends Seeder
             'cantidad'=>45,
             'grupo'=>3,
             'razon'=>'Examen',   //692D 
-            'fechaReserva'=>'2024-06-23',
+            'fechaReserva'=>'2024-06-24',
             'periodo_ini_id'=>3,
             'periodo_fin_id'=>4,
             'fechaAtendida'=>'2024-06-11',
@@ -89,7 +89,7 @@ class SolicitudSeeder extends Seeder
             'cantidad'=>33,
             'grupo'=>5,
             'razon'=>'Examen',
-            'fechaReserva'=>'2024-06-23',  //655 
+            'fechaReserva'=>'2024-06-19',  //655 
             'periodo_ini_id'=>4,
             'periodo_fin_id'=>5,
             'estado'=>'en espera'
@@ -241,7 +241,7 @@ class SolicitudSeeder extends Seeder
             'grupo'=>1,
             'cantidad'=>14,
             'razon'=>'XYZ',
-            'fechaReserva'=>'2024-06-25',
+            'fechaReserva'=>'2024-06-21',
             'periodo_ini_id'=>3, 
             'periodo_fin_id'=>3,
             'estado'=>'en espera'
@@ -258,7 +258,7 @@ class SolicitudSeeder extends Seeder
             'grupo'=>1,
             'cantidad'=>14,
             'razon'=>'XYZ',
-            'fechaReserva'=>'2024-06-15',
+            'fechaReserva'=>'2024-06-27',
             'periodo_ini_id'=>4, 
             'periodo_fin_id'=>7,
             'estado'=>'en espera'

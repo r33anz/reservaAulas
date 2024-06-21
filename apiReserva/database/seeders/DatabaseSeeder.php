@@ -17,13 +17,11 @@ class DatabaseSeeder extends Seeder
         $this->call([
             UserSeeder::class,
             MateriaSeeder::class,
-            AmbienteSeeder::class,
             BloqueSeeder::class,
             PisoSeeder::class,
+            AmbienteSeeder::class,
             PeriodoSeeder::class,
             SolicitudSeeder::class
-            
-           
         ]);
     }
 }
