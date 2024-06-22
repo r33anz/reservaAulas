@@ -11,9 +11,11 @@ use Illuminate\Support\Facades\DB;
 use App\Services\NotificadorService;
 use App\Mail\SolicitudRealizada;
 use App\Events\NotificacionUsuario;
+use App\Events\SolicitudCreada;
 use App\Models\User;
 use App\Models\Periodo;
 use App\Notifications\SolicitudR;
+use Illuminate\Support\Carbon;
 class SolicitudController extends Controller
 {
     protected $ambienteValido;
@@ -64,6 +66,25 @@ class SolicitudController extends Controller
         $estado = 'en espera';
         $idAmbiente = $request->input('ambiente');
         $periodos = $request->input('periodos');
+        ///
+        if (count($periodos) === 1) {
+            $periodoInicial = $periodos[0];
+            $periodoFinal = $periodos[0];
+        } else { // Si hay más de un periodo, determina el periodo inicial y final
+            $periodoInicial = $periodos[0];
+            $periodoFinal = $periodos[count($periodos) - 1];
+        }
+        //verificar si la solicitud se realizo X horas antes del periodo inicial
+        $enTiempo = $this->validadorTiempos($fechaReserva, $periodoInicial); //paso el id del periodo Inicial
+
+        if(!$enTiempo){
+            return response()->json([
+                (object) [
+                    'mensaje' => "No puede realizar esta solicitud con no menos de 5 horas de anticipacion.",
+                    'alerta' => "advertencia"
+                ]
+            ]);
+        }
         // verificar si el ambiente es valido
         $ambienteDisponible = $this->ambienteValido
                                     ->ambienteValido($idAmbiente, $fechaReserva, $periodos,
@@ -73,14 +94,6 @@ class SolicitudController extends Controller
             return response()->json([$ambienteDisponible]);
         }
 
-        if (count($periodos) === 1) {
-            $periodoInicial = $periodos[0];
-            $periodoFinal = $periodos[0];
-        } else { // Si hay más de un periodo, determina el periodo inicial y final
-            $periodoInicial = $periodos[0];
-            $periodoFinal = $periodos[count($periodos) - 1];
-        }
-        
         $solicitud = Solicitud::create([
             'user_id' => $idUsuario,
             'materia' => $materia,
@@ -106,6 +119,8 @@ class SolicitudController extends Controller
         dispatch(function () use ($user, $nombreAmbiente, $fechaReserva, $ini, $fin) {
             $user->notify(new SolicitudR($nombreAmbiente, $fechaReserva, $ini->horainicial, $fin->horafinal));
         });
+        //notificar administrador
+        event(new SolicitudCreada($solicitud->id));
         return response()->json([
             'mensaje' => 'Resgistro existoso',
         ]);
@@ -164,13 +179,34 @@ class SolicitudController extends Controller
             dispatch(function () use ($user, $nombreAmbiente, $fechaReserva, $ini, $fin) {
                 $user->notify(new SolicitudR($nombreAmbiente, $fechaReserva, $ini->horainicial, $fin->horafinal));
             });
-        });
 
+            //notificar administrador
+            event(new SolicitudCreada($solicitud->id));
+        });
+        
         return response()->json([
             'mensaje' => 'Registro exitoso',
         ]);
     }
 
+    private function validadorTiempos($fechaReserva, $idPeriodoInicial){ //valida que la solicitud se haya realizado 
+                                                        //X horas antes del periodo inical solicitado
+        
+        $periodo = Periodo::find($idPeriodoInicial);
+        $horaInicial = Carbon::parse($periodo->horainicial);
+
+        // Combinar la fecha de reserva con la hora inicial del periodo
+        $fechaHoraReserva = Carbon::parse($fechaReserva . ' ' . $horaInicial->format('H:i:s'));
+
+        // Obtener la hora actual
+        $horaActual = Carbon::now();
+
+        // Calcular la diferencia en horas
+        $horasFaltantes = $horaActual->diffInHours($fechaHoraReserva, false);
+
+        // Validar que la diferencia sea de al menos 5 horas
+        return $horasFaltantes >= 5;
+    }
     // FINISH T
     public function informacionSolicitud(Request $request) 
     {
