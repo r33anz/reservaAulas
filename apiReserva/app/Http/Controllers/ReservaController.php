@@ -39,7 +39,7 @@ class ReservaController extends Controller
         } elseif ($estado === 'canceladas') {
             $solicitudes = Solicitud::where('estado', 'cancelado')->where('user_id', $userId)->paginate(7, ['*'], 'pagina', $pagina);
         } else {
-            $solicitudes = Solicitud::where('user_id', $userId)->paginate(5, ['*'], 'pagina', $pagina);
+            $solicitudes = Solicitud::where('user_id', $userId)->paginate(6, ['*'], 'pagina', $pagina);
         }
 
         $datosSolicitudes = [];
@@ -66,6 +66,7 @@ class ReservaController extends Controller
                 'ambienteCantidadMax' => $ambiente->capacidad,
                 'fechaEnviada' => substr($solicitud->created_at, 0, 10),
                 'estado' => $solicitud->estado,
+                'updated_at' => substr($solicitud->updated_at, 0, 10),
             ];
 
             if ($estado === 'aprobadas' || $estado === 'rechazadas') {

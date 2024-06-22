@@ -247,7 +247,7 @@ const CancelarReservas = ({ titulo, tipoDeUsuario }) => {
           </Form>
           <Table striped bordered hover responsive>
             <thead>
-              <tr>
+              <tr className="table-row-fixed-height">
                 <th>Ambiente</th>
                 {tipoDeUsuario === "Admin" && <th>Docente</th>}
                 <th>Materia</th>
@@ -260,7 +260,7 @@ const CancelarReservas = ({ titulo, tipoDeUsuario }) => {
             </thead>
             <tbody>
               {solicitudes.map((item) => (
-                <tr key={item.id}>
+                <tr key={item.id} className="table-row-fixed-height">
                   <td>{item.ambiente_nombre}</td>
                   {tipoDeUsuario === "Admin" && <td>{item.nombreDocente}</td>}
                   <td>{item.materia}</td>
@@ -273,7 +273,7 @@ const CancelarReservas = ({ titulo, tipoDeUsuario }) => {
                   {item.estado === "aprobado" || item.estado === "en espera" ? (
                     <td>
                       <button
-                        className="btn RegistrarAmbiente-button-register"
+                        className="btn CancelarReserva-button-register"
                         onClick={() => {
                           setSolicitud(item);
                           setShow(true);
@@ -301,7 +301,7 @@ const CancelarReservas = ({ titulo, tipoDeUsuario }) => {
         onHide={() => setShow(false)}
         centered
       >
-        <Row sm className="text-white RegistrarAmbiente-header">
+        <Row sm className="text-white ListaDeSolicitudes-header">
           <Col
             xs="10"
             className="d-flex justify-content-start align-items-center"
@@ -328,7 +328,7 @@ const CancelarReservas = ({ titulo, tipoDeUsuario }) => {
             </div>
           </Col>
         </Row>
-        <Row className="RegistrarAmbiente-body justify-content-center">
+        <Row className="ListaDeSolicitudes-body justify-content-center">
           <h6>Nombre del Ambiente:</h6>
           <p>{solicitud.ambiente_nombre}</p>
           {tipoDeUsuario === "Admin" && (
@@ -357,14 +357,14 @@ const CancelarReservas = ({ titulo, tipoDeUsuario }) => {
               <h5>¿Está seguro de cancelar la solicitud?</h5>
               <div className="d-flex justify-content-center mt-3">
                 <button
-                  className="btn RegistrarAmbiente-button-register"
+                  className="btn CancelarReserva-button-register"
                   onClick={() => handleCancelarReserva(solicitud.id)}
                 >
                   Sí
                 </button>
                 <div style={{ width: "10px" }}></div>
                 <button
-                  className="btn RegistrarAmbiente-button-cancel"
+                  className="btn CancelarReserva-button-cancel"
                   onClick={() => setShow(false)}
                 >
                   No

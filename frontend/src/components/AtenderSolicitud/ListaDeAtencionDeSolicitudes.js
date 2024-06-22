@@ -154,7 +154,7 @@ const ListaDeAtencionDeSolicitudes = () => {
         <Row className="ListaDeSolicitudes-body justify-content-center">
           <Table striped bordered hover responsive>
             <thead>
-              <tr>
+              <tr className="table-row-fixed-height">
                 <th>Ambiente</th>
                 <th>Docente</th>
                 <th>Materia</th>
@@ -166,7 +166,7 @@ const ListaDeAtencionDeSolicitudes = () => {
             </thead>
             <tbody>
               {solicitudes.map((item) => (
-                <tr>
+                <tr className="table-row-fixed-height">
                   <td>{item.ambiente_nombre}</td>
                   <td>{item.nombreDocente}</td>
                   <td>{item.materia}</td>
