@@ -3,8 +3,7 @@ import {
   buscarAmbientePorNombre,
   recuperarAmbientePorID,
 } from "../../services/Busqueda.service";
-import { Button, Col, Container, Dropdown, Form, Row } from "react-bootstrap";
-import { XSquareFill } from "react-bootstrap-icons";
+import { Col, Container, Dropdown, Form, Row } from "react-bootstrap";
 import "./Style.css";
 import { useFormik } from "formik";
 import * as Yup from "yup";
@@ -130,7 +129,7 @@ const Buscar = () => {
   }, []);
 
   return (
-    <div className="buscarcontainer">
+    <div className="BusquedaPorNombre-container">
       <Container className="BusquedaPorNombre-header" fluid>
         <Row xs="auto" className="text-white justify-content-end">
           <Col
@@ -147,7 +146,7 @@ const Buscar = () => {
           <Col xs lg="11">
             <Form onSubmit={formik.handleSubmit}>
               <Form.Group as={Row} className="mb-3" controlId="ambiente">
-                <Form.Label column sm="2">
+                <Form.Label column sm="1">
                   Nombre
                 </Form.Label>
                 <Col sm="10">
@@ -218,10 +217,10 @@ const Buscar = () => {
       </Container>
 
       {/* Mostrar los detalles de cada ambiente */}
-      {ambienteDetails.length > 0 && (
-        <Row className="ambientedetails">
-          {ambienteDetails.map((ambiente, index) => (
-            <Col key={index}>
+      <Row className="BusquedaPorNombre-ambientedetails">
+        {ambienteDetails.length > 0 &&
+          ambienteDetails.map((ambiente, index) => (
+            <Col key={index} sm={3}>
               <div className="datos2">
                 <h6>{ambiente.nombre}</h6>
                 <p>Capacidad: {ambiente.capacidad}</p>
@@ -231,8 +230,7 @@ const Buscar = () => {
               </div>
             </Col>
           ))}
-        </Row>
-      )}
+      </Row>
     </div>
   );
 };

@@ -365,8 +365,8 @@ const Modificarperdiodo = ({ onClose }) => {
   };
 
   return (
-    <div>
-      <Container className="ModificarEstadoDelAmbientePorPeriodo-header" fluid>
+    <div style={{ display: "grid", height: "93vh", alignContent: "center", justifyContent: "center" }}>
+      <Container className="ModificarEstadoDelAmbientePorPeriodo-header">
         <Row xs="auto" className="text-white justify-content-end">
           <Col
             xs="12"
@@ -380,17 +380,16 @@ const Modificarperdiodo = ({ onClose }) => {
         </Row>
       </Container>
       <Container className="ModificarEstadoDelAmbientePorPeriodo-body">
-        <Row className="justify-content-md-center">
-          <Col xs lg="15">
+        <Row >
+          <Col xs={12} lg="12" md="12">
             <Form onSubmit={formik.handleSubmit} onKeyPress={handleKeyPress}>
               <Form.Group as={Row} className="mb-3">
-                <Form.Label column sm="2">
+                <Form.Label column sm="2" className="text-center">
                   Nombre{" "}
                 </Form.Label>
-                <Col sm="10">
+                <Col sm="5">
                   <Dropdown>
                     <Dropdown.Toggle
-                      style={{ width: "100%" }}
                       ref={inputAmbienteRef}
                       as={"input"}
                       id="ambiente"
@@ -450,10 +449,10 @@ const Modificarperdiodo = ({ onClose }) => {
                 </Col>
               </Form.Group>
               <Form.Group as={Row} className="mb-3" controlId="fecha">
-                <Form.Label column sm="2">
+                <Form.Label column sm="2" className="text-center">
                   Fecha
                 </Form.Label>
-                <Col sm="5">
+                <Col sm="2">
                   <FormControl
                     type="text"
                     placeholder="Ingrese la fecha"
@@ -476,16 +475,16 @@ const Modificarperdiodo = ({ onClose }) => {
                   </Form.Text>
                 </Col>
               </Form.Group>
-              <Row xs="auto" className="justify-content-md-end">
+              <Row xs="auto" sm={5} className="justify-content-end">
                 <Stack direction="horizontal" gap={2}>
-                  <Button className="consultar1-button" type="submit">
+                  <Button className="ModicarPorPeriodo-consultar-button" type="submit">
                     Consultar
                   </Button>
                 </Stack>
               </Row>
             </Form>
-            <Form.Group as={Row} className="mb-3">
-              <Col sm="3">
+            <Form.Group as={Row} className="mb-3 justify-content-center">
+              <Col sm="11">
                 {consultarPresionado && ambientes.length > 0 && (
                   <div className="periodos-container">
                     <h6>Periodos:</h6>
