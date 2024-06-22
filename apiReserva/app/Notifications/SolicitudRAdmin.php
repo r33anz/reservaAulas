@@ -11,15 +11,13 @@ class SolicitudRAdmin extends Notification
 {
     use Queueable;
 
-    
-    protected $nombreAmbiente;
     protected $docente;
-    protected $materia;
-    public function __construct( $nombreAmbiente,$docente,$materia) 
+    protected $fecha;
+    public function __construct( $docente,$fecha) 
     {
-        $this->nombreAmbiente = $nombreAmbiente;
+        
         $this->docente = $docente;
-        $this->materia = $materia;
+        $this->fecha = $fecha;
         
     }
 
@@ -48,7 +46,7 @@ class SolicitudRAdmin extends Notification
     private function formatearTextoNotificacion()
     {
         return "El docente " . $this->docente . "\n"
-             . " solicito reserva del ambiente " . $this->nombreAmbiente . "\n"
-             ." para la materia ".$this->materia;
+             . " acaba de realizar una solicitud \n"
+             ." para la fecha ".$this->fecha;
     }
 }
