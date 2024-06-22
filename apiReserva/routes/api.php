@@ -18,7 +18,7 @@ use App\Http\Controllers\ValidadorController;
 use App\Http\Controllers\ReporteController;
 use App\Http\Controllers\AuthController;
 
-
+/*
 ///Docente
 Route::get('/docentes/{id}', [DocenteController::class, 'getMaterias']);  //REDONE
 Route::get('/listaDocentes', [DocenteController::class, 'getAllDocenteNames']); //REDONE
@@ -80,7 +80,7 @@ Route::post('/notificacionBroadcast',[NotificationController::class,'broadcast']
 //reportes
 Route::get('/generarReporte', [ReporteController::class, 'generarReporte']);
 
-/*
+*/
 //autentificacion
 // Rutas públicas
 Route::post('/login', [AuthController::class, 'login']);
