@@ -214,24 +214,22 @@ class AmbienteController extends Controller
     public function establecerRango($cantidad){
         $maxCapacidad = Ambiente::max('capacidad');
         $minCapacidad = Ambiente::min('capacidad');
-
+        
         // Si la cantidad solicitada es mayor que la capacidad máxima disponible
         if ($cantidad > $maxCapacidad) {
-            $min = $cantidad - 20;
+            $min = $maxCapacidad;
             $max = $cantidad; // Ajustar el rango máximo a la cantidad solicitada
         } else {
             if ($cantidad <= $minCapacidad) {
                 $min = $minCapacidad;
                 $max = $cantidad + 20;
-            } else if ($cantidad >= $maxCapacidad) {
-                $min = $cantidad - 20;
-                $max = $maxCapacidad;
-            } else {
-                $min = max(10, $cantidad - 10);
-                $max = min(200, $cantidad + 10);
+            }else 
+            {
+                $min = max(10, $cantidad - 20);
+                $max = min(200, $cantidad + 20);
             }
         }
-
+        
         return [$min, $max];
     }
     
@@ -326,46 +324,34 @@ class AmbienteController extends Controller
         $cantidad = $request->input('cantidad');
         $fecha = $request->input('fecha');
         $periodos = $request->input('periodos');
+
         $busquedaFechaPeriodos = $this->fechaPeriodo($fecha, $periodos);
         $availableIds = $busquedaFechaPeriodos->toArray();
-
         Log::info('Available IDs: ', $availableIds);
+
+        $result = [];
         $busquedaCantidadMono = $this->busquedaMonoAmbiente($cantidad);
         Log::info('Single Ambiente Result: ', $busquedaCantidadMono ? $busquedaCantidadMono->toArray() : []);
 
-        $result = [];
-
-        // Filtrar ambientes mono por disponibilidad
-        if ($busquedaCantidadMono->isNotEmpty()) {
-            foreach ($busquedaCantidadMono as $ambiente) {
-                if (in_array($ambiente->id, $availableIds)) {
-                    $result[] = [$ambiente]; // Envolver en un array para mantener consistencia en el formato
-                }
+        foreach ($busquedaCantidadMono as $ambiente) {
+            if (in_array($ambiente->id, $availableIds)) {
+                $result[] = [$ambiente]; 
             }
         }
-
-        if (empty($result)) {
-            $busquedaCantidadMulti = $this->busquedaMultiAmbientes($cantidad);
-
-            // Depuración: Verificar combinaciones múltiples
-            Log::info('Multi Ambiente Combinations: ', $busquedaCantidadMulti);
-
-            // Filtrar combinaciones de ambientes por disponibilidad
-            foreach ($busquedaCantidadMulti as $combination) {
-                $allAvailable = true;
-                foreach ($combination as $ambiente) {
-                    if (!in_array($ambiente->id, $availableIds)) {
-                        $allAvailable = false;
-                        break;
-                    }
-                }
-                if ($allAvailable) {
-                    $result[] = $combination;
+        $busquedaCantidadMulti = $this->busquedaMultiAmbientes($cantidad);
+        Log::info('Multi Ambiente Combinations: ', $busquedaCantidadMulti);
+        foreach ($busquedaCantidadMulti as $combination) {
+            $allAvailable = true;
+            foreach ($combination as $ambiente) {
+                if (!in_array($ambiente->id, $availableIds)) {
+                    $allAvailable = false;
+                    break;
                 }
             }
+            if ($allAvailable) {
+                $result[] = $combination;
+            }
         }
-
-        // Depuración: Verificar resultado final
         Log::info('Final Result: ', $result);
 
         return response()->json($result);

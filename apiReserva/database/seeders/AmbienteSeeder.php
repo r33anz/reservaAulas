@@ -15,7 +15,7 @@ class AmbienteSeeder extends Seeder
     public function run()
     {
         // Bloque central
-        /*Ambiente::create([
+        Ambiente::create([
             'piso_id' => 1,
             'nombre' => '652',
             'capacidad' => 10,
@@ -33,7 +33,7 @@ class AmbienteSeeder extends Seeder
             'nombre' => '652A',
             'capacidad' => 30,
             'tipo' => 'Aula',
-        ]);*/
+        ]);
         // Bloque académico
         Ambiente::create([
             'piso_id' => 4,
@@ -73,7 +73,7 @@ class AmbienteSeeder extends Seeder
         ]);
         // Edificio nuevo
         // Planta baja
-        /*
+        
         Ambiente::create([
             'piso_id' => 8,
             'nombre' => '690A',
@@ -210,7 +210,7 @@ class AmbienteSeeder extends Seeder
             'nombre' => 'AUDITORIO EDIFICIO NUEVO',
             'capacidad' => 150,
             'tipo' => 'Auditorio',
-        ]);*/
+        ]);
         // MEMI
         Ambiente::create([
             'piso_id' => 14,
@@ -244,7 +244,7 @@ class AmbienteSeeder extends Seeder
             'tipo' => 'Laboratorio',
         ]);
         // Bloque informatica
-        /*Ambiente::create([
+        Ambiente::create([
             'piso_id' => 18,
             'nombre' => 'LABORATORIO REDES',
             'capacidad' => 15,
@@ -261,9 +261,9 @@ class AmbienteSeeder extends Seeder
             'nombre' => 'AUDITORIO INFORMATICA',
             'capacidad' => 20,
             'tipo' => 'Auditorio',
-        ]);*/
+        ]);
         // Bloque quimica
-        /*Ambiente::create([
+        Ambiente::create([
             'piso_id' => 21,
             'nombre' => 'LABORATORIO QUIMICA 1',
             'capacidad' => 20,
@@ -280,7 +280,7 @@ class AmbienteSeeder extends Seeder
             'nombre' => 'AUDITORIO QUIMICA',
             'capacidad' => 40,
             'tipo' => 'Auditorio',
-        ]);*/
+        ]);
 
     }
 }
