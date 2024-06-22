@@ -21,7 +21,12 @@ class CreateAmbientesTable extends Migration
             $table->string('tipo');
             $table->text('descripcion')->nullable();
             $table->timestamps();
-        });
+
+            // Definición de la clave foránea
+            $table->foreign('piso_id')->references('id')->on('pisos')->onDelete('cascade');
+            $table->index('capacidad');
+            $table->index('piso_id');
+        });     
     }
 
     /**

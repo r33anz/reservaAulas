@@ -97,7 +97,7 @@ class MateriaSeeder extends Seeder
         DB::table('docente_materia')->insert([
             'user_id' =>3,
             'materia_id' =>4,
-            'grupo'=>5
+            'grupo'=>2
         ]);
         DB::table('docente_materia')->insert([
             'user_id' =>3,
@@ -107,7 +107,7 @@ class MateriaSeeder extends Seeder
         DB::table('docente_materia')->insert([
             'user_id' =>4,
             'materia_id' =>8,
-            'grupo'=>9
+            'grupo'=>2
         ]);
         DB::table('docente_materia')->insert([
             'user_id' =>5,

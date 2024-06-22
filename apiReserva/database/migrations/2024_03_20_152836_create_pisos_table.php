@@ -18,6 +18,8 @@ class CreatePisosTable extends Migration
             $table->unsignedBigInteger('bloque_id');
             $table->integer('nroPiso');
             $table->timestamps();
+
+            $table->foreign('bloque_id')->references('id')->on('bloques')->onDelete('cascade');
         });
     }
 

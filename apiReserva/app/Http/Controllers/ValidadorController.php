@@ -38,13 +38,25 @@ class ValidadorController extends Controller
             ->whereBetween('periodo_id', [$periodoInicial, $periodoFinal])
             ->pluck('ambiente_id');
 
-        $solicitudes = Solicitud::whereDate('fechaReserva', $fecha)
+        $reservas = Solicitud::whereDate('fechaReserva', $fecha)
             ->where('estado', 'aprobado') 
             ->where('periodo_ini_id', '>=', $periodoInicial)
             ->where('periodo_fin_id', '<=', $periodoFinal)
             ->pluck('id');
 
         $ambientesReservados = DB::table('ambiente_solicitud')
+            ->whereIn('solicitud_id', $reservas)
+            ->pluck('ambiente_id')
+            ->unique()
+            ->values();
+        
+        $solicitudes = Solicitud::whereDate('fechaReserva', $fecha)
+            ->where('estado', 'en espera') 
+            ->where('periodo_ini_id', '>=', $periodoInicial)
+            ->where('periodo_fin_id', '<=', $periodoFinal)
+            ->pluck('id');
+
+        $ambientesSolicitados = DB::table('ambiente_solicitud')
             ->whereIn('solicitud_id', $solicitudes)
             ->pluck('ambiente_id')
             ->unique()
@@ -52,17 +64,22 @@ class ValidadorController extends Controller
 
         $ambientesInhabilitadosArray = $ambientesInhabilitados->toArray();
         $ambientesReservadosArray = $ambientesReservados->toArray();
+        $ambientesSolicitadossArray = $ambientesSolicitados->toArray();
+
 
         // Eliminar los ambientes inhabilitados y reservados de la lista general de ambientes
-        $ambientesDisponibles = $ambientes->reject(function ($ambiente) use ($ambientesInhabilitadosArray, $ambientesReservadosArray) {
-            return in_array($ambiente['id'], $ambientesInhabilitadosArray) || in_array($ambiente['id'], $ambientesReservadosArray);
+        $ambientesDisponibles = $ambientes->reject(function ($ambiente) use ($ambientesInhabilitadosArray,
+                                $ambientesReservadosArray,$ambientesSolicitadossArray) {
+
+            return in_array($ambiente['id'], $ambientesInhabilitadosArray) 
+            || in_array($ambiente['id'], $ambientesReservadosArray)
+            || in_array($ambiente['id'], $ambientesSolicitadossArray);
         });
 
         // Obtener solo los IDs y nombres de los ambientes disponibles
         $ambientesDisponibles = $ambientesDisponibles->map(function ($ambiente) {
             return [
                 'id' => $ambiente['id'],
-                'nombre' => $ambiente['nombre']
             ];
         });
         return response()->json(['ambientes_disponibles' => $ambientesDisponibles]);
@@ -70,10 +87,12 @@ class ValidadorController extends Controller
 
     public function consultarFechaPeriodoAmbiente(Request $request){
         $fecha = $request->input('fechaReserva');
-        $periodos = $request->input('periodos');
+        //$periodos = $request->input('periodos');
         $ambiente = $request->input('ambiente');
-        $docente = $request->input('idDocente');
-        $ambienteDisponible = $this->ambienteValido->antenderAmbiente($ambiente, $fecha, $periodos,$docente);
+        $id = $request->input("idSolicitud");
+        $solicitud = Solicitud::find($id);
+        $periodos = [$solicitud->periodo_ini_id,$solicitud->periodo_fin_id]; 
+        $ambienteDisponible = $this->ambienteValido->antenderAmbiente($ambiente, $fecha, $periodos,$solicitud->user_id);
         return response()->json([
             $ambienteDisponible
         ]);

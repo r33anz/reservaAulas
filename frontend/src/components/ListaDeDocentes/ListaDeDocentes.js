@@ -20,7 +20,7 @@ import { getDocentes } from "../../services/Docente.service";
 import {
   enviarNotificacionIndividual,
   enviarNotificacionGeneral,
-} from "../../services//Notification.service";
+} from "../../services/Notification.service";
 import "./style.css"; // Asegúrate de importar tu archivo de estilos
 
 const ListaDeSolicitudes = ({ tipoDeUsuario }) => {
@@ -133,7 +133,7 @@ const ListaDeSolicitudes = ({ tipoDeUsuario }) => {
   };
 
   return (
-    <Container fluid>
+    <Container fluid style={{ marginBottom: "1rem" }}>
       <Row sm className="text-white ListaDeDocentes-header">
         <Col
           xs="10"
@@ -148,19 +148,32 @@ const ListaDeSolicitudes = ({ tipoDeUsuario }) => {
         >
           <div
             onClick={reloadSolicitudes}
-            className="ListaDeDocentes-header-button-cargar d-flex 
-                                           justify-content-center align-items-center"
+            className="ListaDeDocentes-header-button-cargar d-flex justify-content-center align-items-center"
           >
             <ArrowClockwise size={24} />
           </div>
         </Col>
       </Row>
-      <Row className="ListaDeDocentes-body justify-content-center">
+      {tipoDeUsuario === "Admin" && (
+        <Row className="ListaDeDocentes-body1 justify-content-end">
+          <Col className="d-flex justify-content-end">
+            <Button
+              style={{ width: "300px" }}
+              className="btn ListaDeDocentes-register"
+              onClick={() => setShowModal(true)}
+            >
+              Notificación general
+            </Button>
+          </Col>
+        </Row>
+      )}
+      <Row className="ListaDeDocentes-body">
         <div className="table-container">
           <Table striped bordered hover responsive>
             <thead>
               <tr>
                 <th>Nombre del Docente</th>
+                <th>Correo Electrónico</th>
                 <th style={{ width: "350px" }}>Acciones</th>
               </tr>
             </thead>
@@ -169,6 +182,7 @@ const ListaDeSolicitudes = ({ tipoDeUsuario }) => {
                 <React.Fragment key={index}>
                   <tr>
                     <td>{docente.nombre}</td>
+                    <td>{docente.email}</td>
                     <td>
                       <Button
                         onClick={() => toggleExpand(index)}
@@ -176,8 +190,7 @@ const ListaDeSolicitudes = ({ tipoDeUsuario }) => {
                         aria-controls={`expandable-row-${index}`}
                         aria-expanded={expandedIndex === index}
                       >
-                        {expandedIndex === index ? "Ocultar" : "Ver"} Materias y
-                        Grupos
+                        {expandedIndex === index ? "Ocultar" : "Ver"} Materias y Grupos
                       </Button>
                       {tipoDeUsuario === "Admin" && (
                         <Button
@@ -192,7 +205,7 @@ const ListaDeSolicitudes = ({ tipoDeUsuario }) => {
                     </td>
                   </tr>
                   <tr>
-                    <td colSpan="2">
+                    <td colSpan="3">
                       <Collapse in={expandedIndex === index}>
                         <div id={`expandable-row-${index}`}>
                           <Table bordered>
@@ -203,18 +216,12 @@ const ListaDeSolicitudes = ({ tipoDeUsuario }) => {
                               </tr>
                             </thead>
                             <tbody>
-                              {Object.keys(docente.materias).map(
-                                (materia, idx) => (
-                                  <tr key={idx}>
-                                    <td>{materia}</td>
-                                    <td>
-                                      {docente.materias[materia].grupos.join(
-                                        ", "
-                                      )}
-                                    </td>
-                                  </tr>
-                                )
-                              )}
+                              {Object.keys(docente.materias).map((materia, idx) => (
+                                <tr key={idx}>
+                                  <td>{materia}</td>
+                                  <td>{docente.materias[materia].grupos.join(", ")}</td>
+                                </tr>
+                              ))}
                             </tbody>
                           </Table>
                         </div>
@@ -227,17 +234,6 @@ const ListaDeSolicitudes = ({ tipoDeUsuario }) => {
           </Table>
         </div>
       </Row>
-      {tipoDeUsuario === "Admin" && (
-        <Row className="justify-content-center mt-3">
-          <Button
-            style={{ width: "300px" }}
-            className="btn ListaDeDocentes-register"
-            onClick={() => setShowModal(true)}
-          >
-            Notificación general
-          </Button>
-        </Row>
-      )}
       <Modal show={showModal} onHide={handleCloseModal} centered>
         <Row sm className="text-white ListaDeDocentes-header">
           <Col
@@ -245,10 +241,8 @@ const ListaDeSolicitudes = ({ tipoDeUsuario }) => {
             className="d-flex justify-content-start align-items-center"
             style={{ height: "100%" }}
           >
-            <h4 style={{ fontWeight: "bold" }} className="">
-              {selectedDocente
-                ? `Notificar a ${selectedDocente.nombre}`
-                : "Notificación general"}
+            <h4 style={{ fontWeight: "bold" }}>
+              {selectedDocente ? `Notificar a ${selectedDocente.nombre}` : "Notificación general"}
             </h4>
           </Col>
           <Col
@@ -264,25 +258,23 @@ const ListaDeSolicitudes = ({ tipoDeUsuario }) => {
             </div>
           </Col>
         </Row>
-        <Row className="ListaDeDocentes-body justify-content-center">
+        <Row className="ListaDeDocentes-body-Modal">
           <Form>
             <Form.Group controlId="formNotificacion">
               <Form.Label>Mensaje</Form.Label>
               <Form.Control
                 as="textarea"
+                placeholder="Ingrese el mensaje a notificar"
                 rows={3}
                 value={mensaje}
+                style={{ height: "5rem" }}
                 onChange={(e) => setMensaje(e.target.value)}
               />
             </Form.Group>
             <div className="d-flex justify-content-center mt-3">
               <Button
                 className="btn ListaDeDocentes-register"
-                onClick={
-                  selectedDocente
-                    ? handleEnviarNotificacion
-                    : handleNotificacionGeneral
-                }
+                onClick={selectedDocente ? handleEnviarNotificacion : handleNotificacionGeneral}
                 disabled={loading}
               >
                 {loading ? (

@@ -18,33 +18,33 @@
     cursor: pointer;
 }
 
-.RegistrarAmbiente-button-cancel {
+.CancelarReserva-button-cancel {
   color: #003F70;
   background-color: #ffffff;
   border-color: #003F70;
 }
 
-.RegistrarAmbiente-button-cancel:hover,
-.RegistrarAmbiente-button-cancel:active,
-.RegistrarAmbiente-button-cancel:focus,
-.RegistrarAmbiente-button-cancel.active {
+.CancelarReserva-button-cancel:hover,
+.CancelarReserva-button-cancel:active,
+.CancelarReserva-button-cancel:focus,
+.CancelarReserva-button-cancel.active {
   /* let's darken #004E64 a bit for hover effect */
   color: #003F70;
   background: #ffffff;
   border-color: #003F70;
 }
 
-  .RegistrarAmbiente-button-register {
+  .CancelarReserva-button-register {
     color: #ffffff;
     background-color: #003F70;
     border-color: #003F70;
   }
   
-  .RegistrarAmbiente-button-register:hover,
-  .RegistrarAmbiente-button-register:active,
-  .RegistrarAmbiente-button-register:focus,
-  .RegistrarAmbiente-button-register:disabled,
-  .RegistrarAmbiente-button-register.active {
+  .CancelarReserva-button-register:hover,
+  .CancelarReserva-button-register:active,
+  .CancelarReserva-button-register:focus,
+  .CancelarReserva-button-register:disabled,
+  .CancelarReserva-button-register.active {
     /* let's darken #004E64 a bit for hover effect */
     color: #ffffff;
     background: #003F70;

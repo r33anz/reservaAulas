@@ -49,9 +49,7 @@ body {
   -moz-appearance: textfield;
 }
 
-.RegistrarAmbiente-entrada-numero input {
-  text-align: center;
-}
+
 
 .RegistrarAmbiente-button-cancel {
   width: 10rem;
@@ -74,12 +72,14 @@ body {
 }
 
 .RegistrarAmbiente-button-register {
-  width: 10rem;
+  width: 20rem;
+  height: 2.5rem;
   color: #ffffff;
   background-color: #003F70;
   border-color: #003F70;
   margin: 1rem auto;
   text-align: center;
+  font-size: large;
 }
 
 .RegistrarAmbiente-button-register:hover,

@@ -2,14 +2,20 @@
   background-color: #003F70;
   height: 3rem;
 }
-
+.ListaDeDocentes-body1 {
+  background-color: #D9D9D9;
+  padding: 0.5rem;
+  
+}
 .ListaDeDocentes-body {
   background-color: #D9D9D9;
-  padding: 1rem;
+  padding: 0.5rem;
+  height: 500px;
+  
 }
 
 .table-container {
-  max-height: 400px;
+  max-height: 500px;
   /* Puedes ajustar esta altura según tus necesidades */
   overflow-y: auto;
 }
@@ -85,3 +91,33 @@
   --bs-btn-active-bg: #ffffff;
   --bs-btn-active-border-color: #003F70;
 }
+
+.ListaDeDocentes-register2 {
+  color: #ffffff;
+  background-color: #003F70;
+  border-color: #003F70;
+  width: 20rem;
+  margin-right: 3rem;
+}
+
+.ListaDeDocentes-register2:hover,
+.ListaDeDocentes-register2:active,
+.ListaDeDocentes-register2:focus,
+.ListaDeDocentes-register2:disabled,
+.ListaDeDocentes-register2.active {
+  /* let's darken #004E64 a bit for hover effect */
+  color: #ffffff;
+  background: #003F70;
+  border-color: #003F70;
+}
+.ListaDeDocentes-body-Modal{
+  
+    background-color: #D9D9D9;
+    padding: 1rem;
+    height: 200px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start; /* Alinea los elementos desde el inicio (arriba) */
+
+}
+

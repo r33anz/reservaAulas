@@ -269,17 +269,7 @@ const RegistrarAmbiente = ({ onClose }) => {
 
                   <Row className="justify-content-md-center">
                     <Stack gap={2} direction="horizontal">
-                      <Button
-                        className="btn RegistrarAmbiente-button-cancel"
-                        size="sm"
-                        onClick={() => {
-                          formik.resetForm();
-                          onClose();
-                        }}
-                        disabled={loading}
-                      >
-                        Cancelar
-                      </Button>
+                      
                       <Button
                         className="btn RegistrarAmbiente-button-register"
                         size="sm"

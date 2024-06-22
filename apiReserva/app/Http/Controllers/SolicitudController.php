@@ -207,15 +207,16 @@ class SolicitudController extends Controller
         $ambiente = Ambiente::where('id', $idAmbiente)->first();
 
         $docente = User::find($solicitud->user_id);
-
+        $ini = Periodo::find($solicitud->periodo_ini_id);
+        $fin = Periodo::find($solicitud->periodo_fin_id);
         return response()->json([
             'nombreDocente' => $docente->name,
             'materia' => $solicitud->materia,
             'grupo' => $solicitud->grupo,
             'cantidad' => $solicitud->cantidad,
             'razon' => $solicitud->razon,
-            'periodo_ini_id' => $solicitud->periodo_ini_id,
-            'periodo_fin_id' => $solicitud->periodo_fin_id,
+            'periodo_ini_id' => $ini->horainicial,
+            'periodo_fin_id' => $fin->horafinal,
             'fecha' => $solicitud->fechaReserva,
 
             'ambiente_nombre' => $ambiente->nombre,
@@ -257,7 +258,7 @@ class SolicitudController extends Controller
         } else {
             $query = Solicitud::orderBy('updated_at', 'desc');
         }
-        $solicitudes = $query->paginate(7, ['*'], 'pagina', $pagina);
+        $solicitudes = $query->paginate(6, ['*'], 'pagina', $pagina);
         $datosSolicitudes = [];
 
         foreach ($solicitudes as $solicitud) {
@@ -301,7 +302,7 @@ class SolicitudController extends Controller
     }
 
     //FINISH v2
-    public function aceptarSolicitud(Request $request)//REDONE TEST
+    public function aceptarSolicitud(Request $request)
     {
         $id = $request->input('idSolicitud');
         $fechaAtendido = $request->input('fechaAtendida');
@@ -320,7 +321,7 @@ class SolicitudController extends Controller
     }
 
     //FINISH v2
-    public function rechazarSolicitud(Request $request)//REDONE TEST
+    public function rechazarSolicitud(Request $request)
     {
         $id = $request->input('id');
         $fechaAtendido = $request->input('fechaAtendida');

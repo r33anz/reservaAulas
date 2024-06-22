@@ -11,12 +11,11 @@ import {
   Tooltip,
 } from "react-bootstrap";
 import "./style.css";
-import { recuperarSolicitudesDeReserva } from "../../services/Reserva.service";
+import { recuperarSolicitudesDeReserva, recuperarSolicitudesDeReservaDocente } from "../../services/Reserva.service";
 import {
   ArrowClockwise,
   CardHeading,
   CheckCircleFill,
-  EnvelopeExclamation,
   XSquareFill,
 } from "react-bootstrap-icons";
 import { AlertsContext } from "../Alert/AlertsContext";
@@ -30,46 +29,27 @@ const ListaDeSolicitudes = ({ titulo, tipoDeUsuario }) => {
   const [totalPages, setTotalPages] = useState(0);
   const [estado, setEstado] = useState("");
   const { agregarAlert } = useContext(AlertsContext);
-  const periodos = [
-    { id: 1, hora: "6:45 ", isHabilitado: true },
-    { id: 2, hora: "8:15 ", isHabilitado: true },
-    { id: 3, hora: "9:45 ", isHabilitado: true },
-    { id: 4, hora: "11:15 ", isHabilitado: true },
-    { id: 5, hora: "12:45 ", isHabilitado: true },
-    { id: 6, hora: "14:15 ", isHabilitado: true },
-    { id: 7, hora: "15:45 ", isHabilitado: false },
-    { id: 8, hora: "17:15 ", isHabilitado: false },
-    { id: 9, hora: "18:45 ", isHabilitado: false },
-    { id: 10, hora: "20:15 ", isHabilitado: false },
-  ];
-
-  const getPeriodo = (periodoInicioId, periodoFinId) => {
-    const periodoReserva = periodos
-      .filter((periodo) => {
-        return periodo.id === periodoInicioId || periodo.id === periodoFinId;
-      })
-      .map((periodo) => periodo.hora);
-    return (
-      <>
-        {periodoReserva[0]} <br /> {periodoReserva[1]}
-      </>
-    );
-  };
 
   const reloadSolicitudes = async () => {
     await getSolicitudes();
     agregarAlert({
       icon: <CheckCircleFill />,
       severidad: "success",
-      mensaje: "Actualizacion con exito",
+      mensaje: "Actualización con éxito",
     });
   };
 
   const getSolicitudes = useCallback(async () => {
-    const data = await recuperarSolicitudesDeReserva(currentPage, estado);
+    let data;
+    if (tipoDeUsuario === "Admin") {
+      data = await recuperarSolicitudesDeReserva(currentPage, estado);
+    } else if (tipoDeUsuario === "Docente") {
+      const docenteId = window.sessionStorage.getItem("docente_id");
+      data = await recuperarSolicitudesDeReservaDocente(currentPage, estado,docenteId);
+    }
     setSolicitudes(data.contenido);
     setTotalPages(data.numeroPaginasTotal);
-  }, [currentPage, estado]);
+  }, [currentPage, estado, tipoDeUsuario]);
 
   useEffect(() => {
     setCurrentPage(1);
@@ -229,34 +209,40 @@ const ListaDeSolicitudes = ({ titulo, tipoDeUsuario }) => {
               </div>
             ))}
           </Form>
-          {solicitudes.length > 0 ? (
-            <Table striped bordered hover responsive>
-              <thead>
+          <Table striped bordered hover responsive>
+            <thead>
+              <tr className="table-row-fixed-height">
+                <th>Ambiente</th>
+                {tipoDeUsuario === "Admin" && <th>Docente</th>}
+                <th>Materia</th>
+                <th>Periodo</th>
+                <th>Fecha de Reserva</th>
+                {(estado === "" || estado === "canceladas") && (
+                  <th>Fecha de Actualización</th>
+                )}
+                {estado === "en espera" && <th>Fecha de Enviada</th>}
+                {(estado === "rechazadas" || estado === "aprobadas") && (
+                  <th>Fecha de Atención</th>
+                )}
+                <th>Estado</th>
+                <th>Detalle</th>
+              </tr>
+            </thead>
+            <tbody>
+              {solicitudes.length === 0 ? (
                 <tr>
-                  <th>Ambiente</th>
-                  {tipoDeUsuario === "Admin" && <th>Docente</th>}
-                  <th>Materia</th>
-                  <th>Periodo</th>
-                  <th>Fecha de Reserva</th>
-                  {(estado === "" || estado === "canceladas") && (
-                    <th>Fecha de Actualizacion</th>
-                  )}
-                  {estado === "en espera" && <th>Fecha de Enviada</th>}
-                  {(estado === "rechazadas" || estado === "aprobadas") && (
-                    <th>Fecha de Atencion</th>
-                  )}
-                  <th>Estado</th>
-                  <th>Detalle</th>
+                  <td colSpan={tipoDeUsuario === "Admin" ? 9 : 8} className="text-center">
+                    No hay solicitudes para mostrar.
+                  </td>
                 </tr>
-              </thead>
-              <tbody>
-                {solicitudes.map((item, index) => (
-                  <tr key={index}>
+              ) : (
+                solicitudes.map((item) => (
+                  <tr key={item.id} className="table-row-fixed-height">
                     <td>{item.ambiente_nombre}</td>
                     {tipoDeUsuario === "Admin" && <td>{item.nombreDocente}</td>}
                     <td>{item.materia}</td>
                     <td>
-                      {getPeriodo(item.periodo_ini_id, item.periodo_fin_id)}
+                      {`${item.periodo_ini_id} hasta ${item.periodo_fin_id}`}
                     </td>
                     <td>{item.fechaReserva}</td>
                     {(estado === "" || estado === "canceladas") && (
@@ -278,14 +264,10 @@ const ListaDeSolicitudes = ({ titulo, tipoDeUsuario }) => {
                       />
                     </td>
                   </tr>
-                ))}
-              </tbody>
-            </Table>
-          ) : (
-            <div className="text-center" style={{ marginTop: "20px" }}>
-              <p>No hay solicitudes para mostrar.</p>
-            </div>
-          )}
+                ))
+              )}
+            </tbody>
+          </Table>
           <Pagination style={{ justifyContent: "center" }}>
             {renderPaginationItems()}
           </Pagination>
@@ -321,8 +303,8 @@ const ListaDeSolicitudes = ({ titulo, tipoDeUsuario }) => {
             </div>
           </Col>
         </Row>
-        <Row className="ListaDeSolicitudes-body justify-content-center">
-          <div style={{ background: "white", padding: "1rem" }}>
+        <Row className="ListaDeSolicitudes-body ">
+          <div style={{  padding: "1rem" }}>
             <h6>Nombre del Ambiente:</h6>
             <p>{solicitud.ambiente_nombre}</p>
             {tipoDeUsuario === "Admin" && (
@@ -333,7 +315,7 @@ const ListaDeSolicitudes = ({ titulo, tipoDeUsuario }) => {
             )}
             <h6>Periodo: </h6>
             <p>
-              {getPeriodo(solicitud.periodo_ini_id, solicitud.periodo_fin_id)}
+              {`${solicitud.periodo_ini_id} hasta ${solicitud.periodo_fin_id}`}
             </p>
             <h6>Materia: </h6>
             <p>{solicitud.materia}</p>
@@ -341,7 +323,7 @@ const ListaDeSolicitudes = ({ titulo, tipoDeUsuario }) => {
             <p>{solicitud.fechaReserva}</p>
             {(solicitud.estado === "" || solicitud.estado === "canceladas") && (
               <>
-                <h6>Fecha de Actualizacion:</h6>
+                <h6>Fecha de Actualización:</h6>
                 <p>{solicitud.updated_at}</p>
               </>
             )}
@@ -362,7 +344,7 @@ const ListaDeSolicitudes = ({ titulo, tipoDeUsuario }) => {
             <p>{solicitud.cantidad}</p>
             <h6>Grupo: </h6>
             <p>{solicitud.grupo}</p>
-            <h6>Razon: </h6>
+            <h6>Razón: </h6>
             <p>{solicitud.razon}</p>
           </div>
         </Row>

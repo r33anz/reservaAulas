@@ -348,7 +348,7 @@ function Calendario() {
             >
               <div
                 onClick={handleClose}
-                className="RegistrarAmbiente-header-button-close d-flex justify-content-center align-items-center"
+                className="Calendario-header-button-close d-flex justify-content-center align-items-center"
               >
                 <XSquareFill size={24} />
               </div>
