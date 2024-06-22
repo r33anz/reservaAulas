@@ -1,7 +1,7 @@
 .Login-button-login {
     color: #ffffff;
-    background-color: #003F70;
-    border-color: #003F70;
+    background-color: #003f70;
+    border-color: #003f70;
     cursor: pointer;
 }
 
@@ -12,8 +12,24 @@
 .Login-button-login.active {
     /* let's darken #004E64 a bit for hover effect */
     color: #ffffff;
-    background: #003F70;
-    border-color: #003F70;
-    --bs-btn-active-bg: #003F70;
-    --bs-btn-active-border-color: #003F70;
+    background: #003f70;
+    border-color: #003f70;
+    --bs-btn-active-bg: #003f70;
+    --bs-btn-active-border-color: #003f70;
+}
+
+.Login-aulapro span {
+    color: #003f70;
+}
+
+.Login-aulapro {
+    color: red;
+}
+
+.Login-titulo-ventajas {
+    font-weight: bold;
+}
+
+.Login-subtitulo {
+    font-weight: bold;
 }
