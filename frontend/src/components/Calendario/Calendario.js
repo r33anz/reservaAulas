@@ -3,14 +3,29 @@ import "react-big-calendar/lib/css/react-big-calendar.css";
 import dayjs from "dayjs";
 import "dayjs/locale/es";
 import "./style.css";
-import { recuperarFechasSolicitud, recuperarInformacionSolicitud } from "../../services/Fechas.service";
+import {
+  recuperarFechasSolicitud,
+  recuperarInformacionSolicitud,
+} from "../../services/Fechas.service";
 import { useState, useEffect, useRef } from "react";
-import { Col, Modal, Row, Form, Pagination, Dropdown, Stack, Button } from "react-bootstrap";
+import {
+  Col,
+  Modal,
+  Row,
+  Form,
+  Pagination,
+  Dropdown,
+  Stack,
+  Button,
+} from "react-bootstrap";
 import { XSquareFill, ArrowClockwise } from "react-bootstrap-icons";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { modificarPerio } from "../../../src/services/ModificarPeriodo.service";
-import { getAmbientes, getPeriodosReservados } from "../../../src/services/Ambiente.service";
+import {
+  getAmbientes,
+  getPeriodosReservados,
+} from "../../../src/services/Ambiente.service";
 dayjs.locale("es");
 
 function Calendario() {
@@ -27,7 +42,10 @@ function Calendario() {
   const reservasPerPage = 4; // Número de reservas por página
   const indexOfLastReserva = currentPage * reservasPerPage;
   const indexOfFirstReserva = indexOfLastReserva - reservasPerPage;
-  const currentReservas = filteredReservas.slice(indexOfFirstReserva, indexOfLastReserva);
+  const currentReservas = filteredReservas.slice(
+    indexOfFirstReserva,
+    indexOfLastReserva
+  );
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
   const totalPages = Math.ceil(filteredReservas.length / reservasPerPage);
 
@@ -68,11 +86,14 @@ function Calendario() {
   const refDropdown = useRef(null);
 
   const getPeriodo = (periodoInicioId, periodoFinId) => {
-    const periodoInicio = periodos.find((periodo) => periodo.id === periodoInicioId);
+    const periodoInicio = periodos.find(
+      (periodo) => periodo.id === periodoInicioId
+    );
     const periodoFin = periodosF.find((periodo) => periodo.id === periodoFinId);
     return (
       <>
-        {periodoInicio ? periodoInicio.hora : "N/A"}-{periodoFin ? periodoFin.hora : "N/A"}
+        {periodoInicio ? periodoInicio.hora : "N/A"}-
+        {periodoFin ? periodoFin.hora : "N/A"}
       </>
     );
   };
@@ -83,12 +104,14 @@ function Calendario() {
     setDatos(fechas);
     const events2 = [];
 
-    fechas.forEach(fecha => {
+    fechas.forEach((fecha) => {
       if (fecha.reservas.length > 0) {
         const eventoReserva = {
           start: dayjs(fecha.fecha).toDate(),
           end: dayjs(fecha.fecha).toDate(),
-          title: `${fecha.reservas.length} ${fecha.reservas.length > 1 ? "reservas" : "reserva"}`,
+          title: `${fecha.reservas.length} ${
+            fecha.reservas.length > 1 ? "reservas" : "reserva"
+          }`,
           type: "reserva",
         };
         events2.push(eventoReserva);
@@ -98,7 +121,9 @@ function Calendario() {
         const eventoSolicitud = {
           start: dayjs(fecha.fecha).toDate(),
           end: dayjs(fecha.fecha).toDate(),
-          title: `${fecha.solicitudes.length} ${fecha.solicitudes.length > 1 ? "solicitudes" : "solicitud"}`,
+          title: `${fecha.solicitudes.length} ${
+            fecha.solicitudes.length > 1 ? "solicitudes" : "solicitud"
+          }`,
           type: "solicitud",
         };
         events2.push(eventoSolicitud);
@@ -124,7 +149,7 @@ function Calendario() {
   const filtrarReservas = () => {
     let filtered = reservas;
     if (searchTerm) {
-      filtered = filtered.filter(reserva =>
+      filtered = filtered.filter((reserva) =>
         reserva.ambiente_nombre.toLowerCase().includes(searchTerm.toLowerCase())
       );
     }
@@ -135,21 +160,23 @@ function Calendario() {
     setFilteredReservas([]);
     const formattedDate = dayjs(event.start).format("YYYY-MM-DD");
 
-    const datosEncontrados = datos.find(fechaObj => fechaObj.fecha === formattedDate);
+    const datosEncontrados = datos.find(
+      (fechaObj) => fechaObj.fecha === formattedDate
+    );
 
     if (event.type === "reserva") {
       for (const reservaId of datosEncontrados.reservas) {
         const data = await recuperarInformacionSolicitud(reservaId);
-        setReservas(prevReservas => [...prevReservas, data]);
-        setFilteredReservas(prevReservas => [...prevReservas, data]);
+        setReservas((prevReservas) => [...prevReservas, data]);
+        setFilteredReservas((prevReservas) => [...prevReservas, data]);
       }
       setNombre("Detalle de Reservas");
       setMensaje("No hay reservas");
     } else if (event.type === "solicitud") {
       for (const solicitudId of datosEncontrados.solicitudes) {
         const data = await recuperarInformacionSolicitud(solicitudId);
-        setReservas(prevReservas => [...prevReservas, data]);
-        setFilteredReservas(prevReservas => [...prevReservas, data]);
+        setReservas((prevReservas) => [...prevReservas, data]);
+        setFilteredReservas((prevReservas) => [...prevReservas, data]);
         console.log(data);
       }
       console.log(filteredReservas);
@@ -281,7 +308,7 @@ function Calendario() {
   }, [refDropdownMenu, refDropdown, refDropdownToggle]);
 
   const handleKeyDown = (event) => {
-    if (event.key === 'Enter') {
+    if (event.key === "Enter") {
       event.preventDefault();
       // Aquí va tu lógica para manejar la búsqueda
     }
@@ -293,18 +320,42 @@ function Calendario() {
 
   return (
     <>
-    <div style={{ display: 'flex', justifyContent: "space-around", alignItems: 'center', marginBottom: '10px' }}>
-          <h4>Calendario </h4>
-          <ArrowClockwise size={24} onClick={handleReload} style={{ cursor: 'pointer' }} />
-        </div>
       <div
         style={{
-          height: "505px",
-          width: "1040px",
-          backgroundColor: "white",
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          width: "100%",
+          background: "rgb(11 63 111)",
+          color: "white",
         }}
       >
-        
+        <h5
+          style={{
+            marginBottom: "0",
+            marginLeft: "10px",
+            alignContent: "center",
+            fontWeight: "bold",
+          }}
+        >
+          Calendario{" "}
+        </h5>
+        <div className="Calendario-header-button-close align-items-center justify-content-center d-flex">
+          <ArrowClockwise
+            size={24}
+            onClick={handleReload}
+            style={{ cursor: "pointer", fontWeight: "bold" }}
+          />
+        </div>
+      </div>
+      <div
+        style={{
+          height: "88vh",
+          width: "100%",
+          backgroundColor: "#D9D9D9",
+          paddingTop: "1rem",
+        }}
+      >
         <Calendar
           localizer={localizer}
           events={event}
@@ -325,7 +376,6 @@ function Calendario() {
           }}
         />
         <Modal
-          size="lg"
           aria-labelledby="contained-modal-title-vcenter"
           show={show}
           onHide={handleClose}
@@ -354,57 +404,66 @@ function Calendario() {
               </div>
             </Col>
           </Row>
-          <Row className="RegistrarAmbiente-body1 justify-content-center" style={{ backgroundColor: "#D9D9D9" }}>
+          <Row
+            className="justify-content-center"
+            style={{ backgroundColor: "#D9D9D9" }}
+          >
+            <Form inline className="d-flex  mb-2">
+              <Form.Group
+                controlId="searchTerm"
+                className="mr-2 d-flex align-items-center"
+                style={{ paddingTop: "0.5rem" }}
+              >
+                <Form.Label style={{ width: "100%" }}>
+                  Buscar por Ambiente
+                </Form.Label>
+                <Form.Control
+                  type="text"
+                  value={searchTerm}
+                  onKeyDown={handleKeyDown}
+                  onChange={handleInputChange}
+                  placeholder="Nombre del Ambiente"
+                  style={{ width: "100%" }}
+                />
+              </Form.Group>
+            </Form>
 
-            <>
-              <Form inline className="d-flex  mb-2">
-                <Form.Group controlId="searchTerm" className="mr-2 d-flex align-items-center">
-                  <Form.Label className="mr-2">Buscar por Ambiente</Form.Label>
-                  <Form.Control
-                    type="text"
-                    value={searchTerm}
-                    onKeyDown={handleKeyDown}
-                    onChange={handleInputChange}
-                    placeholder="Nombre del Ambiente"
-                    style={{ width: "100%" }}
-                  />
-                </Form.Group>
-              </Form>
-
-              {filteredReservas.length === 0 ? (
-                <p>{mensaje}</p>
-              ) : (
-                filteredReservas.map((reserva, index) => (
-                  <div key={index} className="reserva">
-                    <div className="reserva-row">
-                      <h6>Docente:</h6>
-                      <p>{reserva.nombreDocente}</p>
-                    </div>
-                    <div className="reserva-row">
-                      <h6>Nombre del Ambiente:</h6>
-                      <p>{reserva.ambiente_nombre}</p>
-                    </div>
-                    <div className="reserva-row">
-                      <h6>Periodo:</h6>
-                      <p>{getPeriodo(reserva.periodo_ini_id, reserva.periodo_fin_id)}</p>
-                    </div>
-                    {index < filteredReservas.length - 1 && <hr />}
+            {filteredReservas.length === 0 ? (
+              <p>{mensaje}</p>
+            ) : (
+              filteredReservas.map((reserva, index) => (
+                <div key={index} className="reserva">
+                  <div className="reserva-row">
+                    <h6>Docente:</h6>
+                    <p>{reserva.nombreDocente}</p>
                   </div>
-                ))
-              )}
-              {filteredReservas.length > 0 && (
-                <Pagination style={{ justifyContent: "center" }}>
-                  {renderPaginationItems()}
-                </Pagination>
-              )}
-            </>
+                  <div className="reserva-row">
+                    <h6>Nombre del Ambiente:</h6>
+                    <p>{reserva.ambiente_nombre}</p>
+                  </div>
+                  <div className="reserva-row">
+                    <h6>Periodo:</h6>
+                    <p>
+                      {getPeriodo(
+                        reserva.periodo_ini_id,
+                        reserva.periodo_fin_id
+                      )}
+                    </p>
+                  </div>
+                  {index < filteredReservas.length - 1 && <hr />}
+                </div>
+              ))
+            )}
+            {filteredReservas.length > 0 && (
+              <Pagination style={{ justifyContent: "center" }}>
+                {renderPaginationItems()}
+              </Pagination>
+            )}
           </Row>
-
         </Modal>
       </div>
     </>
   );
-
 }
 
 export default Calendario;

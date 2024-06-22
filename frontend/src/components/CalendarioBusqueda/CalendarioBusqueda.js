@@ -18,7 +18,7 @@ import {
   Stack,
   Button,
 } from "react-bootstrap";
-import { XSquareFill } from "react-bootstrap-icons";
+import { ArrowClockwise, XSquareFill } from "react-bootstrap-icons";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import {
@@ -370,9 +370,32 @@ function Calendario() {
     <>
       <div
         style={{
-          height: "505px",
-          width: "1040px",
-          backgroundColor: "white",
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          width: "100%",
+          background: "rgb(11 63 111)",
+          color: "white",
+          height: "3rem"
+        }}
+      >
+        <h5
+          style={{
+            marginBottom: "0",
+            marginLeft: "10px",
+            alignContent: "center",
+            fontWeight: "bold",
+          }}
+        >
+          Calendario
+        </h5>
+      </div>
+      <div
+        style={{
+          height: "93vh",
+          width: "100%",
+          backgroundColor: "#D9D9D9",
+          paddingTop: "1rem",
         }}
       >
         <Calendar
