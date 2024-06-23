@@ -20,30 +20,30 @@ class DocenteController extends Controller
             'materias' => $materiasConGrupos
         ]);
     }
-    public function getAllDocenteNames()
-    {
+    
+    public function getAllDocenteNames(){
         $docentes = User::whereHas('materias')->with('materias')->get();
     
-    // Ordenar los docentes por nombre
-    $docentes = $docentes->sortBy('name')->values();
+        // Ordenar los docentes por nombre
+        $docentes = $docentes->sortBy('name')->values();
 
-    // Estructurar los datos
-    $docentesConMaterias = $docentes->map(function ($docente) {
-        $materiasConGrupos = $docente->materias->groupBy('nombreMateria')->map(function ($materias) {
-            $grupos = $materias->pluck('pivot.grupo');
+        // Estructurar los datos
+        $docentesConMaterias = $docentes->map(function ($docente) {
+            $materiasConGrupos = $docente->materias->groupBy('nombreMateria')->map(function ($materias) {
+                $grupos = $materias->pluck('pivot.grupo');
+                return [
+                    'grupos' => $grupos
+                ];
+            });
+
             return [
-                'grupos' => $grupos
+                'id' => $docente->id,
+                'nombre' => $docente->name,
+                'email'=> $docente->email,
+                'materias' => $materiasConGrupos
             ];
         });
 
-        return [
-            'id' => $docente->id,
-            'nombre' => $docente->name,
-            'email'=> $docente->email,
-            'materias' => $materiasConGrupos
-        ];
-    });
-
-    return response()->json($docentesConMaterias);
+        return response()->json($docentesConMaterias);
     }
 }

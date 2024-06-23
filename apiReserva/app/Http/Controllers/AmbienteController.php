@@ -47,11 +47,11 @@ class AmbienteController extends Controller
         $nroPiso = $piso->nroPiso;
 
         return response()->json([
-        'nombre'=>$ambiente->nombre,
-        'capacidad'=>$ambiente->capacidad,
-        'tipo'=>$ambiente->tipo,
-        'nombreBloque' => $nombreBloque,
-        'nroPiso' => $nroPiso
+            'nombre'=>$ambiente->nombre,
+            'capacidad'=>$ambiente->capacidad,
+            'tipo'=>$ambiente->tipo,
+            'nombreBloque' => $nombreBloque,
+            'nroPiso' => $nroPiso
         ]);
     }
 
@@ -195,21 +195,21 @@ class AmbienteController extends Controller
     public function busquedaMultiAmbientes($cantidad) {  
         list($min, $max) = $this->establecerRango($cantidad);
 
-    // Obtener todos los ambientes y agruparlos por piso_id
-    $ambientes = Ambiente::orderBy('piso_id')
-                        ->orderBy('id')
-                        ->get()
-                        ->groupBy('piso_id');
+        // Obtener todos los ambientes y agruparlos por piso_id
+        $ambientes = Ambiente::orderBy('piso_id')
+                            ->orderBy('id')
+                            ->get()
+                            ->groupBy('piso_id');
 
-    $result = [];
-    foreach ($ambientes as $piso_id => $ambientesPiso) {
-        $combinations = $this->combinaciones($ambientesPiso->all(), $min, $max);
-        foreach ($combinations as $combination) {
-            $result[] = $combination;
+        $result = [];
+        foreach ($ambientes as $piso_id => $ambientesPiso) {
+            $combinations = $this->combinaciones($ambientesPiso->all(), $min, $max);
+            foreach ($combinations as $combination) {
+                $result[] = $combination;
+            }
         }
-    }
 
-    return $result;
+        return $result;
     }
 
     public function establecerRango($cantidad){
@@ -236,34 +236,34 @@ class AmbienteController extends Controller
     
     public function combinaciones($ambientes, $min, $max){
         $combinations = [];
-    $count = count($ambientes);
+        $count = count($ambientes);
 
-    // Generar todas las combinaciones posibles de 2 o más ambientes
-    for ($i = 0; $i < (1 << $count); $i++) {
-        $combination = [];
-        $sum = 0;
-        for ($j = 0; $j < $count; $j++) {
-            if ($i & (1 << $j)) {
-                $combination[] = $ambientes[$j];
-                $sum += $ambientes[$j]->capacidad;
-            }
-        }
-        if ($sum >= $min && $sum <= $max && count($combination) > 1) {
-            // Verificar que todos los ambientes en la combinación pertenezcan al mismo piso
-            $samePiso = true;
-            $piso_id = $combination[0]->piso_id;
-            foreach ($combination as $ambiente) {
-                if ($ambiente->piso_id != $piso_id) {
-                    $samePiso = false;
-                    break;
+        // Generar todas las combinaciones posibles de 2 o más ambientes
+        for ($i = 0; $i < (1 << $count); $i++) {
+            $combination = [];
+            $sum = 0;
+            for ($j = 0; $j < $count; $j++) {
+                if ($i & (1 << $j)) {
+                    $combination[] = $ambientes[$j];
+                    $sum += $ambientes[$j]->capacidad;
                 }
             }
-            if ($samePiso) {
-                $combinations[] = $combination;
+            if ($sum >= $min && $sum <= $max && count($combination) > 1) {
+                // Verificar que todos los ambientes en la combinación pertenezcan al mismo piso
+                $samePiso = true;
+                $piso_id = $combination[0]->piso_id;
+                foreach ($combination as $ambiente) {
+                    if ($ambiente->piso_id != $piso_id) {
+                        $samePiso = false;
+                        break;
+                    }
+                }
+                if ($samePiso) {
+                    $combinations[] = $combination;
+                }
             }
         }
-    }
-    return $combinations;
+        return $combinations;
     }
 
     //buscar ambientes por fecha/periodo
