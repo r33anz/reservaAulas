@@ -17,7 +17,7 @@ class CreateSolicitudsTable extends Migration
             $table->id();
             $table->unsignedInteger('user_id');
             $table->string('materia');
-            $table->integer('grupo');
+            $table->string('grupo',100);
             $table->integer('cantidad');
             $table->string('razon');
             $table->date('fechaReserva');

@@ -207,6 +207,87 @@ class SolicitudController extends Controller
         // Validar que la diferencia sea de al menos 5 horas
         return $horasFaltantes >= 5;
     }
+
+    public function realizarSolicitudV2(Request $request)
+    {
+        $idUsuario = $request->input('idDocente');
+        $materia = $request->input('materia');
+        $grupos = $request->input('grupo');  // []
+        $cantidad = $request->input('capacidad');
+        $razon = $request->input('razon');
+        $fechaReserva = $request->input('fechaReserva');
+        $estado = 'en espera';
+        $idAmbientes = $request->input('ambiente'); // []
+        $periodos = $request->input('periodos');
+    
+        if (count($periodos) === 1) {
+            $periodoInicial = $periodos[0];
+            $periodoFinal = $periodos[0];
+        } else {
+            $periodoInicial = $periodos[0];
+            $periodoFinal = $periodos[count($periodos) - 1];
+        }
+    
+        // Verificar si la solicitud se realizó al menos 5 horas antes del periodo inicial
+        $enTiempo = $this->validadorTiempos($fechaReserva, $periodoInicial);
+    
+        if (!$enTiempo) {
+            return response()->json([
+                (object) [
+                    'mensaje' => "No puede realizar esta solicitud con no menos de 5 horas de anticipacion.",
+                    'alerta' => "advertencia"
+                ]
+            ]);
+        }
+    
+        // Validar disponibilidad de los ambientes
+        /*$ambienteDisponible = $this->ambienteValido->ambienteValido($idAmbientes, $fechaReserva, $periodos, $idUsuario, $materia, $grupos, $razon);
+    
+        if ($ambienteDisponible->alerta != 'exito') {
+            return response()->json([$ambienteDisponible]);
+        }*/
+    
+        // Convertir grupos a string para almacenamiento
+        $gruposString = implode(',', $grupos);
+    
+        // Crear la solicitud
+        $solicitud = Solicitud::create([
+            'user_id' => $idUsuario,
+            'materia' => $materia,
+            'grupo' => $gruposString,
+            'cantidad' => $cantidad,
+            'razon' => $razon,
+            'fechaReserva' => $fechaReserva,
+            'periodo_ini_id' => $periodoInicial,
+            'periodo_fin_id' => $periodoFinal,
+            'estado' => $estado,
+        ]);
+    
+        // Insertar en la tabla pivote ambiente_solicitud
+        foreach ($idAmbientes as $idAmbiente) {
+            DB::table('ambiente_solicitud')->insert([
+                'ambiente_id' => $idAmbiente,
+                'solicitud_id' => $solicitud->id
+            ]);
+        }
+    
+        // Notificar al usuario sobre la nueva solicitud
+        $nombreAmbiente = Ambiente::whereIn('id', $idAmbientes)->pluck('nombre')->implode(', ');
+        $ini = Periodo::find($periodoInicial);
+        $fin = Periodo::find($periodoFinal);
+        $user = User::find($idUsuario);
+        dispatch(function () use ($user, $nombreAmbiente, $fechaReserva, $ini, $fin) {
+            $user->notify(new SolicitudR($nombreAmbiente, $fechaReserva, $ini->horainicial, $fin->horafinal));
+        });
+    
+        // Notificar al administrador
+        event(new SolicitudCreada($solicitud->id));
+    
+        return response()->json([
+            'mensaje' => 'Registro exitoso',
+        ]);
+    }
+
     // FINISH T
     public function informacionSolicitud(Request $request) 
     {
