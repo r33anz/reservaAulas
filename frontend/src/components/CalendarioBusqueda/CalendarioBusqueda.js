@@ -270,8 +270,10 @@ function Calendario() {
   };
 
   const fetchAmbientes = async () => {
-    let { respuesta } = await getAmbientes();
-    setAmbientes(respuesta);
+    let response = await getAmbientes();
+    if (response !== null) {
+      setAmbientes(response.respuesta);
+    }
   };
 
   const cambiarColorLabels = useCallback(
@@ -376,7 +378,7 @@ function Calendario() {
           width: "100%",
           background: "rgb(11 63 111)",
           color: "white",
-          height: "3rem"
+          height: "3rem",
         }}
       >
         <h5
@@ -392,7 +394,7 @@ function Calendario() {
       </div>
       <div
         style={{
-          height: "93vh",
+          height: "88vh",
           width: "100%",
           backgroundColor: "#D9D9D9",
           paddingTop: "1rem",

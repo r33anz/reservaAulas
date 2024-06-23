@@ -84,7 +84,6 @@ const SolicitarReserva = ({ onClose }) => {
 
   // Función para buscar los ambientes que coinciden con el nombre
   
-  
   const buscar = async () => {
     const { fechaReserva, capacidad, periodoInicio, periodoFin } = formik.values;
     const periodoInicioID = parseInt(periodoInicio, 10);

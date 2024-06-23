@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { buscarAmbientePorCantidad, getMaxMinCapacidad } from "../../services/Busqueda.service";
+import {
+  buscarAmbientePorCantidad,
+  getMaxMinCapacidad,
+} from "../../services/Busqueda.service";
 import { Button, Col, Container, Row, Form } from "react-bootstrap";
 import { XSquareFill } from "react-bootstrap-icons";
 import Slider from "rc-slider";
@@ -32,11 +35,13 @@ const BuscarCantidad = () => {
 
   const buscarAmbientesPorCantidad = async () => {
     const [minCantidad, maxCantidad] = cantidadRange;
-    const { respuesta } = await buscarAmbientePorCantidad(minCantidad, maxCantidad);
-    setAmbientes(respuesta);
-    setAmbienteDetails(respuesta || []); // Asegurarse de que siempre sea un array
-    setBusquedaRealizada(true);
-    setSliderModificado(false); // Resetear el estado al realizar una nueva búsqueda
+    const response = await buscarAmbientePorCantidad(minCantidad, maxCantidad);
+    if (response === null) {
+      setAmbientes(response.respuesta);
+      setAmbienteDetails(response.respuesta || []); // Asegurarse de que siempre sea un array
+      setBusquedaRealizada(true);
+      setSliderModificado(false); // Resetear el estado al realizar una nueva búsqueda
+    }
   };
 
   const handleBuscarClick = (event) => {
@@ -57,7 +62,10 @@ const BuscarCantidad = () => {
   };
 
   const handleInputChange = (event, index) => {
-    const value = Math.min(Math.max(Number(event.target.value), 0), maxCapacidad); // Asegurar que el valor esté dentro de los límites
+    const value = Math.min(
+      Math.max(Number(event.target.value), 0),
+      maxCapacidad
+    ); // Asegurar que el valor esté dentro de los límites
     const newRange = [...cantidadRange];
     newRange[index] = value;
     setCantidadRange(newRange);
@@ -210,14 +218,9 @@ const BuscarCantidad = () => {
       </Container>
 
       {busquedaRealizada && !sliderModificado && ambienteDetails.length > 0 && (
-        <div
-          className="ambientedetails"
-        >
+        <div className="ambientedetails">
           {ambienteDetails.map((ambiente, index) => (
-            <div
-              key={index}
-              className="datos1"
-            >
+            <div key={index} className="datos1">
               <h6>{ambiente.nombre}</h6>
               <p>Capacidad: {ambiente.capacidad}</p>
               <p>Tipo de Ambiente: {ambiente.tipo}</p>

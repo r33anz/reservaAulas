@@ -122,8 +122,7 @@ const Login = () => {
                   style={{ fontWeight: "bold", paddingTop: "0.5rem" }}
                 >
                   Aula
-                  <span className="Login-p">P</span>
-                  <span className="Login-ro">ro</span>
+                  <span>Pro</span>
                 </h1>
               </div>
               <Formik
