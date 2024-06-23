@@ -188,7 +188,7 @@ class SolicitudController extends Controller
             'mensaje' => 'Registro exitoso',
         ]);
     }
-
+    //
     private function validadorTiempos($fechaReserva, $idPeriodoInicial){ //valida que la solicitud se haya realizado 
                                                         //X horas antes del periodo inical solicitado
         
@@ -296,14 +296,16 @@ class SolicitudController extends Controller
         if (!$solicitud) {
             return response()->json(['mensaje' => 'Solicitud no encontrada'], 404);
         }
-        $idAmbiente = DB::table('ambiente_solicitud')->where('solicitud_id', $id)->value('ambiente_id');
-        $ambiente = Ambiente::where('id', $idAmbiente)->first();
-        if (!$ambiente) {
-            return response()->json(['mensaje' => 'No se encontró información del ambiente asociado a la solicitud'], 404);
+        $idAmbientes = DB::table('ambiente_solicitud')->where('solicitud_id', $id)->pluck('ambiente_id');
+        $ambientes = Ambiente::whereIn('id', $idAmbientes)->get();
+
+        if ($ambientes->isEmpty()) {
+            return response()->json(['mensaje' => 'No se encontró información de los ambientes asociados a la solicitud'], 404);
         }
 
-        $nombreDocente = User::where('id', $solicitud->user_id)
-            ->value('name');
+        $nombreDocente = User::where('id', $solicitud->user_id)->value('name');
+        $nombresAmbientes = $ambientes->pluck('nombre')->implode(', ');
+
         return response()->json([
             'cantidad' => $solicitud->cantidad,
             'materia' => $solicitud->materia,
@@ -312,7 +314,7 @@ class SolicitudController extends Controller
             'periodo_ini_id' => $solicitud->periodo_ini_id,
             'periodo_fin_id' => $solicitud->periodo_fin_id,
             'fecha' => $solicitud->fechaReserva,
-            'ambiente_nombre' => $ambiente->nombre,
+            'ambiente_nombre' => $nombresAmbientes,
         ]);
     }
 
@@ -320,71 +322,84 @@ class SolicitudController extends Controller
     public function recuperarInformacion($idSolicitud)
     {
         $solicitud = Solicitud::find($idSolicitud);
-        $idAmbiente = DB::table('ambiente_solicitud')->where('solicitud_id', $idSolicitud)->value('ambiente_id');
-        $ambiente = Ambiente::where('id', $idAmbiente)->first();
+        if (!$solicitud) {
+            return response()->json(['mensaje' => 'Solicitud no encontrada'], 404);
+        }
+
+        $idAmbientes = DB::table('ambiente_solicitud')->where('solicitud_id', $idSolicitud)->pluck('ambiente_id');
+        $ambientes = Ambiente::whereIn('id', $idAmbientes)->get();
+
+        if ($ambientes->isEmpty()) {
+            return response()->json(['mensaje' => 'No se encontró información de los ambientes asociados a la solicitud'], 404);
+        }
 
         $docente = User::find($solicitud->user_id);
+        $nombreDocente = $docente ? $docente->name : 'Docente no encontrado';
+
         $ini = Periodo::find($solicitud->periodo_ini_id);
         $fin = Periodo::find($solicitud->periodo_fin_id);
+
+        $nombresAmbientes = $ambientes->pluck('nombre')->implode(', ');
+        $capacidadesAmbientes = $ambientes->pluck('capacidad')->implode(', ');
+
         return response()->json([
-            'nombreDocente' => $docente->name,
+            'nombreDocente' => $nombreDocente,
             'materia' => $solicitud->materia,
             'grupo' => $solicitud->grupo,
             'cantidad' => $solicitud->cantidad,
             'razon' => $solicitud->razon,
-            'periodo_ini_id' => $ini->horainicial,
-            'periodo_fin_id' => $fin->horafinal,
+            'periodo_ini_id' => $ini ? $ini->horainicial : 'Periodo inicial no encontrado',
+            'periodo_fin_id' => $fin ? $fin->horafinal : 'Periodo final no encontrado',
             'fecha' => $solicitud->fechaReserva,
-
-            'ambiente_nombre' => $ambiente->nombre,
-            'ambienteCantidadMax' => $ambiente->capacidad,
-            'id_ambiente' => $idAmbiente,
+            'ambiente_nombres' => $nombresAmbientes,
+            'ambiente_capacidades' => $capacidadesAmbientes,
+            'id_ambientes' => $idAmbientes,
         ]);
     }
 
     //FINISH v2
-    public function verListas(Request $request)//REDONE TEST
+    public function verListas(Request $request)
     {
+        
         $estado = $request->input('estado');
         $pagina = $request->input('pagina', 1);
         $fechaActual = now();
-        //$query = Solicitud::orderBy('created_at', 'desc');
+
         if ($estado === 'aprobadas') {
-            $query = Solicitud::orderBy('updated_at', 'asc');
-            $query->where('estado', 'aprobado');
+            $query = Solicitud::orderBy('updated_at', 'asc')->where('estado', 'aprobado');
         } elseif ($estado === 'rechazadas') {
-            $query = Solicitud::orderBy('updated_at', 'asc');
-            $query->where('estado', 'rechazado');
+            $query = Solicitud::orderBy('updated_at', 'asc')->where('estado', 'rechazado');
         } elseif ($estado === 'en espera') {
-            $query = Solicitud::orderBy('updated_at', 'asc');
-            $query->where('estado', 'en espera');
+            $query = Solicitud::orderBy('updated_at', 'asc')->where('estado', 'en espera');
         } elseif ($estado === 'canceladas') {
-            $query = Solicitud::orderBy('updated_at', 'asc');
-            $query->where('estado', 'cancelado');
+            $query = Solicitud::orderBy('updated_at', 'asc')->where('estado', 'cancelado');
         } elseif ($estado === 'inhabilitada') {
-            $query = Solicitud::orderBy('updated_at', 'asc');
-            $query->where('estado', 'inhabilitada');
+            $query = Solicitud::orderBy('updated_at', 'asc')->where('estado', 'inhabilitada');
         } elseif ($estado === 'prioridad') {
             $query = Solicitud::where('estado', 'en espera')
                 ->orderByRaw("
-                      CASE
-                          WHEN fechaReserva < ? THEN 0
-                          ELSE 1
-                      END, ABS(DATEDIFF(fechaReserva, ?))
-                  ", [$fechaActual, $fechaActual]);
+                    CASE
+                        WHEN fechaReserva < ? THEN 0
+                        ELSE 1
+                    END, ABS(DATEDIFF(fechaReserva, ?))
+                ", [$fechaActual, $fechaActual]);
         } else {
             $query = Solicitud::orderBy('updated_at', 'desc');
         }
-        $solicitudes = $query->paginate(6, ['*'], 'pagina', $pagina);
+
+        $solicitudes = $query->paginate(7, ['*'], 'pagina', $pagina);
         $datosSolicitudes = [];
 
         foreach ($solicitudes as $solicitud) {
-            $idAmbiente = DB::table('ambiente_solicitud')->where('solicitud_id', $solicitud->id)->value('ambiente_id');
-            $ambiente = Ambiente::find($idAmbiente);
+            $idAmbientes = DB::table('ambiente_solicitud')->where('solicitud_id', $solicitud->id)->pluck('ambiente_id');
+            $ambientes = Ambiente::whereIn('id', $idAmbientes)->get();
             $docente = User::find($solicitud->user_id);
-
             $ini = Periodo::find($solicitud->periodo_ini_id);
             $fin = Periodo::find($solicitud->periodo_fin_id);
+
+            $nombresAmbientes = $ambientes->pluck('nombre')->implode(', ');
+            $capacidadesAmbientes = $ambientes->pluck('capacidad')->implode(', ');
+
             $datosSolicitud = [
                 'id' => $solicitud->id,
                 'nombreDocente' => $docente->name,
@@ -395,8 +410,8 @@ class SolicitudController extends Controller
                 'periodo_ini_id' => $ini->horainicial,
                 'periodo_fin_id' => $fin->horafinal,
                 'fechaReserva' => $solicitud->fechaReserva,
-                'ambiente_nombre' => $ambiente->nombre,
-                'ambienteCantidadMax' => $ambiente->capacidad,
+                'ambiente_nombres' => $nombresAmbientes,
+                'ambiente_capacidades' => $capacidadesAmbientes,
                 'fechaEnviada' => substr($solicitud->created_at, 0, 10),
                 'estado' => $solicitud->estado,
                 'updated_at' => substr($solicitud->updated_at, 0, 10),
@@ -408,8 +423,10 @@ class SolicitudController extends Controller
                 $datosSolicitud['fechaAtendida'] = $solicitud->fechaAtendida;
                 $datosSolicitud['razonRechazo'] = $solicitud->razonRechazo;
             }
+
             $datosSolicitudes[] = $datosSolicitud;
         }
+
         return response()->json([
             'numeroItemsPagina' => $solicitudes->perPage(),
             'paginaActual' => $solicitudes->currentPage(),

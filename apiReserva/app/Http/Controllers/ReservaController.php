@@ -45,12 +45,16 @@ class ReservaController extends Controller
         $datosSolicitudes = [];
 
         foreach ($solicitudes as $solicitud) {
-            $idAmbiente = DB::table('ambiente_solicitud')->where('solicitud_id', $solicitud->id)->value('ambiente_id');
-            $ambiente = Ambiente::find($idAmbiente);
+            $idAmbientes = DB::table('ambiente_solicitud')->where('solicitud_id', $solicitud->id)->pluck('ambiente_id');
+            $ambientes = Ambiente::whereIn('id', $idAmbientes)->get();
+
             $docente = User::find($solicitud->user_id);
 
             $ini = Periodo::find($solicitud->periodo_ini_id);
             $fin = Periodo::find($solicitud->periodo_fin_id);
+
+            $nombresAmbientes = $ambientes->pluck('nombre')->implode(', ');
+            $capacidadesAmbientes = $ambientes->pluck('capacidad')->implode(', ');
 
             $datosSolicitud = [
                 'id'=> $solicitud->id,
@@ -62,8 +66,8 @@ class ReservaController extends Controller
                 'periodo_ini_id' => $ini->horainicial,
                 'periodo_fin_id' => $fin->horafinal,
                 'fechaReserva' => $solicitud->fechaReserva,
-                'ambiente_nombre' => $ambiente->nombre,
-                'ambienteCantidadMax' => $ambiente->capacidad,
+                'ambientes' => $nombresAmbientes,
+                'capacidadesAmbientes' => $capacidadesAmbientes,
                 'fechaEnviada' => substr($solicitud->created_at, 0, 10),
                 'estado' => $solicitud->estado,
                 'updated_at' => substr($solicitud->updated_at, 0, 10),
