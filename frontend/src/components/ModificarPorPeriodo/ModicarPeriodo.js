@@ -73,9 +73,11 @@ const Modificarperdiodo = ({ onClose }) => {
   };
 
   const buscar = async (nombre) => {
-    const { respuesta } = await buscarAmbientePorNombre(nombre);
-    setAmbientes(respuesta);
-    console.log(ambientes);
+    const response = await buscarAmbientePorNombre(nombre);
+    if (response !== null) {
+      setAmbientes(response.respuesta);
+      console.log(ambientes);
+    }
   };
 
   const buscarAmbientPorFecha = async (ambiente, fecha) => {
@@ -365,7 +367,14 @@ const Modificarperdiodo = ({ onClose }) => {
   };
 
   return (
-    <div style={{ display: "grid", height: "93vh", alignContent: "center", justifyContent: "center" }}>
+    <div
+      style={{
+        display: "grid",
+        height: "93vh",
+        alignContent: "center",
+        justifyContent: "center",
+      }}
+    >
       <Container className="ModificarEstadoDelAmbientePorPeriodo-header">
         <Row xs="auto" className="text-white justify-content-end">
           <Col
@@ -380,7 +389,7 @@ const Modificarperdiodo = ({ onClose }) => {
         </Row>
       </Container>
       <Container className="ModificarEstadoDelAmbientePorPeriodo-body">
-        <Row >
+        <Row>
           <Col xs={12} lg="12" md="12">
             <Form onSubmit={formik.handleSubmit} onKeyPress={handleKeyPress}>
               <Form.Group as={Row} className="mb-3">
@@ -478,7 +487,10 @@ const Modificarperdiodo = ({ onClose }) => {
               </Form.Group>
               <Row xs="auto" sm={5} className="justify-content-end">
                 <Stack direction="horizontal" gap={2}>
-                  <Button className="ModicarPorPeriodo-consultar-button" type="submit">
+                  <Button
+                    className="ModicarPorPeriodo-consultar-button"
+                    type="submit"
+                  >
                     Consultar
                   </Button>
                 </Stack>

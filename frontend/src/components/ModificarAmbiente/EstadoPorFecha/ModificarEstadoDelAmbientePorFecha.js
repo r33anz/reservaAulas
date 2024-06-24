@@ -243,8 +243,10 @@ const ModificarEstadoDelAmbientePorFecha = ({ onclose }) => {
   };
 
   const fetchAmbientes = async () => {
-    let { respuesta } = await getAmbientes();
-    setAmbientes(respuesta);
+    let response = await getAmbientes();
+    if (response !== null) { 
+      setAmbientes(response.respuesta);
+    }
   };
 
   const isReservado = (periodoId) => {

@@ -11,6 +11,8 @@ use App\Models\Solicitud;
 use App\Services\AmbienteService;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use App\Models\Periodo;
+use Illuminate\Support\Carbon;
 class AmbienteController extends Controller
 {
 
@@ -336,22 +338,34 @@ class AmbienteController extends Controller
         $cantidad = $request->input('cantidad');
         $fecha = $request->input('fecha');
         $periodos = $request->input('periodos');
+        
+        // Verificar si la solicitud se realizó al menos 5 horas antes del periodo inicial
+        $enTiempo = $this->validadorTiempos($fecha, $periodos[0]);
+
+        if (!$enTiempo) {
+            return response()->json([
+                (object) [
+                    'mensaje' => "No puede realizar esta solicitud con no menos de 5 horas de anticipacion.",
+                    'alerta' => "advertencia"
+                ]
+            ]);
+        }
 
         $busquedaFechaPeriodos = $this->fechaPeriodo($fecha, $periodos);
         $availableIds = $busquedaFechaPeriodos->toArray();
-        Log::info('Available IDs: ', $availableIds);
-
+        
         $result = [];
         $busquedaCantidadMono = $this->busquedaMonoAmbiente($cantidad);
-        Log::info('Single Ambiente Result: ', $busquedaCantidadMono ? $busquedaCantidadMono->toArray() : []);
 
         foreach ($busquedaCantidadMono as $ambiente) {
             if (in_array($ambiente->id, $availableIds)) {
+                $ambiente->load('piso.bloque'); // Cargar la relación del piso y bloque
                 $result[] = [$ambiente]; 
             }
         }
+
         $busquedaCantidadMulti = $this->busquedaMultiAmbientes($cantidad);
-        Log::info('Multi Ambiente Combinations: ', $busquedaCantidadMulti);
+        
         foreach ($busquedaCantidadMulti as $combination) {
             $allAvailable = true;
             foreach ($combination as $ambiente) {
@@ -361,11 +375,49 @@ class AmbienteController extends Controller
                 }
             }
             if ($allAvailable) {
+                foreach ($combination as $ambiente) {
+                    $ambiente->load('piso.bloque'); // Cargar la relación del piso y bloque
+                }
                 $result[] = $combination;
             }
         }
-        Log::info('Final Result: ', $result);
 
-        return response()->json($result);
+        // Convertir la respuesta a un formato más amigable
+        $response = [];
+        foreach ($result as $combination) {
+            $combinationData = [];
+            foreach ($combination as $ambiente) {
+                $combinationData[] = [
+                    'id' => $ambiente->id,
+                    'nombre' => $ambiente->nombre,
+                    'capacidad' => $ambiente->capacidad,
+                    'piso' => $ambiente->piso ? $ambiente->piso->nroPiso : null,
+                    'bloque' => $ambiente->piso && $ambiente->piso->bloque ? $ambiente->piso->bloque->nombreBloque : null
+                ];
+            }
+            $response[] = $combinationData;
+        }
+
+        return response()->json($response);
     }
+
+    private function validadorTiempos($fechaReserva, $idPeriodoInicial){ //valida que la solicitud se haya realizado 
+                                                                        //X horas antes del periodo inical solicitado
+
+        $periodo = Periodo::find($idPeriodoInicial);
+        $horaInicial = Carbon::parse($periodo->horainicial);
+
+        // Combinar la fecha de reserva con la hora inicial del periodo
+        $fechaHoraReserva = Carbon::parse($fechaReserva . ' ' . $horaInicial->format('H:i:s'));
+
+        // Obtener la hora actual
+        $horaActual = Carbon::now();
+
+        // Calcular la diferencia en horas
+        $horasFaltantes = $horaActual->diffInHours($fechaHoraReserva, false);
+
+        // Validar que la diferencia sea de al menos 5 horas
+        return $horasFaltantes >= 5;
+        }
+
 }

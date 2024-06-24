@@ -189,25 +189,6 @@ class SolicitudController extends Controller
         ]);
     }
     //
-    private function validadorTiempos($fechaReserva, $idPeriodoInicial){ //valida que la solicitud se haya realizado 
-                                                        //X horas antes del periodo inical solicitado
-        
-        $periodo = Periodo::find($idPeriodoInicial);
-        $horaInicial = Carbon::parse($periodo->horainicial);
-
-        // Combinar la fecha de reserva con la hora inicial del periodo
-        $fechaHoraReserva = Carbon::parse($fechaReserva . ' ' . $horaInicial->format('H:i:s'));
-
-        // Obtener la hora actual
-        $horaActual = Carbon::now();
-
-        // Calcular la diferencia en horas
-        $horasFaltantes = $horaActual->diffInHours($fechaHoraReserva, false);
-
-        // Validar que la diferencia sea de al menos 5 horas
-        return $horasFaltantes >= 5;
-    }
-
     public function realizarSolicitudV2(Request $request)
     {
         $idUsuario = $request->input('idDocente');
@@ -227,25 +208,14 @@ class SolicitudController extends Controller
             $periodoInicial = $periodos[0];
             $periodoFinal = $periodos[count($periodos) - 1];
         }
-    
-        // Verificar si la solicitud se realizó al menos 5 horas antes del periodo inicial
-        $enTiempo = $this->validadorTiempos($fechaReserva, $periodoInicial);
-    
-        if (!$enTiempo) {
-            return response()->json([
-                (object) [
-                    'mensaje' => "No puede realizar esta solicitud con no menos de 5 horas de anticipacion.",
-                    'alerta' => "advertencia"
-                ]
-            ]);
-        }
+
     
         // Validar disponibilidad de los ambientes
-        /*$ambienteDisponible = $this->ambienteValido->ambienteValido($idAmbientes, $fechaReserva, $periodos, $idUsuario, $materia, $grupos, $razon);
+        $ambienteDisponible = $this->ambienteValido->validarAmbientesGrupos($idAmbientes, $fechaReserva, $periodos, $idUsuario, $materia, $grupos, $razon);
     
         if ($ambienteDisponible->alerta != 'exito') {
             return response()->json([$ambienteDisponible]);
-        }*/
+        }
     
         // Convertir grupos a string para almacenamiento
         $gruposString = implode(',', $grupos);

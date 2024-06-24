@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { buscarAmbientePorCantidad, getMaxMinCapacidad } from "../../services/Busqueda.service";
+import {
+  buscarAmbientePorCantidad,
+  getMaxMinCapacidad,
+} from "../../services/Busqueda.service";
 import { Button, Col, Container, Row, Form } from "react-bootstrap";
 import { XSquareFill } from "react-bootstrap-icons";
 import Slider from "rc-slider";
@@ -7,7 +10,6 @@ import "rc-slider/assets/index.css";
 import "./Style.css";
 
 const BuscarCantidad = () => {
-  const [ambientes, setAmbientes] = useState([]);
   const [cantidadRange, setCantidadRange] = useState([0, 300]);
   const [ambienteDetails, setAmbienteDetails] = useState([]);
   const [busquedaRealizada, setBusquedaRealizada] = useState(false);
@@ -32,11 +34,12 @@ const BuscarCantidad = () => {
 
   const buscarAmbientesPorCantidad = async () => {
     const [minCantidad, maxCantidad] = cantidadRange;
-    const { respuesta } = await buscarAmbientePorCantidad(minCantidad, maxCantidad);
-    setAmbientes(respuesta);
-    setAmbienteDetails(respuesta || []); // Asegurarse de que siempre sea un array
-    setBusquedaRealizada(true);
-    setSliderModificado(false); // Resetear el estado al realizar una nueva búsqueda
+    const response = await buscarAmbientePorCantidad(minCantidad, maxCantidad);
+    if (response !== null) {
+      setAmbienteDetails(response.respuesta || []); // Asegurarse de que siempre sea un array
+      setBusquedaRealizada(true);
+      setSliderModificado(false); // Resetear el estado al realizar una nueva búsqueda
+    }
   };
 
   const handleBuscarClick = (event) => {
@@ -57,7 +60,10 @@ const BuscarCantidad = () => {
   };
 
   const handleInputChange = (event, index) => {
-    const value = Math.min(Math.max(Number(event.target.value), 0), maxCapacidad); // Asegurar que el valor esté dentro de los límites
+    const value = Math.min(
+      Math.max(Number(event.target.value), 0),
+      maxCapacidad
+    ); // Asegurar que el valor esté dentro de los límites
     const newRange = [...cantidadRange];
     newRange[index] = value;
     setCantidadRange(newRange);
@@ -90,9 +96,9 @@ const BuscarCantidad = () => {
           </Col>
         </Row>
       </Container>
-      <Container fluid>
+      <Container className="BusquedaPorCantidad-body" fluid>
         <Row
-          className="justify-content-md-center"
+          className="justify-content-center"
           style={{ marginTop: "2rem" }}
         >
           <Col xs lg="12">
@@ -209,15 +215,10 @@ const BuscarCantidad = () => {
         </Row>
       </Container>
 
-      {busquedaRealizada && !sliderModificado && ambienteDetails.length > 0 && (
-        <div
-          className="ambientedetails"
-        >
+      {/* {busquedaRealizada && !sliderModificado && ambienteDetails.length > 0 && ( */}
+        <div className="ambientedetails">
           {ambienteDetails.map((ambiente, index) => (
-            <div
-              key={index}
-              className="datos1"
-            >
+            <div key={index} className="datos1">
               <h6>{ambiente.nombre}</h6>
               <p>Capacidad: {ambiente.capacidad}</p>
               <p>Tipo de Ambiente: {ambiente.tipo}</p>
@@ -226,7 +227,7 @@ const BuscarCantidad = () => {
             </div>
           ))}
         </div>
-      )}
+      {/* )} */}
       {busquedaRealizada &&
         !sliderModificado &&
         ambienteDetails.length === 0 && (
