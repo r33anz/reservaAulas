@@ -46,6 +46,7 @@ const SolicitarReserva = ({ onClose }) => {
   const [loading, setLoading] = useState(false);
   const [habilitado, sethabilitado] = useState(false);
   const [ambienteDetails, setAmbienteDetails] = useState([]);
+  const [ambientesDisponibles, setAmbientesDisponibles] = useState(false);
   const [periodos, setPeriodos] = useState([
     { id: 1, hora: "6:45" },
     { id: 2, hora: "8:15" },
@@ -94,11 +95,28 @@ const SolicitarReserva = ({ onClose }) => {
       cantidad: capacidad,
       periodos: periodoIDs,
     };
-    sethabilitado(true);
+    
     const respuesta = await busquedaCantidad(data);
+    if(respuesta[0].alerta === "advertencia"){
+      agregarAlert({
+        icon: <ExclamationCircleFill />,
+        severidad: "danger",
+        mensaje: respuesta[0].mensaje,
+      });
+      sethabilitado(false);
+    }else{
+      sethabilitado(true);
     setAmbienteOptions(respuesta);
     console.log(respuesta);
+    setAmbientesDisponibles(true);
     
+    agregarAlert({
+      icon: <ExclamationCircleFill />,
+      severidad: "success",
+      mensaje: "Busqueda terminada, seleccione su ambiente",
+    });
+  
+}
   };
   const vacio=()=>{
     sethabilitado(false);
@@ -173,7 +191,6 @@ const SolicitarReserva = ({ onClose }) => {
         .required("Obligatorio"),
     }),
     onSubmit: (values) => {
-      console.log("aaaaaaaa");
       const id = parseInt(window.sessionStorage.getItem("docente_id"),10);
       const periodoInicioID = parseInt(values.periodoInicio, 10);
       const periodoFinID = parseInt(values.periodoFin, 10);
@@ -199,9 +216,9 @@ const SolicitarReserva = ({ onClose }) => {
               mensaje: "Se realizo la solicitud correctamente",
             });
             formik.resetForm();
-            
+            vacio();
             setLoading(false);
-          /*} else if (response[0].alerta === "advertencia") {
+          } else if (response[0].alerta === "advertencia") {
             agregarAlert({
               icon: <ExclamationCircleFill />,
               severidad: "danger",
@@ -217,7 +234,7 @@ const SolicitarReserva = ({ onClose }) => {
               severidad: "warning",
               mensaje: response[0].mensaje,
             });
-            setLoading(false);*/
+            setLoading(false);
           } else {
             setLoading(false);
             // Manejar otros casos no esperados
@@ -318,7 +335,8 @@ const SolicitarReserva = ({ onClose }) => {
   });
   const renderFirstStep = () => (
     <div style={{ display: 'flex' }}>
-    <div style={{ width: '45%' }}>
+    <div style={{ width: '45%'}}>
+    
       <Container className="RegistrarAmbiente-header1" fluid>
         <Row xs="auto" className="text-white justify-content-end">
           <Col
@@ -332,48 +350,13 @@ const SolicitarReserva = ({ onClose }) => {
           </Col>
         </Row>
       </Container>
-      <Container className="RegistrarSolicitud-body" fluid>
+      
+      <Container className="RegistrarSolicitud-body" style={{borderRight: "1px solid #b2afaf", paddingRight: "0px"}} fluid>
         <Row className="justify-content-md-center">
           <Col xs lg="11">
             <Form onSubmit={formik.handleSubmit} onKeyPress={handleKeyPress}>
               <Stack gap={2} direction="vertical">
                 <Col lg="12">
-                  <p>Docente: {docentes}</p>
-                  <Form.Group
-                    as={Row}
-                    className="mb-3"
-                    controlId="fechaReserva"
-                  >
-                    <Form.Label className="RegistrarSolicitud-required">
-                      Fecha Reserva
-                    </Form.Label>
-                    <Col>
-                      <FormControl
-                        type="text"
-                        placeholder="Ingrese la fecha para la reserva"
-                        onChange={(e) => {
-                          formik.handleChange(e);
-                          vacio();
-                        }}
-                        onFocus={(e) => {
-                          e.target.type = "date";
-                        }}
-                        onBlur={(e) => {
-                          e.target.type = "text";
-                          formik.handleBlur(e);
-                        }}
-                        value={formik.values.fechaReserva}
-                      />
-                      <Form.Text className="text-danger">
-                        {formik.touched.fechaReserva &&
-                        formik.errors.fechaReserva ? (
-                          <div className="text-danger">
-                            {formik.errors.fechaReserva}
-                          </div>
-                        ) : null}
-                      </Form.Text>
-                    </Col>
-                  </Form.Group>
                   <Form.Group className="mb-3" controlId="materia">
                     <Form.Label className="RegistrarSolicitud-required">
                       Materia
@@ -452,6 +435,42 @@ const SolicitarReserva = ({ onClose }) => {
                       ) : null}
                     </Form.Text>
                   </Form.Group>
+                  <p>BUSCAR AULA</p>
+                  <Form.Group
+                    as={Row}
+                    className="mb-3"
+                    controlId="fechaReserva"
+                  >
+                    <Form.Label className="RegistrarSolicitud-required">
+                      Fecha Reserva
+                    </Form.Label>
+                    <Col>
+                      <FormControl
+                        type="text"
+                        placeholder="Ingrese la fecha para la reserva"
+                        onChange={(e) => {
+                          formik.handleChange(e);
+                          vacio();
+                        }}
+                        onFocus={(e) => {
+                          e.target.type = "date";
+                        }}
+                        onBlur={(e) => {
+                          e.target.type = "text";
+                          formik.handleBlur(e);
+                        }}
+                        value={formik.values.fechaReserva}
+                      />
+                      <Form.Text className="text-danger">
+                        {formik.touched.fechaReserva &&
+                        formik.errors.fechaReserva ? (
+                          <div className="text-danger">
+                            {formik.errors.fechaReserva}
+                          </div>
+                        ) : null}
+                      </Form.Text>
+                    </Col>
+                  </Form.Group>
                   <Form.Group
                     className="mb-3 RegistrarAmbiente-entrada-numero"
                     controlId="capacidad"
@@ -476,10 +495,13 @@ const SolicitarReserva = ({ onClose }) => {
                       //disabled={!formik.values.nombreAmbiente}
                     />
                     <Form.Text className="text-danger">
-                        <div className="text-danger">
-                          {formik.errors.capacidad}
-                        </div>
-                      
+                    
+{formik.touched.capacidad &&
+                        formik.errors.capacidad ? (
+                          <div className="text-danger">
+                            {formik.errors.capacidad}
+                          </div>
+                        ) : null}
                     </Form.Text>
                   </Form.Group>
                   
@@ -582,7 +604,7 @@ const SolicitarReserva = ({ onClose }) => {
         </Row>
       </Container>
       </div>
-    <div style={{ width: '45%' ,marginLeft:"5%"}}>
+    <div style={{ width: '45%'}}>
       <Container className="RegistrarAmbiente-header1" fluid>
         <Row xs="auto" className="text-white justify-content-end">
           <Col
@@ -590,9 +612,7 @@ const SolicitarReserva = ({ onClose }) => {
             className="d-flex justify-content-start align-items-center"
             style={{ height: "3rem", padding: 0, paddingLeft: "0.5rem" }}
           >
-            <h5 style={{ fontWeight: "bold" }}>
-              Registrar reserva de Ambiente
-            </h5>
+            
           </Col>
         </Row>
       </Container>
@@ -696,8 +716,8 @@ const SolicitarReserva = ({ onClose }) => {
             <p>Capacidad: {ambiente.capacidad}</p>
             <p>Tipo de Ambiente: {ambiente.tipo}</p>
             <div style={{ display: "flex", alignItems: "center" }}>
-              <p style={{ marginRight: "10px" }}>Bloque: {ambiente.nombreBloque}</p>
-              <p style={{ marginLeft: "10px" }}>Piso: {ambiente.nroPiso}</p>
+              <p style={{ marginRight: "10px" }}>Bloque: {ambiente.bloque}</p>
+              <p style={{ marginLeft: "10px" }}>Piso: {ambiente.piso}</p>
             </div>
           </div>
         </Col>
