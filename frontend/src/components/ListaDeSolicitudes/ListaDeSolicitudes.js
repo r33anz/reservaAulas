@@ -157,7 +157,7 @@ const ListaDeSolicitudes = ({ titulo, tipoDeUsuario }) => {
           </Col>
         </Row>
         <Row className="ListaDeSolicitudes-body justify-content-center">
-          <Form>
+          <Form className="ListaDeSolicitudes-form-filtros">
             {["radio"].map((type) => (
               <div key={`inline-${type}`} className="mb-3">
                 <strong>Estado: </strong>
@@ -238,7 +238,7 @@ const ListaDeSolicitudes = ({ titulo, tipoDeUsuario }) => {
               ) : (
                 solicitudes.map((item) => (
                   <tr key={item.id} className="table-row-fixed-height">
-                    <td>{item.ambiente_nombre}</td>
+                    <td>{item.ambiente_nombres}</td>
                     {tipoDeUsuario === "Admin" && <td>{item.nombreDocente}</td>}
                     <td>{item.materia}</td>
                     <td>

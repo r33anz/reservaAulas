@@ -66,7 +66,7 @@ class ReservaController extends Controller
                 'periodo_ini_id' => $ini->horainicial,
                 'periodo_fin_id' => $fin->horafinal,
                 'fechaReserva' => $solicitud->fechaReserva,
-                'ambientes' => $nombresAmbientes,
+                'ambiente_nombres' => $nombresAmbientes,
                 'capacidadesAmbientes' => $capacidadesAmbientes,
                 'fechaEnviada' => substr($solicitud->created_at, 0, 10),
                 'estado' => $solicitud->estado,

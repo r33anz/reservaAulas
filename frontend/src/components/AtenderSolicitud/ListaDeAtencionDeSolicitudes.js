@@ -164,10 +164,17 @@ const ListaDeAtencionDeSolicitudes = () => {
                 <th>Accion</th>
               </tr>
             </thead>
+            {solicitudes.length === 0 ? (
+                <tr>
+                  <td colSpan={ 7} className="text-center">
+                    No hay reservas o solicitudes disponibles
+                  </td>
+                </tr>
+              ) : (
             <tbody>
               {solicitudes.map((item) => (
                 <tr className="table-row-fixed-height">
-                  <td>{item.ambiente_nombre}</td>
+                  <td>{item.ambiente_nombres}</td>
                   <td>{item.nombreDocente}</td>
                   <td>{item.materia}</td>
                   <td>
@@ -187,6 +194,7 @@ const ListaDeAtencionDeSolicitudes = () => {
                 </tr>
               ))}
             </tbody>
+              )}
           </Table>
           <Pagination style={{ justifyContent: "center" }}>
             {renderPaginationItems()}

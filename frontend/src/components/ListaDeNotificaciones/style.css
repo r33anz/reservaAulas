@@ -7,7 +7,10 @@
     height: 100%;
     cursor: pointer;
 }
-
+.ListaDeNotificaciones-header{
+    background-color: #003F70;
+    height: 3rem;
+}
 .ListaDeNotificaciones-header-button-cargar:hover,
 .ListaDeNotificaciones-header-button-cargar:active,
 .ListaDeNotificaciones-header-button-cargar:focus,
@@ -18,4 +21,14 @@
     border-color: #D51809;
     --bs-btn-active-bg: #D51809;
     --bs-btn-active-border-color: #D51809;
+}
+
+
+
+.ListaDeNotificaciones-body {
+    background-color: #D9D9D9;
+    padding: 1rem;
+    min-height: calc(100vh - 7rem); /* Mantener el tamaño del componente */
+    display: flex;
+   
 }
