@@ -1,6 +1,7 @@
 .ListaDeSolicitudes-header {
     background-color: #003F70;
     height: 3rem;
+    width: 100%;
 }
 /* style.css */
 .table-row-fixed-height {
@@ -11,9 +12,10 @@
     height: 35px;
 }
 .ListaDeSolicitudes-body {
+    width: 100%;
     background-color: #D9D9D9;
     padding: 1rem;
-    min-height: calc(100vh - 7rem); /* Mantener el tamaño del componente */
+    min-height: calc(100vh - 8rem); /* Mantener el tamaño del componente */
     display: flex;
     flex-direction: column;
     align-items: flex-start;  /* Alinea los elementos desde el inicio (arriba) */

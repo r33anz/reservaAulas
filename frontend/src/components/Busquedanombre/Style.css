@@ -1,10 +1,12 @@
 .BusquedaPorNombre-header {
   background-color: #003F70;
+  width: 100%;
 }
 
 .BusquedaPorNombre-body {
   background-color: #D9D9D9;
   padding: 1rem;
+  width: 100%;
 }
 
 .selected {

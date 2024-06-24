@@ -319,7 +319,7 @@ const SolicitarReserva = ({ onClose }) => {
   const renderFirstStep = () => (
     <div style={{ display: 'flex' }}>
     <div style={{ width: '45%' }}>
-      <Container className="RegistrarAmbiente-header1" fluid>
+      <Container className="RegistrarSolicitud-header" fluid>
         <Row xs="auto" className="text-white justify-content-end">
           <Col
             xs="12"
@@ -583,7 +583,7 @@ const SolicitarReserva = ({ onClose }) => {
       </Container>
       </div>
     <div style={{ width: '45%' ,marginLeft:"5%"}}>
-      <Container className="RegistrarAmbiente-header1" fluid>
+      <Container className="RegistrarSolicitud-header" fluid>
         <Row xs="auto" className="text-white justify-content-end">
           <Col
             xs="12"

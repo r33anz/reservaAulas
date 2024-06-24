@@ -1,10 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { Button, Nav, Container, Row, Col } from "react-bootstrap";
-import { ChevronDoubleLeft, List } from "react-bootstrap-icons";
+import { Col, Nav, NavLink, Row } from "react-bootstrap";
 import logo from "../../assets/images/image.png";
-import "./style.css"; // Archivo CSS para estilos del sidebar
-import { logout } from "../../services/Authenticacion.service";
-import { useNavigate, useParams } from "react-router-dom";
 import Home from "../Home";
 import Buscar from "../../components/Busquedanombre/Buscar";
 import ListaDeSolicitudes from "../../components/ListaDeSolicitudes";
@@ -15,17 +11,19 @@ import Calendario from "../../components/Calendario";
 import CalendarioB from "../../components/CalendarioBusqueda";
 import ListaDeDocentes from "../../components/ListaDeDocentes/ListaDeDocentes";
 import ListaDeAtencionDeSolicitudes from "../../components/AtenderSolicitud/ListaDeAtencionDeSolicitudes";
+import "./style.css";
 import SolicitarReserva from "../../components/SolicitudReserva/SolicitarReserva";
 import ListaDeNotificaciones from "../../components/ListaDeNotificaciones/ListaDeNotificaciones";
-import CancelarReservas from "../../components/CancelarReserva/CancelarReservas";
 import { getDocente } from "../../services/SolicitarReserva.service";
+import { useNavigate, useParams } from "react-router-dom";
+import { logout } from "../../services/Authenticacion.service";
+import CancelarReservas from "../../components/CancelarReserva/CancelarReservas";
 
-const Sidebar = ({
+const Inicio = ({
   fetchNotifications,
   notifications,
   notificationsIdNotRead,
 }) => {
-  const [showSidebar, setShowSidebar] = useState(true);
   const [activeTab, setActiveTab] = useState("inicio");
   const [docente, setDocente] = useState({});
   const { id } = useParams("id");
@@ -53,6 +51,12 @@ const Sidebar = ({
     }
   }, [navigate]);
 
+  useEffect(() => {
+    if (id !== null) {
+      fetchDocente(id);
+    }
+  }, []);
+
   const isAuthenticated = () => {
     const auth = sessionStorage.getItem("auth");
     if (auth !== null && auth === "false") {
@@ -60,65 +64,24 @@ const Sidebar = ({
     }
   };
 
-  useEffect(() => {
-    if (id !== null) {
-      fetchDocente(id);
-    }
-  }, []);
-
   const renderContent = () => {
     isAuthenticated();
     switch (activeTab) {
       case "registrarAmbiente":
         return (
           <div style={{ padding: "1rem" }}>
-            {!showSidebar && (
-              <div className="Inicio-sidebar-boton-open">
-                <Button
-                  className="button-list"
-                  variant="primary"
-                  onClick={() => setShowSidebar(true)}
-                >
-                  <List />
-                </Button>
-              </div>
-            )}
             <RegistrarAmbiente />
           </div>
         );
       case "registrarReserva":
         return (
-          <div
-            style={{ padding: "1rem", paddingLeft: "120px", height: "250px" }}
-          >
-            {!showSidebar && (
-              <div className="Inicio-sidebar-boton-open">
-                <Button
-                  className="button-list"
-                  variant="primary"
-                  onClick={() => setShowSidebar(true)}
-                >
-                  <List />
-                </Button>
-              </div>
-            )}
+          <div style={{ padding: "1rem" }}>
             <SolicitarReserva />
           </div>
         );
       case "listaDeSolicitudes":
         return (
           <div style={{ padding: "1rem" }}>
-            {!showSidebar && (
-              <div className="Inicio-sidebar-boton-open">
-                <Button
-                  className="button-list"
-                  variant="primary"
-                  onClick={() => setShowSidebar(true)}
-                >
-                  <List />
-                </Button>
-              </div>
-            )}
             <ListaDeSolicitudes
               tipoDeUsuario="Admin"
               titulo="Lista de Solicitudes"
@@ -128,17 +91,6 @@ const Sidebar = ({
       case "misSolicitudes":
         return (
           <div style={{ padding: "1rem" }}>
-            {!showSidebar && (
-              <div className="Inicio-sidebar-boton-open">
-                <Button
-                  className="button-list"
-                  variant="primary"
-                  onClick={() => setShowSidebar(true)}
-                >
-                  <List />
-                </Button>
-              </div>
-            )}
             <ListaDeSolicitudes
               tipoDeUsuario="Docente"
               titulo="Mis Solicitudes"
@@ -148,220 +100,98 @@ const Sidebar = ({
       case "busquedaPorNombre":
         return (
           <div style={{ padding: "1rem" }}>
-            {!showSidebar && (
-              <div className="Inicio-sidebar-boton-open">
-                <Button
-                  className="button-list"
-                  variant="primary"
-                  onClick={() => setShowSidebar(true)}
-                >
-                  <List />
-                </Button>
-              </div>
-            )}
             <Buscar />
           </div>
         );
       case "busquedaPorCantidad":
         return (
           <div style={{ padding: "1rem" }}>
-            {!showSidebar && (
-              <div className="Inicio-sidebar-boton-open">
-                <Button
-                  className="button-list"
-                  variant="primary"
-                  onClick={() => setShowSidebar(true)}
-                >
-                  <List />
-                </Button>
-              </div>
-            )}
             <BuscarCantidad />
           </div>
         );
       case "modificarPorPeriodo":
         return (
           <div style={{ padding: "1rem" }}>
-            {!showSidebar && (
-              <div className="Inicio-sidebar-boton-open">
-                <Button
-                  className="button-list"
-                  variant="primary"
-                  onClick={() => setShowSidebar(true)}
-                >
-                  <List />
-                </Button>
-              </div>
-            )}
             <Modificarperdiodo />
           </div>
         );
       case "listaDeDocentes":
         return (
           <div style={{ padding: "1rem" }}>
-            {!showSidebar && (
-              <div className="Inicio-sidebar-boton-open">
-                <Button
-                  className="button-list"
-                  variant="primary"
-                  onClick={() => setShowSidebar(true)}
-                >
-                  <List />
-                </Button>
-              </div>
-            )}
             <ListaDeDocentes tipoDeUsuario="Admin" />
           </div>
         );
       case "calendario":
         return (
           <div style={{ padding: "1rem" }}>
-            {!showSidebar && (
-              <div className="Inicio-sidebar-boton-open">
-                <Button
-                  className="button-list"
-                  variant="primary"
-                  onClick={() => setShowSidebar(true)}
-                >
-                  <List />
-                </Button>
-              </div>
-            )}
-            <Calendario />
+            {" "}
+            <Calendario />{" "}
           </div>
         );
       case "busquedaPorCalendario":
         return (
           <div style={{ padding: "1rem" }}>
-            {!showSidebar && (
-              <div className="Inicio-sidebar-boton-open">
-                <Button
-                  className="button-list"
-                  variant="primary"
-                  onClick={() => setShowSidebar(true)}
-                >
-                  <List />
-                </Button>
-              </div>
-            )}
             <CalendarioB />
           </div>
         );
       case "cancelarReserva":
         return (
           <div style={{ padding: "1rem" }}>
-            {!showSidebar && (
-              <div className="Inicio-sidebar-boton-open">
-                <Button
-                  className="button-list"
-                  variant="primary"
-                  onClick={() => setShowSidebar(true)}
-                >
-                  <List />
-                </Button>
-              </div>
-            )}
-            <CancelarReservas />
+            < CancelarReservas/>
           </div>
         );
       case "notificaciones":
         return (
           <div style={{ padding: "1rem" }}>
-            {!showSidebar && (
-              <div className="Inicio-sidebar-boton-open">
-                <Button
-                  className="button-list"
-                  variant="primary"
-                  onClick={() => setShowSidebar(true)}
-                >
-                  <List />
-                </Button>
-              </div>
-            )}
             <ListaDeNotificaciones
               id={id}
               fetchNotifications={fetchNotifications}
               notifications={notifications}
-              showSidebar={showSidebar}
             />
           </div>
         );
       case "atencionDeSolicitudes":
         return (
           <div style={{ padding: "1rem" }}>
-            {!showSidebar && (
-              <div className="Inicio-sidebar-boton-open">
-                <Button
-                  className="button-list"
-                  variant="primary"
-                  onClick={() => setShowSidebar(true)}
-                >
-                  <List />
-                </Button>
-              </div>
-            )}
             <ListaDeAtencionDeSolicitudes />
           </div>
         );
       default:
         return (
           <div className="logo-background">
-            {!showSidebar && (
-              <div className="Inicio-sidebar-boton-open">
-                <Button
-                  className="button-list"
-                  variant="primary"
-                  onClick={() => setShowSidebar(true)}
-                >
-                  <List />
-                </Button>
-              </div>
-            )}
-            <div
-              className={
-                showSidebar ? "Inicio-welcome-sidebar" : "Inicio-welcome"
-              }
-            >
-              <span className="justify-items-center">
-                <h1 style={{ fontWeight: "bold" }}>
-                  Bienvenidos al Sistema de Gestion de Ambientes
-                </h1>
-                <h4>
-                  Disfruta de una experiencia única en tu reserva de ambientes
-                </h4>
-              </span>
-            </div>
+            <h1 style={{ fontWeight: "bold" }}>
+              Bienvenidos al Sistema de Gestion de Ambientes
+            </h1>
+            <h4>
+              Disfruta de una experiencia única en tu reserva de ambientes
+            </h4>
           </div>
         );
     }
   };
 
   return (
-    <Container fluid>
-      <Row>
-        {/* Sidebar */}
-        {showSidebar && (
-          <Col sm={3} className={`sidebar ${showSidebar ? "open" : ""}`}>
-            <div className="logo-container">
-              <h4 className="Inicio-aulapro">
-                <img src={logo} className="Inicio-logo" alt="logo" />
-                Aula Pro
+    <div className="inicio-container">
+      <Row className="prueba">
+        <Col sm="2" className="sidebar">
+          <div className="logo-container">
+            <img src={logo} className="App-logo" alt="logo" />
+            <div className="titulo-header">
+              <h4>
+                Intelligence
+                <br />
+                Software
               </h4>
-              <Button
-                onClick={() => setShowSidebar(false)}
-                className="sidebar-button-close"
-              >
-                <ChevronDoubleLeft />
-              </Button>
             </div>
-            <div className="separador"></div>
-            <div className="usuario-header">
-              <p>USUARIO: {docente.nombre}</p>
-            </div>
-            <div className="separador"></div>
-            <Nav className="flex-column sidebar-nav">
+          </div>
+          <div className="separador"></div>
+          <div className="usuario-header">
+            <p>USUARIO: {docente.nombre}</p>
+          </div>
+          <div className="separador"></div>
+          <div className="nav-container">
+            <Nav className="flex-column" activeKey={activeTab}>
               <Nav.Link
-                active={"inicio" === activeTab}
                 eventKey={"inicio"}
                 onClick={() => setActiveTab("inicio")}
               >
@@ -449,9 +279,9 @@ const Sidebar = ({
               >
                 Busqueda calendario
               </Nav.Link>
-              <Nav.Link onClick={() => setActiveTab("cancelarReserva")}>
+              <NavLink onClick={() => setActiveTab("cancelarReserva")}>
                 Cancelacion de Reservas/Solicitudes
-              </Nav.Link>
+              </NavLink>
               <Nav.Link
                 eventKey={"atencionDeSolicitudes"}
                 onClick={() => {
@@ -464,40 +294,16 @@ const Sidebar = ({
               <Nav.Link eventKey={"cerrarSesion"} onClick={handleLogout}>
                 Cerrar Sesion
               </Nav.Link>
+              <div className="separador"></div>
             </Nav>
-          </Col>
-        )}
-
-        {/* Contenido */}
-        {/* {showSidebar ? ( */}
-        <Col
-          sm={!showSidebar ? 12 : 9}
-          className={`${
-            !showSidebar ? "content" : "sidebar-content"
-          } Inicio-components`}
-        >
-          <Home
-            fetchNotifications={fetchNotifications}
-            showSidebar={showSidebar}
-          >
-            {renderContent()}
-          </Home>
+          </div>
         </Col>
-        {/* ) : (
-          <Col
-            sm={12}
-            className={`${
-              !showSidebar ? "content" : "sidebar-content"
-            } Inicio-components`}
-          >
-            <Home fetchNotifications={fetchNotifications} showSidebar={showSidebar}>
-              {renderContent()}
-            </Home>
-          </Col>
-        )} */}
+        <Col className="Inicio-components">
+          <Home fetchNotifications={fetchNotifications}>{renderContent()}</Home>
+        </Col>
       </Row>
-    </Container>
+    </div>
   );
 };
 
-export default Sidebar;
+export default Inicio;
