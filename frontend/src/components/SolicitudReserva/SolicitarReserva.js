@@ -1,13 +1,11 @@
 import React, { useContext, useEffect, useState, useRef } from "react";
 import {
-  getBloques,
-  getGruposPorBloque,
   postReserva,
   postReserva2,
   getDocente,
-  recuperarAmbientePorID,
+  busquedaCantidad,
 } from "../../services/SolicitarReserva.service";
-import { buscarAmbientePorNombre } from "../../services/Busqueda.service";
+
 import {
   Container,
   Row,
@@ -25,7 +23,6 @@ import {
   CheckCircleFill,
   ExclamationCircleFill,
   QuestionCircleFill,
-  XSquareFill,
 } from "react-bootstrap-icons";
 import { useFormik } from "formik";
 import * as Yup from "yup";
@@ -45,9 +42,10 @@ const SolicitarReserva = ({ onClose }) => {
   const [docentes, setDocente] = useState([]);
   const [grupos, setGrupos] = useState([]);
   const { agregarAlert } = useContext(AlertsContext);
-  const [loadingAceptar, setLoadingAceptar] = useState(false);
   const [ambienteOptions, setAmbienteOptions] = useState([]); // Estado para almacenar las opciones de ambiente
   const [loading, setLoading] = useState(false);
+  const [habilitado, sethabilitado] = useState(false);
+  const [ambienteDetails, setAmbienteDetails] = useState([]);
   const [periodos, setPeriodos] = useState([
     { id: 1, hora: "6:45" },
     { id: 2, hora: "8:15" },
@@ -80,64 +78,43 @@ const SolicitarReserva = ({ onClose }) => {
     { id: 5, name: "Examen de mesa" },
   ]);
   const [periodosFin, setPeriodosFin] = useState(periodos1);
-  const [step, setStep] = useState(1); // Nuevo estado para manejar los pasos del formulario
   const [estado, setEstado] = useState("");
   const [showMensajeDeConfirmacion, setShowMensajeDeConfirmacion] =
     useState(false);
 
   // Función para buscar los ambientes que coinciden con el nombre
-  const buscarAmbiente = async (event) => {
-    if (
-      event.hasOwnProperty("target") &&
-      event.target.hasOwnProperty("value")
-    ) {
-      const originalValue = event.target.value;
-      const trimmedValue = originalValue.trim(); // Eliminar espacios al inicio y al final
-
-      if (trimmedValue === "") {
-        formik.setFieldValue("nombreAmbiente", ""); // Actualiza el estado directamente con una cadena vacía
-        setShowDropdown(false); // Oculta el desplegable si el valor está vacío
-      } else if (!trimmedValue.startsWith(" ")) {
-        // Verificar si el primer carácter no es un espacio
-        const value = originalValue.toUpperCase(); // Convertir a mayúsculas si pasa la validación del espacio inicial
-
-        if (/^[a-zA-Z0-9\s]*$/.test(value)) {
-          formik.setFieldValue("nombreAmbiente", value); // Actualiza el estado directamente con el nombre
-          setShowDropdown(true); // Muestra el desplegable si el valor es válido
-          setCapacidadDelAmbienteSeleccionado(null);
-
-          const matchingOption = ambienteOptions.find(
-            (option) => option.nombre === value
-          );
-          if (matchingOption) {
-            console.log(matchingOption);
-            setNombreDelAmbiente(matchingOption);
-            // Aquí puedes usar matchingOption para acceder a toda la información de la opción que coincide
-          }
-        }
-      }
-    }
-  };
-
-  const buscar = async (nombre) => {
-    const { respuesta } = await buscarAmbientePorNombre(nombre);
+  
+  
+  const buscar = async () => {
+    const { fechaReserva, capacidad, periodoInicio, periodoFin } = formik.values;
+    const periodoInicioID = parseInt(periodoInicio, 10);
+      const periodoFinID = parseInt(periodoFin, 10);
+      const periodoIDs = [periodoInicioID, periodoFinID];
+    const data = {
+      fecha: fechaReserva,
+      cantidad: capacidad,
+      periodos: periodoIDs,
+    };
+    sethabilitado(true);
+    const respuesta = await busquedaCantidad(data);
     setAmbienteOptions(respuesta);
-    console.log(ambienteOptions);
+    console.log(respuesta);
+    
   };
-
+  const vacio=()=>{
+    sethabilitado(false);
+    setAmbienteDetails([]);
+    setShowDropdown(false);
+    formik.setFieldValue("nombreAmbiente",  "");
+  }
   const docente = (nombre) => {
     getDocente(nombre)
       .then((data) => {
         setDocente(data.nombre);
-
-        // Obtener los nombres de las materias
         const materiasNombres = Object.keys(data.materias);
         setBloques(materiasNombres);
 
-        // Guardar los datos de las materias para su uso posterior
         setMateriasData(data.materias);
-
-        console.log(data, "qa"); // Actualizar las opciones de ambiente con los datos obtenidos
       })
       .catch((error) => {
         console.log("Error al buscar los ambientes:", error);
@@ -166,31 +143,21 @@ const SolicitarReserva = ({ onClose }) => {
       capacidad: "",
       materia: "",
       nombreAmbiente: "",
-      grupo: "", // Nuevo campo para el grupo
+      grupos: "", // Nuevo campo para el grupos
       fechaReserva: "",
       periodoInicio: "",
       periodoFin: "",
     },
     validationSchema: Yup.object({
-      nombreAmbiente: Yup.string() // Validar como cadena en lugar de objeto
-        .test("existe-ambiente", "No existe el ambiente", function (value) {
-          const ambientes = ambienteOptions.map((ambiente) => ambiente.nombre);
-          //setCapacidadDelAmbienteSeleccionado(null);
-          return ambientes.includes(value);
-        })
-        .required("Obligatorio"),
+      nombreAmbiente: Yup.string().required("Obligatorio"),
       razon: Yup.string().required("Obligatorio"),
       periodoInicio: Yup.string().required("Obligatorio"),
       periodoFin: Yup.string().required("Obligatorio"),
       capacidad: Yup.number()
         .positive("Debe ser mayor a 0")
-        .required("Obligatorio")
-        .max(
-          capacidadDelAmbienteSeleccionado,
-          "No puede ser mayor que otro número"
-        ),
+        .required("Obligatorio"),
       materia: Yup.string().required("Obligatorio"),
-      grupo: Yup.string().required("Obligatorio"),
+      grupos: Yup.string().required("Obligatorio"),
       fechaReserva: Yup.date()
         .min(
           new Date(new Date().setDate(new Date().getDate() - 1)),
@@ -207,23 +174,25 @@ const SolicitarReserva = ({ onClose }) => {
         .required("Obligatorio"),
     }),
     onSubmit: (values) => {
-      setLoadingAceptar(true);
-      const id = window.sessionStorage.getItem("docente_id");
+      console.log("aaaaaaaa");
+      const id = parseInt(window.sessionStorage.getItem("docente_id"),10);
       const periodoInicioID = parseInt(values.periodoInicio, 10);
       const periodoFinID = parseInt(values.periodoFin, 10);
 
       // Combinar los IDs de periodoInicio y periodoFin en un solo array
       const periodoIDs = [periodoInicioID, periodoFinID];
-
+      const grupoID = parseInt(values.grupos, 10);
+      values.grupo = [grupoID];
       // Asignar la lista de IDs a values.periodos
       values.periodos = periodoIDs;
       values.ambiente = ida;
       values.idDocente = id;
-      console.log(periodoIDs);
-      setLoading(true);
+      console.log(values);
+      //setLoading(true);
       postReserva(values)
         .then((response) => {
-          if (response.mensaje === "Resgistro existoso") {
+          console.log(response.mensaje);
+          if (response.mensaje === "Registro exitoso") {
             console.log("Registro exitoso");
             agregarAlert({
               icon: <CheckCircleFill />,
@@ -231,10 +200,9 @@ const SolicitarReserva = ({ onClose }) => {
               mensaje: "Se realizo la solicitud correctamente",
             });
             formik.resetForm();
-            setCapacidadDelAmbienteSeleccionado(null);
-            setStep(1);
+            
             setLoading(false);
-          } else if (response[0].alerta === "advertencia") {
+          /*} else if (response[0].alerta === "advertencia") {
             agregarAlert({
               icon: <ExclamationCircleFill />,
               severidad: "danger",
@@ -250,7 +218,7 @@ const SolicitarReserva = ({ onClose }) => {
               severidad: "warning",
               mensaje: response[0].mensaje,
             });
-            setLoading(false);
+            setLoading(false);*/
           } else {
             setLoading(false);
             // Manejar otros casos no esperados
@@ -297,23 +265,14 @@ const SolicitarReserva = ({ onClose }) => {
     const gruposAsociados = materiasData[materiaSeleccionada]?.grupos || [];
     setGrupos(gruposAsociados);
 
-    formik.setFieldValue("grupo", ""); // Limpiar el campo grupo en el formulario, si estás usando Formik
+    formik.setFieldValue("grupos", ""); // Limpiar el campo grupos en el formulario, si estás usando Formik
   };
 
   const setNombreDelAmbiente = async (ambiente) => {
     formik.setFieldValue("nombreAmbiente", ambiente.nombre); // Asigna el nombre directamente
-    setidambiente(ambiente.id);
-    //setShowDropdown(false);
-    recuperarAmbientePorID(ambiente.id)
-      .then((data) => {
-        // Actualizar estado con los detalles del ambiente
-        setCapacidadDelAmbienteSeleccionado(data.capacidad);
-        console.log(data.capacidad);
-      })
-      .catch((error) => {
-        console.log("Error al buscar el ambiente:", error);
-      });
-    //inputAmbienteRef.current.blur();
+    setAmbienteDetails(ambiente.option);
+    console.log(ambienteDetails);
+    setidambiente(ambiente.ids);
   };
   const reserva = async (val) => {
     setShowMensajeDeConfirmacion(false);
@@ -328,7 +287,7 @@ const SolicitarReserva = ({ onClose }) => {
           });
           formik.resetForm();
           setCapacidadDelAmbienteSeleccionado(null);
-          setStep(1);
+
         }
       })
       .catch((error) => {
@@ -350,12 +309,18 @@ const SolicitarReserva = ({ onClose }) => {
     docente(id);
     setLoading(false);
     //setBloques(bloquesData);
-    buscar(" ");
+    
   }, []);
-
+  const combinedAmbienteDetails = ambienteOptions.map(option => {
+    
+    const nombre = option.map(ambiente => ambiente.nombre).join(' y ');
+    const ids = option.map(ambiente => ambiente.id);
+    return { nombre, ids ,option};
+  });
   const renderFirstStep = () => (
-    <div style={{ width: "50%" }}>
-      <Container className="RegistrarAmbiente-header" fluid>
+    <div style={{ display: 'flex' }}>
+    <div style={{ width: '45%' }}>
+      <Container className="RegistrarAmbiente-header1" fluid>
         <Row xs="auto" className="text-white justify-content-end">
           <Col
             xs="12"
@@ -368,7 +333,7 @@ const SolicitarReserva = ({ onClose }) => {
           </Col>
         </Row>
       </Container>
-      <Container className="RegistrarAmbiente-body" fluid>
+      <Container className="RegistrarSolicitud-body" fluid>
         <Row className="justify-content-md-center">
           <Col xs lg="11">
             <Form onSubmit={formik.handleSubmit} onKeyPress={handleKeyPress}>
@@ -387,7 +352,10 @@ const SolicitarReserva = ({ onClose }) => {
                       <FormControl
                         type="text"
                         placeholder="Ingrese la fecha para la reserva"
-                        onChange={formik.handleChange}
+                        onChange={(e) => {
+                          formik.handleChange(e);
+                          vacio();
+                        }}
                         onFocus={(e) => {
                           e.target.type = "date";
                         }}
@@ -436,191 +404,28 @@ const SolicitarReserva = ({ onClose }) => {
                       ) : null}
                     </Form.Text>
                   </Form.Group>
-                  <Form.Group className="mb-3" controlId="grupo">
+                  <Form.Group className="mb-3" controlId="grupos">
                     <Form.Label className="RegistrarSolicitud-required">
                       Grupo
                     </Form.Label>
                     <Form.Select
                       onChange={formik.handleChange}
                       onBlur={formik.handleBlur}
-                      value={formik.values.grupo}
+                      value={formik.values.grupos}
                       disabled={!formik.values.materia} // Deshabilitar si no se ha seleccionado una materia
                     >
                       <option value="" disabled selected>
-                        Seleccione un grupo
+                        Seleccione un grupos
                       </option>
-                      {grupos.map((grupo) => (
-                        <option key={grupo} value={grupo}>
-                          {grupo}
+                      {grupos.map((grupos) => (
+                        <option key={grupos} value={grupos}>
+                          {grupos}
                         </option>
                       ))}
                     </Form.Select>
                     <Form.Text className="text-danger">
-                      {formik.touched.grupo && formik.errors.grupo ? (
-                        <div className="text-danger">{formik.errors.grupo}</div>
-                      ) : null}
-                    </Form.Text>
-                  </Form.Group>
-                </Col>
-              </Stack>
-            </Form>
-            <Stack
-              gap={2}
-              direction="horizontal"
-              className="justify-content-end"
-            >
-              <Button
-                className="btn RegistrarAmbiente-button-cancel"
-                size="sm"
-                onClick={() => {
-                  setCapacidadDelAmbienteSeleccionado(null);
-                  formik.resetForm();
-                  setAmbienteOptions([]);
-                  setStep(1);
-                }}
-              >
-                Limpiar
-              </Button>
-              <Button
-                className="btn RegistrarAmbiente-button-register"
-                size="sm"
-                type="submit"
-                onClick={() => setStep(2)}
-              >
-                Siguiente
-              </Button>
-            </Stack>
-          </Col>
-        </Row>
-      </Container>
-    </div>
-  );
-
-  const renderSecondStep = () => (
-    <div style={{ width: "50%" }}>
-      <Container className="RegistrarAmbiente-header" fluid>
-        <Row xs="auto" className="text-white justify-content-end">
-          <Col
-            xs="12"
-            className="d-flex justify-content-start align-items-center"
-            style={{ height: "3rem", padding: 0, paddingLeft: "0.5rem" }}
-          >
-            <h5 style={{ fontWeight: "bold" }}>
-              Registrar reserva de Ambiente
-            </h5>
-          </Col>
-        </Row>
-      </Container>
-      <Container className="RegistrarAmbiente-body" fluid>
-        <Row className="justify-content-md-center">
-          <Col xs lg="11">
-            <Form onSubmit={formik.handleSubmit} onKeyPress={handleKeyPress}>
-              <Stack gap={2} direction="vertical">
-                <Col lg="12">
-                  <Form.Group
-                    as={Row}
-                    className="mb-3"
-                    controlId="nombreAmbiente"
-                  >
-                    <Form.Label className="RegistrarSolicitud-required">
-                      Nombre del Ambiente
-                    </Form.Label>
-                    <Col>
-                      <Dropdown id="solicitudnombreAmbientes">
-                        <Dropdown.Toggle
-                          ref={inputAmbienteRef}
-                          as={"input"}
-                          id="nombreAmbiente"
-                          type="text"
-                          placeholder="Ingrese el nombre del ambiente"
-                          onChange={buscarAmbiente}
-                          onBlur={formik.handleBlur}
-                          value={formik.values.nombreAmbiente}
-                          className="form-control"
-                          bsPrefix="dropdown-toggle"
-                        />
-                        {formik.values.nombreAmbiente !== "" &&
-                          ambienteOptions.filter((ambiente) =>
-                            ambiente.nombre
-                              .toLowerCase()
-                              .includes(
-                                formik.values.nombreAmbiente
-                                  .trim()
-                                  .toLowerCase()
-                              )
-                          ).length > 0 && (
-                            <Dropdown.Menu
-                              class={`dropdown-menu ${
-                                showDropdown ? "show" : ""
-                              }`}
-                              style={{
-                                width: "100%",
-                                overflowY: "auto",
-                                maxHeight: "5rem",
-                              }}
-                            >
-                              {ambienteOptions
-                                .filter((ambiente) =>
-                                  ambiente.nombre
-                                    .toLowerCase()
-                                    .includes(
-                                      formik.values.nombreAmbiente
-                                        .trim()
-                                        .toLowerCase()
-                                    )
-                                )
-                                .map((ambiente) => (
-                                  <Dropdown.Item
-                                    key={ambiente.nombre}
-                                    onClick={() =>
-                                      setNombreDelAmbiente(ambiente)
-                                    }
-                                  >
-                                    {ambiente.nombre}
-                                  </Dropdown.Item>
-                                ))}
-                            </Dropdown.Menu>
-                          )}
-                      </Dropdown>
-                      <Form.Text className="text-danger">
-                        {formik.touched.nombreAmbiente &&
-                        formik.errors.nombreAmbiente ? (
-                          <div className="text-danger">
-                            {formik.errors.nombreAmbiente}
-                          </div>
-                        ) : null}
-                      </Form.Text>
-                    </Col>
-                  </Form.Group>
-                  {capacidadDelAmbienteSeleccionado !== null && (
-                    <p>Capacidad:{capacidadDelAmbienteSeleccionado}</p>
-                  )}
-
-                  <Form.Group
-                    className="mb-3 RegistrarAmbiente-entrada-numero"
-                    controlId="capacidad"
-                  >
-                    <Form.Label className="RegistrarSolicitud-required">
-                      Cantidad de alumnos
-                    </Form.Label>
-                    <Form.Control
-                      type="number"
-                      onKeyDown={(e) => {
-                        if (!validosKey.includes(e.key)) {
-                          e.preventDefault();
-                        }
-                      }}
-                      placeholder="Ingrese un valor"
-                      onChange={formik.handleChange}
-                      onBlur={formik.handleBlur}
-                      value={formik.values.capacidad}
-                      disabled={!formik.values.nombreAmbiente}
-                    />
-                    <Form.Text className="text-danger">
-                      {formik.touched.capacidad && formik.errors.capacidad ? (
-                        <div className="text-danger">
-                          {formik.errors.capacidad}
-                        </div>
+                      {formik.touched.grupos && formik.errors.grupos ? (
+                        <div className="text-danger">{formik.errors.grupos}</div>
                       ) : null}
                     </Form.Text>
                   </Form.Group>
@@ -648,8 +453,40 @@ const SolicitarReserva = ({ onClose }) => {
                       ) : null}
                     </Form.Text>
                   </Form.Group>
+                  <Form.Group
+                    className="mb-3 RegistrarAmbiente-entrada-numero"
+                    controlId="capacidad"
+                  >
+                    <Form.Label className="RegistrarSolicitud-required">
+                      Cantidad de alumnos
+                    </Form.Label>
+                    <Form.Control
+                      type="number"
+                      onKeyDown={(e) => {
+                        if (!validosKey.includes(e.key)) {
+                          e.preventDefault();
+                        }
+                      }}
+                      placeholder="Ingrese un valor"
+                      onChange={(e) => {
+                        formik.handleChange(e);
+                        vacio();
+                      }}
+                      onBlur={formik.handleBlur}
+                      value={formik.values.capacidad}
+                      //disabled={!formik.values.nombreAmbiente}
+                    />
+                    <Form.Text className="text-danger">
+                        <div className="text-danger">
+                          {formik.errors.capacidad}
+                        </div>
+                      
+                    </Form.Text>
+                  </Form.Group>
+                  
 
                   <div className="periodos-columna">
+                    
                     <Form.Group className="mb-3" controlId="periodoInicio">
                       <Form.Label className="RegistrarSolicitud-required">
                         Periodo Inicio
@@ -657,6 +494,7 @@ const SolicitarReserva = ({ onClose }) => {
                       <Form.Select
                         onChange={(e) => {
                           formik.handleChange(e);
+                          vacio();
                           // Filtrar los periodos fin basado en el periodo inicio seleccionado
                           const selectedPeriodoInicio = parseInt(
                             e.target.value,
@@ -696,7 +534,10 @@ const SolicitarReserva = ({ onClose }) => {
                         Periodo Fin
                       </Form.Label>
                       <Form.Select
-                        onChange={formik.handleChange}
+                        onChange={(e) => {
+                          formik.handleChange(e);
+                          vacio();
+                        }}
                         onBlur={formik.handleBlur}
                         value={formik.values.periodoFin}
                         disabled={!formik.values.periodoInicio}
@@ -721,48 +562,153 @@ const SolicitarReserva = ({ onClose }) => {
                     </Form.Group>
                   </div>
                 </Col>
-                <Row xs="auto" className="justify-content-md-end">
-                  <Stack direction="horizontal" gap={2}>
-                    <Button
-                      className="btn RegistrarAmbiente-button-cancel"
-                      size="sm"
-                      onClick={() => setStep(1)}
-                      disabled={loading}
-                    >
-                      Anterior
-                    </Button>
-                    <Button
-                      className="btn RegistrarAmbiente-button-cancel"
-                      size="sm"
-                      onClick={() => {
-                        setCapacidadDelAmbienteSeleccionado(null);
-                        formik.resetForm();
-                        setStep(1);
-                      }}
-                      disabled={loading}
-                    >
-                      Limpiar
-                    </Button>
-                    <Button
-                      className="btn RegistrarAmbiente-button-register"
-                      size="sm"
-                      type="submit"
-                      disabled={loading}
-                      //disabled={!formik.isValid || !formik.dirty}
-                    >
-                      {loading ? (
-                        <>
-                          <Spinner animation="grow" size="sm" />
-                          Registrando...
-                        </>
-                      ) : (
-                        "Registrar"
-                      )}
-                    </Button>
-                  </Stack>
-                </Row>
               </Stack>
             </Form>
+            <Stack
+              gap={2}
+              direction="horizontal"
+              className="justify-content-end"
+            >
+              <Button
+                className="btn RegistrarAmbiente-button-cancel"
+                style={{background:"#003F70", borderColor:"#003F70",color: "white"}}
+                size="sm"
+                disabled={!(formik.values.fechaReserva && formik.values.capacidad && formik.values.periodoInicio && formik.values.periodoFin)} 
+                onClick={buscar}
+              >
+                Buscar
+              </Button>
+            </Stack>
+          </Col>
+        </Row>
+      </Container>
+      </div>
+    <div style={{ width: '45%' ,marginLeft:"5%"}}>
+      <Container className="RegistrarAmbiente-header1" fluid>
+        <Row xs="auto" className="text-white justify-content-end">
+          <Col
+            xs="12"
+            className="d-flex justify-content-start align-items-center"
+            style={{ height: "3rem", padding: 0, paddingLeft: "0.5rem" }}
+          >
+            <h5 style={{ fontWeight: "bold" }}>
+              Registrar reserva de Ambiente
+            </h5>
+          </Col>
+        </Row>
+      </Container>
+      <Container className="RegistrarSolicitud-body" fluid>
+        <Row className="justify-content-md-center">
+          <Col xs lg="11">
+          <Form onSubmit={formik.handleSubmit} onKeyPress={handleKeyPress}>
+  <Stack gap={2} direction="vertical">
+    <Col lg="12">
+    <Form.Group as={Row} className="mb-3" controlId="nombreAmbiente">
+            <Form.Label className="RegistrarSolicitud-required">
+              Nombre del Ambiente
+            </Form.Label>
+            <Col>
+            <Dropdown
+      show={showDropdown}
+      onToggle={() => setShowDropdown(!showDropdown)}
+    >
+      <Dropdown.Toggle
+        className="fixed-width-dropdown"
+        disabled={!habilitado}
+        style={{
+          maxWidth: '400px', // Ajusta este valor según el ancho deseado
+          overflow: 'hidden',
+          textOverflow: 'ellipsis',
+          whiteSpace: 'nowrap',
+          backgroundColor:"white",
+          color:"black"
+        }}
+      >
+        {formik.values.nombreAmbiente || 'Seleccione el nombre del ambiente'}
+      </Dropdown.Toggle>
+      <Dropdown.Menu className="fixed-width-menu">
+  {combinedAmbienteDetails.map((combined, index) => (
+    <Dropdown.Item
+      key={combined.nombre}
+      onClick={() => setNombreDelAmbiente(combined)}
+      className="fixed-width-item"
+    >
+      {combined.nombre}
+    </Dropdown.Item>
+  ))}
+</Dropdown.Menu>
+    </Dropdown>
+              <Form.Text className="text-danger">
+                {formik.touched.nombreAmbiente && formik.errors.nombreAmbiente ? (
+                  <div className="text-danger">{formik.errors.nombreAmbiente}</div>
+                ) : null}
+              </Form.Text>
+            </Col>
+          </Form.Group>
+    </Col>
+    <Row xs="auto" className="justify-content-md-end">
+      <Stack direction="horizontal" gap={2}>
+        <Button
+          className="btn RegistrarAmbiente-button-cancel"
+          size="sm"
+          onClick={() => {
+            setCapacidadDelAmbienteSeleccionado(null);
+            formik.resetForm();
+            vacio();
+          }}
+          disabled={loading}
+        >
+          Limpiar
+        </Button>
+        <Button
+          className="btn RegistrarAmbiente-button-cancel" 
+          style={{background:"#003F70",borderColor:"#003F70",color: "white"}}
+          size="sm"
+          type="submit"
+          disabled={
+            loading || // Deshabilitar durante carga
+            !formik.isValid || // Deshabilitar si el formulario no es válido
+            !formik.dirty || // Deshabilitar si el formulario no ha sido modificado
+            !formik.values.nombreAmbiente || // Asegúrate de que todos los campos requeridos estén llenos
+            !formik.values.fechaReserva ||
+            !formik.values.capacidad ||
+            !formik.values.periodoInicio ||
+            !formik.values.periodoFin
+          }
+        >
+          {loading ? (
+            <>
+              <Spinner animation="grow" size="sm" />
+              Registrando...
+            </>
+          ) : (
+            "Registrar"
+          )}
+        </Button>
+      </Stack>
+    </Row>
+    <div style={{ maxHeight: "400px", overflowY: "auto", scrollbarWidth: "thin", scrollbarColor: "transparent" }}>
+  <Row className="g-0">
+    {ambienteDetails.length > 0 &&
+      ambienteDetails.map((ambiente, index) => (
+        <Col key={index} style={{ height: "200px", marginLeft: "40px", width: "300px" }}>
+          <div className="datos3" style={{ border: "1px solid #ccc", padding: "10px" }}>
+            <h6>{ambiente.nombre}</h6>
+            <p>Capacidad: {ambiente.capacidad}</p>
+            <p>Tipo de Ambiente: {ambiente.tipo}</p>
+            <div style={{ display: "flex", alignItems: "center" }}>
+              <p style={{ marginRight: "10px" }}>Bloque: {ambiente.nombreBloque}</p>
+              <p style={{ marginLeft: "10px" }}>Piso: {ambiente.nroPiso}</p>
+            </div>
+          </div>
+        </Col>
+      ))}
+  </Row>
+</div>
+
+  </Stack>
+</Form>
+
           </Col>
         </Row>
       </Container>
@@ -810,9 +756,10 @@ const SolicitarReserva = ({ onClose }) => {
         </Modal>
       )}
     </div>
+    </div>
   );
 
-  return <>{step === 1 ? renderFirstStep() : renderSecondStep()}</>;
+  return <>{renderFirstStep()}</>;
 };
 
 export default SolicitarReserva;

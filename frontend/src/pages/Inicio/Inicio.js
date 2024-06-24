@@ -75,7 +75,7 @@ const Inicio = ({
         );
       case "registrarReserva":
         return (
-          <div style={{ padding: "1rem" }}>
+          <div style={{ padding: "1rem" ,paddingLeft:"120px", height:"250px"}}>
             <SolicitarReserva />
           </div>
         );

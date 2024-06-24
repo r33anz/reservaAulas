@@ -9,7 +9,11 @@
   position: absolute;
   z-index: 1;
 }
-
+.RegistrarSolicitud-body {
+  background-color: #D9D9D9;
+  padding: 1rem;
+  height: 89%;
+}
 .search-field1 {
 
   padding-left: 0px;
@@ -47,4 +51,68 @@
 
 .SolicitarReserva-header {
   background-color: #003F70;
+}
+
+.input-with-clear {
+  position: relative;
+}
+
+.input-with-clear input {
+  width: 100%;
+}
+
+.clear-button {
+  position: absolute;
+  right: 0.5rem;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: #000;
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+
+.clear-button:focus {
+  outline: none;
+}
+.fixed-width-dropdown {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.fixed-width-menu {
+  width: 100%;
+  max-width: 100%;
+  max-height: 400px; /* Altura máxima del menú desplegable */
+  overflow-y: auto; /* Agrega desplazamiento vertical si el contenido excede la altura máxima */
+  overflow-x: auto; /* Agrega desplazamiento horizontal si el contenido excede el ancho máximo */
+}
+
+.fixed-width-item {
+  max-width: 300px; /* Ajusta el ancho máximo según tus necesidades */
+  white-space: normal; /* Permitir saltos de línea */
+  overflow: hidden; /* Ocultar el contenido que desborda */
+  text-overflow: ellipsis; /* Trunca el texto con puntos suspensivos si es necesario */
+}
+
+.datos3 {
+  
+  max-height: 17rem;
+  padding-top: 0.5rem;
+  margin: 1rem; /* Add margin to each item for better spacing */
+  background-color: #f9f9f9;
+  padding-left: 1rem;
+  border-radius: 8px;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+}
+.RegistrarAmbiente-header1 {
+  background-color: #003F70;
+  padding: 0.3rem;
+  border-radius: 0.5rem 0.5rem 0 0;
+}
+.RegistrarAmbiente-header1 h5 {
+  font-size: 30px;
+  color: #ffffff;
+  text-align: center;
 }

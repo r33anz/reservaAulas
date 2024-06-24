@@ -23,11 +23,22 @@ export const getDocente = (id) => {
     });
   };
 
+  export const busquedaCantidad = (reserva) => {
+    console.log(reserva);
+    return api.post(`${apiUrl}/buscarCantidadFechaPeriodo`, reserva)
+      .then(function(response) {
+        //console.log(response.data);
+        return response.data;
+      })
+      .catch(function(error) {
+        return error.message;
+      });
+  };
   export const postReserva = (reserva) => {
     console.log(reserva);
-    return api.post(`${apiUrl}/realizarSolicitud`, reserva)
+    return api.post(`${apiUrl}/realizarSolicitudV2`, reserva)
       .then(function(response) {
-        console.log(response.data);
+        console.log(response.data.mensaje);
         return response.data;
       })
       .catch(function(error) {
