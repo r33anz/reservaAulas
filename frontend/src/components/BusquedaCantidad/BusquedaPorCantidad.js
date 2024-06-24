@@ -10,7 +10,6 @@ import "rc-slider/assets/index.css";
 import "./Style.css";
 
 const BuscarCantidad = () => {
-  const [ambientes, setAmbientes] = useState([]);
   const [cantidadRange, setCantidadRange] = useState([0, 300]);
   const [ambienteDetails, setAmbienteDetails] = useState([]);
   const [busquedaRealizada, setBusquedaRealizada] = useState(false);
@@ -36,8 +35,7 @@ const BuscarCantidad = () => {
   const buscarAmbientesPorCantidad = async () => {
     const [minCantidad, maxCantidad] = cantidadRange;
     const response = await buscarAmbientePorCantidad(minCantidad, maxCantidad);
-    if (response === null) {
-      setAmbientes(response.respuesta);
+    if (response !== null) {
       setAmbienteDetails(response.respuesta || []); // Asegurarse de que siempre sea un array
       setBusquedaRealizada(true);
       setSliderModificado(false); // Resetear el estado al realizar una nueva búsqueda
@@ -98,9 +96,9 @@ const BuscarCantidad = () => {
           </Col>
         </Row>
       </Container>
-      <Container fluid>
+      <Container className="BusquedaPorCantidad-body" fluid>
         <Row
-          className="justify-content-md-center"
+          className="justify-content-center"
           style={{ marginTop: "2rem" }}
         >
           <Col xs lg="12">
@@ -217,7 +215,7 @@ const BuscarCantidad = () => {
         </Row>
       </Container>
 
-      {busquedaRealizada && !sliderModificado && ambienteDetails.length > 0 && (
+      {/* {busquedaRealizada && !sliderModificado && ambienteDetails.length > 0 && ( */}
         <div className="ambientedetails">
           {ambienteDetails.map((ambiente, index) => (
             <div key={index} className="datos1">
@@ -229,7 +227,7 @@ const BuscarCantidad = () => {
             </div>
           ))}
         </div>
-      )}
+      {/* )} */}
       {busquedaRealizada &&
         !sliderModificado &&
         ambienteDetails.length === 0 && (

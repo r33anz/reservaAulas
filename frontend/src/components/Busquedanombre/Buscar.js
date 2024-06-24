@@ -142,7 +142,7 @@ const Buscar = () => {
         </Row>
       </Container>
       <Container className="BusquedaPorNombre-body" fluid>
-        <Row className="justify-content-md-center">
+        <Row className="justify-content-center">
           <Col xs lg="11">
             <Form onSubmit={formik.handleSubmit}>
               <Form.Group as={Row} className="mb-3" controlId="ambiente">
