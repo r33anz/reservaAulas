@@ -8,6 +8,16 @@
   /* Habilitar el desplazamiento vertical cuando se supera la altura máxima */
   position: absolute;
   z-index: 1;
+  
+}
+.RegistrarSolicitud-header {
+  background-color: #003F70;
+  padding: 0.5rem;
+  border-radius: 0.5rem 0.5rem 0 0;
+}
+.RegistrarSolicitud-header h5 {
+  color: #ffffff;
+  text-align: center;
 }
 .RegistrarSolicitud-body {
   background-color: #D9D9D9;
@@ -35,7 +45,7 @@
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   /* Divide los elementos en tres columnas */
-  gap: 20px;
+  gap: 10px;
   /* Espacio entre los elementos */
 }
 
@@ -116,3 +126,4 @@
   color: #ffffff;
   text-align: center;
 }
+

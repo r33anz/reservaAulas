@@ -1,6 +1,7 @@
 .ListaDeSolicitudes-header {
     background-color: #003F70;
     height: 3rem;
+    width: 100%;
 }
 
 /* style.css */
@@ -15,6 +16,7 @@
 }
 
 .ListaDeSolicitudes-body {
+    width: 100%;
     background-color: #D9D9D9;
     padding: 1rem;
     min-height: calc(100vh - 7rem);

@@ -435,7 +435,6 @@ const SolicitarReserva = ({ onClose }) => {
                       ) : null}
                     </Form.Text>
                   </Form.Group>
-                  <label for="buscarAula"><b><u>BUSCAR AULA</u></b></label>
                   <Form.Group
                     as={Row}
                     className="mb-3"
@@ -604,7 +603,7 @@ const SolicitarReserva = ({ onClose }) => {
         </Row>
       </Container>
       </div>
-    <div style={{ width: '45%'}}>
+    <div style={{ width: '45%', marginLeft: '20px'}}>
       <Container className="RegistrarAmbiente-header1" fluid>
         <Row xs="auto" className="text-white justify-content-end">
           <Col
@@ -612,7 +611,9 @@ const SolicitarReserva = ({ onClose }) => {
             className="d-flex justify-content-start align-items-center"
             style={{ height: "3rem", padding: 0, paddingLeft: "0.5rem" }}
           >
-            
+            <h5 style={{ fontWeight: "bold" }}>
+              Buscar Ambiente
+            </h5>
           </Col>
         </Row>
       </Container>
