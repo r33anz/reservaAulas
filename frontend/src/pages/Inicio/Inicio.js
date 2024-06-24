@@ -1,6 +1,10 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { Col, Nav, NavLink, Row } from "react-bootstrap";
+import { Button, Nav, Container, Row, Col } from "react-bootstrap";
+import { ChevronDoubleLeft, List } from "react-bootstrap-icons";
 import logo from "../../assets/images/image.png";
+import "./style.css"; // Archivo CSS para estilos del sidebar
+import { logout } from "../../services/Authenticacion.service";
+import { useNavigate, useParams } from "react-router-dom";
 import Home from "../Home";
 import Buscar from "../../components/Busquedanombre/Buscar";
 import ListaDeSolicitudes from "../../components/ListaDeSolicitudes";
@@ -11,20 +15,19 @@ import Calendario from "../../components/Calendario";
 import CalendarioB from "../../components/CalendarioBusqueda";
 import ListaDeDocentes from "../../components/ListaDeDocentes/ListaDeDocentes";
 import ListaDeAtencionDeSolicitudes from "../../components/AtenderSolicitud/ListaDeAtencionDeSolicitudes";
-import "./style.css";
 import SolicitarReserva from "../../components/SolicitudReserva/SolicitarReserva";
 import ListaDeNotificaciones from "../../components/ListaDeNotificaciones/ListaDeNotificaciones";
-import { getDocente } from "../../services/SolicitarReserva.service";
-import { useNavigate, useParams } from "react-router-dom";
-import { logout } from "../../services/Authenticacion.service";
 import CancelarReservas from "../../components/CancelarReserva/CancelarReservas";
+import { getDocente } from "../../services/SolicitarReserva.service";
 
-const Inicio = ({
+const Sidebar = ({
   fetchNotifications,
   notifications,
   notificationsIdNotRead,
 }) => {
+  const [showSidebar, setShowSidebar] = useState(true);
   const [activeTab, setActiveTab] = useState("inicio");
+  const toggleSidebar = () => setShowSidebar(!showSidebar);
   const [docente, setDocente] = useState({});
   const { id } = useParams("id");
   const navigate = useNavigate();
@@ -51,18 +54,18 @@ const Inicio = ({
     }
   }, [navigate]);
 
-  useEffect(() => {
-    if (id !== null) {
-      fetchDocente(id);
-    }
-  }, []);
-
   const isAuthenticated = () => {
     const auth = sessionStorage.getItem("auth");
     if (auth !== null && auth === "false") {
       navigate("/login");
     }
   };
+
+  useEffect(() => {
+    if (id !== null) {
+      fetchDocente(id);
+    }
+  }, []);
 
   const renderContent = () => {
     isAuthenticated();
@@ -137,7 +140,7 @@ const Inicio = ({
       case "cancelarReserva":
         return (
           <div style={{ padding: "1rem" }}>
-            < CancelarReservas/>
+            <CancelarReservas />
           </div>
         );
       case "notificaciones":
@@ -159,39 +162,59 @@ const Inicio = ({
       default:
         return (
           <div className="logo-background">
-            <h1 style={{ fontWeight: "bold" }}>
-              Bienvenidos al Sistema de Gestion de Ambientes
-            </h1>
-            <h4>
-              Disfruta de una experiencia única en tu reserva de ambientes
-            </h4>
+            {!showSidebar && (
+              <div className="Inicio-sidebar-boton-open">
+                <Button
+                  className="button-list"
+                  variant="primary"
+                  onClick={toggleSidebar}
+                >
+                  <List />
+                </Button>
+              </div>
+            )}
+            <div
+              className={
+                showSidebar ? "Inicio-welcome-sidebar" : "Inicio-welcome"
+              }
+            >
+              <span className="justify-items-center">
+                <h1 style={{ fontWeight: "bold" }}>
+                  Bienvenidos al Sistema de Gestion de Ambientes
+                </h1>
+                <h4>
+                  Disfruta de una experiencia única en tu reserva de ambientes
+                </h4>
+              </span>
+            </div>
           </div>
         );
     }
   };
 
   return (
-    <div className="inicio-container">
-      <Row className="prueba">
-        <Col sm="2" className="sidebar">
-          <div className="logo-container">
-            <img src={logo} className="App-logo" alt="logo" />
-            <div className="titulo-header">
-              <h4>
-                Intelligence
-                <br />
-                Software
+    <Container fluid>
+      <Row>
+        {/* Sidebar */}
+        {showSidebar && (
+          <Col sm={3} className={`sidebar ${showSidebar ? "open" : ""}`}>
+            <div className="logo-container">
+              <h4 className="Inicio-aulapro">
+                <img src={logo} className="Inicio-logo" alt="logo" />
+                Aula Pro
               </h4>
+              <Button onClick={toggleSidebar} className="sidebar-button-close">
+                <ChevronDoubleLeft />
+              </Button>
             </div>
-          </div>
-          <div className="separador"></div>
-          <div className="usuario-header">
-            <p>USUARIO: {docente.nombre}</p>
-          </div>
-          <div className="separador"></div>
-          <div className="nav-container">
-            <Nav className="flex-column" activeKey={activeTab}>
+            <div className="separador"></div>
+            <div className="usuario-header">
+              <p>USUARIO: {docente.nombre}</p>
+            </div>
+            <div className="separador"></div>
+            <Nav className="flex-column sidebar-nav">
               <Nav.Link
+                active={"inicio" === activeTab}
                 eventKey={"inicio"}
                 onClick={() => setActiveTab("inicio")}
               >
@@ -279,9 +302,9 @@ const Inicio = ({
               >
                 Busqueda calendario
               </Nav.Link>
-              <NavLink onClick={() => setActiveTab("cancelarReserva")}>
+              <Nav.Link onClick={() => setActiveTab("cancelarReserva")}>
                 Cancelacion de Reservas/Solicitudes
-              </NavLink>
+              </Nav.Link>
               <Nav.Link
                 eventKey={"atencionDeSolicitudes"}
                 onClick={() => {
@@ -294,16 +317,37 @@ const Inicio = ({
               <Nav.Link eventKey={"cerrarSesion"} onClick={handleLogout}>
                 Cerrar Sesion
               </Nav.Link>
-              <div className="separador"></div>
             </Nav>
-          </div>
-        </Col>
-        <Col className="Inicio-components">
-          <Home fetchNotifications={fetchNotifications}>{renderContent()}</Home>
-        </Col>
+          </Col>
+        )}
+
+        {/* Contenido */}
+        {showSidebar ? (
+          <Col
+            sm={9}
+            className={`${
+              !showSidebar ? "content" : "sidebar-content"
+            } Inicio-components`}
+          >
+            <Home fetchNotifications={fetchNotifications}>
+              {renderContent()}
+            </Home>
+          </Col>
+        ) : (
+          <Col
+            sm={12}
+            className={`${
+              !showSidebar ? "content" : "sidebar-content"
+            } Inicio-components`}
+          >
+            <Home fetchNotifications={fetchNotifications}>
+              {renderContent()}
+            </Home>
+          </Col>
+        )}
       </Row>
-    </div>
+    </Container>
   );
 };
 
-export default Inicio;
+export default Sidebar;
