@@ -435,7 +435,7 @@ const SolicitarReserva = ({ onClose }) => {
                       ) : null}
                     </Form.Text>
                   </Form.Group>
-                  <p>BUSCAR AULA</p>
+                  <label for="buscarAula"><b><u>BUSCAR AULA</u></b></label>
                   <Form.Group
                     as={Row}
                     className="mb-3"

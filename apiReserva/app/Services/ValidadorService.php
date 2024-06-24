@@ -214,12 +214,14 @@ class ValidadorService{
             }
         }
 
-        
         //Verificación de si un usuario hizo la misma solicitud 
-        $solicitudesUsuario = Solicitud::whereIn('estado', 'en espera')
+        $solicitudesUsuario = Solicitud::where('estado', 'en espera')
                                         ->where('user_id', $idUsuario)
                                         ->where('fechaReserva', $fecha)
                                         ->whereHas('ambientes', function($query) use ($idAmbientes) {
+                                            if (!is_array($idAmbientes)) {
+                                                $idAmbientes = [$idAmbientes];
+                                            }
                                             $query->whereIn('ambiente_id', $idAmbientes);
                                         })
                                         ->get();
@@ -236,10 +238,13 @@ class ValidadorService{
         }
 
         // Verificación de si un usuario hizo la misma reserva 
-        $solicitudesUsuario = Solicitud::where('estado','aprobado')
+        $solicitudesUsuario = Solicitud::where('estado', 'aprobado')
                                         ->where('user_id', $idUsuario)
                                         ->where('fechaReserva', $fecha)
                                         ->whereHas('ambientes', function($query) use ($idAmbientes) {
+                                            if (!is_array($idAmbientes)) {
+                                                $idAmbientes = [$idAmbientes];
+                                            }
                                             $query->whereIn('ambiente_id', $idAmbientes);
                                         })
                                         ->get();
@@ -283,8 +288,8 @@ class ValidadorService{
         $idSolicitudesAmbiente = DB::table('ambiente_solicitud')
                                     ->whereIn('ambiente_id', $idAmbientes)
                                     ->pluck('solicitud_id')
-                                    ->unique();
-
+                                    ->unique()
+                                    ->toArray();
 
         //Verificación si hay reservas con choques de ambientes
         $solicitudesCoincidencia = Solicitud::where('estado', 'aprobado')
