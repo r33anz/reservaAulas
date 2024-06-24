@@ -48,15 +48,11 @@ class SolicitudController extends Controller
         }
         return response()->json(['listaFechas' => $listaFechas]);
     }
-
-    // FINISH v2  
+    // FINISH v2 
+    /*
     public function registroSolicitud(Request $request)  
     {
-        /**
-         * docente / materia / grupo / cantidad / razon / fecha / estado :false
-         * preProcesamineto: periodoId
-         * el idAmbiente y el idSolicitud ponerlo en tabla pivote.
-         */
+        
         $idUsuario = $request->input('idDocente');
         $materia = $request->input('materia');
         $grupo = $request->input('grupo');
@@ -124,8 +120,8 @@ class SolicitudController extends Controller
         return response()->json([
             'mensaje' => 'Resgistro existoso',
         ]);
-    }
-
+    }*/
+    /*
     public function registroSolicitudP2(Request $request)
     {
         $idUsuario = $request->input('idDocente');
@@ -187,13 +183,14 @@ class SolicitudController extends Controller
         return response()->json([
             'mensaje' => 'Registro exitoso',
         ]);
-    }
+    }*/
     //
+
     public function realizarSolicitudV2(Request $request)
     {
         $idUsuario = $request->input('idDocente');
         $materia = $request->input('materia');
-        $grupos = $request->input('grupo');  // []
+        $grupo = $request->input('grupo');  
         $cantidad = $request->input('capacidad');
         $razon = $request->input('razon');
         $fechaReserva = $request->input('fechaReserva');
@@ -211,20 +208,18 @@ class SolicitudController extends Controller
 
     
         // Validar disponibilidad de los ambientes
-        $ambienteDisponible = $this->ambienteValido->validarAmbientesGrupos($idAmbientes, $fechaReserva, $periodos, $idUsuario, $materia, $grupos, $razon);
+        $ambienteDisponible = $this->ambienteValido->validarAmbientesGrupos($idAmbientes, $fechaReserva, $periodos, $idUsuario, $materia, $grupo, $razon);
     
         if ($ambienteDisponible->alerta != 'exito') {
             return response()->json([$ambienteDisponible]);
         }
     
         // Convertir grupos a string para almacenamiento
-        $gruposString = implode(',', $grupos);
-    
         // Crear la solicitud
         $solicitud = Solicitud::create([
             'user_id' => $idUsuario,
             'materia' => $materia,
-            'grupo' => $gruposString,
+            'grupo' => $grupo,
             'cantidad' => $cantidad,
             'razon' => $razon,
             'fechaReserva' => $fechaReserva,
