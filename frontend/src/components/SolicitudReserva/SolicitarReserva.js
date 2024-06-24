@@ -95,18 +95,28 @@ const SolicitarReserva = ({ onClose }) => {
       cantidad: capacidad,
       periodos: periodoIDs,
     };
-    sethabilitado(true);
+    
     const respuesta = await busquedaCantidad(data);
+    if(respuesta[0].alerta === "advertencia"){
+      agregarAlert({
+        icon: <ExclamationCircleFill />,
+        severidad: "danger",
+        mensaje: respuesta[0].mensaje,
+      });
+      sethabilitado(false);
+    }else{
+      sethabilitado(true);
     setAmbienteOptions(respuesta);
     console.log(respuesta);
     setAmbientesDisponibles(true);
-    if(ambientesDisponibles ){
+    
     agregarAlert({
       icon: <ExclamationCircleFill />,
       severidad: "success",
       mensaje: "Busqueda terminada, seleccione su ambiente",
     });
-  }
+  
+}
   };
   const vacio=()=>{
     sethabilitado(false);
@@ -181,7 +191,6 @@ const SolicitarReserva = ({ onClose }) => {
         .required("Obligatorio"),
     }),
     onSubmit: (values) => {
-      console.log("aaaaaaaa");
       const id = parseInt(window.sessionStorage.getItem("docente_id"),10);
       const periodoInicioID = parseInt(values.periodoInicio, 10);
       const periodoFinID = parseInt(values.periodoFin, 10);
@@ -195,7 +204,7 @@ const SolicitarReserva = ({ onClose }) => {
       values.ambiente = ida;
       values.idDocente = id;
       console.log(values);
-      setLoading(true);
+      //setLoading(true);
       postReserva(values)
         .then((response) => {
           console.log(response.mensaje);
@@ -207,6 +216,7 @@ const SolicitarReserva = ({ onClose }) => {
               mensaje: "Se realizo la solicitud correctamente",
             });
             formik.resetForm();
+            vacio();
             setLoading(false);
           } else if (response[0].alerta === "advertencia") {
             agregarAlert({
@@ -485,10 +495,13 @@ const SolicitarReserva = ({ onClose }) => {
                       //disabled={!formik.values.nombreAmbiente}
                     />
                     <Form.Text className="text-danger">
-                        <div className="text-danger">
-                          {formik.errors.capacidad}
-                        </div>
-                      
+                    
+{formik.touched.capacidad &&
+                        formik.errors.capacidad ? (
+                          <div className="text-danger">
+                            {formik.errors.capacidad}
+                          </div>
+                        ) : null}
                     </Form.Text>
                   </Form.Group>
                   
@@ -703,8 +716,8 @@ const SolicitarReserva = ({ onClose }) => {
             <p>Capacidad: {ambiente.capacidad}</p>
             <p>Tipo de Ambiente: {ambiente.tipo}</p>
             <div style={{ display: "flex", alignItems: "center" }}>
-              <p style={{ marginRight: "10px" }}>Bloque: {ambiente.nombreBloque}</p>
-              <p style={{ marginLeft: "10px" }}>Piso: {ambiente.nroPiso}</p>
+              <p style={{ marginRight: "10px" }}>Bloque: {ambiente.bloque}</p>
+              <p style={{ marginLeft: "10px" }}>Piso: {ambiente.piso}</p>
             </div>
           </div>
         </Col>
