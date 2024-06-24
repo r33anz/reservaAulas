@@ -1,26 +1,12 @@
-.CancelarReservas-header {
-    background-color: #003F70;
-    height: 3rem;
-}
-
-.CancelarReservas-body {
-    background-color: #D9D9D9;
-    padding: 1rem;
-    min-height: calc(100vh - 7rem);
-    display: flex;
-    flex-direction: row;
-    align-items: flex-start;  /* Alinea los elementos desde el inicio (arriba) */
-    align-content: flex-start;
-}
 .CacelarReservas-header-button-cargar,
 .CacelarReservas-header-button-close {
-    color: #ffffff;
-    background-color: #D51809;
-    border-radius: 0%;
-    border-color: #D51809;
-    width: 58px;
-    height: 100%;
-    cursor: pointer;
+  color: #ffffff;
+  background-color: #D51809;
+  border-radius: 0%;
+  border-color: #D51809;
+  width: 58px;
+  height: 100%;
+  cursor: pointer;
 }
 
 .CancelarReserva-button-cancel {
@@ -39,20 +25,81 @@
   border-color: #003F70;
 }
 
-  .CancelarReserva-button-register {
-    color: #ffffff;
-    background-color: #003F70;
-    border-color: #003F70;
-  }
-  
-  .CancelarReserva-button-register:hover,
-  .CancelarReserva-button-register:active,
-  .CancelarReserva-button-register:focus,
-  .CancelarReserva-button-register:disabled,
-  .CancelarReserva-button-register.active {
-    /* let's darken #004E64 a bit for hover effect */
-    color: #ffffff;
-    background: #003F70;
-    border-color: #003F70;
-  }
+.CancelarReserva-button-register {
+  color: #ffffff;
+  background-color: #003F70;
+  border-color: #003F70;
+}
 
+.CancelarReserva-button-register:hover,
+.CancelarReserva-button-register:active,
+.CancelarReserva-button-register:focus,
+.CancelarReserva-button-register:disabled,
+.CancelarReserva-button-register.active {
+  /* let's darken #004E64 a bit for hover effect */
+  color: #ffffff;
+  background: #003F70;
+  border-color: #003F70;
+}
+
+.CancelarReservas-header {
+  background-color: #003F70;
+  height: 3rem;
+}
+
+.CancelarReservas-body {
+  background-color: #D9D9D9;
+  padding: 1rem;
+  min-height: calc(92vh - 7rem);
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  /* Alinea los elementos desde el inicio (arriba) */
+  align-content: flex-start;
+}
+
+.CancelarReservas-sidebar-header {
+  background-color: #003F70;
+  height: 3rem;
+  width: 97%;
+}
+
+.CancelarReservas-header {
+  background-color: #003F70;
+  height: 3rem;
+}
+
+.CancelarReservas-sidebar-body {
+  background-color: #D9D9D9;
+  padding: 1rem;
+  width: 97%;
+  min-height: calc(100vh - 7rem);
+  /* Mantener el tamaño del componente */
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  /* Alinea los elementos desde el inicio (arriba) */
+}
+
+/* Estilos para alinear los elementos arriba */
+.CancelarReservas-body>*,
+.CancelarReservas-sidebar-body>* {
+
+  align-self: stretch;
+  /* Asegura que los elementos ocupen todo el ancho disponible */
+}
+
+.CancelarReservas-body>form,
+.CancelarReservas-sidebar-body>form {
+  margin-top: 0;
+}
+
+.CancelarReservas-body>table,
+.CancelarReservas-sidebar-body>table {
+  margin-top: 0;
+}
+
+.CancelarReservas-body>.pagination,
+.CancelarReservas-sidebar-body>.pagination {
+  margin-top: auto;
+}

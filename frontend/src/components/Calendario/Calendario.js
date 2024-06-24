@@ -8,27 +8,12 @@ import {
   recuperarInformacionSolicitud,
 } from "../../services/Fechas.service";
 import { useState, useEffect, useRef } from "react";
-import {
-  Col,
-  Modal,
-  Row,
-  Form,
-  Pagination,
-  Dropdown,
-  Stack,
-  Button,
-} from "react-bootstrap";
+import { Col, Modal, Row, Form, Pagination } from "react-bootstrap";
 import { XSquareFill, ArrowClockwise } from "react-bootstrap-icons";
-import { useFormik } from "formik";
-import * as Yup from "yup";
-import { modificarPerio } from "../../../src/services/ModificarPeriodo.service";
-import {
-  getAmbientes,
-  getPeriodosReservados,
-} from "../../../src/services/Ambiente.service";
+import { getAmbientes } from "../../../src/services/Ambiente.service";
 dayjs.locale("es");
 
-function Calendario() {
+function Calendario({ showSidebar }) {
   const localizer = dayjsLocalizer(dayjs);
   const [event, setEvent] = useState([]);
   const [datos, setDatos] = useState([]);
@@ -323,14 +308,11 @@ function Calendario() {
   return (
     <>
       <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          width: "100%",
-          background: "rgb(11 63 111)",
-          color: "white",
-        }}
+        className={`${
+          showSidebar
+            ? "Calendario-sidebar-header-container"
+            : "Calendario-header-container"
+        }`}
       >
         <h5
           style={{
@@ -351,12 +333,9 @@ function Calendario() {
         </div>
       </div>
       <div
-        style={{
-          height: "88vh",
-          width: "100%",
-          backgroundColor: "#D9D9D9",
-          paddingTop: "1rem",
-        }}
+        className={`${
+          showSidebar ? "Calendario-sidebar-body" : "Calendario-body"
+        }`}
       >
         <Calendar
           localizer={localizer}
