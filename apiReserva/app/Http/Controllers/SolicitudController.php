@@ -190,7 +190,7 @@ class SolicitudController extends Controller
     {
         $idUsuario = $request->input('idDocente');
         $materia = $request->input('materia');
-        $grupo = $request->input('grupo');  
+        $grupo = $request->input('grupo')[0];  
         $cantidad = $request->input('capacidad');
         $razon = $request->input('razon');
         $fechaReserva = $request->input('fechaReserva');
@@ -214,7 +214,7 @@ class SolicitudController extends Controller
             return response()->json([$ambienteDisponible]);
         }
     
-        // Convertir grupos a string para almacenamiento
+    
         // Crear la solicitud
         $solicitud = Solicitud::create([
             'user_id' => $idUsuario,
@@ -251,6 +251,7 @@ class SolicitudController extends Controller
         return response()->json([
             'mensaje' => 'Registro exitoso',
         ]);
+       
     }
 
     // FINISH T
