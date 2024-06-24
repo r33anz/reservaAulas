@@ -193,7 +193,7 @@ const Sidebar = ({
                 </Button>
               </div>
             )}
-            <Modificarperdiodo />
+            <Modificarperdiodo showSidebar={showSidebar} />
           </div>
         );
       case "listaDeDocentes":
@@ -210,7 +210,7 @@ const Sidebar = ({
                 </Button>
               </div>
             )}
-            <ListaDeDocentes tipoDeUsuario="Admin" />
+            <ListaDeDocentes tipoDeUsuario="Admin" showSidebar={showSidebar} />
           </div>
         );
       case "calendario":
@@ -227,7 +227,7 @@ const Sidebar = ({
                 </Button>
               </div>
             )}
-            <Calendario />
+            <Calendario showSidebar={showSidebar} />
           </div>
         );
       case "busquedaPorCalendario":
@@ -244,7 +244,7 @@ const Sidebar = ({
                 </Button>
               </div>
             )}
-            <CalendarioB />
+            <CalendarioB showSidebar={showSidebar} />
           </div>
         );
       case "cancelarReserva":
@@ -261,7 +261,7 @@ const Sidebar = ({
                 </Button>
               </div>
             )}
-            <CancelarReservas />
+            <CancelarReservas showSidebar={showSidebar} />
           </div>
         );
       case "notificaciones":
@@ -300,7 +300,7 @@ const Sidebar = ({
                 </Button>
               </div>
             )}
-            <ListaDeAtencionDeSolicitudes />
+            <ListaDeAtencionDeSolicitudes showSidebar={showSidebar} />
           </div>
         );
       default:
@@ -341,7 +341,11 @@ const Sidebar = ({
       <Row>
         {/* Sidebar */}
         {showSidebar && (
-          <Col sm={3} className={`sidebar ${showSidebar ? "open" : ""}`}>
+          <Col
+            sm={3}
+            className={`sidebar ${showSidebar ? "open" : ""}`}
+            style={{ overflowY: "scroll" }}
+          >
             <div className="logo-container">
               <h4 className="Inicio-aulapro">
                 <img src={logo} className="Inicio-logo" alt="logo" />
@@ -469,7 +473,6 @@ const Sidebar = ({
         )}
 
         {/* Contenido */}
-        {/* {showSidebar ? ( */}
         <Col
           sm={!showSidebar ? 12 : 9}
           className={`${
@@ -483,18 +486,6 @@ const Sidebar = ({
             {renderContent()}
           </Home>
         </Col>
-        {/* ) : (
-          <Col
-            sm={12}
-            className={`${
-              !showSidebar ? "content" : "sidebar-content"
-            } Inicio-components`}
-          >
-            <Home fetchNotifications={fetchNotifications} showSidebar={showSidebar}>
-              {renderContent()}
-            </Home>
-          </Col>
-        )} */}
       </Row>
     </Container>
   );

@@ -2,21 +2,27 @@
     background-color: #003F70;
     height: 3rem;
 }
+
 /* style.css */
 .table-row-fixed-height {
-    height: 65px; /* Ajusta la altura según tus necesidades */
+    height: 65px;
+    /* Ajusta la altura según tus necesidades */
     text-align: center;
-  }
-.ListaDeSolicitudes-form-filtros{
+}
+
+.ListaDeSolicitudes-form-filtros {
     height: 35px;
 }
+
 .ListaDeSolicitudes-body {
     background-color: #D9D9D9;
     padding: 1rem;
-    min-height: calc(100vh - 7rem); /* Mantener el tamaño del componente */
+    min-height: calc(100vh - 7rem);
+    /* Mantener el tamaño del componente */
     display: flex;
     flex-direction: column;
-    align-items: flex-start;  /* Alinea los elementos desde el inicio (arriba) */
+    align-items: flex-start;
+    /* Alinea los elementos desde el inicio (arriba) */
 }
 
 .page-item.active.color-blue,
@@ -71,19 +77,20 @@
 }
 
 /* Estilos para alinear los elementos arriba */
-.ListaDeSolicitudes-body > * {
+.ListaDeSolicitudes-body>* {
 
-    align-self: stretch; /* Asegura que los elementos ocupen todo el ancho disponible */
+    align-self: stretch;
+    /* Asegura que los elementos ocupen todo el ancho disponible */
 }
 
-.ListaDeSolicitudes-body > form {
+.ListaDeSolicitudes-body>form {
     margin-top: 0;
 }
 
-.ListaDeSolicitudes-body > table {
+.ListaDeSolicitudes-body>table {
     margin-top: 0;
 }
 
-.ListaDeSolicitudes-body > .pagination {
+.ListaDeSolicitudes-body>.pagination {
     margin-top: auto;
 }

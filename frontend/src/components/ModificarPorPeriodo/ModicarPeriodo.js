@@ -24,7 +24,7 @@ import { QuestionCircleFill } from "react-bootstrap-icons";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 
-const Modificarperdiodo = ({ onClose }) => {
+const Modificarperdiodo = ({ showSidebar }) => {
   const inputAmbienteRef = useRef();
   const [show, setShow] = useState("");
   const [periodosModificados, setPeriodosModificados] = useState([]);
@@ -369,14 +369,13 @@ const Modificarperdiodo = ({ onClose }) => {
   return (
     <div
       style={{
-        display: "grid",
-        height: "93vh",
-        alignContent: "center",
-        justifyContent: "center",
+        height: `${showSidebar ? "100vh" : "85vh"}`,
+        paddingLeft: `${showSidebar ? "1rem" : "10rem"}`,
+        paddingTop: `${showSidebar ? "2rem" : ""}`,
       }}
     >
       <Container className="ModificarEstadoDelAmbientePorPeriodo-header">
-        <Row xs="auto" className="text-white justify-content-end">
+        <Row xs="auto" className="text-white">
           <Col
             xs="12"
             className="d-flex justify-content-start align-items-center"
@@ -464,7 +463,7 @@ const Modificarperdiodo = ({ onClose }) => {
                 <Col sm="2">
                   <FormControl
                     type="text"
-                    style={{ width: "200px"}}
+                    style={{ width: "200px" }}
                     placeholder="Ingrese la fecha"
                     onChange={(e) =>
                       setFechaDelAmbiente(e, formik.handleChange)

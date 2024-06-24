@@ -22,7 +22,7 @@ import {
 import { AlertsContext } from "../Alert/AlertsContext";
 import AtenderSolicitud from "../AtenderSolicitud/AtenderSolicitud";
 
-const ListaDeAtencionDeSolicitudes = () => {
+const ListaDeAtencionDeSolicitudes = ({ showSidebar }) => {
   const [solicitudes, setSolicitudes] = useState([]);
   const [solicitud, setSolicitud] = useState({});
   const [show, setShow] = useState(false);
@@ -125,7 +125,14 @@ const ListaDeAtencionDeSolicitudes = () => {
   return (
     <>
       <Container fluid>
-        <Row sm className="text-white ListaDeSolicitudes-header">
+        <Row
+          sm
+          className={`text-white ${
+            showSidebar
+              ? "ListaDeAtentionDeSolicitudes-sidebar-header"
+              : "ListaDeAtentionDeSolicitudes-header"
+          }`}
+        >
           <Col
             xs="10"
             className="d-flex justify-content-start align-items-center"
@@ -151,7 +158,13 @@ const ListaDeAtencionDeSolicitudes = () => {
             </OverlayTrigger>
           </Col>
         </Row>
-        <Row className="ListaDeSolicitudes-body justify-content-center">
+        <Row
+          className={`${
+            showSidebar
+              ? "ListaDeAtentionDeSolicitudes-sidebar-body"
+              : "ListaDeAtentionDeSolicitudes-body"
+          } justify-content-center`}
+        >
           <Table striped bordered hover responsive>
             <thead>
               <tr className="table-row-fixed-height">
@@ -165,36 +178,36 @@ const ListaDeAtencionDeSolicitudes = () => {
               </tr>
             </thead>
             {solicitudes.length === 0 ? (
-                <tr>
-                  <td colSpan={ 7} className="text-center">
-                    No hay reservas o solicitudes disponibles
-                  </td>
-                </tr>
-              ) : (
-            <tbody>
-              {solicitudes.map((item) => (
-                <tr className="table-row-fixed-height">
-                  <td>{item.ambiente_nombres}</td>
-                  <td>{item.nombreDocente}</td>
-                  <td>{item.materia}</td>
-                  <td>
-                    {`${item.periodo_ini_id} hasta ${item.periodo_fin_id}`}
-                  </td>
-                  <td>{item.fechaReserva}</td>
-                  <td>{item.estado}</td>
-                  <td>
-                    <EnvelopeExclamation
-                      size={30}
-                      onClick={() => {
-                        setSolicitud(item);
-                        setShow(true);
-                      }}
-                    />
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-              )}
+              <tr>
+                <td colSpan={7} className="text-center">
+                  No hay reservas o solicitudes disponibles
+                </td>
+              </tr>
+            ) : (
+              <tbody>
+                {solicitudes.map((item) => (
+                  <tr className="table-row-fixed-height">
+                    <td>{item.ambiente_nombres}</td>
+                    <td>{item.nombreDocente}</td>
+                    <td>{item.materia}</td>
+                    <td>
+                      {`${item.periodo_ini_id} hasta ${item.periodo_fin_id}`}
+                    </td>
+                    <td>{item.fechaReserva}</td>
+                    <td>{item.estado}</td>
+                    <td>
+                      <EnvelopeExclamation
+                        size={30}
+                        onClick={() => {
+                          setSolicitud(item);
+                          setShow(true);
+                        }}
+                      />
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            )}
           </Table>
           <Pagination style={{ justifyContent: "center" }}>
             {renderPaginationItems()}

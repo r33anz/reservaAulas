@@ -80,7 +80,6 @@
   margin: 0.5rem 0;
 }
 
-
 .logo-background {
   margin-left: -12px;
   margin-right: -12px;
@@ -96,7 +95,8 @@
 }
 
 .Inicio-sidebar-boton-open {
-  padding: 1rem;
+  padding-bottom: 1rem;
+  padding-top: 1rem;
 }
 
 .Inicio-welcome {

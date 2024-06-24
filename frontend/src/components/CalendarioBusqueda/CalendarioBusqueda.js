@@ -3,27 +3,20 @@ import "react-big-calendar/lib/css/react-big-calendar.css";
 import dayjs from "dayjs";
 import "dayjs/locale/es";
 import "./style.css";
-import {
-  recuperarFechasSolicitud,
-  recuperarInformacionSolicitud,
-} from "../../services/Fechas.service";
 import { useState, useEffect, useRef, useCallback } from "react";
 import {
   Col,
   Modal,
   Row,
   Form,
-  Pagination,
   Dropdown,
   Stack,
   Button,
 } from "react-bootstrap";
-import { ArrowClockwise, XSquareFill } from "react-bootstrap-icons";
+import { XSquareFill } from "react-bootstrap-icons";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import {
-  estadoinhabilitado,
-  habilita,
   modificarPerio,
   getPeriodosReservados,
   getPeriodosSolicitados,
@@ -31,7 +24,7 @@ import {
 import { getAmbientes } from "../../services/Ambiente.service";
 dayjs.locale("es");
 
-function Calendario() {
+function Calendario({ showSidebar }) {
   const localizer = dayjsLocalizer(dayjs);
   const [event, setEvent] = useState([]);
   const [datos, setDatos] = useState([]);
@@ -371,15 +364,11 @@ function Calendario() {
   return (
     <>
       <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          width: "100%",
-          background: "rgb(11 63 111)",
-          color: "white",
-          height: "3rem",
-        }}
+        className={`${
+          showSidebar
+            ? "CalendarioBusqueda-sidebar-header-container"
+            : "CalendarioBusqueda-header-container"
+        }`}
       >
         <h5
           style={{
@@ -393,12 +382,11 @@ function Calendario() {
         </h5>
       </div>
       <div
-        style={{
-          height: "88vh",
-          width: "100%",
-          backgroundColor: "#D9D9D9",
-          paddingTop: "1rem",
-        }}
+        className={`${
+          showSidebar
+            ? "CalendarioBusqueda-sidebar-body-container"
+            : "CalendarioBusqueda-body-container"
+        }`}
       >
         <Calendar
           localizer={localizer}
