@@ -23,7 +23,7 @@ import {
 } from "../../services/Notification.service";
 import "./style.css"; // Asegúrate de importar tu archivo de estilos
 
-const ListaDeSolicitudes = ({ tipoDeUsuario }) => {
+const ListaDeSolicitudes = ({ tipoDeUsuario, showSidebar }) => {
   const [docentes, setDocentes] = useState([]);
   const { agregarAlert } = useContext(AlertsContext);
   const [expandedIndex, setExpandedIndex] = useState(-1);
@@ -134,7 +134,14 @@ const ListaDeSolicitudes = ({ tipoDeUsuario }) => {
 
   return (
     <Container fluid style={{ marginBottom: "1rem" }}>
-      <Row sm className="text-white ListaDeDocentes-header">
+      <Row
+        sm
+        className={`text-white ${
+          showSidebar
+            ? "ListaDeDocentes-sidebar-header"
+            : "ListaDeDocentes-header"
+        }`}
+      >
         <Col
           xs="10"
           className="d-flex justify-content-start align-items-center"
@@ -155,7 +162,13 @@ const ListaDeSolicitudes = ({ tipoDeUsuario }) => {
         </Col>
       </Row>
       {tipoDeUsuario === "Admin" && (
-        <Row className="ListaDeDocentes-body1 justify-content-end">
+        <Row
+          className={`${
+            showSidebar
+              ? "ListaDeDocentes-sidebar-body1"
+              : "ListaDeDocentes-body1"
+          } justify-content-end`}
+        >
           <Col className="d-flex justify-content-end">
             <Button
               style={{ width: "300px" }}
@@ -167,7 +180,7 @@ const ListaDeSolicitudes = ({ tipoDeUsuario }) => {
           </Col>
         </Row>
       )}
-      <Row className="ListaDeDocentes-body">
+      <Row className={`${showSidebar ? "ListaDeDocentes-sidebar-body" : "ListaDeDocentes-body"}`}>
         <div className="table-container">
           <Table striped bordered hover responsive>
             <thead>
@@ -190,7 +203,8 @@ const ListaDeSolicitudes = ({ tipoDeUsuario }) => {
                         aria-controls={`expandable-row-${index}`}
                         aria-expanded={expandedIndex === index}
                       >
-                        {expandedIndex === index ? "Ocultar" : "Ver"} Materias y Grupos
+                        {expandedIndex === index ? "Ocultar" : "Ver"} Materias y
+                        Grupos
                       </Button>
                       {tipoDeUsuario === "Admin" && (
                         <Button
@@ -216,12 +230,18 @@ const ListaDeSolicitudes = ({ tipoDeUsuario }) => {
                               </tr>
                             </thead>
                             <tbody>
-                              {Object.keys(docente.materias).map((materia, idx) => (
-                                <tr key={idx}>
-                                  <td>{materia}</td>
-                                  <td>{docente.materias[materia].grupos.join(", ")}</td>
-                                </tr>
-                              ))}
+                              {Object.keys(docente.materias).map(
+                                (materia, idx) => (
+                                  <tr key={idx}>
+                                    <td>{materia}</td>
+                                    <td>
+                                      {docente.materias[materia].grupos.join(
+                                        ", "
+                                      )}
+                                    </td>
+                                  </tr>
+                                )
+                              )}
                             </tbody>
                           </Table>
                         </div>
@@ -242,7 +262,9 @@ const ListaDeSolicitudes = ({ tipoDeUsuario }) => {
             style={{ height: "100%" }}
           >
             <h4 style={{ fontWeight: "bold" }}>
-              {selectedDocente ? `Notificar a ${selectedDocente.nombre}` : "Notificación general"}
+              {selectedDocente
+                ? `Notificar a ${selectedDocente.nombre}`
+                : "Notificación general"}
             </h4>
           </Col>
           <Col
@@ -274,7 +296,11 @@ const ListaDeSolicitudes = ({ tipoDeUsuario }) => {
             <div className="d-flex justify-content-center mt-3">
               <Button
                 className="btn ListaDeDocentes-register"
-                onClick={selectedDocente ? handleEnviarNotificacion : handleNotificacionGeneral}
+                onClick={
+                  selectedDocente
+                    ? handleEnviarNotificacion
+                    : handleNotificacionGeneral
+                }
                 disabled={loading}
               >
                 {loading ? (

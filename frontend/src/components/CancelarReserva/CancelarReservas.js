@@ -22,7 +22,7 @@ import {
 } from "react-bootstrap-icons";
 import { AlertsContext } from "../Alert/AlertsContext";
 
-const CancelarReservas = ({ titulo, tipoDeUsuario }) => {
+const CancelarReservas = ({ showSidebar, tipoDeUsuario }) => {
   const [solicitudes, setSolicitudes] = useState([]);
   const [solicitud, setSolicitud] = useState({});
   const [show, setShow] = useState(false);
@@ -173,7 +173,14 @@ const CancelarReservas = ({ titulo, tipoDeUsuario }) => {
   return (
     <>
       <Container fluid>
-        <Row sm className="text-white ListaDeSolicitudes-header">
+        <Row
+          sm
+          className={`text-white ${
+            showSidebar
+              ? "CancelarReservas-sidebar-header"
+              : "CancelarReservas-header"
+          }`}
+        >
           <Col
             xs="10"
             className="d-flex justify-content-start align-items-center"
@@ -201,7 +208,13 @@ const CancelarReservas = ({ titulo, tipoDeUsuario }) => {
             </OverlayTrigger>
           </Col>
         </Row>
-        <Row className="ListaDeSolicitudes-body justify-content-center">
+        <Row
+          className={`${
+            showSidebar
+              ? "CancelarReservas-sidebar-body"
+              : "CancelarReservas-body"
+          } justify-content-center`}
+        >
           <Form>
             {["radio"].map((type) => (
               <div key={`inline-${type}`} className="mb-3">
@@ -259,43 +272,47 @@ const CancelarReservas = ({ titulo, tipoDeUsuario }) => {
               </tr>
             </thead>
             {solicitudes.length === 0 ? (
-                <tr>
-                  <td colSpan={tipoDeUsuario === "Admin" ? 8 : 7} className="text-center">
-                    No hay reservas o solicitudes disponibles
-                  </td>
-                </tr>
-              ) : (
-            <tbody>
-              {solicitudes.map((item) => (
-                <tr key={item.id} className="table-row-fixed-height">
-                  <td>{item.ambiente_nombres}</td>
-                  {tipoDeUsuario === "Admin" && <td>{item.nombreDocente}</td>}
-                  <td>{item.materia}</td>
-                  <td>
-                    {`${item.periodo_ini_id} hasta ${item.periodo_fin_id}`}
-                  </td>
-                  <td>{item.fechaReserva}</td>
-                  <td>{item.fechaEnviada}</td>
-                  <td>{item.estado}</td>
-                  {item.estado === "aprobado" || item.estado === "en espera" ? (
+              <tr>
+                <td
+                  colSpan={tipoDeUsuario === "Admin" ? 8 : 7}
+                  className="text-center"
+                >
+                  No hay reservas o solicitudes disponibles
+                </td>
+              </tr>
+            ) : (
+              <tbody>
+                {solicitudes.map((item) => (
+                  <tr key={item.id} className="table-row-fixed-height">
+                    <td>{item.ambiente_nombres}</td>
+                    {tipoDeUsuario === "Admin" && <td>{item.nombreDocente}</td>}
+                    <td>{item.materia}</td>
                     <td>
-                      <button
-                        className="btn CancelarReserva-button-register"
-                        onClick={() => {
-                          setSolicitud(item);
-                          setShow(true);
-                        }}
-                      >
-                        Cancelar
-                      </button>
+                      {`${item.periodo_ini_id} hasta ${item.periodo_fin_id}`}
                     </td>
-                  ) : (
-                    <td></td>
-                  )}
-                </tr>
-              ))}
-            </tbody>
-              )}
+                    <td>{item.fechaReserva}</td>
+                    <td>{item.fechaEnviada}</td>
+                    <td>{item.estado}</td>
+                    {item.estado === "aprobado" ||
+                    item.estado === "en espera" ? (
+                      <td>
+                        <button
+                          className="btn CancelarReserva-button-register"
+                          onClick={() => {
+                            setSolicitud(item);
+                            setShow(true);
+                          }}
+                        >
+                          Cancelar
+                        </button>
+                      </td>
+                    ) : (
+                      <td></td>
+                    )}
+                  </tr>
+                ))}
+              </tbody>
+            )}
           </Table>
           <Pagination style={{ justifyContent: "center" }}>
             {renderPaginationItems()}

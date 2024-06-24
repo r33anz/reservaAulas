@@ -38,7 +38,7 @@ export const getDocente = (id) => {
     console.log(reserva);
     return api.post(`${apiUrl}/realizarSolicitudV2`, reserva)
       .then(function(response) {
-        console.log(response.data.mensaje);
+        console.log(response);
         return response.data;
       })
       .catch(function(error) {

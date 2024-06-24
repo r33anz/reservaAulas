@@ -1,17 +1,43 @@
 .ListaDeDocentes-header {
   background-color: #003F70;
   height: 3rem;
+  width: 100%;
+  margin-left: 1rem;
 }
+
 .ListaDeDocentes-body1 {
   background-color: #D9D9D9;
   padding: 0.5rem;
-  
+  width: 100%;
+  margin-left: 1rem;
 }
+
 .ListaDeDocentes-body {
   background-color: #D9D9D9;
   padding: 0.5rem;
-  height: 500px;
-  
+  height: 40.5rem;
+  overflow-y: scroll;
+  width: 100%;
+  margin-left: 1rem;
+}
+
+/* sidebar */
+.ListaDeDocentes-sidebar-header {
+  background-color: #003F70;
+  height: 3rem;
+  width: 96%;
+}
+.ListaDeDocentes-sidebar-body1 {
+  background-color: #D9D9D9;
+  padding: 0.5rem;
+  width: 96%;
+}
+.ListaDeDocentes-sidebar-body {
+  background-color: #D9D9D9;
+  padding: 0.5rem;
+  height: 45rem;
+  overflow-y: scroll;
+  width: 96%;
 }
 
 .table-container {

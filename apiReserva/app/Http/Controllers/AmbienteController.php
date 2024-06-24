@@ -221,15 +221,15 @@ class AmbienteController extends Controller
         // Si la cantidad solicitada es mayor que la capacidad máxima disponible
         if ($cantidad > $maxCapacidad) {
             $min = $maxCapacidad;
-            $max = $cantidad; // Ajustar el rango máximo a la cantidad solicitada
+            $max = $cantidad; 
         } else {
             if ($cantidad <= $minCapacidad) {
                 $min = $minCapacidad;
                 $max = $cantidad + 20;
             }else 
             {
-                $min = max(10, $cantidad - 20);
-                $max = min(200, $cantidad + 20);
+                $min = max($minCapacidad, $cantidad - 20);
+                $max = min($maxCapacidad, $cantidad + 20);
             }
         }
         
@@ -271,65 +271,69 @@ class AmbienteController extends Controller
     //buscar ambientes por fecha/periodo
     public function fechaPeriodo($fecha,$periodos){
 
-        if (count($periodos) === 1) {
-            $periodoInicial = $periodos[0];
-            $periodoFinal = $periodos[0];
-        } else {
-            $periodoInicial = $periodos[0];
-            $periodoFinal = $periodos[count($periodos) - 1];
-        }
-    
+        $idPeriodos = count($periodos) === 1 ? [$periodos[0]] : range($periodos[0], $periodos[count($periodos) - 1]);
+
         $ambientes = Ambiente::all();
+
+        // Obtener los ambientes inhabilitados para la fecha y los periodos especificados
         $ambientesInhabilitados = Inhabilitado::where('fecha', $fecha)
-            ->whereBetween('periodo_id', [$periodoInicial, $periodoFinal])
-            ->pluck('ambiente_id');
-    
+                                    ->whereIn('periodo_id', $idPeriodos)
+                                    ->pluck('ambiente_id');
+
+        // Obtener las reservas aprobadas que coinciden con la fecha y los periodos especificados
         $reservas = Solicitud::whereDate('fechaReserva', $fecha)
             ->where('estado', 'aprobado')
-            ->where('periodo_ini_id', '>=', $periodoInicial)
-            ->where('periodo_fin_id', '<=', $periodoFinal)
+            ->where(function ($query) use ($idPeriodos) {
+                foreach ($idPeriodos as $periodo) {
+                    $query->orWhere(function ($q) use ($periodo) {
+                        $q->where('periodo_ini_id', '<=', $periodo)
+                            ->where('periodo_fin_id', '>=', $periodo);
+                    });
+                }
+            })
             ->pluck('id');
-    
+
+        // Obtener los ambientes reservados para las solicitudes aprobadas
         $ambientesReservados = DB::table('ambiente_solicitud')
             ->whereIn('solicitud_id', $reservas)
             ->pluck('ambiente_id')
             ->unique()
             ->values();
-    
+
+        // Obtener las solicitudes en espera que coinciden con la fecha y los periodos especificados
         $solicitudes = Solicitud::whereDate('fechaReserva', $fecha)
             ->where('estado', 'en espera')
-            ->where('periodo_ini_id', '>=', $periodoInicial)
-            ->where('periodo_fin_id', '<=', $periodoFinal)
+            ->where(function ($query) use ($idPeriodos) {
+                foreach ($idPeriodos as $periodo) {
+                    $query->orWhere(function ($q) use ($periodo) {
+                        $q->where('periodo_ini_id', '<=', $periodo)
+                            ->where('periodo_fin_id', '>=', $periodo);
+                    });
+                }
+            })
             ->pluck('id');
-    
+
+        // Obtener los ambientes solicitados para las solicitudes en espera
         $ambientesSolicitados = DB::table('ambiente_solicitud')
             ->whereIn('solicitud_id', $solicitudes)
             ->pluck('ambiente_id')
             ->unique()
             ->values();
-    
+
         $ambientesInhabilitadosArray = $ambientesInhabilitados->toArray();
         $ambientesReservadosArray = $ambientesReservados->toArray();
         $ambientesSolicitadosArray = $ambientesSolicitados->toArray();
-    
-        // Depuración: Verificar IDs inhabilitados, reservados y solicitados
-        Log::info('Inhabilitados IDs: ', $ambientesInhabilitadosArray);
-        Log::info('Reservados IDs: ', $ambientesReservadosArray);
-        Log::info('Solicitados IDs: ', $ambientesSolicitadosArray);
-    
-        // Eliminar los ambientes inhabilitados y reservados de la lista general de ambientes
+
+        // Eliminar los ambientes inhabilitados, reservados y solicitados de la lista general de ambientes
         $ambientesDisponibles = $ambientes->reject(function ($ambiente) use ($ambientesInhabilitadosArray, $ambientesReservadosArray, $ambientesSolicitadosArray) {
             return in_array($ambiente->id, $ambientesInhabilitadosArray) 
                 || in_array($ambiente->id, $ambientesReservadosArray)
                 || in_array($ambiente->id, $ambientesSolicitadosArray);
         });
-    
+
         // Obtener solo los IDs de los ambientes disponibles
         $ambientesDisponibles = $ambientesDisponibles->pluck('id');
-    
-        // Depuración: Verificar ambientes disponibles
-        Log::info('Available Ambientes IDs: ', $ambientesDisponibles->toArray());
-    
+
         return $ambientesDisponibles;
     }
 
@@ -418,6 +422,6 @@ class AmbienteController extends Controller
 
         // Validar que la diferencia sea de al menos 5 horas
         return $horasFaltantes >= 5;
-        }
+    }
 
 }
