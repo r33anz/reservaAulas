@@ -27,7 +27,6 @@ const Sidebar = ({
 }) => {
   const [showSidebar, setShowSidebar] = useState(true);
   const [activeTab, setActiveTab] = useState("inicio");
-  const toggleSidebar = () => setShowSidebar(!showSidebar);
   const [docente, setDocente] = useState({});
   const { id } = useParams("id");
   const navigate = useNavigate();
@@ -73,18 +72,53 @@ const Sidebar = ({
       case "registrarAmbiente":
         return (
           <div style={{ padding: "1rem" }}>
+            {!showSidebar && (
+              <div className="Inicio-sidebar-boton-open">
+                <Button
+                  className="button-list"
+                  variant="primary"
+                  onClick={() => setShowSidebar(true)}
+                >
+                  <List />
+                </Button>
+              </div>
+            )}
             <RegistrarAmbiente />
           </div>
         );
       case "registrarReserva":
         return (
-          <div style={{ padding: "1rem" ,paddingLeft:"120px", height:"250px"}}>
+          <div
+            style={{ padding: "1rem", paddingLeft: "120px", height: "250px" }}
+          >
+            {!showSidebar && (
+              <div className="Inicio-sidebar-boton-open">
+                <Button
+                  className="button-list"
+                  variant="primary"
+                  onClick={() => setShowSidebar(true)}
+                >
+                  <List />
+                </Button>
+              </div>
+            )}
             <SolicitarReserva />
           </div>
         );
       case "listaDeSolicitudes":
         return (
           <div style={{ padding: "1rem" }}>
+            {!showSidebar && (
+              <div className="Inicio-sidebar-boton-open">
+                <Button
+                  className="button-list"
+                  variant="primary"
+                  onClick={() => setShowSidebar(true)}
+                >
+                  <List />
+                </Button>
+              </div>
+            )}
             <ListaDeSolicitudes
               tipoDeUsuario="Admin"
               titulo="Lista de Solicitudes"
@@ -94,6 +128,17 @@ const Sidebar = ({
       case "misSolicitudes":
         return (
           <div style={{ padding: "1rem" }}>
+            {!showSidebar && (
+              <div className="Inicio-sidebar-boton-open">
+                <Button
+                  className="button-list"
+                  variant="primary"
+                  onClick={() => setShowSidebar(true)}
+                >
+                  <List />
+                </Button>
+              </div>
+            )}
             <ListaDeSolicitudes
               tipoDeUsuario="Docente"
               titulo="Mis Solicitudes"
@@ -103,59 +148,158 @@ const Sidebar = ({
       case "busquedaPorNombre":
         return (
           <div style={{ padding: "1rem" }}>
+            {!showSidebar && (
+              <div className="Inicio-sidebar-boton-open">
+                <Button
+                  className="button-list"
+                  variant="primary"
+                  onClick={() => setShowSidebar(true)}
+                >
+                  <List />
+                </Button>
+              </div>
+            )}
             <Buscar />
           </div>
         );
       case "busquedaPorCantidad":
         return (
           <div style={{ padding: "1rem" }}>
+            {!showSidebar && (
+              <div className="Inicio-sidebar-boton-open">
+                <Button
+                  className="button-list"
+                  variant="primary"
+                  onClick={() => setShowSidebar(true)}
+                >
+                  <List />
+                </Button>
+              </div>
+            )}
             <BuscarCantidad />
           </div>
         );
       case "modificarPorPeriodo":
         return (
           <div style={{ padding: "1rem" }}>
+            {!showSidebar && (
+              <div className="Inicio-sidebar-boton-open">
+                <Button
+                  className="button-list"
+                  variant="primary"
+                  onClick={() => setShowSidebar(true)}
+                >
+                  <List />
+                </Button>
+              </div>
+            )}
             <Modificarperdiodo />
           </div>
         );
       case "listaDeDocentes":
         return (
           <div style={{ padding: "1rem" }}>
+            {!showSidebar && (
+              <div className="Inicio-sidebar-boton-open">
+                <Button
+                  className="button-list"
+                  variant="primary"
+                  onClick={() => setShowSidebar(true)}
+                >
+                  <List />
+                </Button>
+              </div>
+            )}
             <ListaDeDocentes tipoDeUsuario="Admin" />
           </div>
         );
       case "calendario":
         return (
           <div style={{ padding: "1rem" }}>
-            {" "}
-            <Calendario />{" "}
+            {!showSidebar && (
+              <div className="Inicio-sidebar-boton-open">
+                <Button
+                  className="button-list"
+                  variant="primary"
+                  onClick={() => setShowSidebar(true)}
+                >
+                  <List />
+                </Button>
+              </div>
+            )}
+            <Calendario />
           </div>
         );
       case "busquedaPorCalendario":
         return (
           <div style={{ padding: "1rem" }}>
+            {!showSidebar && (
+              <div className="Inicio-sidebar-boton-open">
+                <Button
+                  className="button-list"
+                  variant="primary"
+                  onClick={() => setShowSidebar(true)}
+                >
+                  <List />
+                </Button>
+              </div>
+            )}
             <CalendarioB />
           </div>
         );
       case "cancelarReserva":
         return (
           <div style={{ padding: "1rem" }}>
+            {!showSidebar && (
+              <div className="Inicio-sidebar-boton-open">
+                <Button
+                  className="button-list"
+                  variant="primary"
+                  onClick={() => setShowSidebar(true)}
+                >
+                  <List />
+                </Button>
+              </div>
+            )}
             <CancelarReservas />
           </div>
         );
       case "notificaciones":
         return (
           <div style={{ padding: "1rem" }}>
+            {!showSidebar && (
+              <div className="Inicio-sidebar-boton-open">
+                <Button
+                  className="button-list"
+                  variant="primary"
+                  onClick={() => setShowSidebar(true)}
+                >
+                  <List />
+                </Button>
+              </div>
+            )}
             <ListaDeNotificaciones
               id={id}
               fetchNotifications={fetchNotifications}
               notifications={notifications}
+              showSidebar={showSidebar}
             />
           </div>
         );
       case "atencionDeSolicitudes":
         return (
           <div style={{ padding: "1rem" }}>
+            {!showSidebar && (
+              <div className="Inicio-sidebar-boton-open">
+                <Button
+                  className="button-list"
+                  variant="primary"
+                  onClick={() => setShowSidebar(true)}
+                >
+                  <List />
+                </Button>
+              </div>
+            )}
             <ListaDeAtencionDeSolicitudes />
           </div>
         );
@@ -167,7 +311,7 @@ const Sidebar = ({
                 <Button
                   className="button-list"
                   variant="primary"
-                  onClick={toggleSidebar}
+                  onClick={() => setShowSidebar(true)}
                 >
                   <List />
                 </Button>
@@ -203,7 +347,10 @@ const Sidebar = ({
                 <img src={logo} className="Inicio-logo" alt="logo" />
                 Aula Pro
               </h4>
-              <Button onClick={toggleSidebar} className="sidebar-button-close">
+              <Button
+                onClick={() => setShowSidebar(false)}
+                className="sidebar-button-close"
+              >
                 <ChevronDoubleLeft />
               </Button>
             </div>
@@ -322,29 +469,32 @@ const Sidebar = ({
         )}
 
         {/* Contenido */}
-        {showSidebar ? (
-          <Col
-            sm={9}
-            className={`${
-              !showSidebar ? "content" : "sidebar-content"
-            } Inicio-components`}
+        {/* {showSidebar ? ( */}
+        <Col
+          sm={!showSidebar ? 12 : 9}
+          className={`${
+            !showSidebar ? "content" : "sidebar-content"
+          } Inicio-components`}
+        >
+          <Home
+            fetchNotifications={fetchNotifications}
+            showSidebar={showSidebar}
           >
-            <Home fetchNotifications={fetchNotifications}>
-              {renderContent()}
-            </Home>
-          </Col>
-        ) : (
+            {renderContent()}
+          </Home>
+        </Col>
+        {/* ) : (
           <Col
             sm={12}
             className={`${
               !showSidebar ? "content" : "sidebar-content"
             } Inicio-components`}
           >
-            <Home fetchNotifications={fetchNotifications}>
+            <Home fetchNotifications={fetchNotifications} showSidebar={showSidebar}>
               {renderContent()}
             </Home>
           </Col>
-        )}
+        )} */}
       </Row>
     </Container>
   );

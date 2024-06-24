@@ -9,6 +9,13 @@
     padding-right: 1rem;
 }
 
+.Home-sidebar-footer {
+    background-color: #fff;
+    color: #869099;
+    padding-right: 1rem;
+    width: 95%;
+}
+
 .Home-footer-grupo {
     color: #003f70;
     text-decoration: none;

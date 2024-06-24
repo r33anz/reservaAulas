@@ -23,12 +23,32 @@
     --bs-btn-active-border-color: #D51809;
 }
 
+.ListaDeNotificaciones-sidebar-body {
+    background-color: #D9D9D9;
+    padding: 1rem;
+    min-height: calc(88vh - 4.5rem);
+    display: flex;
+    width: 96%;
+    height: 88vh;
+    align-items: flex-start;
+}
 
+.ListaDeNotificaciones-sidebar-header {
+    background-color: #003F70;
+    height: 3rem;
+    width: 96%;
+}
 
 .ListaDeNotificaciones-body {
     background-color: #D9D9D9;
     padding: 1rem;
-    min-height: calc(100vh - 7rem); /* Mantener el tamaño del componente */
+    min-height: calc(88vh - 4.5rem);
     display: flex;
-   
+    height: 78vh;
+    align-items: flex-start;
+}
+
+.ListaDeNotificaciones-header {
+    background-color: #003F70;
+    height: 3rem;
 }

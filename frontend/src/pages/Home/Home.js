@@ -7,10 +7,9 @@ import { Link, Outlet, useParams } from "react-router-dom";
 import NotificacionDocente from "../NotificacionDocente/NotificacionDocente";
 import NotificacionAdmin from "../NotificacionAdmin/NotificacionAdmin";
 
-const Home = ({ children, fetchNotifications }) => {
+const Home = ({ children, fetchNotifications, showSidebar }) => {
   const { id } = useParams("id");
   const [usuarioId, setUsuarioId] = useState(null);
-
   useEffect(() => {
     if (id !== undefined) {
       window.sessionStorage.setItem("docente_id", id);
@@ -31,7 +30,11 @@ const Home = ({ children, fetchNotifications }) => {
         <Outlet />
         {children}
       </Container>
-      <footer className="Home-footer text-end">
+      <footer
+        className={`${
+          showSidebar ? "Home-sidebar-footer" : "Home-footer"
+        } text-end`}
+      >
         <strong>
           Copyright © 2024{" "}
           <span className="Home-footer-grupo">IntelligSoft</span>.

@@ -12,7 +12,12 @@ import "./style.css";
 import { readNotification } from "../../services/Notification.service";
 import { ArrowClockwise, Envelope, EnvelopeOpen } from "react-bootstrap-icons";
 
-const ListaDeNotificaciones = ({ notifications, id, fetchNotifications }) => {
+const ListaDeNotificaciones = ({
+  notifications,
+  id,
+  fetchNotifications,
+  showSidebar,
+}) => {
   const [expandedIndex, setExpandedIndex] = useState(-1);
 
   const formatDistanceToNow = (timestamp) => {
@@ -37,8 +42,15 @@ const ListaDeNotificaciones = ({ notifications, id, fetchNotifications }) => {
 
   return (
     <>
-      <Container fluid>
-        <Row sm className="text-white ListaDeNotificaciones-header">
+      <Container fluid style={{ paddingRight: 0 }}>
+        <Row
+          sm
+          className={`text-white ${
+            showSidebar
+              ? "ListaDeNotificaciones-sidebar-header"
+              : "ListaDeNotificaciones-header"
+          }`}
+        >
           <Col
             xs="10"
             className="d-flex justify-content-start align-items-center"
@@ -64,7 +76,13 @@ const ListaDeNotificaciones = ({ notifications, id, fetchNotifications }) => {
             </OverlayTrigger>
           </Col>
         </Row>
-        <Row className="ListaDeNotificaciones-body justify-content-center">
+        <Row
+          className={`${
+            showSidebar
+              ? "ListaDeNotificaciones-sidebar-body"
+              : "ListaDeNotificaciones-body"
+          } justify-content-center`}
+        >
           <Table striped bordered hover responsive>
             <thead>
               <tr>
