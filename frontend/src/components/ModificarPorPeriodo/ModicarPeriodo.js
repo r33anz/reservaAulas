@@ -464,6 +464,7 @@ const Modificarperdiodo = ({ onClose }) => {
                 <Col sm="2">
                   <FormControl
                     type="text"
+                    style={{ width: "200px"}}
                     placeholder="Ingrese la fecha"
                     onChange={(e) =>
                       setFechaDelAmbiente(e, formik.handleChange)

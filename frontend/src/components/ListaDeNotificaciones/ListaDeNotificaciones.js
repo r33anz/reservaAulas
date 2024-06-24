@@ -38,7 +38,7 @@ const ListaDeNotificaciones = ({ notifications, id, fetchNotifications }) => {
   return (
     <>
       <Container fluid>
-        <Row sm className="text-white ListaDeSolicitudes-header">
+        <Row sm className="text-white ListaDeNotificaciones-header">
           <Col
             xs="10"
             className="d-flex justify-content-start align-items-center"
@@ -64,7 +64,7 @@ const ListaDeNotificaciones = ({ notifications, id, fetchNotifications }) => {
             </OverlayTrigger>
           </Col>
         </Row>
-        <Row className="ListaDeSolicitudes-body justify-content-center">
+        <Row className="ListaDeNotificaciones-body justify-content-center">
           <Table striped bordered hover responsive>
             <thead>
               <tr>

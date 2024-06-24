@@ -258,10 +258,17 @@ const CancelarReservas = ({ titulo, tipoDeUsuario }) => {
                 <th>Acciones</th>
               </tr>
             </thead>
+            {solicitudes.length === 0 ? (
+                <tr>
+                  <td colSpan={tipoDeUsuario === "Admin" ? 8 : 7} className="text-center">
+                    No hay reservas o solicitudes disponibles
+                  </td>
+                </tr>
+              ) : (
             <tbody>
               {solicitudes.map((item) => (
                 <tr key={item.id} className="table-row-fixed-height">
-                  <td>{item.ambiente_nombre}</td>
+                  <td>{item.ambiente_nombres}</td>
                   {tipoDeUsuario === "Admin" && <td>{item.nombreDocente}</td>}
                   <td>{item.materia}</td>
                   <td>
@@ -288,6 +295,7 @@ const CancelarReservas = ({ titulo, tipoDeUsuario }) => {
                 </tr>
               ))}
             </tbody>
+              )}
           </Table>
           <Pagination style={{ justifyContent: "center" }}>
             {renderPaginationItems()}

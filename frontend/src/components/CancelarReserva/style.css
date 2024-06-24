@@ -1,11 +1,16 @@
-.ListaDeSolicitudes-header {
+.CancelarReservas-header {
     background-color: #003F70;
     height: 3rem;
 }
 
-.ListaDeSolicitudes-body {
+.CancelarReservas-body {
     background-color: #D9D9D9;
     padding: 1rem;
+    min-height: calc(100vh - 7rem);
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;  /* Alinea los elementos desde el inicio (arriba) */
+    align-content: flex-start;
 }
 .CacelarReservas-header-button-cargar,
 .CacelarReservas-header-button-close {
