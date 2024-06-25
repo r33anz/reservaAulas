@@ -90,6 +90,9 @@ const ListaDeNotificaciones = ({
               </tr>
             </thead>
             <tbody>
+              {notifications.length === 0 && (
+                <div className="text-center">No hay notificaciones</div>
+              )}
               {notifications.map((item) => (
                 <tr
                   onClick={() =>
