@@ -342,18 +342,23 @@ class SolicitudController extends Controller
         } elseif ($estado === 'inhabilitada') {
             $query = Solicitud::orderBy('updated_at', 'asc')->where('estado', 'inhabilitada');
         } elseif ($estado === 'prioridad') {
+            $fechaActual = Carbon::now()->toDateString();
+
             $query = Solicitud::where('estado', 'en espera')
                 ->orderByRaw("
                     CASE
                         WHEN fechaReserva < ? THEN 0
                         ELSE 1
-                    END, ABS(DATEDIFF(fechaReserva, ?))
-                ", [$fechaActual, $fechaActual]);
+                    END, 
+                    ABS(DATEDIFF(fechaReserva, ?)),
+                    periodo_ini_id
+                ", [$fechaActual, $fechaActual])
+                ->orderBy('periodo_ini_id');
         } else {
             $query = Solicitud::orderBy('updated_at', 'desc');
         }
 
-        $solicitudes = $query->paginate(6, ['*'], 'pagina', $pagina);
+        $solicitudes = $query->paginate(8, ['*'], 'pagina', $pagina);
         $datosSolicitudes = [];
 
         foreach ($solicitudes as $solicitud) {
@@ -464,6 +469,85 @@ class SolicitudController extends Controller
         return response()->json([
             "periodosReservados" => $periodosReservados
         ]);
+    }
+
+    public function fechasReserva($fecha){
+        $solicitudes = Solicitud::where('fechaReserva', $fecha)
+                            ->where('estado', 'aprobado')
+                            ->get();
+
+        if ($solicitudes->isEmpty()) {
+            return response()->json(['mensaje' => 'No se encontraron solicitudes en espera para la fecha proporcionada'], 404);
+        }
+
+        $resultado = [];
+
+        foreach ($solicitudes as $solicitud) {
+            $idAmbientes = DB::table('ambiente_solicitud')->where('solicitud_id', $solicitud->id)->pluck('ambiente_id');
+            $ambientes = Ambiente::whereIn('id', $idAmbientes)->get();
+            $docente = User::find($solicitud->user_id);
+            $nombreDocente = $docente ? $docente->name : 'Docente no encontrado';
+
+            $ini = Periodo::find($solicitud->periodo_ini_id);
+            $fin = Periodo::find($solicitud->periodo_fin_id);
+
+            $nombresAmbientes = $ambientes->pluck('nombre')->implode(', ');
+
+
+            $resultado[] = [
+                'nombreDocente' => $nombreDocente,
+                'materia' => $solicitud->materia,
+                'grupo' => $solicitud->grupo,
+                'cantidad' => $solicitud->cantidad,
+                'razon' => $solicitud->razon,
+                'periodo_ini' => $ini ? $ini->horainicial : 'Periodo inicial no encontrado',
+                'periodo_fin' => $fin ? $fin->horafinal : 'Periodo final no encontrado',
+                'fecha' => $solicitud->fechaReserva,
+                'ambiente_nombres' => $nombresAmbientes,
+                
+            ];
+        }
+
+        return response()->json($resultado);
+    }
+
+    public function fechasSolicitud($fecha){
+        $solicitudes = Solicitud::where('fechaReserva', $fecha)
+                            ->where('estado', 'en espera')
+                            ->get();
+
+        if ($solicitudes->isEmpty()) {
+            return response()->json(['mensaje' => 'No se encontraron solicitudes en espera para la fecha proporcionada'], 404);
+        }
+
+        $resultado = [];
+
+        foreach ($solicitudes as $solicitud) {
+            $idAmbientes = DB::table('ambiente_solicitud')->where('solicitud_id', $solicitud->id)->pluck('ambiente_id');
+            $ambientes = Ambiente::whereIn('id', $idAmbientes)->get();
+            $docente = User::find($solicitud->user_id);
+            $nombreDocente = $docente ? $docente->name : 'Docente no encontrado';
+
+            $ini = Periodo::find($solicitud->periodo_ini_id);
+            $fin = Periodo::find($solicitud->periodo_fin_id);
+
+            $nombresAmbientes = $ambientes->pluck('nombre')->implode(', ');
+    
+            $resultado[] = [
+                'nombreDocente' => $nombreDocente,
+                'materia' => $solicitud->materia,
+                'grupo' => $solicitud->grupo,
+                'cantidad' => $solicitud->cantidad,
+                'razon' => $solicitud->razon,
+                'periodo_ini' => $ini ? $ini->horainicial : 'Periodo inicial no encontrado',
+                'periodo_fin' => $fin ? $fin->horafinal : 'Periodo final no encontrado',
+                'fecha' => $solicitud->fechaReserva,
+                'ambiente_nombres' => $nombresAmbientes,
+                
+            ];
+        }
+
+        return response()->json($resultado);
     }
     
 }

@@ -204,7 +204,7 @@ const SolicitarReserva = ({ onClose }) => {
       values.ambiente = ida;
       values.idDocente = id;
       console.log(values);
-      //setLoading(true);
+      setLoading(true);
       postReserva(values)
         .then((response) => {
           console.log(response.mensaje);
@@ -715,7 +715,7 @@ const SolicitarReserva = ({ onClose }) => {
           <div className="datos3" style={{ border: "1px solid #ccc", padding: "10px" }}>
             <h6>{ambiente.nombre}</h6>
             <p>Capacidad: {ambiente.capacidad}</p>
-            <p>Tipo de Ambiente: {ambiente.tipo}</p>
+            {/*<p>Tipo de Ambiente: {ambiente.tipo}</p>*/}
             <div style={{ display: "flex", alignItems: "center" }}>
               <p style={{ marginRight: "10px" }}>Bloque: {ambiente.bloque}</p>
               <p style={{ marginLeft: "10px" }}>Piso: {ambiente.piso}</p>

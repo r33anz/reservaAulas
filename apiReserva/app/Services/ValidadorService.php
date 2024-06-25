@@ -210,7 +210,7 @@ class ValidadorService{
                                                     ->exists();
             if ($coincidenciasInhabilitados) {
                 $nombre = Ambiente::find($idAmbiente);
-                return $this->crearRespuesta("El ambiente " . $nombre->nombre . " está deshabilitado.", 'advertencia');
+                return $this->crearRespuesta("El ambiente " . $nombre->nombre . " está deshabilitado en los periodos que selecciono.", 'advertencia');
             }
         }
 
