@@ -6,11 +6,14 @@ import "./style.css";
 import {
   recuperarFechasSolicitud,
   recuperarInformacionSolicitud,
+  recuperarReserva,
+  recuperarSolicitud,
 } from "../../services/Fechas.service";
 import { useState, useEffect, useRef } from "react";
 import { Col, Modal, Row, Form, Pagination } from "react-bootstrap";
 import { XSquareFill, ArrowClockwise } from "react-bootstrap-icons";
 import { getAmbientes } from "../../../src/services/Ambiente.service";
+
 dayjs.locale("es");
 
 function Calendario({ showSidebar }) {
@@ -18,21 +21,13 @@ function Calendario({ showSidebar }) {
   const [event, setEvent] = useState([]);
   const [datos, setDatos] = useState([]);
   const [reservas, setReservas] = useState([]);
+  const [filteredReservas, setFilteredReservas] = useState([]);
   const [show, setShow] = useState(false);
   const [nombre, setNombre] = useState("");
   const [mensaje, setMensaje] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
-  const [filteredReservas, setFilteredReservas] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const reservasPerPage = 4; // Número de reservas por página
-  const indexOfLastReserva = currentPage * reservasPerPage;
-  const indexOfFirstReserva = indexOfLastReserva - reservasPerPage;
-  const currentReservas = filteredReservas.slice(
-    indexOfFirstReserva,
-    indexOfLastReserva
-  );
-  const paginate = (pageNumber) => setCurrentPage(pageNumber);
-  const totalPages = Math.ceil(filteredReservas.length / reservasPerPage);
 
   const periodos = [
     { id: 1, hora: "6:45" },
@@ -70,11 +65,24 @@ function Calendario({ showSidebar }) {
   const refDropdownToggle = useRef(null);
   const refDropdown = useRef(null);
 
-  const getPeriodo = (periodoInicioId, periodoFinId) => {
-    const periodoInicio = periodos.find(
-      (periodo) => periodo.id === periodoInicioId
-    );
-    const periodoFin = periodosF.find((periodo) => periodo.id === periodoFinId);
+  const formatHora = (hora) => {
+    const [hours, minutes] = hora.split(":");
+    return `${hours.padStart(2, "0")}:${minutes}`;
+  };
+
+  const getPeriodo = (periodoInicioHora, periodoFinHora) => {
+    const inicioHora = formatHora(periodoInicioHora.substring(0, 5));
+    const finHora = formatHora(periodoFinHora.substring(0, 5));
+
+    console.log("Inicio Hora:", inicioHora); // Para depuración
+    console.log("Fin Hora:", finHora); // Para depuración
+
+    const periodoInicio = periodos.find((periodo) => periodo.hora === inicioHora);
+    const periodoFin = periodosF.find((periodo) => periodo.hora === finHora);
+
+    console.log("Periodo Inicio Encontrado:", periodoInicio); // Para depuración
+    console.log("Periodo Fin Encontrado:", periodoFin); // Para depuración
+
     return (
       <>
         {periodoInicio ? periodoInicio.hora : "N/A"}-
@@ -129,7 +137,7 @@ function Calendario({ showSidebar }) {
 
   useEffect(() => {
     filtrarReservas();
-  }, [searchTerm]);
+  }, [searchTerm, reservas]);
 
   const filtrarReservas = () => {
     let filtered = reservas;
@@ -145,26 +153,20 @@ function Calendario({ showSidebar }) {
     setFilteredReservas([]);
     const formattedDate = dayjs(event.start).format("YYYY-MM-DD");
 
-    const datosEncontrados = datos.find(
-      (fechaObj) => fechaObj.fecha === formattedDate
-    );
+    const datosEncontrados = datos.find((fechaObj) => fechaObj.fecha === formattedDate);
 
     if (event.type === "reserva") {
-      for (const reservaId of datosEncontrados.reservas) {
-        const data = await recuperarInformacionSolicitud(reservaId);
-        setReservas((prevReservas) => [...prevReservas, data]);
-        setFilteredReservas((prevReservas) => [...prevReservas, data]);
-      }
+      const data = await recuperarReserva(formattedDate);
+      console.log(data);
+      setReservas(data);
+      setFilteredReservas(data);
       setNombre("Detalle de Reservas");
       setMensaje("No hay reservas");
     } else if (event.type === "solicitud") {
-      for (const solicitudId of datosEncontrados.solicitudes) {
-        const data = await recuperarInformacionSolicitud(solicitudId);
-        setReservas((prevReservas) => [...prevReservas, data]);
-        setFilteredReservas((prevReservas) => [...prevReservas, data]);
-        console.log(data);
-      }
-      console.log(filteredReservas);
+      const data = await recuperarSolicitud(formattedDate);
+      console.log(data);
+      setReservas(data);
+      setFilteredReservas(data);
       setNombre("Detalle de Solicitudes");
       setMensaje("No hay solicitudes");
     }
@@ -183,7 +185,6 @@ function Calendario({ showSidebar }) {
 
   const renderPaginationItems = () => {
     const items = [];
-
     items.push(
       <Pagination.First
         key="first"
@@ -202,9 +203,7 @@ function Calendario({ showSidebar }) {
     );
 
     if (currentPage > 3) {
-      items.push(
-        <Pagination.Ellipsis key="ellipsis-left" className="color-blue" />
-      );
+      items.push(<Pagination.Ellipsis key="ellipsis-left" className="color-blue" />);
     }
 
     for (
@@ -305,38 +304,22 @@ function Calendario({ showSidebar }) {
     getFechas(); // Llamar a la función de recarga
   };
 
+  const indexOfLastReserva = currentPage * reservasPerPage;
+  const indexOfFirstReserva = indexOfLastReserva - reservasPerPage;
+  const currentReservas = filteredReservas.slice(indexOfFirstReserva, indexOfLastReserva);
+  const totalPages = Math.ceil(filteredReservas.length / reservasPerPage);
+
   return (
     <>
-      <div
-        className={`${
-          showSidebar
-            ? "Calendario-sidebar-header-container"
-            : "Calendario-header-container"
-        }`}
-      >
-        <h5
-          style={{
-            marginBottom: "0",
-            marginLeft: "10px",
-            alignContent: "center",
-            fontWeight: "bold",
-          }}
-        >
+      <div className={`${showSidebar ? "Calendario-sidebar-header-container" : "Calendario-header-container"}`}>
+        <h5 style={{ marginBottom: "0", marginLeft: "10px", alignContent: "center", fontWeight: "bold" }}>
           Calendario{" "}
         </h5>
         <div className="Calendario-header-button-close align-items-center justify-content-center d-flex">
-          <ArrowClockwise
-            size={24}
-            onClick={handleReload}
-            style={{ cursor: "pointer", fontWeight: "bold" }}
-          />
+          <ArrowClockwise size={24} onClick={handleReload} style={{ cursor: "pointer", fontWeight: "bold" }} />
         </div>
       </div>
-      <div
-        className={`${
-          showSidebar ? "Calendario-sidebar-body" : "Calendario-body"
-        }`}
-      >
+      <div className={`${showSidebar ? "Calendario-sidebar-body" : "Calendario-body"}`}>
         <Calendar
           localizer={localizer}
           events={event}
@@ -356,26 +339,14 @@ function Calendario({ showSidebar }) {
             more: "más",
           }}
         />
-        <Modal
-          aria-labelledby="contained-modal-title-vcenter"
-          show={show}
-          onHide={handleClose}
-          centered
-        >
+        <Modal aria-labelledby="contained-modal-title-vcenter" show={show} onHide={handleClose} centered>
           <Row sm className="text-white Calendario-header">
-            <Col
-              xs="10"
-              className="d-flex justify-content-start align-items-center"
-            >
+            <Col xs="10" className="d-flex justify-content-start align-items-center">
               <h4 style={{ fontWeight: "bold" }} className="">
                 {isSlotSelected ? "Detalle ambiente" : nombre}
               </h4>
             </Col>
-            <Col
-              xs="2"
-              className="d-flex justify-content-end align-items-end"
-              style={{ padding: 0 }}
-            >
+            <Col xs="2" className="d-flex justify-content-end align-items-end" style={{ padding: 0 }}>
               <div
                 onClick={handleClose}
                 className="Calendario-header-button-close d-flex justify-content-center align-items-center"
@@ -384,19 +355,10 @@ function Calendario({ showSidebar }) {
               </div>
             </Col>
           </Row>
-          <Row
-            className="justify-content-center"
-            style={{ backgroundColor: "#D9D9D9" }}
-          >
+          <Row className="justify-content-center" style={{ backgroundColor: "#D9D9D9" }}>
             <Form inline className="d-flex  mb-2">
-              <Form.Group
-                controlId="searchTerm"
-                className="mr-2 d-flex align-items-center"
-                style={{ paddingTop: "0.5rem" }}
-              >
-                <Form.Label style={{ width: "100%" }}>
-                  Buscar por Ambiente
-                </Form.Label>
+              <Form.Group controlId="searchTerm" className="mr-2 d-flex align-items-center" style={{ paddingTop: "0.5rem" }}>
+                <Form.Label style={{ width: "100%" }}>Buscar por Ambiente</Form.Label>
                 <Form.Control
                   type="text"
                   value={searchTerm}
@@ -408,10 +370,10 @@ function Calendario({ showSidebar }) {
               </Form.Group>
             </Form>
 
-            {filteredReservas.length === 0 ? (
+            {currentReservas.length === 0 ? (
               <p>{mensaje}</p>
             ) : (
-              filteredReservas.map((reserva, index) => (
+              currentReservas.map((reserva, index) => (
                 <div key={index} className="reserva">
                   <div className="reserva-row">
                     <h6>Docente:</h6>
@@ -419,25 +381,20 @@ function Calendario({ showSidebar }) {
                   </div>
                   <div className="reserva-row">
                     <h6>Nombre del Ambiente:</h6>
-                    <p>{reserva.ambiente_nombre}</p>
+                    <p>{reserva.ambiente_nombres}</p>
                   </div>
                   <div className="reserva-row">
                     <h6>Periodo:</h6>
                     <p>
-                      {getPeriodo(
-                        reserva.periodo_ini_id,
-                        reserva.periodo_fin_id
-                      )}
+                      {reserva.periodo_ini}-{reserva.periodo_fin}
                     </p>
                   </div>
-                  {index < filteredReservas.length - 1 && <hr />}
+                  {index < currentReservas.length - 1 && <hr />}
                 </div>
               ))
             )}
             {filteredReservas.length > 0 && (
-              <Pagination style={{ justifyContent: "center" }}>
-                {renderPaginationItems()}
-              </Pagination>
+              <Pagination style={{ justifyContent: "center" }}>{renderPaginationItems()}</Pagination>
             )}
           </Row>
         </Modal>
@@ -447,3 +404,4 @@ function Calendario({ showSidebar }) {
 }
 
 export default Calendario;
+
