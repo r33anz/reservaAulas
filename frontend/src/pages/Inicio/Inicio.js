@@ -305,7 +305,7 @@ const Sidebar = ({
         );
       default:
         return (
-          <div className="logo-background">
+          <div className="logo-background"  style={{ padding: "1rem" }}>
             {!showSidebar && (
               <div className="Inicio-sidebar-boton-open">
                 <Button
