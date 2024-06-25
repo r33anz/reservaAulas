@@ -349,7 +349,7 @@ const Sidebar = ({
             <div className="logo-container">
               <h4 className="Inicio-aulapro">
                 <img src={logo} className="Inicio-logo" alt="logo" />
-                Aula Pro
+                AulaPro
               </h4>
               <Button
                 onClick={() => setShowSidebar(false)}
