@@ -326,7 +326,7 @@ const CancelarReservas = ({ showSidebar, tipoDeUsuario }) => {
         onHide={() => setShow(false)}
         centered
       >
-        <Row sm className="text-white ListaDeSolicitudes-header">
+        <Row sm className="text-white CancelarReservas-modal-header">
           <Col
             xs="10"
             className="d-flex justify-content-start align-items-center"
@@ -353,7 +353,7 @@ const CancelarReservas = ({ showSidebar, tipoDeUsuario }) => {
             </div>
           </Col>
         </Row>
-        <Row className="ListaDeSolicitudes-body justify-content-center">
+        <Row className="CancelarReservas-modal-body justify-content-center">
           <h6>Nombre del Ambiente:</h6>
           <p>{solicitud.ambiente_nombre}</p>
           {tipoDeUsuario === "Admin" && (

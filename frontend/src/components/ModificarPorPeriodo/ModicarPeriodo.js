@@ -369,9 +369,10 @@ const Modificarperdiodo = ({ showSidebar }) => {
   return (
     <div
       style={{
-        height: `${showSidebar ? "100vh" : "85vh"}`,
-        paddingLeft: `${showSidebar ? "1rem" : "10rem"}`,
+        height: `${showSidebar ? "89vh" : "85vh"}`,
+        paddingLeft: `${showSidebar ? "2.5rem" : "10rem"}`,
         paddingTop: `${showSidebar ? "2rem" : ""}`,
+        alignContent: "center"
       }}
     >
       <Container className="ModificarEstadoDelAmbientePorPeriodo-header">

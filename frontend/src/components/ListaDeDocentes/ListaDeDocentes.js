@@ -255,7 +255,7 @@ const ListaDeSolicitudes = ({ tipoDeUsuario, showSidebar }) => {
         </div>
       </Row>
       <Modal show={showModal} onHide={handleCloseModal} centered>
-        <Row sm className="text-white ListaDeDocentes-header">
+        <Row sm className="text-white ListaDeDocentes-modal-header">
           <Col
             xs="10"
             className="d-flex justify-content-start align-items-center"

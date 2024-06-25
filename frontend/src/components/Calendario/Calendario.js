@@ -362,11 +362,10 @@ function Calendario({ showSidebar }) {
           onHide={handleClose}
           centered
         >
-          <Row sm className="text-white RegistrarAmbiente-header">
+          <Row sm className="text-white Calendario-header">
             <Col
               xs="10"
               className="d-flex justify-content-start align-items-center"
-              style={{ height: "100%" }}
             >
               <h4 style={{ fontWeight: "bold" }} className="">
                 {isSlotSelected ? "Detalle ambiente" : nombre}
