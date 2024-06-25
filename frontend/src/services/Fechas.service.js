@@ -19,3 +19,25 @@ export const recuperarInformacionSolicitud = (identificador) => {
         return null; // Manejo del error: retorna null si hay un error en la búsqueda
       });
   };
+  export const recuperarReserva = (identificador) => {
+    console.log(identificador);
+    return api.get(`${apiUrl}/reservas/${identificador}`)
+      .then(function (response) {
+        
+        return response.data; // Devuelve los datos de la solicitud
+      })
+      .catch(function (error) {
+        console.log(error);
+        return null; // Manejo del error: retorna null si hay un error en la búsqueda
+      });
+  };
+  export const recuperarSolicitud = (identificador) => {
+    return api.get(`${apiUrl}/solicitud/${identificador}`)
+      .then(function (response) {
+        return response.data; // Devuelve los datos de la solicitud
+      })
+      .catch(function (error) {
+        console.log(error);
+        return null; // Manejo del error: retorna null si hay un error en la búsqueda
+      });
+  };
