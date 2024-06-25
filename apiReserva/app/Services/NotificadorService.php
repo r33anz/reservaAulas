@@ -13,12 +13,12 @@ use App\Notifications\Inhabilitar;
 use App\Events\NotificacionUsuario;
 use App\Models\Docente;
 use App\Notifications\Cancelada;
+use App\Notifications\LiberacionAmbiente;
 use App\Notifications\SolicitudRAdmin;
 
 class NotificadorService
 {
-    public function notificarInhabilitacion($idSolicitud)
-    {
+    public function notificarInhabilitacion($idSolicitud){
         $solicitud = Solicitud::find($idSolicitud);
         $idAmbiente = DB::table('ambiente_solicitud')
                             ->where('solicitud_id', $idSolicitud)
@@ -92,7 +92,7 @@ class NotificadorService
         $user = User::find($solicitud->user_id);
         $user->notify(new SolicitudR($nombreAmbiente,$solicitud->fechaReserva,$ini->horainicial,$fin->horafinal));
     }
-    /*
+
     public function cancelarReserva($idSolicitud){
         $solicitud = Solicitud::find($idSolicitud);
         $idAmbiente = DB::table('ambiente_solicitud')
@@ -106,9 +106,15 @@ class NotificadorService
 
         $ini = Periodo::find($periodoIdIni);
         $fin = Periodo::find($periodoIdFin);
-        $nombre = User::where('id',$solicitud->user_id)->value('nombre');
-        $user = // saber quienes son los q pueden recibir las notificaciones de parte de los usuarios administrativos
-        $user->notify(new Cancelada($nombreAmbiente,$solicitud->fechaReserva,$ini->horainicial,$fin->horafinal,$nombre));
-    }*/
+        
+        // Encuentra a todos los docentes excepto al creador de la solicitud
+        $docentes = User::role('docente')->where('id', '!=', $solicitud->user_id)->get();
+
+        foreach ($docentes as $docente) {
+            event(new NotificacionUsuario($docente->id, 'Ambiente Liberado.'));
+            $docente->notify(new LiberacionAmbiente($nombreAmbiente, $solicitud->fechaReserva,
+                                                         $ini->horainicial, $fin->horafinal));
+        }
+    }
 
 }

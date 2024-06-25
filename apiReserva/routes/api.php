@@ -133,6 +133,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/verListas', [SolicitudController::class, 'verListas']);
     Route::get('/periodosSolicitados/{fecha}/{idAmbiente}', [SolicitudController::class, 'periodosSolicitados']);
     Route::post('/realizarSolicitudV2',[SolicitudController::class,'realizarSolicitudV2']);
+    //calendario
+    Route::get('/reservas/{fecha}',[SolicitudController::class,'fechasReserva']);
+    Route::get('/solicitud/{fecha}',[SolicitudController::class,'fechasSolicitud']);
+
     // Validador
     Route::post('/consultarFechaPeriodo', [ValidadorController::class, 'consultaFechaPeriodo']);
     Route::post('/consultarFechaPeriodAmbiente', [ValidadorController::class, 'consultarFechaPeriodoAmbiente']);

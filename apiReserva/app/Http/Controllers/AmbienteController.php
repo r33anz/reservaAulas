@@ -349,7 +349,7 @@ class AmbienteController extends Controller
         if (!$enTiempo) {
             return response()->json([
                 (object) [
-                    'mensaje' => "No puede realizar esta solicitud con no menos de 5 horas de anticipacion.",
+                    'mensaje' => "No puede realizar esta solicitud pasada la hora de inicio del periodo.",
                     'alerta' => "advertencia"
                 ]
             ]);
@@ -394,6 +394,7 @@ class AmbienteController extends Controller
                 $combinationData[] = [
                     'id' => $ambiente->id,
                     'nombre' => $ambiente->nombre,
+                    'tipo' => $ambiente->tipo,
                     'capacidad' => $ambiente->capacidad,
                     'piso' => $ambiente->piso ? $ambiente->piso->nroPiso : null,
                     'bloque' => $ambiente->piso && $ambiente->piso->bloque ? $ambiente->piso->bloque->nombreBloque : null
@@ -411,17 +412,12 @@ class AmbienteController extends Controller
         $periodo = Periodo::find($idPeriodoInicial);
         $horaInicial = Carbon::parse($periodo->horainicial);
 
-        // Combinar la fecha de reserva con la hora inicial del periodo
         $fechaHoraReserva = Carbon::parse($fechaReserva . ' ' . $horaInicial->format('H:i:s'));
 
-        // Obtener la hora actual
         $horaActual = Carbon::now();
 
-        // Calcular la diferencia en horas
         $horasFaltantes = $horaActual->diffInHours($fechaHoraReserva, false);
-
-        // Validar que la diferencia sea de al menos 5 horas
-        return $horasFaltantes >= 5;
+        return $horasFaltantes > 0;
     }
 
 }
