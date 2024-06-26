@@ -55,7 +55,7 @@ class Rechazar extends Notification
 
     private function formatearTextoNotificacion()
     {
-        return "Solcitud del ambiente ".$this->nombreAmbiente."\n"
+        return "Solicitud del ambiente ".$this->nombreAmbiente."\n"
         ." con fecha ".$this->fecha." y periodos \n"
         .$this->ini."-".$this->fin." fue rechazada \n"
         ."debido a ".$this->razon;

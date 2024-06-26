@@ -21,7 +21,7 @@ class DatabaseSeeder extends Seeder
             PisoSeeder::class,
             AmbienteSeeder::class,
             PeriodoSeeder::class,
-            SolicitudSeeder::class,
+            //SolicitudSeeder::class,
             RolesPermisosSeeder::class
         ]);
     }

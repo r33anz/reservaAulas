@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\BloqueController;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -13,4 +13,3 @@ use App\Http\Controllers\BloqueController;
 |
 */
 
-Route::get('/', [BloqueController::class,'index'])->name('index');

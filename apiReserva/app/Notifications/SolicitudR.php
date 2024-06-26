@@ -33,9 +33,4 @@ class SolicitudR extends Notification
         ->to($notifiable->email); 
     }
 
-    public function toArray($notifiable)
-    {
-        return [
-        ];
-    }
 }

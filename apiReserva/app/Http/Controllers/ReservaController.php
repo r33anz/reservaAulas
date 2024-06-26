@@ -12,15 +12,13 @@ use App\Models\Periodo;
 use App\Models\Inhabilitado;
 use App\Services\InhabilitadorService;
 use App\Services\NotificadorService;
-use App\Events\NotificacionUsuario;
 class ReservaController extends Controller
 {
 
     protected $inhabilitadorService;
     protected $notificadorService;
 
-    public function __construct(InhabilitadorService $inhabilitadorService, NotificadorService $notificadorService)
-    {
+    public function __construct(InhabilitadorService $inhabilitadorService, NotificadorService $notificadorService){
         $this->inhabilitadorService = $inhabilitadorService;
         $this->notificadorService = $notificadorService;
     }
@@ -128,10 +126,6 @@ class ReservaController extends Controller
             "periodosReservados" => $periodosReservados
         ]);
     }
-
-    //agregar tabla Inhabilitado  rango: [periodoIni, periodoFin]
-    //cambiar estado de reserva-> inhabilitada 
-    //notificar [idSolicitud, idambiente, fecha, docente]
 
     public function inhabilitarReserva(Request $request){ //[] lista de idSolicitudes
 

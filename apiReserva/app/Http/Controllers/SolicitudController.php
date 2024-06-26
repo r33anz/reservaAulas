@@ -20,15 +20,15 @@ class SolicitudController extends Controller
 {
     protected $ambienteValido;
     protected $notificadorService;
-    public function __construct(ValidadorService $ambienteValido, NotificadorService $notificadorService)
-    {
+
+    public function __construct(ValidadorService $ambienteValido, NotificadorService $notificadorService){
         $this->ambienteValido = $ambienteValido;
         $this->notificadorService = $notificadorService;
     }
 
-    // FINISH v2
-    public function conseguirFechas()  // devuelve objetos donde esta compuesto por una fecha
-    {                                   // y las reservas y solicitudes de la respectiva fecha
+    // devuelve objetos donde esta compuesto por una fecha
+    // y las reservas y solicitudes de la respectiva fecha
+    public function conseguirFechas(){                                   
         $fechas = Solicitud::distinct()->pluck('fechaReserva');
         $listaFechas = [];
         foreach ($fechas as $fecha) {
@@ -48,146 +48,8 @@ class SolicitudController extends Controller
         }
         return response()->json(['listaFechas' => $listaFechas]);
     }
-    // FINISH v2 
-    /*
-    public function registroSolicitud(Request $request)  
-    {
-        
-        $idUsuario = $request->input('idDocente');
-        $materia = $request->input('materia');
-        $grupo = $request->input('grupo');
-        $cantidad = $request->input('capacidad');
-        $razon = $request->input('razon');
-        $fechaReserva = $request->input('fechaReserva');
-        $estado = 'en espera';
-        $idAmbiente = $request->input('ambiente');
-        $periodos = $request->input('periodos');
-        ///
-        if (count($periodos) === 1) {
-            $periodoInicial = $periodos[0];
-            $periodoFinal = $periodos[0];
-        } else { // Si hay más de un periodo, determina el periodo inicial y final
-            $periodoInicial = $periodos[0];
-            $periodoFinal = $periodos[count($periodos) - 1];
-        }
-        //verificar si la solicitud se realizo X horas antes del periodo inicial
-        $enTiempo = $this->validadorTiempos($fechaReserva, $periodoInicial); //paso el id del periodo Inicial
-
-        if(!$enTiempo){
-            return response()->json([
-                (object) [
-                    'mensaje' => "No puede realizar esta solicitud con no menos de 5 horas de anticipacion.",
-                    'alerta' => "advertencia"
-                ]
-            ]);
-        }
-        // verificar si el ambiente es valido
-        $ambienteDisponible = $this->ambienteValido
-                                    ->ambienteValido($idAmbiente, $fechaReserva, $periodos,
-                                                     $idUsuario, $materia, $grupo, $razon);
-
-        if ($ambienteDisponible->alerta != 'exito') {
-            return response()->json([$ambienteDisponible]);
-        }
-
-        $solicitud = Solicitud::create([
-            'user_id' => $idUsuario,
-            'materia' => $materia,
-            'grupo' => $grupo,
-            'cantidad' => $cantidad,
-            'razon' => $razon,
-            'fechaReserva' => $fechaReserva,
-            'periodo_ini_id' => $periodoInicial,
-            'periodo_fin_id' => $periodoFinal,
-            'estado' => $estado,
-        ]);
-
-        DB::table('ambiente_solicitud')->insert([
-            'ambiente_id' => $idAmbiente,
-            'solicitud_id' => $solicitud->id
-        ]);
-        // notificar nuevo registro de solicitud al docente
-        $nombreAmbiente = Ambiente::where('id', $idAmbiente)
-                                    ->value('nombre');
-        $ini = Periodo::find($periodoInicial);
-        $fin = Periodo::find($periodoFinal);
-        $user = User::find($idUsuario);
-        dispatch(function () use ($user, $nombreAmbiente, $fechaReserva, $ini, $fin) {
-            $user->notify(new SolicitudR($nombreAmbiente, $fechaReserva, $ini->horainicial, $fin->horafinal));
-        });
-        //notificar administrador
-        event(new SolicitudCreada($solicitud->id));
-        return response()->json([
-            'mensaje' => 'Resgistro existoso',
-        ]);
-    }*/
-    /*
-    public function registroSolicitudP2(Request $request)
-    {
-        $idUsuario = $request->input('idDocente');
-        $materia = $request->input('materia');
-        $grupo = $request->input('grupo');
-        $cantidad = $request->input('capacidad');
-        $razon = $request->input('razon');
-        $fechaReserva = $request->input('fechaReserva');
-        $estado = 'en espera';
-        $idAmbiente = $request->input('ambiente');
-        $periodos = $request->input('periodos');
-
-        // Determinar periodo inicial y final
-        if (count($periodos) === 1) {
-            $periodoInicial = $periodos[0];
-            $periodoFinal = $periodos[0];
-        } else {
-            $periodoInicial = $periodos[0];
-            $periodoFinal = $periodos[count($periodos) - 1];
-        }
-
-        // Validar periodos
-        $ini = Periodo::find($periodoInicial);
-        $fin = Periodo::find($periodoFinal);
-
-        DB::transaction(function () use ($idUsuario, $materia, $grupo, $cantidad, $razon, $fechaReserva, $periodoInicial, $periodoFinal, $estado, $idAmbiente, $ini, $fin) {
-            // Crear la solicitud
-            $solicitud = Solicitud::create([
-                'user_id' => $idUsuario,
-                'materia' => $materia,
-                'grupo' => $grupo,
-                'cantidad' => $cantidad,
-                'razon' => $razon,
-                'fechaReserva' => $fechaReserva,
-                'periodo_ini_id' => $periodoInicial,
-                'periodo_fin_id' => $periodoFinal,
-                'estado' => $estado,
-            ]);
-
-            // Insertar en la tabla pivot `ambiente_solicitud`
-            DB::table('ambiente_solicitud')->insert([
-                'ambiente_id' => $idAmbiente,
-                'solicitud_id' => $solicitud->id,
-            ]);
-
-            // Notificar nuevo registro de solicitud al docente
-            $nombreAmbiente = Ambiente::where('id', $idAmbiente)->value('nombre');
-            $user = User::find($idUsuario);
-
-            // Notificación en segundo plano
-            dispatch(function () use ($user, $nombreAmbiente, $fechaReserva, $ini, $fin) {
-                $user->notify(new SolicitudR($nombreAmbiente, $fechaReserva, $ini->horainicial, $fin->horafinal));
-            });
-
-            //notificar administrador
-            event(new SolicitudCreada($solicitud->id));
-        });
-        
-        return response()->json([
-            'mensaje' => 'Registro exitoso',
-        ]);
-    }*/
-    //
-
-    public function realizarSolicitudV2(Request $request)
-    {
+    
+    public function realizarSolicitud(Request $request){
         $idUsuario = $request->input('idDocente');
         $materia = $request->input('materia');
         $grupo = $request->input('grupo')[0];  
@@ -206,15 +68,12 @@ class SolicitudController extends Controller
             $periodoFinal = $periodos[count($periodos) - 1];
         }
 
-    
         // Validar disponibilidad de los ambientes
         $ambienteDisponible = $this->ambienteValido->validarAmbientesGrupos($idAmbientes, $fechaReserva, $periodos, $idUsuario, $materia, $grupo, $razon);
     
         if ($ambienteDisponible->alerta != 'exito') {
             return response()->json([$ambienteDisponible]);
         }
-    
-    
         // Crear la solicitud
         $solicitud = Solicitud::create([
             'user_id' => $idUsuario,
@@ -254,7 +113,7 @@ class SolicitudController extends Controller
        
     }
 
-    // FINISH T
+    
     public function informacionSolicitud(Request $request) 
     {
         $id = $request->input('id');
@@ -284,9 +143,7 @@ class SolicitudController extends Controller
         ]);
     }
 
-    // FINISH T
-    public function recuperarInformacion($idSolicitud)
-    {
+    public function recuperarInformacion($idSolicitud){
         $solicitud = Solicitud::find($idSolicitud);
         if (!$solicitud) {
             return response()->json(['mensaje' => 'Solicitud no encontrada'], 404);
@@ -323,7 +180,7 @@ class SolicitudController extends Controller
         ]);
     }
 
-    //FINISH v2
+    
     public function verListas(Request $request)
     {
         
@@ -406,9 +263,7 @@ class SolicitudController extends Controller
         ]);
     }
 
-    //FINISH v2
-    public function aceptarSolicitud(Request $request)
-    {
+    public function aceptarSolicitud(Request $request){
         $id = $request->input('idSolicitud');
         $fechaAtendido = $request->input('fechaAtendida');
         $solicitud = Solicitud::find($id);
@@ -425,9 +280,7 @@ class SolicitudController extends Controller
         return response()->json(['mensaje' => 'Solicitud atendida correctamente']);
     }
 
-    //FINISH v2
-    public function rechazarSolicitud(Request $request)
-    {
+    public function rechazarSolicitud(Request $request){
         $id = $request->input('id');
         $fechaAtendido = $request->input('fechaAtendida');
         $razon = $request->input('razonRechazo');
