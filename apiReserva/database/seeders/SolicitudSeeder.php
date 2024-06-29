@@ -71,7 +71,7 @@ class SolicitudSeeder extends Seeder
             'cantidad'=>45,
             'grupo'=>3,
             'razon'=>'Examen',   //692D 
-            'fechaReserva'=>'2024-06-24',
+            'fechaReserva'=>'2024-06-29',
             'periodo_ini_id'=>3,
             'periodo_fin_id'=>4,
             'fechaAtendida'=>'2024-06-11',
@@ -89,7 +89,7 @@ class SolicitudSeeder extends Seeder
             'cantidad'=>33,
             'grupo'=>5,
             'razon'=>'Examen',
-            'fechaReserva'=>'2024-06-19',  //655 
+            'fechaReserva'=>'2024-06-29',  //655 
             'periodo_ini_id'=>4,
             'periodo_fin_id'=>5,
             'estado'=>'en espera'
@@ -108,7 +108,7 @@ class SolicitudSeeder extends Seeder
             'cantidad' => 10,
             'grupo' => 1,
             'razon' => 'xyz',
-            'fechaReserva' => '2024-06-15',
+            'fechaReserva' => '2024-06-29',
             'periodo_ini_id'=>3,
             'periodo_fin_id'=>6,
             'fechaAtendida'=>'2024-06-11',
@@ -126,7 +126,7 @@ class SolicitudSeeder extends Seeder
             'cantidad' => 10,
             'grupo' => 1,
             'razon' => 'xyz',
-            'fechaReserva' => '2024-06-11',
+            'fechaReserva' => '2024-06-29',
             'periodo_ini_id'=>3,
             'periodo_fin_id'=>3,
             'fechaAtendida'=>'2024-06-9',
@@ -144,7 +144,7 @@ class SolicitudSeeder extends Seeder
             'cantidad' => 10,
             'grupo' => 1,
             'razon' => 'xyz',
-            'fechaReserva' => '2024-06-20',
+            'fechaReserva' => '2024-06-29',
             'periodo_ini_id'=>7,
             'periodo_fin_id'=>8,
             'fechaAtendida'=>'2024-06-13',
@@ -221,7 +221,7 @@ class SolicitudSeeder extends Seeder
             'cantidad' => 10,
             'grupo' => 1,
             'razon' => 'xyz',
-            'fechaReserva' => '2024-06-07',
+            'fechaReserva' => '2024-06-29',
             'periodo_ini_id'=>3,
             'periodo_fin_id'=>4,
             'fechaAtendida'=>'2024-06-11',
@@ -241,7 +241,7 @@ class SolicitudSeeder extends Seeder
             'grupo'=>1,
             'cantidad'=>14,
             'razon'=>'XYZ',
-            'fechaReserva'=>'2024-06-21',
+            'fechaReserva'=>'2024-06-29',
             'periodo_ini_id'=>3, 
             'periodo_fin_id'=>3,
             'estado'=>'en espera'
@@ -258,7 +258,7 @@ class SolicitudSeeder extends Seeder
             'grupo'=>1,
             'cantidad'=>14,
             'razon'=>'XYZ',
-            'fechaReserva'=>'2024-06-27',
+            'fechaReserva'=>'2024-06-29',
             'periodo_ini_id'=>4, 
             'periodo_fin_id'=>7,
             'estado'=>'en espera'

@@ -40,14 +40,14 @@ class Inhabilitar extends Notification
     public function toDatabase($notifiable)
     {   
             return [
-            'message' => 'Reserva Cancelada.',
+            'message' => 'Reserva/Solicitud Cancelada.',
             'data' => $this->formatearTextoNotificacion()
         ];
     }
     public function toArray($notifiable)
     {
         return [
-            'message' => 'Reserva Cancelada.',
+            'message' => 'Reserva/Solicitud Cancelada.',
             'data' => $this->formatearTextoNotificacion()
         ];
     }

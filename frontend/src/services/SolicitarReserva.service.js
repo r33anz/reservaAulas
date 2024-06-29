@@ -36,7 +36,7 @@ export const getDocente = (id) => {
   };
   export const postReserva = (reserva) => {
     console.log(reserva);
-    return api.post(`${apiUrl}/realizarSolicitudV2`, reserva)
+    return api.post(`${apiUrl}/realizarSolicitud`, reserva)
       .then(function(response) {
         console.log(response);
         return response.data;

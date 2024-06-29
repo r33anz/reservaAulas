@@ -27,7 +27,7 @@ class ReservaInhabilitada extends Mailable
     {
         
         
-        $texto = "Motivo de informarle que la reserva que usted tenia \n"
+        $texto = "Motivo de informarle que la reserva/solicitud que usted tenia \n"
                 ."la fecha ".$this->fecha." ,del ambiente ".$this->nombreAmbiente."\n"
                 ."con los periodos reservados de ".$this->ini." hasta ".$this->fin." han sido inhabilitados \n"
                 ."Pedirle que realize otra solicitud de reserva consultando la nueva disponibilidad de horarios.";

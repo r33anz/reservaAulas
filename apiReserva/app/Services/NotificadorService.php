@@ -11,109 +11,88 @@ use App\Notifications\Aceptar;
 use App\Notifications\Rechazar;
 use App\Notifications\Inhabilitar;
 use App\Events\NotificacionUsuario;
-use App\Models\Docente;
-use App\Notifications\Cancelada;
 use App\Notifications\LiberacionAmbiente;
-use App\Notifications\SolicitudRAdmin;
+
 
 class NotificadorService
 {
+
+    protected function obtenerDatosSolicitud($idSolicitud){
+        $solicitud = Solicitud::findOrFail($idSolicitud);
+        $idAmbiente = DB::table('ambiente_solicitud')
+                        ->where('solicitud_id', $idSolicitud)
+                        ->value('ambiente_id');
+        $nombreAmbiente = Ambiente::findOrFail($idAmbiente)->nombre;
+        $ini = Periodo::findOrFail($solicitud->periodo_ini_id);
+        $fin = Periodo::findOrFail($solicitud->periodo_fin_id);
+        $user = User::findOrFail($solicitud->user_id);
+
+        return compact('solicitud', 'nombreAmbiente', 'ini', 'fin', 'user');
+    }
+
+
     public function notificarInhabilitacion($idSolicitud){
-        $solicitud = Solicitud::find($idSolicitud);
-        $idAmbiente = DB::table('ambiente_solicitud')
-                            ->where('solicitud_id', $idSolicitud)
-                            ->value('ambiente_id');
-        $nombreAmbiente = Ambiente::where('id', $idAmbiente)
-                                    ->value('nombre');
+        $datos = $this->obtenerDatosSolicitud($idSolicitud);
 
-        $periodoIdIni=$solicitud->periodo_ini_id;
-        $periodoIdFin=$solicitud->periodo_fin_id;
-
-        $ini = Periodo::find($periodoIdIni);
-        $fin = Periodo::find($periodoIdFin);
-
-        $user = User::find($solicitud->user_id);
-        //disparar evento
-        event(new NotificacionUsuario($solicitud->user_id,'Nueva notificacion.'));
-        $user->notify(new Inhabilitar($nombreAmbiente, $solicitud->fechaReserva, $ini->horainicial, $fin->horafinal));
-
+        // Disparar evento
+        event(new NotificacionUsuario($datos['solicitud']->user_id, 'Nueva notificacion.'));
+        $datos['user']->notify(new Inhabilitar(
+            $datos['nombreAmbiente'],
+            $datos['solicitud']->fechaReserva,
+            $datos['ini']->horainicial,
+            $datos['fin']->horafinal
+        ));
+    }
+    
+    public function notificarAceptacion($idSolicitud)
+    {
+        $datos = $this->obtenerDatosSolicitud($idSolicitud);
+        $datos['user']->notify(new Aceptar(
+            $datos['nombreAmbiente'],
+            $datos['solicitud']->fechaReserva,
+            $datos['ini']->horainicial,
+            $datos['fin']->horafinal
+        ));
     }
 
-    public function notificarAceptacion($idSolicitud){
-        
-        $solicitud = Solicitud::find($idSolicitud);
-        $idAmbiente = DB::table('ambiente_solicitud')
-                            ->where('solicitud_id', $idSolicitud)
-                            ->value('ambiente_id');
-        $nombreAmbiente = Ambiente::where('id', $idAmbiente)
-                                    ->value('nombre');
-
-        $periodoIdIni = $solicitud->periodo_ini_id;
-        $periodoIdFin = $solicitud->periodo_fin_id;
-
-        $ini = Periodo::find($periodoIdIni);
-        $fin = Periodo::find($periodoIdFin);
-
-        $user = User::find($solicitud->user_id);
-        $user->notify(new Aceptar($nombreAmbiente, $solicitud->fechaReserva, $ini->horainicial, $fin->horafinal));
+    public function notificarRechazo($idSolicitud)
+    {
+        $datos = $this->obtenerDatosSolicitud($idSolicitud);
+        $datos['user']->notify(new Rechazar(
+            $datos['nombreAmbiente'],
+            $datos['solicitud']->fechaReserva,
+            $datos['ini']->horainicial,
+            $datos['fin']->horafinal,
+            $datos['solicitud']->razonRechazo
+        ));
     }
 
-    public function notificarRechazo($idSolicitud){
-        $solicitud = Solicitud::find($idSolicitud);
-        $idAmbiente = DB::table('ambiente_solicitud')
-                            ->where('solicitud_id', $idSolicitud)
-                            ->value('ambiente_id');
-        $nombreAmbiente = Ambiente::where('id', $idAmbiente)
-                                    ->value('nombre');
-
-        $periodoIdIni=$solicitud->periodo_ini_id;
-        $periodoIdFin=$solicitud->periodo_fin_id;
-
-        $ini = Periodo::find($periodoIdIni);
-        $fin = Periodo::find($periodoIdFin);
-
-        $user = User::find($solicitud->user_id);
-        $user->notify(new Rechazar($nombreAmbiente, $solicitud->fechaReserva, $ini->horainicial, $fin->horafinal,$solicitud->razonRechazo));
+    public function solicitudRealizada($idSolicitud)
+    {
+        $datos = $this->obtenerDatosSolicitud($idSolicitud);
+        $datos['user']->notify(new SolicitudR(
+            $datos['nombreAmbiente'],
+            $datos['solicitud']->fechaReserva,
+            $datos['ini']->horainicial,
+            $datos['fin']->horafinal
+        ));
     }
 
-    public function solicitudRealizada($idSolicitud){
-        $solicitud = Solicitud::find($idSolicitud);
-        $idAmbiente = DB::table('ambiente_solicitud')
-                            ->where('solicitud_id', $idSolicitud)
-                            ->value('ambiente_id');
-        $nombreAmbiente = Ambiente::where('id', $idAmbiente)
-                                    ->value('nombre');
+    public function cancelarReserva($idSolicitud)
+    {
+        $datos = $this->obtenerDatosSolicitud($idSolicitud);
 
-        $periodoIdIni=$solicitud->periodo_ini_id;
-        $periodoIdFin=$solicitud->periodo_fin_id;
-
-        $ini = Periodo::find($periodoIdIni);
-        $fin = Periodo::find($periodoIdFin);
-        $user = User::find($solicitud->user_id);
-        $user->notify(new SolicitudR($nombreAmbiente,$solicitud->fechaReserva,$ini->horainicial,$fin->horafinal));
-    }
-
-    public function cancelarReserva($idSolicitud){
-        $solicitud = Solicitud::find($idSolicitud);
-        $idAmbiente = DB::table('ambiente_solicitud')
-                            ->where('solicitud_id', $idSolicitud)
-                            ->value('ambiente_id');
-        $nombreAmbiente = Ambiente::where('id', $idAmbiente)
-                                    ->value('nombre');
-
-        $periodoIdIni=$solicitud->periodo_ini_id;
-        $periodoIdFin=$solicitud->periodo_fin_id;
-
-        $ini = Periodo::find($periodoIdIni);
-        $fin = Periodo::find($periodoIdFin);
-        
         // Encuentra a todos los docentes excepto al creador de la solicitud
-        $docentes = User::role('docente')->where('id', '!=', $solicitud->user_id)->get();
+        $docentes = User::role('docente')->where('id', '!=', $datos['solicitud']->user_id)->get();
 
         foreach ($docentes as $docente) {
             event(new NotificacionUsuario($docente->id, 'Ambiente Liberado.'));
-            $docente->notify(new LiberacionAmbiente($nombreAmbiente, $solicitud->fechaReserva,
-                                                         $ini->horainicial, $fin->horafinal));
+            $docente->notify(new LiberacionAmbiente(
+                $datos['nombreAmbiente'],
+                $datos['solicitud']->fechaReserva,
+                $datos['ini']->horainicial,
+                $datos['fin']->horafinal
+            ));
         }
     }
 

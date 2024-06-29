@@ -10,7 +10,7 @@ use Illuminate\Http\Request;
 use App\Jobs\NotificacionGeneralJ;
 class NotificationController extends Controller
 {
-    public function marcarNotificacionLeida(Request $request){ // se hara de forma individual
+    public function marcarNotificacionLeida(Request $request){
         $idUsuario = $request->input('idUsuario');
         $notificacionId = $request->input('notificacionId');
 
