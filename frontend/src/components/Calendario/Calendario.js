@@ -5,21 +5,18 @@ import "dayjs/locale/es";
 import "./style.css";
 import {
   recuperarFechasSolicitud,
-  recuperarInformacionSolicitud,
   recuperarReserva,
   recuperarSolicitud,
 } from "../../services/Fechas.service";
 import { useState, useEffect, useRef } from "react";
 import { Col, Modal, Row, Form, Pagination } from "react-bootstrap";
 import { XSquareFill, ArrowClockwise } from "react-bootstrap-icons";
-import { getAmbientes } from "../../../src/services/Ambiente.service";
 
 dayjs.locale("es");
 
 function Calendario({ showSidebar }) {
   const localizer = dayjsLocalizer(dayjs);
   const [event, setEvent] = useState([]);
-  const [datos, setDatos] = useState([]);
   const [reservas, setReservas] = useState([]);
   const [filteredReservas, setFilteredReservas] = useState([]);
   const [show, setShow] = useState(false);
@@ -29,72 +26,15 @@ function Calendario({ showSidebar }) {
   const [currentPage, setCurrentPage] = useState(1);
   const reservasPerPage = 4; // Número de reservas por página
 
-  const periodos = [
-    { id: 1, hora: "6:45" },
-    { id: 2, hora: "8:15" },
-    { id: 3, hora: "9:45" },
-    { id: 4, hora: "11:15" },
-    { id: 5, hora: "12:45" },
-    { id: 6, hora: "14:15" },
-    { id: 7, hora: "15:45" },
-    { id: 8, hora: "17:15" },
-    { id: 9, hora: "18:45" },
-    { id: 10, hora: "20:15" },
-  ];
-
-  const periodosF = [
-    { id: 1, hora: "8:15" },
-    { id: 2, hora: "9:45" },
-    { id: 3, hora: "11:15" },
-    { id: 4, hora: "12:45" },
-    { id: 5, hora: "14:15" },
-    { id: 6, hora: "15:45" },
-    { id: 7, hora: "17:15" },
-    { id: 8, hora: "18:45" },
-    { id: 9, hora: "20:15" },
-    { id: 10, hora: "21:45" },
-  ];
-
-  const [selectedDate, setSelectedDate] = useState(null);
   const [isSlotSelected, setIsSlotSelected] = useState(false);
-  const [ambientes, setAmbientes] = useState([]);
-  const [ambiente, setAmbiente] = useState({});
-  const [show1, setShow1] = useState(false);
-
   const refDropdownMenu = useRef(null);
   const refDropdownToggle = useRef(null);
   const refDropdown = useRef(null);
 
-  const formatHora = (hora) => {
-    const [hours, minutes] = hora.split(":");
-    return `${hours.padStart(2, "0")}:${minutes}`;
-  };
-
-  const getPeriodo = (periodoInicioHora, periodoFinHora) => {
-    const inicioHora = formatHora(periodoInicioHora.substring(0, 5));
-    const finHora = formatHora(periodoFinHora.substring(0, 5));
-
-    console.log("Inicio Hora:", inicioHora); // Para depuración
-    console.log("Fin Hora:", finHora); // Para depuración
-
-    const periodoInicio = periodos.find((periodo) => periodo.hora === inicioHora);
-    const periodoFin = periodosF.find((periodo) => periodo.hora === finHora);
-
-    console.log("Periodo Inicio Encontrado:", periodoInicio); // Para depuración
-    console.log("Periodo Fin Encontrado:", periodoFin); // Para depuración
-
-    return (
-      <>
-        {periodoInicio ? periodoInicio.hora : "N/A"}-
-        {periodoFin ? periodoFin.hora : "N/A"}
-      </>
-    );
-  };
 
   const getFechas = async () => {
     const data = await recuperarFechasSolicitud();
     const fechas = data.listaFechas;
-    setDatos(fechas);
     const events2 = [];
 
     fechas.forEach((fecha) => {
@@ -143,7 +83,7 @@ function Calendario({ showSidebar }) {
     let filtered = reservas;
     if (searchTerm) {
       filtered = filtered.filter((reserva) =>
-        reserva.ambiente_nombre.toLowerCase().includes(searchTerm.toLowerCase())
+        reserva.ambiente_nombres.toLowerCase().includes(searchTerm.toLowerCase())
       );
     }
     setFilteredReservas(filtered);
@@ -153,18 +93,14 @@ function Calendario({ showSidebar }) {
     setFilteredReservas([]);
     const formattedDate = dayjs(event.start).format("YYYY-MM-DD");
 
-    const datosEncontrados = datos.find((fechaObj) => fechaObj.fecha === formattedDate);
-
     if (event.type === "reserva") {
       const data = await recuperarReserva(formattedDate);
-      console.log(data);
       setReservas(data);
       setFilteredReservas(data);
       setNombre("Detalle de Reservas");
       setMensaje("No hay reservas");
     } else if (event.type === "solicitud") {
       const data = await recuperarSolicitud(formattedDate);
-      console.log(data);
       setReservas(data);
       setFilteredReservas(data);
       setNombre("Detalle de Solicitudes");
@@ -178,9 +114,8 @@ function Calendario({ showSidebar }) {
     setSearchTerm("");
     setReservas([]);
     setFilteredReservas([]);
-    setSelectedDate(null);
     setIsSlotSelected(false);
-    setAmbiente({});
+
   };
 
   const renderPaginationItems = () => {
@@ -248,32 +183,16 @@ function Calendario({ showSidebar }) {
     return items;
   };
 
-  const fetchAmbientes = async () => {
-    let response = await getAmbientes();
-    if (response !== null) {
-      setAmbientes(response.respuesta);
-    }
-  };
 
-  useEffect(() => {
-    fetchAmbientes();
-  }, []);
+
+
 
   const handleInputChange = (e) => {
-    const originalValue = e.target.value;
-    const trimmedValue = originalValue.trim(); // Eliminar espacios al inicio y al final
-
-    if (trimmedValue === "") {
-      setSearchTerm("");
-    } else if (!trimmedValue.startsWith(" ")) {
-      const value = originalValue.toUpperCase(); // Convertir a mayúsculas si pasa la validación del espacio inicial
-
-      if (/^[a-zA-Z0-9\s]*$/.test(value)) {
-        // Si pasa la validación de caracteres especiales, establecer el valor en searchTerm
-        setSearchTerm(value);
-      }
-    }
+    const value = e.target.value.toUpperCase();
+    setSearchTerm(value);
+    setCurrentPage(1); // Ajusta la página actual a 1 cada vez que se cambia el término de búsqueda
   };
+  
 
   useEffect(() => {
     const handleOutSideClick = (event) => {
@@ -282,7 +201,7 @@ function Calendario({ showSidebar }) {
         !refDropdown.current?.contains(event.target) &&
         !refDropdownToggle.current?.contains(event.target)
       ) {
-        setShow1(false);
+
       }
     };
 
@@ -296,7 +215,6 @@ function Calendario({ showSidebar }) {
   const handleKeyDown = (event) => {
     if (event.key === "Enter") {
       event.preventDefault();
-      // Aquí va tu lógica para manejar la búsqueda
     }
   };
 
@@ -404,4 +322,3 @@ function Calendario({ showSidebar }) {
 }
 
 export default Calendario;
-

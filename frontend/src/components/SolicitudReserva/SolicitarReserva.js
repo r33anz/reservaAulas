@@ -1,28 +1,23 @@
 import React, { useContext, useEffect, useState, useRef } from "react";
 import {
   postReserva,
-  postReserva2,
   getDocente,
   busquedaCantidad,
 } from "../../services/SolicitarReserva.service";
-
 import {
   Container,
   Row,
-  Modal,
   Col,
   Form,
   Button,
   Stack,
   Dropdown,
   FormControl,
-  Alert,
   Spinner,
 } from "react-bootstrap";
 import {
   CheckCircleFill,
   ExclamationCircleFill,
-  QuestionCircleFill,
 } from "react-bootstrap-icons";
 import { useFormik } from "formik";
 import * as Yup from "yup";
@@ -32,21 +27,16 @@ import { AlertsContext } from "../Alert/AlertsContext";
 const SolicitarReserva = ({ onClose }) => {
   const inputAmbienteRef = useRef();
   const [showDropdown, setShowDropdown] = useState(false);
-  const [
-    capacidadDelAmbienteSeleccionado,
-    setCapacidadDelAmbienteSeleccionado,
-  ] = useState(null);
   const [ida, setidambiente] = useState(null);
   const [materiasData, setMateriasData] = useState({});
   const [bloques, setBloques] = useState([]);
-  const [docentes, setDocente] = useState([]);
   const [grupos, setGrupos] = useState([]);
   const { agregarAlert } = useContext(AlertsContext);
   const [ambienteOptions, setAmbienteOptions] = useState([]); // Estado para almacenar las opciones de ambiente
   const [loading, setLoading] = useState(false);
   const [habilitado, sethabilitado] = useState(false);
   const [ambienteDetails, setAmbienteDetails] = useState([]);
-  const [ambientesDisponibles, setAmbientesDisponibles] = useState(false);
+  const [filteredPeriodos, setFilteredPeriodos] = useState([]);
   const [periodos, setPeriodos] = useState([
     { id: 1, hora: "6:45" },
     { id: 2, hora: "8:15" },
@@ -79,9 +69,6 @@ const SolicitarReserva = ({ onClose }) => {
     { id: 5, name: "Examen de mesa" },
   ]);
   const [periodosFin, setPeriodosFin] = useState(periodos1);
-  const [estado, setEstado] = useState("");
-  const [showMensajeDeConfirmacion, setShowMensajeDeConfirmacion] =
-    useState(false);
 
   // Función para buscar los ambientes que coinciden con el nombre
   
@@ -107,9 +94,6 @@ const SolicitarReserva = ({ onClose }) => {
     }else{
       sethabilitado(true);
     setAmbienteOptions(respuesta);
-    console.log(respuesta);
-    setAmbientesDisponibles(true);
-    
     agregarAlert({
       icon: <ExclamationCircleFill />,
       severidad: "success",
@@ -127,7 +111,6 @@ const SolicitarReserva = ({ onClose }) => {
   const docente = (nombre) => {
     getDocente(nombre)
       .then((data) => {
-        setDocente(data.nombre);
         const materiasNombres = Object.keys(data.materias);
         setBloques(materiasNombres);
 
@@ -203,13 +186,10 @@ const SolicitarReserva = ({ onClose }) => {
       values.periodos = periodoIDs;
       values.ambiente = ida;
       values.idDocente = id;
-      console.log(values);
       setLoading(true);
       postReserva(values)
         .then((response) => {
-          console.log(response.mensaje);
           if (response.mensaje === "Registro exitoso") {
-            console.log("Registro exitoso");
             agregarAlert({
               icon: <CheckCircleFill />,
               severidad: "success",
@@ -226,9 +206,8 @@ const SolicitarReserva = ({ onClose }) => {
             });
             setLoading(false);
           } else if (response[0].alerta === "alerta") {
-            setEstado("estado");
+            
 
-            setShowMensajeDeConfirmacion(true);
             agregarAlert({
               icon: <ExclamationCircleFill />,
               severidad: "warning",
@@ -269,7 +248,6 @@ const SolicitarReserva = ({ onClose }) => {
         if (document.activeElement === inputAmbienteRef.current) {
           inputAmbienteRef.current.blur();
         }
-        console.log(ambienteEncontrado);
       }
     }
   };
@@ -287,40 +265,13 @@ const SolicitarReserva = ({ onClose }) => {
   const setNombreDelAmbiente = async (ambiente) => {
     formik.setFieldValue("nombreAmbiente", ambiente.nombre); // Asigna el nombre directamente
     setAmbienteDetails(ambiente.option);
-    console.log(ambienteDetails);
     setidambiente(ambiente.ids);
-  };
-  const reserva = async (val) => {
-    setShowMensajeDeConfirmacion(false);
-    postReserva2(val)
-      .then((response) => {
-        if (response.mensaje === "Resgistro existoso") {
-          console.log("Registro exitoso");
-          agregarAlert({
-            icon: <CheckCircleFill />,
-            severidad: "success",
-            mensaje: "Se realizo la solicitud correctamente",
-          });
-          formik.resetForm();
-          setCapacidadDelAmbienteSeleccionado(null);
-
-        }
-      })
-      .catch((error) => {
-        console.log("Error capturado:", error);
-        agregarAlert({
-          icon: <ExclamationCircleFill />,
-          severidad: "danger",
-          mensaje: error.message || "Ha ocurrido un error",
-        });
-      });
   };
   useEffect(() => {
     console.log("showDropdown", showDropdown);
   }, [showDropdown]);
 
   useEffect(() => {
-    console.log(razon);
     const id = window.sessionStorage.getItem("docente_id");
     docente(id);
     setLoading(false);
@@ -333,6 +284,27 @@ const SolicitarReserva = ({ onClose }) => {
     const ids = option.map(ambiente => ambiente.id);
     return { nombre, ids ,option};
   });
+  useEffect(() => {
+    const filterPeriodos = () => {
+      const currentTime = new Date();
+      const limitTime = new Date(currentTime.getTime() + 5 * 60 * 60 * 1000); // current time + 5 hours
+      const filtered = periodos.filter(periodo => {
+        const [periodHour, periodMinute] = periodo.hora.split(':').map(Number);
+        const periodDate = new Date();
+        periodDate.setHours(periodHour);
+        periodDate.setMinutes(periodMinute);
+        return periodDate >= limitTime;
+      });
+
+      setFilteredPeriodos(filtered);
+    };
+
+    if (formik.values.fechaReserva === new Date().toISOString().split('T')[0]) {
+      filterPeriodos();
+    } else {
+      setFilteredPeriodos(periodos);
+    }
+  }, [formik.values.fechaReserva]);
   const renderFirstStep = () => (
     <div style={{ display: 'flex' }}>
     <div style={{ width: '45%'}}>
@@ -449,6 +421,8 @@ const SolicitarReserva = ({ onClose }) => {
                         placeholder="Ingrese la fecha para la reserva"
                         onChange={(e) => {
                           formik.handleChange(e);
+                          formik.setFieldValue("periodoInicio", "");
+                          formik.setFieldValue("periodoFin", "");
                           vacio();
                         }}
                         onFocus={(e) => {
@@ -495,7 +469,7 @@ const SolicitarReserva = ({ onClose }) => {
                     />
                     <Form.Text className="text-danger">
                     
-{formik.touched.capacidad &&
+          {formik.touched.capacidad &&
                         formik.errors.capacidad ? (
                           <div className="text-danger">
                             {formik.errors.capacidad}
@@ -506,81 +480,55 @@ const SolicitarReserva = ({ onClose }) => {
                   
 
                   <div className="periodos-columna">
-                    
-                    <Form.Group className="mb-3" controlId="periodoInicio">
-                      <Form.Label className="RegistrarSolicitud-required">
-                        Periodo Inicio
-                      </Form.Label>
-                      <Form.Select
-                        onChange={(e) => {
-                          formik.handleChange(e);
-                          vacio();
-                          // Filtrar los periodos fin basado en el periodo inicio seleccionado
-                          const selectedPeriodoInicio = parseInt(
-                            e.target.value,
-                            10
-                          );
-                          const filteredPeriodos1 = periodos1.filter(
-                            (item) => item.id >= selectedPeriodoInicio
-                          );
-                          // Actualizar los periodos fin disponibles
-                          setPeriodosFin(filteredPeriodos1);
-                          // Restablecer el valor del periodo fin
-                          formik.setFieldValue("periodoFin", "");
-                        }}
-                        onBlur={formik.handleBlur}
-                        value={formik.values.periodoInicio}
-                      >
-                        <option value="" disabled selected>
-                          Hora inicio
-                        </option>
-                        {periodos.map((item, index) => (
-                          <option key={index} value={item.id}>
-                            {item.hora}
-                          </option>
-                        ))}
-                      </Form.Select>
-                      <Form.Text className="text-danger">
-                        {formik.touched.periodoInicio &&
-                        formik.errors.periodoInicio ? (
-                          <div className="text-danger">
-                            {formik.errors.periodoInicio}
-                          </div>
-                        ) : null}
-                      </Form.Text>
-                    </Form.Group>
-                    <Form.Group className="mb-3" controlId="periodoFin">
-                      <Form.Label className="RegistrarSolicitud-required">
-                        Periodo Fin
-                      </Form.Label>
-                      <Form.Select
-                        onChange={(e) => {
-                          formik.handleChange(e);
-                          vacio();
-                        }}
-                        onBlur={formik.handleBlur}
-                        value={formik.values.periodoFin}
-                        disabled={!formik.values.periodoInicio}
-                      >
-                        <option value="" disabled selected>
-                          Hora final
-                        </option>
-                        {periodosFin.map((item) => (
-                          <option key={item.id} value={item.id}>
-                            {item.hora}
-                          </option>
-                        ))}
-                      </Form.Select>
-                      <Form.Text className="text-danger">
-                        {formik.touched.periodoFin &&
-                        formik.errors.periodoFin ? (
-                          <div className="text-danger">
-                            {formik.errors.periodoFin}
-                          </div>
-                        ) : null}
-                      </Form.Text>
-                    </Form.Group>
-                  </div>
+        <Form.Group className="mb-3" controlId="periodoInicio">
+          <Form.Label className="RegistrarSolicitud-required">Periodo Inicio</Form.Label>
+          <Form.Select
+            onChange={(e) => {
+              formik.handleChange(e);
+              vacio();
+              const selectedPeriodoInicio = parseInt(e.target.value, 10);
+              const filteredPeriodos1 = periodos1.filter(item => item.id >= selectedPeriodoInicio);
+              setPeriodosFin(filteredPeriodos1);
+              formik.setFieldValue("periodoFin", "");
+            }}
+            onBlur={formik.handleBlur}
+            value={formik.values.periodoInicio}
+            disabled={!formik.values.fechaReserva}
+          >
+            <option value="" disabled selected>Hora inicio</option>
+            {filteredPeriodos.map((item, index) => (
+              <option key={index} value={item.id}>{item.hora}</option>
+            ))}
+          </Form.Select>
+          <Form.Text className="text-danger">
+            {formik.touched.periodoInicio && formik.errors.periodoInicio ? (
+              <div className="text-danger">{formik.errors.periodoInicio}</div>
+            ) : null}
+          </Form.Text>
+        </Form.Group>
+        <Form.Group className="mb-3" controlId="periodoFin">
+          <Form.Label className="RegistrarSolicitud-required">Periodo Fin</Form.Label>
+          <Form.Select
+            onChange={(e) => {
+              formik.handleChange(e);
+              vacio();
+            }}
+            onBlur={formik.handleBlur}
+            value={formik.values.periodoFin}
+            disabled={!formik.values.periodoInicio}
+          >
+            <option value="" disabled selected>Hora final</option>
+            {periodosFin.map((item) => (
+              <option key={item.id} value={item.id}>{item.hora}</option>
+            ))}
+          </Form.Select>
+          <Form.Text className="text-danger">
+            {formik.touched.periodoFin && formik.errors.periodoFin ? (
+              <div className="text-danger">{formik.errors.periodoFin}</div>
+            ) : null}
+          </Form.Text>
+        </Form.Group>
+      </div>
                 </Col>
               </Stack>
             </Form>
@@ -672,7 +620,6 @@ const SolicitarReserva = ({ onClose }) => {
           className="btn RegistrarAmbiente-button-cancel"
           size="sm"
           onClick={() => {
-            setCapacidadDelAmbienteSeleccionado(null);
             formik.resetForm();
             vacio();
           }}
@@ -732,49 +679,6 @@ const SolicitarReserva = ({ onClose }) => {
           </Col>
         </Row>
       </Container>
-      {estado !== "" && (
-        <Modal
-          size="xs"
-          aria-labelledby="contained-modal-title-vcenter"
-          show={showMensajeDeConfirmacion}
-          onHide={() => setShowMensajeDeConfirmacion(false)}
-          centered
-        >
-          <Alert
-            variant="primary"
-            show={showMensajeDeConfirmacion}
-            style={{ margin: 0 }}
-          >
-            <Container>
-              <Row xs="auto">
-                <QuestionCircleFill size="2rem" />
-                ¿Quiere continuar reservando?
-              </Row>
-              <Row xs="auto" className="justify-content-md-end">
-                <Stack direction="horizontal" gap={2}>
-                  <Button
-                    className="btn ModificarEstadoDelAmbientePorFecha-cancel"
-                    size="sm"
-                    variant="secondary"
-                    onClick={() => setShowMensajeDeConfirmacion(false)}
-                  >
-                    Cancelar
-                  </Button>
-                  <Button
-                    className="btn ModificarEstadoDelAmbientePorFecha-aceptar"
-                    onClick={() => {
-                      reserva(formik.values);
-                    }}
-                    size="sm"
-                  >
-                    Aceptar
-                  </Button>
-                </Stack>
-              </Row>
-            </Container>
-          </Alert>
-        </Modal>
-      )}
     </div>
     </div>
   );
