@@ -9,13 +9,10 @@ use App\Services\ValidadorService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Services\NotificadorService;
-use App\Mail\SolicitudRealizada;
-use App\Events\NotificacionUsuario;
 use App\Events\SolicitudCreada;
 use App\Models\User;
 use App\Models\Periodo;
 use App\Notifications\SolicitudR;
-use Illuminate\Support\Carbon;
 class SolicitudController extends Controller
 {
     protected $ambienteValido;
@@ -28,239 +25,46 @@ class SolicitudController extends Controller
 
     // devuelve objetos donde esta compuesto por una fecha
     // y las reservas y solicitudes de la respectiva fecha
-    public function conseguirFechas(){                                   
-        $fechas = Solicitud::distinct()->pluck('fechaReserva');
-        $listaFechas = [];
-        foreach ($fechas as $fecha) {
-            $solicitudesEspera = Solicitud::where('fechaReserva', $fecha)
-                ->where('estado', 'en espera')
-                ->pluck('id');
-
-            $solicitudesReserva = Solicitud::where('fechaReserva', $fecha)
-                ->where('estado', 'aprobado')
-                ->pluck('id');
-
-            $listaFechas[] = [
-                'fecha' => $fecha,
-                'solicitudes' => $solicitudesEspera,
-                'reservas' => $solicitudesReserva,
-            ];
-        }
-        return response()->json(['listaFechas' => $listaFechas]);
+    public function conseguirFechas(){     
+        $listas = Solicitud::conseguirFechas();                              
+        return response()->json(['listaFechas' => $listas]);
     }
     
     public function realizarSolicitud(Request $request){
-        $idUsuario = $request->input('idDocente');
-        $materia = $request->input('materia');
-        $grupo = $request->input('grupo')[0];  
-        $cantidad = $request->input('capacidad');
-        $razon = $request->input('razon');
-        $fechaReserva = $request->input('fechaReserva');
-        $estado = 'en espera';
-        $idAmbientes = $request->input('ambiente'); // []
-        $periodos = $request->input('periodos');
-    
-        if (count($periodos) === 1) {
-            $periodoInicial = $periodos[0];
-            $periodoFinal = $periodos[0];
-        } else {
-            $periodoInicial = $periodos[0];
-            $periodoFinal = $periodos[count($periodos) - 1];
+        $data = $request->all();
+        $result = Solicitud::realizarSolicitud($data, $this->ambienteValido);
+
+        if (isset($result->alerta) && $result->alerta != 'exito') {
+            return response()->json([$result]);
         }
 
-        // Validar disponibilidad de los ambientes
-        $ambienteDisponible = $this->ambienteValido->validarAmbientesGrupos($idAmbientes, $fechaReserva, $periodos, $idUsuario, $materia, $grupo, $razon);
-    
-        if ($ambienteDisponible->alerta != 'exito') {
-            return response()->json([$ambienteDisponible]);
-        }
-        // Crear la solicitud
-        $solicitud = Solicitud::create([
-            'user_id' => $idUsuario,
-            'materia' => $materia,
-            'grupo' => $grupo,
-            'cantidad' => $cantidad,
-            'razon' => $razon,
-            'fechaReserva' => $fechaReserva,
-            'periodo_ini_id' => $periodoInicial,
-            'periodo_fin_id' => $periodoFinal,
-            'estado' => $estado,
-        ]);
-    
-        // Insertar en la tabla pivote ambiente_solicitud
-        foreach ($idAmbientes as $idAmbiente) {
-            DB::table('ambiente_solicitud')->insert([
-                'ambiente_id' => $idAmbiente,
-                'solicitud_id' => $solicitud->id
-            ]);
-        }
-    
-        // Notificar al usuario sobre la nueva solicitud
-        $nombreAmbiente = Ambiente::whereIn('id', $idAmbientes)->pluck('nombre')->implode(', ');
-        $ini = Periodo::find($periodoInicial);
-        $fin = Periodo::find($periodoFinal);
-        $user = User::find($idUsuario);
-        dispatch(function () use ($user, $nombreAmbiente, $fechaReserva, $ini, $fin) {
-            $user->notify(new SolicitudR($nombreAmbiente, $fechaReserva, $ini->horainicial, $fin->horafinal));
-        });
-    
-        // Notificar al administrador
-        event(new SolicitudCreada($solicitud->id));
-    
-        return response()->json([
-            'mensaje' => 'Registro exitoso',
-        ]);
-       
+        return response()->json($result);
     }
-
-    
-    public function informacionSolicitud(Request $request) 
-    {
+   
+    public function informacionSolicitud(Request $request){
         $id = $request->input('id');
-        $solicitud = Solicitud::find($id);
-        if (!$solicitud) {
-            return response()->json(['mensaje' => 'Solicitud no encontrada'], 404);
+        $informacion = Solicitud::getInformacionSolicitud($id);
+        if (!$informacion) {
+            return response()->json(['message' => 'Solicitud no encontrada'], 404);
         }
-        $idAmbientes = DB::table('ambiente_solicitud')->where('solicitud_id', $id)->pluck('ambiente_id');
-        $ambientes = Ambiente::whereIn('id', $idAmbientes)->get();
-
-        if ($ambientes->isEmpty()) {
-            return response()->json(['mensaje' => 'No se encontró información de los ambientes asociados a la solicitud'], 404);
-        }
-
-        $nombreDocente = User::where('id', $solicitud->user_id)->value('name');
-        $nombresAmbientes = $ambientes->pluck('nombre')->implode(', ');
-
-        return response()->json([
-            'cantidad' => $solicitud->cantidad,
-            'materia' => $solicitud->materia,
-            'nombreDocente' => $nombreDocente,
-            'razon' => $solicitud->razon,
-            'periodo_ini_id' => $solicitud->periodo_ini_id,
-            'periodo_fin_id' => $solicitud->periodo_fin_id,
-            'fecha' => $solicitud->fechaReserva,
-            'ambiente_nombre' => $nombresAmbientes,
-        ]);
+        return response()->json($informacion, 200);
     }
 
     public function recuperarInformacion($idSolicitud){
-        $solicitud = Solicitud::find($idSolicitud);
-        if (!$solicitud) {
-            return response()->json(['mensaje' => 'Solicitud no encontrada'], 404);
+        $informacion = Solicitud::recuperarInformacion($idSolicitud);
+        if (!$informacion) {
+            return response()->json(['message' => 'Información no encontrada'], 404);
         }
-
-        $idAmbientes = DB::table('ambiente_solicitud')->where('solicitud_id', $idSolicitud)->pluck('ambiente_id');
-        $ambientes = Ambiente::whereIn('id', $idAmbientes)->get();
-
-        if ($ambientes->isEmpty()) {
-            return response()->json(['mensaje' => 'No se encontró información de los ambientes asociados a la solicitud'], 404);
-        }
-
-        $docente = User::find($solicitud->user_id);
-        $nombreDocente = $docente ? $docente->name : 'Docente no encontrado';
-
-        $ini = Periodo::find($solicitud->periodo_ini_id);
-        $fin = Periodo::find($solicitud->periodo_fin_id);
-
-        $nombresAmbientes = $ambientes->pluck('nombre')->implode(', ');
-        $capacidadesAmbientes = $ambientes->pluck('capacidad')->implode(', ');
-
-        return response()->json([
-            'nombreDocente' => $nombreDocente,
-            'materia' => $solicitud->materia,
-            'grupo' => $solicitud->grupo,
-            'cantidad' => $solicitud->cantidad,
-            'razon' => $solicitud->razon,
-            'periodo_ini_id' => $ini ? $ini->horainicial : 'Periodo inicial no encontrado',
-            'periodo_fin_id' => $fin ? $fin->horafinal : 'Periodo final no encontrado',
-            'fecha' => $solicitud->fechaReserva,
-            'ambiente_nombres' => $nombresAmbientes,
-            'ambiente_capacidades' => $capacidadesAmbientes,
-            'id_ambientes' => $idAmbientes,
-        ]);
+        return response()->json($informacion, 200);
     }
-
     
-    public function verListas(Request $request)
-    {
-        
+    public function verListas(Request $request){
+
         $estado = $request->input('estado');
         $pagina = $request->input('pagina', 1);
-        $fechaActual = now();
-
-        if ($estado === 'aprobadas') {
-            $query = Solicitud::orderBy('updated_at', 'asc')->where('estado', 'aprobado');
-        } elseif ($estado === 'rechazadas') {
-            $query = Solicitud::orderBy('updated_at', 'asc')->where('estado', 'rechazado');
-        } elseif ($estado === 'en espera') {
-            $query = Solicitud::orderBy('updated_at', 'asc')->where('estado', 'en espera');
-        } elseif ($estado === 'canceladas') {
-            $query = Solicitud::orderBy('updated_at', 'asc')->where('estado', 'cancelado');
-        } elseif ($estado === 'inhabilitada') {
-            $query = Solicitud::orderBy('updated_at', 'asc')->where('estado', 'inhabilitada');
-        } elseif ($estado === 'prioridad') {
-            $fechaActual = Carbon::now()->toDateString();
-
-            $query = Solicitud::where('estado', 'en espera')
-                ->orderByRaw("
-                    CASE
-                        WHEN fechaReserva < ? THEN 0
-                        ELSE 1
-                    END, 
-                    ABS(DATEDIFF(fechaReserva, ?)),
-                    periodo_ini_id
-                ", [$fechaActual, $fechaActual])
-                ->orderBy('periodo_ini_id');
-        } else {
-            $query = Solicitud::orderBy('updated_at', 'desc');
-        }
-
-        $solicitudes = $query->paginate(8, ['*'], 'pagina', $pagina);
-        $datosSolicitudes = [];
-
-        foreach ($solicitudes as $solicitud) {
-            $idAmbientes = DB::table('ambiente_solicitud')->where('solicitud_id', $solicitud->id)->pluck('ambiente_id');
-            $ambientes = Ambiente::whereIn('id', $idAmbientes)->get();
-            $docente = User::find($solicitud->user_id);
-            $ini = Periodo::find($solicitud->periodo_ini_id);
-            $fin = Periodo::find($solicitud->periodo_fin_id);
-
-            $nombresAmbientes = $ambientes->pluck('nombre')->implode(', ');
-            $capacidadesAmbientes = $ambientes->pluck('capacidad')->implode(', ');
-
-            $datosSolicitud = [
-                'id' => $solicitud->id,
-                'nombreDocente' => $docente->name,
-                'materia' => $solicitud->materia,
-                'grupo' => $solicitud->grupo,
-                'cantidad' => $solicitud->cantidad,
-                'razon' => $solicitud->razon,
-                'periodo_ini_id' => $ini->horainicial,
-                'periodo_fin_id' => $fin->horafinal,
-                'fechaReserva' => $solicitud->fechaReserva,
-                'ambiente_nombres' => $nombresAmbientes,
-                'ambiente_capacidades' => $capacidadesAmbientes,
-                'fechaEnviada' => substr($solicitud->created_at, 0, 10),
-                'estado' => $solicitud->estado,
-                'updated_at' => substr($solicitud->updated_at, 0, 10),
-            ];
-
-            if ($estado === 'aprobadas') {
-                $datosSolicitud['fechaAtendida'] = $solicitud->fechaAtendida;
-            } elseif ($estado === 'rechazadas') {
-                $datosSolicitud['fechaAtendida'] = $solicitud->fechaAtendida;
-                $datosSolicitud['razonRechazo'] = $solicitud->razonRechazo;
-            }
-
-            $datosSolicitudes[] = $datosSolicitud;
-        }
-
-        return response()->json([
-            'numeroItemsPagina' => $solicitudes->perPage(),
-            'paginaActual' => $solicitudes->currentPage(),
-            'numeroPaginasTotal' => $solicitudes->lastPage(),
-            'contenido' => $datosSolicitudes,
-        ]);
+        $listas = Solicitud::verListas($estado, $pagina);
+        return response()->json($listas, 200);
+        
     }
 
     public function aceptarSolicitud(Request $request){
@@ -270,13 +74,7 @@ class SolicitudController extends Controller
         if (!$solicitud) {
             return response()->json(['mensaje' => 'Solicitud no encontrada'], 404);
         }
-        $solicitud->estado = 'aprobado';
-        $solicitud->fechaAtendida = $fechaAtendido;
-        $solicitud->save();
-        //disparar notificacion
-        $this->notificadorService->notificarAceptacion($id);
-        //disparar evento
-        event(new NotificacionUsuario($solicitud->user_id, 'Nueva notificacion.'));
+        $solicitud->aceptar($fechaAtendido, $this->notificadorService);
         return response()->json(['mensaje' => 'Solicitud atendida correctamente']);
     }
 
@@ -288,119 +86,37 @@ class SolicitudController extends Controller
         if (!$solicitud) {
             return response()->json(['mensaje' => 'Solicitud no encontrada'], 404);
         }
-        $solicitud->estado = 'rechazado';
-        $solicitud->razonRechazo = $razon;
-        $solicitud->fechaAtendida = $fechaAtendido;
-        $solicitud->save();
-        //disparar notificacion
-        $this->notificadorService->notificarRechazo($id);
-        //disparar evento
-        event(new NotificacionUsuario($solicitud->user_id, 'Nueva notificacion.'));
+        $solicitud->rechazar($fechaAtendido, $razon, $this->notificadorService);
         return response()->json(['mensaje' => 'Solicitud rechazada correctamente']);
     }
 
-    public function periodosSolicitados($fecha,$idAmbiente){
-        $coincidencias = DB::table('solicituds')
-            ->join('ambiente_solicitud', 'solicituds.id', '=', 'ambiente_solicitud.solicitud_id')
-            ->where('solicituds.fechaReserva', $fecha)
-            ->where('ambiente_solicitud.ambiente_id', $idAmbiente)
-            ->where('solicituds.estado', 'en espera')
-            ->select('solicituds.id', 'solicituds.periodo_ini_id', 'solicituds.periodo_fin_id')
-            ->get();
-        $periodosReservados = [];
-        // Procesar las solicitudes para determinar los periodos reservados
-        foreach ($coincidencias as $coincidencia) {
-            $periodoIni = $coincidencia->periodo_ini_id;
-            $periodoFin = $coincidencia->periodo_fin_id;
-        
-            $periodos = range($periodoIni, $periodoFin);
-            $periodosReservados[] = [
-                'idSolicitud' => $coincidencia->id,
-                'periodos' => $periodos
-            ];
-        }
+    public function periodosSolicitados($fecha, $idAmbiente)
+    {
+        $periodosReservados = Solicitud::obtenerPeriodosSolicitados($fecha, $idAmbiente);
+
         return response()->json([
             "periodosReservados" => $periodosReservados
         ]);
     }
 
     public function fechasReserva($fecha){
-        $solicitudes = Solicitud::where('fechaReserva', $fecha)
-                            ->where('estado', 'aprobado')
-                            ->get();
+        $solicitudes = Solicitud::obtenerSolicitudesPorFecha($fecha, 'aprobado');
 
-        if ($solicitudes->isEmpty()) {
-            return response()->json(['mensaje' => 'No se encontraron solicitudes en espera para la fecha proporcionada'], 404);
+        if (!$solicitudes) {
+            return response()->json(['mensaje' => 'No se encontraron solicitudes aprobadas para la fecha proporcionada'], 404);
         }
 
-        $resultado = [];
-
-        foreach ($solicitudes as $solicitud) {
-            $idAmbientes = DB::table('ambiente_solicitud')->where('solicitud_id', $solicitud->id)->pluck('ambiente_id');
-            $ambientes = Ambiente::whereIn('id', $idAmbientes)->get();
-            $docente = User::find($solicitud->user_id);
-            $nombreDocente = $docente ? $docente->name : 'Docente no encontrado';
-
-            $ini = Periodo::find($solicitud->periodo_ini_id);
-            $fin = Periodo::find($solicitud->periodo_fin_id);
-
-            $nombresAmbientes = $ambientes->pluck('nombre')->implode(', ');
-
-
-            $resultado[] = [
-                'nombreDocente' => $nombreDocente,
-                'materia' => $solicitud->materia,
-                'grupo' => $solicitud->grupo,
-                'cantidad' => $solicitud->cantidad,
-                'razon' => $solicitud->razon,
-                'periodo_ini' => $ini ? $ini->horainicial : 'Periodo inicial no encontrado',
-                'periodo_fin' => $fin ? $fin->horafinal : 'Periodo final no encontrado',
-                'fecha' => $solicitud->fechaReserva,
-                'ambiente_nombres' => $nombresAmbientes,
-                
-            ];
-        }
-
-        return response()->json($resultado);
+        return response()->json($solicitudes);
     }
 
     public function fechasSolicitud($fecha){
-        $solicitudes = Solicitud::where('fechaReserva', $fecha)
-                            ->where('estado', 'en espera')
-                            ->get();
+        $solicitudes = Solicitud::obtenerSolicitudesPorFecha($fecha, 'en espera');
 
-        if ($solicitudes->isEmpty()) {
+        if (!$solicitudes) {
             return response()->json(['mensaje' => 'No se encontraron solicitudes en espera para la fecha proporcionada'], 404);
         }
 
-        $resultado = [];
-
-        foreach ($solicitudes as $solicitud) {
-            $idAmbientes = DB::table('ambiente_solicitud')->where('solicitud_id', $solicitud->id)->pluck('ambiente_id');
-            $ambientes = Ambiente::whereIn('id', $idAmbientes)->get();
-            $docente = User::find($solicitud->user_id);
-            $nombreDocente = $docente ? $docente->name : 'Docente no encontrado';
-
-            $ini = Periodo::find($solicitud->periodo_ini_id);
-            $fin = Periodo::find($solicitud->periodo_fin_id);
-
-            $nombresAmbientes = $ambientes->pluck('nombre')->implode(', ');
-    
-            $resultado[] = [
-                'nombreDocente' => $nombreDocente,
-                'materia' => $solicitud->materia,
-                'grupo' => $solicitud->grupo,
-                'cantidad' => $solicitud->cantidad,
-                'razon' => $solicitud->razon,
-                'periodo_ini' => $ini ? $ini->horainicial : 'Periodo inicial no encontrado',
-                'periodo_fin' => $fin ? $fin->horafinal : 'Periodo final no encontrado',
-                'fecha' => $solicitud->fechaReserva,
-                'ambiente_nombres' => $nombresAmbientes,
-                
-            ];
-        }
-
-        return response()->json($resultado);
+        return response()->json($solicitudes);
     }
     
 }

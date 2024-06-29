@@ -67,9 +67,6 @@ use App\Http\Controllers\AuthController;
         Route::post('/notificacionBroadcast', 'broadcast');
     });
 
-    Route::controller(ReporteController::class)->group(function () {
-        Route::get('/generarReporte', 'generarReporte');
-    });
 */
 
 
@@ -137,10 +134,6 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/notificaciones/{idUsuario}', 'recuperarNotificaciones');
         Route::post('/notificarIndividualmente', 'notificacionIndividual');
         Route::post('/notificacionBroadcast', 'broadcast');
-    });
-
-    Route::controller(ReporteController::class)->group(function () {
-        Route::get('/generarReporte', 'generarReporte');
     });
 
 });

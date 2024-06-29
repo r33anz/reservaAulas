@@ -6,42 +6,28 @@ use Illuminate\Http\Request;
 use App\Models\Ambiente;
 use App\Models\Piso;
 use App\Http\Requests\AmbienteRequest;
-use App\Models\Inhabilitado;
-use App\Models\Solicitud;
 use App\Services\AmbienteService;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
-use App\Models\Periodo;
-use Illuminate\Support\Carbon;
+
 class AmbienteController extends Controller
 {
 
-    protected $ambientesTodos;
+    protected $ambienteService;
 
-    public function __construct(AmbienteService $ambientes)
-    {
-        $this->ambientesTodos = $ambientes;
+    public function __construct(AmbienteService $ambientes){
+        $this->ambienteService = $ambientes;
     }
 
-    public function index()
-    {
-        $ambientes = Ambiente::all()->map(function ($ambiente) {
-            return [
-                'id' => $ambiente->id,
-                'nombre' => $ambiente->nombre,
-            ];
-        });
+    public function index(){
+        $ambientes = $this->ambienteService->todosAmbientes();
     
         return response()->json(['respuesta' => $ambientes]);
     }
 
-    public function show($id)
-    {
+    public function show($id){
         $ambiente = Ambiente::find($id);
         if (!$ambiente) {
             return response()->json(['error' => 'Ambiente no encontrado'], 404);
         }
-        
         
         $piso = $ambiente->piso;
         $bloque = $piso->bloque;
@@ -49,9 +35,9 @@ class AmbienteController extends Controller
         $nroPiso = $piso->nroPiso;
 
         return response()->json([
-            'nombre'=>$ambiente->nombre,
-            'capacidad'=>$ambiente->capacidad,
-            'tipo'=>$ambiente->tipo,
+            'nombre' => $ambiente->nombre,
+            'capacidad' => $ambiente->capacidad,
+            'tipo' => $ambiente->tipo,
             'nombreBloque' => $nombreBloque,
             'nroPiso' => $nroPiso
         ]);
@@ -63,19 +49,16 @@ class AmbienteController extends Controller
         $idBloque = $request->input('idBloque');
         $piso = $request->input('piso');
         $tipo = $request->input('tipo');
-        $descripcion = $request->input('descripcion');
 
         $idPiso = Piso::where('bloque_id', $idBloque)
-                    ->where('nroPiso', $piso)
-                    ->first();
-        
+                      ->where('nroPiso', $piso)
+                      ->first();
         
         Ambiente::create([
             'piso_id' => $idPiso->id,
             'nombre' => $nombre,
             'capacidad' => $capacidad,
-            'tipo' => $tipo,
-            //'descripcion' => $descripcion
+            'tipo' => $tipo
         ]);
 
         return response()->json([
@@ -90,58 +73,24 @@ class AmbienteController extends Controller
         $patronSinEspacios = trim($patron);
 
         if (empty($patronSinEspacios)) {
-            return response()->json(["coincidencias"  =>  []]);
+            return response()->json(["coincidencias" => []]);
         }
-        $resultados = Ambiente::where('nombre', 'like', '%'.$patron.'%')
-        ->get();
-       
-        $listaCoincidencias = [];
-        foreach ($resultados as $resultado){
-            $piso = $resultado->piso;
-            $bloque = $piso->bloque;
 
-            $detalleAula = [
-                'id' => $resultado->id,
-                'nombre' => $resultado->nombre,
-                'capacidad' => $resultado->capacidad,
-                'tipo' => $resultado->tipo,
-                'nombreBloque' => $bloque->nombreBloque,
-                'nroPiso' => $piso->nroPiso,
-            ];
-            $listaCoincidencias[] = $detalleAula;
-        }
+        $resultados = $this->ambienteService->buscarPorNombre($patronSinEspacios);
         
         return response()->json([
-            'coincidencias' => $listaCoincidencias
+            'coincidencias' => $resultados
         ]);
     }
 
-
-    public function buscarPorCapacidad(Request $request){ //buscador HU
+    public function buscarPorCapacidad(Request $request){ 
         $minCapacidad = $request->input('minCapacidad', 0);
         $maxCapacidad = $request->input('maxCapacidad', 100);
 
-        // Realiza la búsqueda en la base de datos
-        $resultados = Ambiente::whereBetween('capacidad', [$minCapacidad, $maxCapacidad])->get();
+        $resultados = $this->ambienteService->buscarPorCapacidad($minCapacidad, $maxCapacidad);
 
-        $ambientes = [];
-        foreach ($resultados as $resultado) {
-            $piso = $resultado->piso;
-            $bloque = $piso->bloque;
-
-            $detalleAula = [
-                'id' => $resultado->id,
-                'nombre' => $resultado->nombre,
-                'capacidad' => $resultado->capacidad,
-                'tipo' => $resultado->tipo,
-                'nombreBloque' => $bloque->nombreBloque,
-                'nroPiso' => $piso->nroPiso,
-            ];
-
-            $ambientes[] = $detalleAula;
-        }
         return response()->json([
-            'respuesta' => $ambientes
+            'respuesta' => $resultados
         ]);
     }
 
@@ -160,234 +109,14 @@ class AmbienteController extends Controller
         $fecha = $request->input('fecha');
         $periodos = $request->input('periodos');
         
-        // Verificar si la solicitud se realizó al menos 5 horas antes del periodo inicial
-        $enTiempo = $this->validadorTiempos($fecha, $periodos[0]);
+        $response = $this->ambienteService->busquedaAmbientesporCantidadFechaPeriodo($cantidad, $fecha, $periodos);
 
-        if (!$enTiempo) {
-            return response()->json([
-                (object) [
-                    'mensaje' => "No puede realizar esta solicitud pasada la hora de inicio del periodo.",
-                    'alerta' => "advertencia"
-                ]
-            ]);
-        }
-
-        $busquedaFechaPeriodos = $this->fechaPeriodo($fecha, $periodos);
-        $availableIds = $busquedaFechaPeriodos->toArray();
-        
-        $result = [];
-        $busquedaCantidadMono = $this->busquedaMonoAmbiente($cantidad);
-
-        foreach ($busquedaCantidadMono as $ambiente) {
-            if (in_array($ambiente->id, $availableIds)) {
-                $ambiente->load('piso.bloque'); // Cargar la relación del piso y bloque
-                $result[] = [$ambiente]; 
-            }
-        }
-
-        $busquedaCantidadMulti = $this->busquedaMultiAmbientes($cantidad);
-        
-        foreach ($busquedaCantidadMulti as $combination) {
-            $allAvailable = true;
-            foreach ($combination as $ambiente) {
-                if (!in_array($ambiente->id, $availableIds)) {
-                    $allAvailable = false;
-                    break;
-                }
-            }
-            if ($allAvailable) {
-                foreach ($combination as $ambiente) {
-                    $ambiente->load('piso.bloque'); // Cargar la relación del piso y bloque
-                }
-                $result[] = $combination;
-            }
-        }
-
-        // Convertir la respuesta a un formato más amigable
-        $response = [];
-        foreach ($result as $combination) {
-            $combinationData = [];
-            foreach ($combination as $ambiente) {
-                $combinationData[] = [
-                    'id' => $ambiente->id,
-                    'nombre' => $ambiente->nombre,
-                    'tipo' => $ambiente->tipo,
-                    'capacidad' => $ambiente->capacidad,
-                    'piso' => $ambiente->piso ? $ambiente->piso->nroPiso : null,
-                    'bloque' => $ambiente->piso && $ambiente->piso->bloque ? $ambiente->piso->bloque->nombreBloque : null
-                ];
-            }
-            $response[] = $combinationData;
+        if (isset($response[0]->mensaje)) {
+            return response()->json($response);
         }
 
         return response()->json($response);
     }
-    // buscar ambinnetes por cantidad
-    private function busquedaMonoAmbiente($cantidad) {
-        list($min, $max) = $this->establecerRango($cantidad);
-        // Intentar encontrar un solo ambiente que cumpla con el rango
-        $ambientes = Ambiente::where('capacidad', '>=', $min)
-                            ->where('capacidad', '<=', $max)
-                            ->get();
 
-        return $ambientes;
-    }
-
-    private function busquedaMultiAmbientes($cantidad) {  
-        list($min, $max) = $this->establecerRango($cantidad);
-
-        // Obtener todos los ambientes y agruparlos por piso_id
-        $ambientes = Ambiente::orderBy('piso_id')
-                            ->orderBy('id')
-                            ->get()
-                            ->groupBy('piso_id');
-
-        $result = [];
-        foreach ($ambientes as $piso_id => $ambientesPiso) {
-            $combinations = $this->combinaciones($ambientesPiso->all(), $min, $max);
-            foreach ($combinations as $combination) {
-                $result[] = $combination;
-            }
-        }
-
-        return $result;
-    }
-
-    private function establecerRango($cantidad){
-        $maxCapacidad = Ambiente::max('capacidad');
-        $minCapacidad = Ambiente::min('capacidad');
-        
-        // Si la cantidad solicitada es mayor que la capacidad máxima disponible
-        if ($cantidad > $maxCapacidad) {
-            $min = $maxCapacidad;
-            $max = $cantidad; 
-        } else {
-            if ($cantidad <= $minCapacidad) {
-                $min = $minCapacidad;
-                $max = $cantidad + 20;
-            }else 
-            {
-                $min = max($minCapacidad, $cantidad - 20);
-                $max = min($maxCapacidad, $cantidad + 20);
-            }
-        }
-        
-        return [$min, $max];
-    }
     
-    private function combinaciones($ambientes, $min, $max){
-        $combinations = [];
-        $count = count($ambientes);
-
-        // Generar todas las combinaciones posibles de 2 o más ambientes
-        for ($i = 0; $i < (1 << $count); $i++) {
-            $combination = [];
-            $sum = 0;
-            for ($j = 0; $j < $count; $j++) {
-                if ($i & (1 << $j)) {
-                    $combination[] = $ambientes[$j];
-                    $sum += $ambientes[$j]->capacidad;
-                }
-            }
-            if ($sum >= $min && $sum <= $max && count($combination) > 1) {
-                // Verificar que todos los ambientes en la combinación pertenezcan al mismo piso
-                $samePiso = true;
-                $piso_id = $combination[0]->piso_id;
-                foreach ($combination as $ambiente) {
-                    if ($ambiente->piso_id != $piso_id) {
-                        $samePiso = false;
-                        break;
-                    }
-                }
-                if ($samePiso) {
-                    $combinations[] = $combination;
-                }
-            }
-        }
-        return $combinations;
-    }
-
-    //buscar ambientes por fecha/periodo
-    private function fechaPeriodo($fecha,$periodos){
-
-        $idPeriodos = count($periodos) === 1 ? [$periodos[0]] : range($periodos[0], $periodos[count($periodos) - 1]);
-
-        $ambientes = Ambiente::all();
-
-        // Obtener los ambientes inhabilitados para la fecha y los periodos especificados
-        $ambientesInhabilitados = Inhabilitado::where('fecha', $fecha)
-                                    ->whereIn('periodo_id', $idPeriodos)
-                                    ->pluck('ambiente_id');
-
-        // Obtener las reservas aprobadas que coinciden con la fecha y los periodos especificados
-        $reservas = Solicitud::whereDate('fechaReserva', $fecha)
-            ->where('estado', 'aprobado')
-            ->where(function ($query) use ($idPeriodos) {
-                foreach ($idPeriodos as $periodo) {
-                    $query->orWhere(function ($q) use ($periodo) {
-                        $q->where('periodo_ini_id', '<=', $periodo)
-                            ->where('periodo_fin_id', '>=', $periodo);
-                    });
-                }
-            })
-            ->pluck('id');
-
-        // Obtener los ambientes reservados para las solicitudes aprobadas
-        $ambientesReservados = DB::table('ambiente_solicitud')
-            ->whereIn('solicitud_id', $reservas)
-            ->pluck('ambiente_id')
-            ->unique()
-            ->values();
-
-        // Obtener las solicitudes en espera que coinciden con la fecha y los periodos especificados
-        $solicitudes = Solicitud::whereDate('fechaReserva', $fecha)
-            ->where('estado', 'en espera')
-            ->where(function ($query) use ($idPeriodos) {
-                foreach ($idPeriodos as $periodo) {
-                    $query->orWhere(function ($q) use ($periodo) {
-                        $q->where('periodo_ini_id', '<=', $periodo)
-                            ->where('periodo_fin_id', '>=', $periodo);
-                    });
-                }
-            })
-            ->pluck('id');
-
-        // Obtener los ambientes solicitados para las solicitudes en espera
-        $ambientesSolicitados = DB::table('ambiente_solicitud')
-            ->whereIn('solicitud_id', $solicitudes)
-            ->pluck('ambiente_id')
-            ->unique()
-            ->values();
-
-        $ambientesInhabilitadosArray = $ambientesInhabilitados->toArray();
-        $ambientesReservadosArray = $ambientesReservados->toArray();
-        $ambientesSolicitadosArray = $ambientesSolicitados->toArray();
-
-        // Eliminar los ambientes inhabilitados, reservados y solicitados de la lista general de ambientes
-        $ambientesDisponibles = $ambientes->reject(function ($ambiente) use ($ambientesInhabilitadosArray, $ambientesReservadosArray, $ambientesSolicitadosArray) {
-            return in_array($ambiente->id, $ambientesInhabilitadosArray) 
-                || in_array($ambiente->id, $ambientesReservadosArray)
-                || in_array($ambiente->id, $ambientesSolicitadosArray);
-        });
-
-        // Obtener solo los IDs de los ambientes disponibles
-        $ambientesDisponibles = $ambientesDisponibles->pluck('id');
-
-        return $ambientesDisponibles;
-    }
-
-    private function validadorTiempos($fechaReserva, $idPeriodoInicial){ //valida que la solicitud se haya realizado 
-                                                                        //X horas antes del periodo inical solicitado
-
-        $periodo = Periodo::find($idPeriodoInicial);
-        $horaInicial = Carbon::parse($periodo->horainicial);
-
-        $fechaHoraReserva = Carbon::parse($fechaReserva . ' ' . $horaInicial->format('H:i:s'));
-
-        $horaActual = Carbon::now();
-
-        $horasFaltantes = $horaActual->diffInHours($fechaHoraReserva, false);
-        return $horasFaltantes > 0;
-    }
-
 }
