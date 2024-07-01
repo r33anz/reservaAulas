@@ -1,136 +1,236 @@
-import React, { useState, useEffect } from "react";
-import { buscarAmbientePorNombre, recuperarAmbientePorID } from '../../services/Busqueda.service';
-import './Style.css';
+import React, { useState, useEffect, useRef } from "react";
+import {
+  buscarAmbientePorNombre,
+  recuperarAmbientePorID,
+} from "../../services/Busqueda.service";
+import { Col, Container, Dropdown, Form, Row } from "react-bootstrap";
+import "./Style.css";
+import { useFormik } from "formik";
+import * as Yup from "yup";
 
 const Buscar = () => {
-  const [nombreAmbiente, setNombreAmbiente] = useState(''); // Estado para almacenar el nombre del ambiente
-  const [ambienteOptions, setAmbienteOptions] = useState([]); // Estado para almacenar las opciones de ambiente
-  const [ambienteDetails, setAmbienteDetails] = useState(null); // Estado para almacenar los detalles del ambiente
-  // (FIX:Marco) 'id' is assigned a value but never used
-  // eslint-disable-next-line
-  const [id, setId] = useState(''); // Estado para almacenar el id del ambiente
-  // (FIX:Marco) 'nombre' is assigned a value but never used 
-  // eslint-disable-next-line
-  const [nombre, setNombre] = useState('');
+  const [ambientes, setAmbientes] = useState([]);
+  const [show, setShow] = useState("");
+  const inputAmbienteRef = useRef();
+  const [showDropdown, setShowDropdown] = useState(false);
+  const [ambienteDetails, setAmbienteDetails] = useState([]); // Cambiar a array para almacenar detalles de varios ambientes
 
-  // Función para buscar los ambientes que coinciden con el nombre
-  const buscarAmbiente = (nombre) => {
-    if (nombre.trim() !== '') {
-      buscarAmbientePorNombre(nombre)
-        .then(data => {
-          const idValue = data.respuesta[0].id;
-          const nombreValue = data.respuesta[0].nombre;
+  const buscarAmbiente = async (event) => {
+    if (
+      event.hasOwnProperty("target") &&
+      event.target.hasOwnProperty("value")
+    ) {
+      const originalValue = event.target.value;
+      const trimmedValue = originalValue.trim(); // Eliminar espacios al inicio y al final
 
-          // Actualizar estados con los valores obtenidos
-          setId(idValue);
-          setNombre(nombreValue);
-          setAmbienteOptions(data.respuesta); // Actualizar las opciones de ambiente con los datos obtenidos
-        })
-        .catch(error => {
-          console.log('Error al buscar los ambientes:', error);
-          setAmbienteOptions([]); // Limpiar las opciones de ambiente en caso de error
+      if (trimmedValue === "") {
+        formik.setFieldValue("ambiente", {
+          ...formik.values.ambiente,
+          nombre: "",
         });
-    } else {
-      // Si el input está vacío, limpiar las opciones de ambiente
-      setAmbienteOptions([]);
-    }
-  };
+        setShowDropdown(false);
+      } else if (!trimmedValue.startsWith(" ")) {
+        // Verificar si el primer carácter no es un espacio
+        const value = originalValue.toUpperCase(); // Convertir a mayúsculas si pasa la validación del espacio inicial
 
-  // Función para manejar el cambio en el campo de entrada
-  const handleInputChange = (e) => {
-    const newValue = e.target.value;
-    // Validar que solo se permitan datos alfanuméricos y espacios en blanco
-    if (/^[a-zA-Z0-9\s]*$/.test(newValue)) {
-        setNombreAmbiente(newValue);
-        if (newValue.trim() === '') {
-            setAmbienteOptions([]); // Limpiar las opciones de ambiente si el campo está vacío
-        } else {
-            buscarAmbiente(newValue); // Realizar la búsqueda de ambientes automáticamente cada vez que cambia el valor del campo de entrada
+        if (/^[a-zA-Z0-9\s]*$/.test(value)) {
+          // Hacemos visible el dropdown solo si hay coincidencias
+          setShowDropdown(
+            ambientes.some((ambiente) =>
+              ambiente.nombre.toLowerCase().includes(value.toLowerCase())
+            )
+          );
+
+          formik.setFieldValue("ambiente", {
+            ...formik.values.ambiente,
+            nombre: value,
+          });
         }
+      }
     }
-};
-
-
-// Función para manejar el clic fuera del campo de entrada
-const handleClickOutside = () => {
-    setAmbienteOptions([]); // Limpiar las opciones de ambiente al hacer clic fuera del campo
-};
-
-// Agregar un event listener para hacer clic fuera del campo de entrada
-useEffect(() => {
-    document.addEventListener('click', handleClickOutside);
-    return () => {
-        document.removeEventListener('click', handleClickOutside);
-    };
-}, []);
-
-
-  // Función para seleccionar un ambiente de la lista de opciones
-  const handleOptionSelect = (selectedId, selectedNombre) => {
-    setId(selectedId);
-    setNombre(selectedNombre);
-    setNombreAmbiente(selectedNombre);
-    setAmbienteOptions([]); // Limpiar las opciones de ambiente después de seleccionar una
-    
-    recuperar(selectedId);
   };
 
+  const buscar = async () => {
+    const response = await buscarAmbientePorNombre();
+    if (response !== null) {
+      setAmbientes(response.respuesta);
+      console.log(ambientes);
+    }
+  };
 
-  // Recuperar los datos del ambiente por su ID
+  const formik = useFormik({
+    initialValues: {
+      ambiente: { nombre: "", id: "" },
+      fecha: "",
+    },
+    validationSchema: Yup.object({
+      ambiente: Yup.object().shape({
+        nombre: Yup.string()
+          .required("Obligatorio")
+          .test("hasOptions", "No existe ese ambiente", function (value) {
+            const trimmedValue = value.trim(); // Eliminar espacios al final del valor
+            return ambientes.some((ambiente) =>
+              ambiente.nombre.toLowerCase().includes(trimmedValue.toLowerCase())
+            );
+          }),
+      }),
+    }),
+    onSubmit: (values) => {
+      //setAmbienteDetails([]);
+      setShowDropdown(false);
+      if (ambientes.length > 0) {
+        console.log(formik.values.ambiente.nombre);
+        recuperar(formik.values.ambiente.nombre);
+        //console.log(ambientes);
+      } else {
+        //setAmbienteDetails([]); // Limpiar los detalles del ambiente en caso de no encontrar coincidencias
+      }
+      setShowDropdown(false);
+      inputAmbienteRef.current.blur();
+    },
+  });
+
+  const setNombreDelAmbiente = (ambiente) => {
+    formik.setFieldValue("ambiente", {
+      id: ambiente.id,
+      nombre: ambiente.nombre,
+    });
+    setAmbienteDetails([]);
+    recuperar(ambiente.nombre);
+    setShowDropdown(false);
+  };
+
+  useEffect(() => {
+    function handleClickOutside() {
+      setShowDropdown(false);
+    }
+    document.addEventListener("click", handleClickOutside);
+    return () => {
+      document.removeEventListener("click", handleClickOutside);
+    };
+  }, []);
+
   const recuperar = (id) => {
     recuperarAmbientePorID(id)
-      .then(data => {
-        // Actualizar estado con los detalles del ambiente
-        setAmbienteDetails(data);
+      .then((data) => {
+        // Almacenar los detalles del ambiente en el array
+        setAmbienteDetails(data.coincidencias);
+        console.log(ambienteDetails);
+        setShow("");
       })
-      .catch(error => {
-        console.log('Error al buscar el ambiente:', error);
-        setAmbienteDetails(null); // Limpiar los detalles del ambiente en caso de error
+      .catch((error) => {
+        console.log("Error al buscar el ambiente:", error);
+        setAmbienteDetails([]); // Limpiar los detalles del ambiente en caso de error
       });
   };
 
+  useEffect(() => {
+    buscar();
+  }, []);
+
   return (
-    <div className="buscarcontainer">
-      <h1 className='titulo'>Búsqueda por nombre</h1>
-      <div className="search-field">
-        <label htmlFor="buscar-input">Nombre del ambiente:</label>
-        <input 
-          type="text" 
-          id="buscar-input" 
-          value={nombreAmbiente}
-          onChange={handleInputChange} 
-        />
-        {ambienteOptions.length > 0 && (
-          <div className="optionscontainer">
-            {ambienteOptions.map(option => (
-              <div 
-                key={option.id} 
-                onClick={() => handleOptionSelect(option.id, option.nombre)}
-                className="option1"
-              >
-                {option.nombre}
+    <div className="BusquedaPorNombre-container">
+      <Container className="BusquedaPorNombre-header" fluid>
+        <Row xs="auto" className="text-white justify-content-end">
+          <Col
+            xs="12"
+            className="d-flex justify-content-start align-items-center"
+            style={{ height: "3rem", padding: 0, paddingLeft: "0.5rem" }}
+          >
+            <h5 style={{ fontWeight: "bold" }}>Buscar por nombre</h5>
+          </Col>
+        </Row>
+      </Container>
+      <Container className="BusquedaPorNombre-body" fluid>
+        <Row className="justify-content-center">
+          <Col xs lg="11">
+            <Form onSubmit={formik.handleSubmit}>
+              <Form.Group as={Row} className="mb-3" controlId="ambiente">
+                <Form.Label column sm="1">
+                  Nombre
+                </Form.Label>
+                <Col sm="10">
+                  <Dropdown id="ambientes">
+                    <Dropdown.Toggle
+                      ref={inputAmbienteRef}
+                      as={"input"}
+                      id="ambiente"
+                      type="text"
+                      placeholder="Ingrese el nombre del ambiente"
+                      onChange={buscarAmbiente}
+                      onBlur={formik.handleBlur}
+                      value={formik.values.ambiente.nombre}
+                      className="form-control"
+                      bsPrefix="dropdown-toggle"
+                    />
+                    {ambientes.filter((ambiente) =>
+                      ambiente.nombre
+                        .toLowerCase()
+                        .includes(
+                          formik.values.ambiente.nombre.trim().toLowerCase()
+                        )
+                    ).length > 0 &&
+                      formik.values.ambiente.nombre !== "" && (
+                        <Dropdown.Menu
+                          class={`dropdown-menu ${showDropdown ? "show" : ""}`}
+                          style={{
+                            width: "100%",
+                            overflowY: "auto",
+                            maxHeight: "5rem",
+                          }}
+                          show
+                        >
+                          {ambientes
+                            .filter((ambiente) =>
+                              ambiente.nombre
+                                .toLowerCase()
+                                .includes(
+                                  formik.values.ambiente.nombre
+                                    .trim()
+                                    .toLowerCase()
+                                )
+                            )
+
+                            .map((ambiente) => (
+                              <Dropdown.Item
+                                key={ambiente.nombre}
+                                onClick={() => setNombreDelAmbiente(ambiente)}
+                              >
+                                {ambiente.nombre}
+                              </Dropdown.Item>
+                            ))}
+                        </Dropdown.Menu>
+                      )}
+                  </Dropdown>
+                  <Form.Text className="text-danger">
+                    {formik.touched.ambiente && formik.errors.ambiente ? (
+                      <div className="text-danger">
+                        {formik.errors.ambiente.nombre}
+                      </div>
+                    ) : null}
+                  </Form.Text>
+                </Col>
+              </Form.Group>
+            </Form>
+          </Col>
+        </Row>
+      </Container>
+
+      {/* Mostrar los detalles de cada ambiente */}
+      <Row className="BusquedaPorNombre-ambientedetails">
+        {ambienteDetails.length > 0 &&
+          ambienteDetails.map((ambiente, index) => (
+            <Col key={index} sm={3}>
+              <div className="datos2">
+                <h6>{ambiente.nombre}</h6>
+                <p>Capacidad: {ambiente.capacidad}</p>
+                <p>Tipo de Ambiente: {ambiente.tipo}</p>
+                <p>Bloque: {ambiente.nombreBloque}</p>
+                <p>Piso: {ambiente.nroPiso}</p>
               </div>
-            ))}
-          </div>
-          
-        )}
-        
-      </div>
-      {/* Mostrar los detalles del ambiente si están disponibles */}
-      {ambienteDetails && (
-        <div className="ambientedetails">
-          <h1>Detalle</h1>
-          <div className="datos">
-          <p>Nombre: {ambienteDetails.nombre}</p>
-          <p>Capacidad:   {ambienteDetails.capacidad}</p>
-          <p>Tipo de Ambiente: {ambienteDetails.tipo}</p>
-          <p>Bloque: {ambienteDetails.nombreBloque}</p>
-          <p>Piso: {ambienteDetails.nroPiso}</p>
-          {/* Mostrar el id y el nombre del ambiente */}
-          </div>
-        </div>
-      )}
-      
+            </Col>
+          ))}
+      </Row>
     </div>
   );
 };

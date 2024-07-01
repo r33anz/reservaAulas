@@ -2,21 +2,45 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Docente;
-use App\Http\Resources\DocenteResource;
+use App\Models\User;
 class DocenteController extends Controller
 {
-    public function getMaterias($id){
-        $docente = Docente::findOrFail($id);
-        $materias = $docente->materias()->get()->map(function ($materia) {
+    public function getMaterias($id){ 
+        $docente = User::findOrFail($id);
+        $materiasConGrupos = $docente->materias()->get()->groupBy('nombreMateria')->map(function ($materias) {
+            $grupos = $materias->pluck('pivot.grupo');
             return [
-                'nombreMateria' => $materia->nombreMateria,
-                'grupo' => $materia->pivot->grupo
+                'grupos' => $grupos
             ];
         });
-    
+
         return response()->json([
-            'materias' => $materias
+            'nombre'=>  $docente->name,
+            'materias' => $materiasConGrupos
         ]);
+    }
+    
+    public function getAllDocenteNames(){
+        $docentes = User::whereHas('materias')->with('materias')->get();
+        // Ordenar los docentes por nombre
+        $docentes = $docentes->sortBy('name')->values();
+        // Estructurar los datos
+        $docentesConMaterias = $docentes->map(function ($docente) {
+            $materiasConGrupos = $docente->materias->groupBy('nombreMateria')->map(function ($materias) {
+                $grupos = $materias->pluck('pivot.grupo');
+                return [
+                    'grupos' => $grupos
+                ];
+            });
+
+            return [
+                'id' => $docente->id,
+                'nombre' => $docente->name,
+                'email'=> $docente->email,
+                'materias' => $materiasConGrupos
+            ];
+        });
+
+        return response()->json($docentesConMaterias);
     }
 }

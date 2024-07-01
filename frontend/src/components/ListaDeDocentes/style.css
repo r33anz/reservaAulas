@@ -1,0 +1,154 @@
+.ListaDeDocentes-header {
+  background-color: #003F70;
+  height: 3rem;
+  width: 100%;
+  margin-left: 1rem;
+}
+
+.ListaDeDocentes-modal-header {
+  background-color: #003F70;
+  height: 3rem;
+}
+
+.ListaDeDocentes-body1 {
+  background-color: #D9D9D9;
+  padding: 0.5rem;
+  width: 100%;
+  margin-left: 1rem;
+}
+
+.ListaDeDocentes-body {
+  background-color: #D9D9D9;
+  padding: 0.5rem;
+  height: 40.5rem;
+  overflow-y: scroll;
+  width: 100%;
+  margin-left: 1rem;
+}
+
+/* sidebar */
+.ListaDeDocentes-sidebar-header {
+  background-color: #003F70;
+  height: 3rem;
+  width: 96%;
+}
+.ListaDeDocentes-sidebar-body1 {
+  background-color: #D9D9D9;
+  padding: 0.5rem;
+  width: 96%;
+}
+.ListaDeDocentes-sidebar-body {
+  background-color: #D9D9D9;
+  padding: 0.5rem;
+  height: 45rem;
+  overflow-y: scroll;
+  width: 96%;
+}
+
+.table-container {
+  max-height: 500px;
+  /* Puedes ajustar esta altura según tus necesidades */
+  overflow-y: auto;
+}
+
+.page-item.active.color-blue,
+.page-item.color-blue {
+  --bs-pagination-color: #003F70;
+  --bs-pagination-hover-color: #003F70;
+  --bs-pagination-focus-color: #003F70;
+  --bs-pagination-active-bg: #003F70;
+  --bs-pagination-active-border-color: #003F70
+}
+
+.ListaDeDocentes-register {
+  color: #ffffff;
+  background-color: #003F70;
+  border-color: #003F70;
+}
+
+.ListaDeDocentes-register:hover,
+.ListaDeDocentes-register:active,
+.ListaDeDocentes-register:focus,
+.ListaDeDocentes-register:disabled,
+.ListaDeDocentes-register.active {
+  /* let's darken #004E64 a bit for hover effect */
+  color: #ffffff;
+  background: #003F70;
+  border-color: #003F70;
+}
+
+.ListaDeDocentes-header-button-cargar,
+.ListaDeDocentes-header-button-close {
+  color: #ffffff;
+  background-color: #D51809;
+  border-radius: 0%;
+  border-color: #D51809;
+  width: 58px;
+  height: 100%;
+}
+
+.ListaDeDocentes-header-button-cargar:hover,
+.ListaDeDocentes-header-button-cargar:active,
+.ListaDeDocentes-header-button-cargar:focus,
+.ListaDeDocentes-header-button-cargar:disabled,
+.ListaDeDocentes-header-button-cargar.active,
+.ListaDeDocentes-header-button-close:hover,
+.ListaDeDocentes-header-button-close:active,
+.ListaDeDocentes-header-button-close:focus,
+.ListaDeDocentes-header-button-close:disabled,
+.ListaDeDocentes-header-button-close.active {
+  color: #ffffff;
+  background: #D51809;
+  border-color: #D51809;
+  --bs-btn-active-bg: #D51809;
+  --bs-btn-active-border-color: #D51809;
+}
+
+.ListaDeDocentes-button-cancel {
+  color: #003F70;
+  background-color: #ffffff;
+  border-color: #003F70;
+}
+
+.ListaDeDocentes-button-cancel:hover,
+.ListaDeDocentes-button-cancel:active,
+.ListaDeDocentes-button-cancel:focus,
+.ListaDeDocentes-button-cancel.active {
+  /* let's darken #004E64 a bit for hover effect */
+  color: #003F70;
+  background: #ffffff;
+  border-color: #003F70;
+  --bs-btn-active-color: #003F70;
+  --bs-btn-active-bg: #ffffff;
+  --bs-btn-active-border-color: #003F70;
+}
+
+.ListaDeDocentes-register2 {
+  color: #ffffff;
+  background-color: #003F70;
+  border-color: #003F70;
+  width: 20rem;
+  margin-right: 3rem;
+}
+
+.ListaDeDocentes-register2:hover,
+.ListaDeDocentes-register2:active,
+.ListaDeDocentes-register2:focus,
+.ListaDeDocentes-register2:disabled,
+.ListaDeDocentes-register2.active {
+  /* let's darken #004E64 a bit for hover effect */
+  color: #ffffff;
+  background: #003F70;
+  border-color: #003F70;
+}
+.ListaDeDocentes-body-Modal{
+  
+    background-color: #D9D9D9;
+    padding: 1rem;
+    height: 200px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start; /* Alinea los elementos desde el inicio (arriba) */
+
+}
+

@@ -1,9 +1,16 @@
 .AlertContext-alert {
-    position: relative;
-    z-index: 1;
+    margin: 0;
 }
 
 .AlertsWrapper-container {
+    display: flex;
     position: absolute;
-    height: 75%;
+    height: 10%;
+    width: 100%;
+    margin-top: 2.5rem;
+    flex-direction: column-reverse;
+}
+
+.modal-backdrop.show {
+    opacity: 0;
 }

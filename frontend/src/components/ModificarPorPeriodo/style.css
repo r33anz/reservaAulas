@@ -1,119 +1,173 @@
 .buscar-container {
-    width: 600px ;
-    height: 530px;
-    margin-left: 300px;
-    
-    background-color: #D9D9D9;
-    display: flex;
-    flex-direction: column;
-    color: #000000;
-}
-.bb{
-    padding-left: 20px;
-    padding-bottom: 5px;
-    font-size: 35px;
-    color: #ffffff;
-    background-color: #003F70;
-}
-.options-container {
-    font-size: 20px;
-    margin-left: 290px;
-    margin-right: 110px;
-    max-height: 100px; /* Altura máxima para mostrar hasta 3 opciones */
-    overflow-y: auto; /* Habilitar el desplazamiento vertical cuando se supera la altura máxima */
-    position: absolute;
-    z-index: 1;
-  }
-  .option {
-    background-color: lightgray; /* Fondo de color gris por defecto */
-    transition: background-color 0.3s ease; /* Transición suave para el cambio de color */
-    width: 170px;
-    
-  }
-  .option:hover {
-    background-color: gray; /* Fondo de color más intenso al pasar el cursor sobre el elemento */
-  }
-#buscar-input {
-    margin-left: 30px;
+  /* width: 600px; */
+  background-color: #d9d9d9;
+  display: flex;
+  flex-direction: column;
+  color: #000000;
 }
 
-.fecha{
-    position: absolute;
-    margin-top: 90px;
-    font-size: 25px;
-    margin-left: 20px;
-    padding-top: 0px;
-    
-}
-#fecha-input{
-    margin-left: 50px;
-    font-size: 17px;
-    border-radius: 5px;
+.ModificarEstadoDelAmbientePorPeriodo-body {
+  background-color: #D9D9D9;
+  padding: 1rem;
+  margin: 0;
+  width: 123vh;
+  height: 73vh;
 }
 
-.consultar-button {
-    position: absolute;
-    margin-top: 100px;
-    margin-left: 500px;
+.ModificarEstadoDelAmbientePorPeriodo-header-button-close {
+  color: #ffffff;
+  background-color: #D51809;
+  border-radius: 0%;
+  border-color: #D51809;
 }
 
-
-.periodos-container{
-
-    position: absolute;
-    margin-left: 20px;
-    margin-top: 130px;
-    
+.ModificarEstadoDelAmbientePorPeriodo-header {
+  margin: 0;
+  width: 123vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #003F70;
 }
 
+.ModicarPorPeriodo-consultar-button {
+  color: #ffffff;
+  background-color: #003F70;
+  border-color: #003F70;
+  width: 8rem;
+  font-weight: bold;
+}
 
+.ModicarPorPeriodo-consultar-button:hover,
+.ModicarPorPeriodo-consultar-button:active,
+.ModicarPorPeriodo-consultar-button:focus,
+.ModicarPorPeriodo-consultar-buttono:disabled,
+.ModicarPorPeriodo-consultar-button.active {
+  /* let's darken #004E64 a bit for hover effect */
+  color: #ffffff;
+  background: #003F70;
+  border-color: #003F70;
+  --bs-btn-active-bg: #003F70;
+  --bs-btn-active-border-color: #003F70;
+}
+
+.justify-content-md-center {
+  margin-right: 10px !important;
+  /* Ajusta según necesites */
+  padding-left: 10px !important;
+  /* Ajusta según necesites */
+  padding-right: 10px !important;
+  /* Ajusta según necesites */
+}
+
+.periodos-container {
+  /* width: 130px; */
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  padding-top: 1rem;
+}
+
+.periodos-grid {
+  display: grid;
+  text-align: center;
+  grid-template-columns: repeat(3, 1fr);
+  /* Divide los elementos en tres columnas */
+  gap: 130px;
+  /* Espacio entre los elementos */
+}
 
 .periodos-container div label {
-    width: 100px; /* Ancho fijo para cada periodo */
-    text-align: center;
-    border: 1px solid black; /* Borde de 1px sólido negro */
-    margin: 2px; /* Espacio entre los elementos */
-    padding: 2px; /* Espacio interno del borde */
+  width: 150px;
+  /* Ancho fijo para cada periodo */
+  height: 50px;
+  text-align: center;
+  border: 1.5px solid black;
+  /* Borde de 1px sólido negro */
+  margin: 5px;
+  /* Espacio entre los elementos */
+  padding: 2px;
+  /* Espacio interno del borde */
+  border-radius: 10px;
 }
 
-.periodos-inhabilitados{
-    background-color: #71a3cc;
+.periodos>div {
+  display: flex;
+  align-items: center;
+  /* Centra verticalmente los elementos */
 }
-.periodos-habilitados{
-    background-color: #ffffff;
+
+.circle-container {
+  display: flex;
+  align-items: center;
+  padding-bottom: 1rem;
 }
-.modi{
-    position: absolute;
-    margin-top: 450px;
-    margin-left: 500px;
+
+.circle {
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-right: 10px;
 }
-.ambiente-details{
-    margin-top: 190px;
-    margin-left: 180px;
-    position: absolute;
-    background-color: #f9f9f9;
-  padding-left: 75px;
-  padding-right: 75px;
-  border-radius: 8px;
-  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
-  }
-  .datos {
-    margin-top: 20px;
-    margin-left: -40px;
-  }
-  
-  .datos p {
-    /* Aplicar estilo de cursiva */
-    font-style: italic;
-  }
-  .search-field1{
-    
-    padding-left: 20px;
-    font-size: 26px;
-    
-  }
-  #buscar-input1{
-    margin-left: 50px;
-    border-radius:5px;
-    font-size: 16px;
-  }
+
+.text {
+  font-size: 15px;
+  width: 160px;
+}
+
+.periodos-reservado {
+  background-color: #d81a0b;
+  color: #ffffff;
+}
+
+.periodos-solicitado {
+  background-color: #0b3f6f;
+  color: #ffffff;
+
+}
+
+.periodos-inhabilitados {
+  background-color: #a4a6a6;
+
+}
+
+.periodos-habilitados {
+  background-color: #ffffff;
+}
+
+.modi {
+  margin-top: -30px;
+  margin-left: 700px;
+}
+
+.ModificarPorPeriodo-button-periodo {
+  margin-top: -30px;
+  margin-left: 630px;
+  color: #ffffff;
+  background-color: #003F70;
+  border-color: #003F70;
+  width: 10rem;
+  font-weight: bold;
+
+}
+
+input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+}
+
+.ModificarPorPeriodo-button-periodo:hover,
+.ModificarPorPeriodo-button-periodo:active,
+.ModificarPorPeriodo-button-periodo:focus,
+.ModificarPorPeriodo-button-periodo:disabled,
+.ModificarPorPeriodo-button-periodo.active {
+  /* let's darken #004E64 a bit for hover effect */
+  color: #ffffff;
+  background: #003F70;
+  border-color: #003F70;
+  --bs-btn-active-bg: #003F70;
+  --bs-btn-active-border-color: #003F70;
+}

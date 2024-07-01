@@ -1,3 +1,43 @@
 .Home-body {
-    padding-top: 2rem;
+    background-color: #f2f0f0;
+    height: 97%;
+}
+
+.Home-footer {
+    background-color: #fff;
+    color: #869099;
+    padding-right: 1rem;
+}
+
+.Home-sidebar-footer {
+    background-color: #fff;
+    color: #869099;
+    padding-right: 1rem;
+    width: 95%;
+}
+
+.Home-footer-grupo {
+    color: #003f70;
+    text-decoration: none;
+    background-color: transparent;
+}
+
+.ico-header {
+    margin-left: calc(100% - 22rem);
+    display: flex;
+    align-items: center;
+}
+
+.App-logo {
+    padding: 15px;
+    width: 5rem;
+    height: 5rem;
+}
+
+.Home-busqueda {
+    margin-left: calc(100% - 25.5rem)
+}
+
+.icon-base {
+    font-size: 24px;
 }

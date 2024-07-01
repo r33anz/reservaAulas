@@ -52,53 +52,71 @@ class MateriaSeeder extends Seeder
         ]);
         
         DB::table('docente_materia')->insert([
-            'docente_id' =>1,
+            'user_id' =>1,
             'materia_id' =>1,
             'grupo'=>1
         ]);
         DB::table('docente_materia')->insert([
-            'docente_id' =>1,
+            'user_id' =>1,
+            'materia_id' =>1,
+            'grupo'=>2        ]);
+        DB::table('docente_materia')->insert([
+            'user_id' =>1,
+            'materia_id' =>1,
+            'grupo'=>4       ]);
+        DB::table('docente_materia')->insert([
+            'user_id' =>1,
             'materia_id' =>2,
             'grupo'=>1
         ]);
         DB::table('docente_materia')->insert([
-            'docente_id' =>1,
+            'user_id' =>1,
             'materia_id' =>3,
             'grupo'=>1
         ]);
         DB::table('docente_materia')->insert([
-            'docente_id' =>2,
+            'user_id' =>1,
+            'materia_id' =>3,
+            'grupo'=>2
+        ]);
+        DB::table('docente_materia')->insert([
+            'user_id' =>2,
             'materia_id' =>4,
             'grupo'=>3
         ]);
         DB::table('docente_materia')->insert([
-            'docente_id' =>2,
+            'user_id' =>2,
             'materia_id' =>5,
             'grupo'=>4
         ]);
         DB::table('docente_materia')->insert([
-            'docente_id' =>3,
+            'user_id' =>2,
             'materia_id' =>4,
-            'grupo'=>5
+            'grupo'=>7
         ]);
         DB::table('docente_materia')->insert([
-            'docente_id' =>3,
+            'user_id' =>3,
+            'materia_id' =>4,
+            'grupo'=>2
+        ]);
+        DB::table('docente_materia')->insert([
+            'user_id' =>3,
             'materia_id' =>5,
             'grupo'=>6
         ]);
         DB::table('docente_materia')->insert([
-            'docente_id' =>4,
+            'user_id' =>4,
             'materia_id' =>8,
-            'grupo'=>9
+            'grupo'=>2
         ]);
         DB::table('docente_materia')->insert([
-            'docente_id' =>5,
+            'user_id' =>5,
             'materia_id' =>9,
             'grupo'=>1
         ]);
 
         DB::table('docente_materia')->insert([
-            'docente_id' =>3,
+            'user_id' =>3,
             'materia_id' =>9,
             'grupo'=>2
         ]);

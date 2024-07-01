@@ -1,12 +1,118 @@
-.rbc-header{
-    color: white;
-    font-size: 14px !important;
-    display: flex ;
-    align-items: center;
-    justify-content: center;
-    height: 36px !important;
-    background: cornflowerblue;
-  
-  }
-  
-  
+.rbc-header {
+  color: rgb(9, 8, 8) !important;
+  font-size: 14px !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 36px !important;
+  background: rgb(255, 255, 255) !important;
+
+}
+
+.rbc-event.rbc-selected,
+.rbc-day-slot .rbc-selected.rbc-background-event {
+  background-color: rgb(11 63 111);
+}
+
+.rbc-button-link {
+  cursor: default !important;
+}
+
+
+.reserva-row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.reserva-row h6 {
+  margin: 0;
+  margin-right: 10px;
+}
+
+.reserva-row p {
+  margin: 0;
+}
+
+.rbc-calendar {
+  background-color: white;
+}
+
+.rbc-toolbar {
+  background-color: #D9D9D9;
+  margin-bottom: 0;
+  padding-bottom: 1rem;
+  padding-left: 1rem;
+}
+
+.rbc-btn-group button {
+  background-color: #ffffff;
+}
+
+.rbc-toolbar-label {
+  font-weight: bold;
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #D9D9D9;
+  padding-left: 1rem;
+}
+
+.Calendario-header-button-close {
+  color: #ffffff;
+  background-color: #D51809;
+  border-radius: 0%;
+  border-color: #D51809;
+  width: 58px;
+  height: 3rem;
+}
+
+.Calendario-header-button-close:hover,
+.Calendario-header-button-close:active,
+.Calendario-header-button-close:focus,
+.Calendario-header-button-close:disabled,
+.Calendario-header-button-close.active {
+  /* let's darken #004E64 a bit for hover effect */
+  color: #ffffff;
+  background: #D51809;
+  border-color: #D51809;
+}
+
+.Calendario-header-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  background: rgb(11 63 111);
+  color: white;
+}
+
+.Calendario-sidebar-header-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 95%;
+  background: rgb(11 63 111);
+  color: white;
+}
+
+.Calendario-sidebar-body {
+  height: 88vh;
+  width: 95%;
+  background-color: #D9D9D9;
+  padding-top: 1rem;
+}
+
+.Calendario-body {
+  height: 80vh;
+  width: 100%;
+  background-color: #D9D9D9;
+  padding-top: 1rem;
+}
+
+.Calendario-header {
+  background-color: #003F70;
+}

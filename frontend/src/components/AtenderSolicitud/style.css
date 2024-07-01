@@ -1,0 +1,158 @@
+.AtenderSolicitud-header,
+.AtenderSolicitud-modal-header {
+    background-color: #003F70;
+    height: 3rem;
+}
+
+.AtenderSolicitud-body,
+.AtenderSolicitud-modal-body {
+    background-color: #D9D9D9;
+    padding: 1rem;
+}
+
+.AtenderSolicitud-sidebar-header,
+.AtenderSolicitud-modal-header {
+    background-color: #003F70;
+    width: 97%;
+    height: 3rem;
+}
+
+.AtenderSolicitud-sidebar-body,
+.AtenderSolicitud-modal-body {
+    background-color: #D9D9D9;
+    padding: 1rem;
+}
+
+.AtenderSolicitud-header-button-close {
+    color: #ffffff;
+    background-color: #D51809;
+    border-radius: 0%;
+    border-color: #D51809;
+    width: 58px;
+    height: 100%;
+    cursor: pointer;
+}
+
+.AtenderSolicitud-header-button-close:hover,
+.AtenderSolicitud-header-button-close:active,
+.AtenderSolicitud-header-button-close:focus,
+.AtenderSolicitud-header-button-close:disabled,
+.AtenderSolicitud-header-button-close.active {
+    /* let's darken #004E64 a bit for hover effect */
+    color: #ffffff;
+    background: #D51809;
+    border-color: #D51809;
+    cursor: pointer;
+}
+
+.AtenderSolicitud-button-cancel,
+.AtenderSolicitud-button-rechazar,
+.AtenderSolicitud-button-disponibilidad {
+    color: #003F70;
+    background-color: #ffffff;
+    border-color: #003F70;
+    cursor: pointer;
+}
+
+.AtenderSolicitud-button-cancel:hover,
+.AtenderSolicitud-button-cancel:active,
+.AtenderSolicitud-button-cancel:focus,
+.AtenderSolicitud-button-cancel:disabled,
+.AtenderSolicitud-button-cancel.active,
+.AtenderSolicitud-button-rechazar.active,
+.AtenderSolicitud-button-disponibilidad.active,
+.AtenderSolicitud-button-rechazar:disabled,
+.AtenderSolicitud-button-disponibilidad:disabled,
+.AtenderSolicitud-button-rechazar:focus,
+.AtenderSolicitud-button-disponibilidad:focus,
+.AtenderSolicitud-button-rechazar:active,
+.AtenderSolicitud-button-disponibilidad:active,
+.AtenderSolicitud-button-rechazar:hover,
+.AtenderSolicitud-button-disponibilidad:hover {
+    /* let's darken #004E64 a bit for hover effect */
+    color: #003F70;
+    background: #ffffff;
+    border-color: #003F70;
+    --bs-btn-active-color: #003F70;
+    --bs-btn-active-bg: #ffffff;
+    --bs-btn-active-border-color: #003F70;
+}
+
+.AtenderSolicitud-button-enviar,
+.AtenderSolicitud-button-aceptar {
+    color: #ffffff;
+    background-color: #003F70;
+    border-color: #003F70;
+    cursor: pointer;
+}
+
+.AtenderSolicitud-button-enviar:hover,
+.AtenderSolicitud-button-aceptar:hover,
+.AtenderSolicitud-button-enviar:active,
+.AtenderSolicitud-button-aceptar:active,
+.AtenderSolicitud-button-enviar:focus,
+.AtenderSolicitud-button-aceptar:focus,
+.AtenderSolicitud-button-enviar:disabled,
+.AtenderSolicitud-button-aceptar:disabled,
+.AtenderSolicitud-button-enviar.active,
+.AtenderSolicitud-button-aceptar.active {
+    color: #ffffff;
+    background: #003F70;
+    border-color: #003F70;
+    --bs-btn-active-color: #003F70;
+    --bs-btn-active-bg: #ffffff;
+    --bs-btn-active-border-color: #003F70;
+}
+
+.ListaDeAtentionDeSolicitudes-header {
+    background-color: #003F70;
+    height: 3rem;
+}
+
+.ListaDeAtentionDeSolicitudes-sidebar-header {
+    background-color: #003F70;
+    height: 3rem;
+    width: 97%;
+}
+
+.ListaDeAtentionDeSolicitudes-body {
+    background-color: #D9D9D9;
+    padding: 1rem;
+    min-height: calc(92vh - 7rem);
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.ListaDeAtentionDeSolicitudes-sidebar-body {
+    background-color: #D9D9D9;
+    padding: 1rem;
+    min-height: calc(100vh - 7rem);
+    display: flex;
+    width: 97%;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+/* Estilos para alinear los elementos arriba */
+.ListaDeAtentionDeSolicitudes-body>*,
+.ListaDeAtentionDeSolicitudes-sidebar-body>* {
+
+    align-self: stretch;
+    /* Asegura que los elementos ocupen todo el ancho disponible */
+}
+
+.ListaDeAtentionDeSolicitudes-body>form,
+.ListaDeAtentionDeSolicitudes-sidebar-body>form {
+    margin-top: 0;
+}
+
+.ListaDeAtentionDeSolicitudes-body>table,
+.ListaDeAtentionDeSolicitudes-sidebar-body>table {
+    margin-top: 0;
+}
+
+.ListaDeAtentionDeSolicitudes-body>.pagination,
+.ListaDeAtentionDeSolicitudes-sidebar-body>.pagination {
+    margin-top: auto;
+}

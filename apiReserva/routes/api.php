@@ -1,45 +1,139 @@
 <?php
 
 use App\Http\Controllers\AmbienteController;
-use App\Http\Controllers\BloqueController;
-use App\Http\Controllers\PeriodoController;
-use App\Http\Resources\BloqueResource;
-use App\Http\Resources\PisoResource;
-use App\Models\Piso;
+use App\Http\Controllers\ReservaController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Models\Bloque;
 use App\Http\Controllers\DocenteController;
 use App\Http\Controllers\InhabilitadoController;
+use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\SolicitudController;
+use App\Http\Controllers\ValidadorController;
+use App\Http\Controllers\ReporteController;
+use App\Http\Controllers\AuthController;
 
-///Docente
-Route::get('/docentes/{id}', [DocenteController::class, 'getMaterias']);
+//sin autentificacion
+/*
+    Route::controller(DocenteController::class)->group(function () {
+        Route::get('/docentes/{id}','getMaterias');
+        Route::get('/listaDocentes','getAllDocenteNames');
+    });
+
+    Route::controller(AmbienteController::class)->group(function () {
+        Route::get('/ambientes', 'index');
+        Route::get('/ambiente/{id}', 'show');
+        Route::post('/registroAmbiente', 'store');
+        Route::post('/busquedaAulaNew', 'buscarV2');
+        Route::post('/buscarPorCapacidad', 'buscarPorCapacidad');
+        Route::get('/maxMin', 'maximoMinimo');
+        Route::post('/buscarCantidadFechaPeriodo', 'busquedaAmbientesporCantidadFechaPeriodo');
+    });
+
+    Route::controller(InhabilitadoController::class)->group(function () {
+        Route::post('/inhabilitarAmbiente', 'inhabilitarAmbiente');
+        Route::delete('/habilitarAmbiente', 'habilitarAmbiente');
+        Route::post('/buscarInhabilitados', 'buscarPeriodos');
+    });
+
+    Route::controller(SolicitudController::class)->group(function () {
+        Route::get('/fechasSolicitud', 'conseguirFechas');
+        Route::post('/informacionSolicitud', 'informacionSolicitud');
+        Route::get('/{idSolicitud}/recuperarInformacion', 'recuperarInformacion');
+        Route::put('/aceptarSolicitud', 'aceptarSolicitud');
+        Route::put('/rechazarSolicitud', 'rechazarSolicitud');
+        Route::post('/verListas', 'verListas');
+        Route::get('/periodosSolicitados/{fecha}/{idAmbiente}', 'periodosSolicitados');
+        Route::post('/realizarSolicitud', 'realizarSolicitud');
+        Route::get('/reservas/{fecha}', 'fechasReserva');
+        Route::get('/solicitud/{fecha}', 'fechasSolicitud');
+    });
+
+    Route::controller(ValidadorController::class)->group(function () {
+        Route::post('/consultarFechaPeriodAmbiente', 'consultarFechaPeriodoAmbiente');
+        Route::get('/solicitudAtendida/{idSolicitud}', 'SolicitudAtendida');
+    });
+    
+    Route::controller(ReservaController::class)->group(function () {
+        Route::post('/docentes/reservas', 'reservasPorDocente');
+        Route::put('/reservas/{id}', 'cancelarReserva');
+        Route::get('/periodosReservados/{fecha}/{idAmbiente}', 'periodosReservados');
+        Route::put('/inhabilitarReserva', 'inhabilitarReserva');
+    });
+    
+    Route::controller(NotificationController::class)->group(function () {
+        Route::post('/marcarNotificacionLeida', 'marcarNotificacionLeida');
+        Route::get('/notificaciones/{idUsuario}', 'recuperarNotificaciones');
+        Route::post('/notificarIndividualmente', 'notificacionIndividual');
+        Route::post('/notificacionBroadcast', 'broadcast');
+    });
+
+*/
 
 
-///Administrador
-/*Route::get('/pisos', function (Request $request) {
-    return new BloqueResource(Bloque::find(1)); 
+//autentificacion
+// Rutas públicas
+Route::post('/login', [AuthController::class, 'login']);
+
+// Rutas protegidas
+Route::middleware('auth:sanctum')->group(function () {
+    
+    Route::get('/user', function (Request $request) {
+        return $request->user();
+    });
+
+    Route::post('/logout', [AuthController::class, 'logout']);
+
+    Route::controller(DocenteController::class)->group(function () {
+        Route::get('/docentes/{id}','getMaterias');
+        Route::get('/listaDocentes','getAllDocenteNames');
+    });
+
+    Route::controller(AmbienteController::class)->group(function () {
+        Route::get('/ambientes', 'index');
+        Route::get('/ambiente/{id}', 'show');
+        Route::post('/registroAmbiente', 'store');
+        Route::post('/busquedaAulaNew', 'buscarV2');
+        Route::post('/buscarPorCapacidad', 'buscarPorCapacidad');
+        Route::get('/maxMin', 'maximoMinimo');
+        Route::post('/buscarCantidadFechaPeriodo', 'busquedaAmbientesporCantidadFechaPeriodo');
+    });
+
+    Route::controller(InhabilitadoController::class)->group(function () {
+        Route::post('/inhabilitarAmbiente', 'inhabilitarAmbiente');
+        Route::delete('/habilitarAmbiente', 'habilitarAmbiente');
+        Route::post('/buscarInhabilitados', 'buscarPeriodos');
+    });
+
+    Route::controller(SolicitudController::class)->group(function () {
+        Route::get('/fechasSolicitud', 'conseguirFechas');
+        Route::post('/informacionSolicitud', 'informacionSolicitud');
+        Route::get('/{idSolicitud}/recuperarInformacion', 'recuperarInformacion');
+        Route::put('/aceptarSolicitud', 'aceptarSolicitud');
+        Route::put('/rechazarSolicitud', 'rechazarSolicitud');
+        Route::post('/verListas', 'verListas');
+        Route::get('/periodosSolicitados/{fecha}/{idAmbiente}', 'periodosSolicitados');
+        Route::post('/realizarSolicitud', 'realizarSolicitud');
+        Route::get('/reservas/{fecha}', 'fechasReserva');
+        Route::get('/solicitud/{fecha}', 'fechasSolicitud');
+    });
+
+    Route::controller(ValidadorController::class)->group(function () {
+        Route::post('/consultarFechaPeriodAmbiente', 'consultarFechaPeriodoAmbiente');
+        Route::get('/solicitudAtendida/{idSolicitud}', 'SolicitudAtendida');
+    });
+    
+    Route::controller(ReservaController::class)->group(function () {
+        Route::post('/docentes/reservas', 'reservasPorDocente');
+        Route::put('/reservas/{id}', 'cancelarReserva');
+        Route::get('/periodosReservados/{fecha}/{idAmbiente}', 'periodosReservados');
+        Route::put('/inhabilitarReserva', 'inhabilitarReserva');
+    });
+    
+    Route::controller(NotificationController::class)->group(function () {
+        Route::post('/marcarNotificacionLeida', 'marcarNotificacionLeida');
+        Route::get('/notificaciones/{idUsuario}', 'recuperarNotificaciones');
+        Route::post('/notificarIndividualmente', 'notificacionIndividual');
+        Route::post('/notificacionBroadcast', 'broadcast');
+    });
+
 });
-Route::get('/ambientes/pisos', function (Request $request) {
-    return new PisoResource(Piso::find(1)); 
-});*/
-Route::get('/bloques', [BloqueController::class, 'index']);
-Route::get('/bloques/{id}', [BloqueController::class, 'show']);
-
-///Registro de ambiente
-Route::post('/registroAmbiente',[AmbienteController::class,'store']);
-
-//Route::get('/periodos', [PeriodoController::class, 'index']);
-Route::get('/periodos/{id}', [PeriodoController::class, 'show']);
-Route::get('/periodos', [PeriodoController::class, 'getPeriodos']);
-
-
-//Ambiente
-Route::post('/busquedaAula',[AmbienteController::class,'buscar']);
-Route::get('/ambientes/{id}', [AmbienteController::class, 'show']);
-Route::get('/ambientes', [AmbienteController::class, 'index']);
-
-//Habilitado/DeshabilitadoAula
-Route::post('/inhabilitarAmbiente',[InhabilitadoController::class,'inhabilitarAmbiente']);
-Route::delete('/habilitarAmbiente',[InhabilitadoController::class,'habilitarAmbiente']);
-Route::post('/buscarInhabilitados',[InhabilitadoController::class,'buscarPeriodos']);

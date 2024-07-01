@@ -1,70 +1,44 @@
-import React from "react";
-import './App.css';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import RegistrarAmbiente from './components/RegistrarAmbiente';
-import Calendario from './components/Calendario';
-import Home from './pages/Home';
-import { AlertsProvider } from './components/Alert/AlertsContext';
-import ModificarPeriodo from './components/ModificarPorPeriodo/ModicarPeriodo';
-import {
-  createBrowserRouter,
-  RouterProvider
-} from "react-router-dom";
-import ModificarEstadoDelAmbientePorFecha from './components/ModificarAmbiente/EstadoPorFecha';
-import Buscar from "./components/Busquedanombre/Buscar";
-
+import React, { useEffect, useState } from "react";
+import "./App.css";
+import "bootstrap/dist/css/bootstrap.min.css";
+import { AlertsProvider } from "./components/Alert/AlertsContext";
+import { Navigate, Route, Routes } from "react-router-dom";
+import NotFound from "./pages/NotFound";
+import { getNotifications } from "./services/Notification.service";
+import Login from "./pages/Login";
+import Inicio from "./pages/Inicio/Inicio";
 function App() {
+  const [notifications, setNotifications] = useState([]);
+  const [notificationsIdNotRead, setNotificationsIdNotRead] = useState([]);
 
-  const router = createBrowserRouter([
-    {
-      path: "/",
-      element: (
-        <AlertsProvider>
-          <RegistrarAmbiente />
-        </AlertsProvider>
-      ),
-    },
-    {
-      path: "registroAmbiente",
-      element: (
-        <AlertsProvider>
-          <RegistrarAmbiente />
-        </AlertsProvider>
-      ),
-    },
-    {
-      path: "modificarPorPeriodo",
-      element: (
-        <AlertsProvider>
-          <ModificarPeriodo />
-        </AlertsProvider>
-      )
-    },
-    {
-      path: "modificarPorFecha",
-      element: (
-        <AlertsProvider>
-          <ModificarEstadoDelAmbientePorFecha />
-        </AlertsProvider>
-      )
-    },
-    {
-      path: "calendario",
-      element: (
-        <Calendario />
-      )
-    }, {
-      path: "buscarPorNombre",
-      element: (
-        <Buscar />
-      )
-    }
-  ]);
+  const fetchNotifications = async (docenteId) => {
+    const response = await getNotifications(docenteId);
+    setNotifications(response);
+    const notificationsIdNotRead = response
+      .filter((notification) => notification.read_at === null)
+      .map((notification) => notification.id);
+    setNotificationsIdNotRead(notificationsIdNotRead);
+  };
 
   return (
-    <Home>
-      <RouterProvider router={router} />
-    </Home>
+    <AlertsProvider>
+      <Routes>
+        <Route exact path="/login" element={<Login />} />
+        <Route
+          exact
+          path="/usuario/:id"
+          element={
+            <Inicio
+              fetchNotifications={fetchNotifications}
+              notifications={notifications}
+              notificationsIdNotRead={notificationsIdNotRead}
+            />
+          }
+        />
+        <Route path="/" element={<Navigate to="/login" replace />} />
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+    </AlertsProvider>
   );
 }
 

@@ -1,0 +1,98 @@
+.ListaDeSolicitudes-header {
+    background-color: #003F70;
+    height: 3rem;
+    width: 100%;
+}
+
+/* style.css */
+.table-row-fixed-height {
+    height: 65px;
+    /* Ajusta la altura según tus necesidades */
+    text-align: center;
+}
+
+.ListaDeSolicitudes-form-filtros {
+    height: 35px;
+}
+
+.ListaDeSolicitudes-body {
+    width: 100%;
+    background-color: #D9D9D9;
+    padding: 1rem;
+    min-height: calc(100vh - 7rem);
+    /* Mantener el tamaño del componente */
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    /* Alinea los elementos desde el inicio (arriba) */
+}
+
+.page-item.active.color-blue,
+.page-item.color-blue {
+    --bs-pagination-color: #003F70;
+    --bs-pagination-hover-color: #003F70;
+    --bs-pagination-focus-color: #003F70;
+    --bs-pagination-active-bg: #003F70;
+    --bs-pagination-active-border-color: #003F70;
+}
+
+.ListaDeSolicitudes-header-button-cargar,
+.ListaDeSolicitudes-header-button-close {
+    color: #ffffff;
+    background-color: #D51809;
+    border-radius: 0%;
+    border-color: #D51809;
+    width: 58px;
+    height: 100%;
+    cursor: pointer;
+}
+
+.ListaDeSolicitudes-header-button-cargar:hover,
+.ListaDeSolicitudes-header-button-cargar:active,
+.ListaDeSolicitudes-header-button-cargar:focus,
+.ListaDeSolicitudes-header-button-cargar:disabled,
+.ListaDeSolicitudes-header-button-cargar.active,
+.ListaDeSolicitudes-header-button-close:hover,
+.ListaDeSolicitudes-header-button-close:active,
+.ListaDeSolicitudes-header-button-close:focus,
+.ListaDeSolicitudes-header-button-close:disabled,
+.ListaDeSolicitudes-header-button-close.active {
+    color: #ffffff;
+    background: #D51809;
+    border-color: #D51809;
+    --bs-btn-active-bg: #D51809;
+    --bs-btn-active-border-color: #D51809;
+}
+
+.ListaDeSolicitudes-button-detalle {
+    cursor: pointer;
+}
+
+.form-check-input[type=radio] {
+    cursor: pointer;
+}
+
+/* Estilo para el mensaje de lista vacía */
+.ListaDeSolicitudes-empty {
+    text-align: center;
+    margin-top: 20px;
+}
+
+/* Estilos para alinear los elementos arriba */
+.ListaDeSolicitudes-body>* {
+
+    align-self: stretch;
+    /* Asegura que los elementos ocupen todo el ancho disponible */
+}
+
+.ListaDeSolicitudes-body>form {
+    margin-top: 0;
+}
+
+.ListaDeSolicitudes-body>table {
+    margin-top: 0;
+}
+
+.ListaDeSolicitudes-body>.pagination {
+    margin-top: auto;
+}
