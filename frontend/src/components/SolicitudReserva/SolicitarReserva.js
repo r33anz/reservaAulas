@@ -288,6 +288,7 @@ const SolicitarReserva = ({ onClose }) => {
     const filterPeriodos = () => {
       const currentTime = new Date();
       const limitTime = new Date(currentTime.getTime() + 5 * 60 * 60 * 1000); // current time + 5 hours
+      
       const filtered = periodos.filter(periodo => {
         const [periodHour, periodMinute] = periodo.hora.split(':').map(Number);
         const periodDate = new Date();
@@ -295,16 +296,20 @@ const SolicitarReserva = ({ onClose }) => {
         periodDate.setMinutes(periodMinute);
         return periodDate >= limitTime;
       });
-
+  
       setFilteredPeriodos(filtered);
     };
-
-    if (formik.values.fechaReserva === new Date().toISOString().split('T')[0]) {
+  
+    // Obtener la fecha actual en el formato 'YYYY-MM-DD'
+    const currentDate = new Date().toLocaleDateString('en-CA'); // 'en-CA' produce 'YYYY-MM-DD'
+    
+    if (formik.values.fechaReserva === currentDate) {
       filterPeriodos();
     } else {
       setFilteredPeriodos(periodos);
     }
   }, [formik.values.fechaReserva]);
+  
   const renderFirstStep = () => (
     <div style={{ display: 'flex' }}>
     <div style={{ width: '45%'}}>
